@@ -2,10 +2,11 @@ package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
 
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
-import me.taylorkelly.mywarp.permissions.WarpPermissions;
 
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class Warp {
@@ -120,7 +121,7 @@ public class Warp {
         if (permissions.contains(player.getName())) {
             return true;
         }
-        if (WarpPermissions.isAdmin(player) && WarpSettings.adminPrivateWarps) {
+        if (MyWarp.getWarpPermissions().isAdmin(player) && WarpSettings.adminPrivateWarps) {
             return true;
         }
 
@@ -136,6 +137,10 @@ public class Warp {
         }
         if (currWorld != null) {
             Location location = new Location(currWorld, x, y, z, yaw, pitch);
+            while (currWorld.getBlockAt(location).getType() != Material.AIR) {
+                location.setY(location.getY() + 1.0);
+                location = currWorld.getBlockAt(location).getLocation();
+            }
             player.teleport(location);
         } else {
             player.sendMessage(ChatColor.RED + "World " + world + " doesn't exist.");
@@ -165,7 +170,7 @@ public class Warp {
         if (creator.equals(player.getName())) {
             return true;
         }
-        if (WarpPermissions.isAdmin(player)) {
+        if (MyWarp.getWarpPermissions().isAdmin(player)) {
             return true;
         }
         return false;

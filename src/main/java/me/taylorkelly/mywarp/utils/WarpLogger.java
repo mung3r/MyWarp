@@ -9,7 +9,6 @@ public class WarpLogger {
 
     public static void severe(String string, Exception ex) {
         log.log(Level.SEVERE, "[MyWarp] " + string, ex);
-
     }
 
     public static void severe(String string) {

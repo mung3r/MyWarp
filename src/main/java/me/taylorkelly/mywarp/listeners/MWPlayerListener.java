@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.listeners;
 
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.SignWarp;
 import me.taylorkelly.mywarp.data.WarpList;
@@ -21,10 +22,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class MWPlayerListener implements Listener
 {
 	private WarpList warpList;
+	private WarpPermissions warpPermissions;
 
-	public MWPlayerListener(WarpList warpList)
+	public MWPlayerListener(MyWarp plugin)
 	{
-		this.warpList = warpList;
+		warpList = plugin.getWarpList();
+		warpPermissions = MyWarp.getWarpPermissions();
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -32,7 +35,7 @@ public class MWPlayerListener implements Listener
 	{
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			Block block = event.getClickedBlock();
-			if (((block.getState() instanceof Sign)) && (SignWarp.isSignWarp((Sign)block.getState())) && (WarpPermissions.signWarp(event.getPlayer())))
+			if (((block.getState() instanceof Sign)) && (SignWarp.isSignWarp((Sign)block.getState())) && (warpPermissions.signWarp(event.getPlayer())))
 				SignWarp.warpSign((Sign)block.getState(), this.warpList, event.getPlayer());
 		}
 	}

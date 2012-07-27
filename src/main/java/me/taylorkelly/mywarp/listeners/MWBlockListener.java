@@ -1,7 +1,7 @@
 package me.taylorkelly.mywarp.listeners;
 
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.SignWarp;
-import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 
 import org.bukkit.ChatColor;
@@ -13,8 +13,11 @@ import org.bukkit.event.block.SignChangeEvent;
 
 public class MWBlockListener implements Listener
 {
-  public MWBlockListener(WarpList list)
+  private WarpPermissions warpPermissions;
+
+  public MWBlockListener(MyWarp plugin)
   {
+      warpPermissions = MyWarp.getWarpPermissions();
   }
 
   @EventHandler(priority = EventPriority.MONITOR)
@@ -23,7 +26,7 @@ public class MWBlockListener implements Listener
     Player player = event.getPlayer();
 
     if (SignWarp.isSignWarp(event))
-      if (WarpPermissions.createSignWarp(player)) {
+      if (warpPermissions.createSignWarp(player)) {
         player.sendMessage(ChatColor.AQUA + "Successfully created a SignWarp");
       }
       else {

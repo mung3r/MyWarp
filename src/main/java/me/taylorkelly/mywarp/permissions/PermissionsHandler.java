@@ -1,14 +1,17 @@
 package me.taylorkelly.mywarp.permissions;
 
 import me.taylorkelly.mywarp.utils.WarpLogger;
+import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class PermissionsHandler implements IPermissionsHandler {
 	private enum PermHandler {
-		PERMISSIONSEX, PERMISSIONS3, PERMISSIONS2, GROUPMANAGER, BPERMISSIONS, BPERMISSIONS2, SUPERPERMS, NONE
+		VAULT, PERMISSIONSEX, PERMISSIONS3, PERMISSIONS2, GROUPMANAGER, BPERMISSIONS, BPERMISSIONS2, SUPERPERMS, NONE
 	}
 	private static PermHandler permplugin = PermHandler.NONE;
 	private transient IPermissionsHandler handler = new NullHandler();
@@ -31,6 +34,16 @@ public class PermissionsHandler implements IPermissionsHandler {
 	
 	public void checkPermissions() {
 		final PluginManager pluginManager = plugin.getServer().getPluginManager();
+
+        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            if (!(handler instanceof VaultHandler)) {
+                permplugin = PermHandler.VAULT;
+                WarpLogger.info("Access Control: Using Vault");
+                handler = new VaultHandler(permissionProvider.getProvider());
+            }
+            return;
+        }
 
 		final Plugin permExPlugin = pluginManager.getPlugin("PermissionsEx");
 		if (permExPlugin != null && permExPlugin.isEnabled()) {
