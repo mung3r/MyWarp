@@ -6,7 +6,6 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class Warp {
