@@ -10,12 +10,7 @@ softdepend:
 main: me.taylorkelly.mywarp.MyWarp
 commands:
   warp:
-    description: All of the MyWarp commands
-    usage: /<command> help - Displays the help for MyWarp
-  mywarp:
-    description: All of the MyWarp commands
-    usage: /<command> help - Displays the help for MyWarp
-  mw:
+    aliases: ['mywarp', 'mw']
     description: All of the MyWarp commands
     usage: /<command> help - Displays the help for MyWarp
 permissions:
