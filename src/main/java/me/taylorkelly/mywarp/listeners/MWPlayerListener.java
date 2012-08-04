@@ -15,7 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -41,7 +41,7 @@ public class MWPlayerListener implements Listener
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerChat(PlayerChatEvent event)
+	public void onPlayerChat(AsyncPlayerChatEvent event)
 	{
 		Player player = event.getPlayer();
 		if (this.warpList.waitingForWelcome(player)) {
