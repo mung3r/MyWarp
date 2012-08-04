@@ -67,6 +67,12 @@ public class MyWarp extends JavaPlugin {
         libCheck();
         if(!sqlCheck()) { return; }
 
+        File newDatabase = new File(getDataFolder(), "warps.db");
+        File oldDatabase = new File("homes-warps.db");
+        if (!newDatabase.exists() && oldDatabase.exists()) {
+            updateFiles(oldDatabase, newDatabase);
+        }
+
         Connection conn = ConnectionManager.initialize();
         if (conn == null) {
             WarpLogger.severe("Could not establish SQL connection. Disabling MyWarp");
