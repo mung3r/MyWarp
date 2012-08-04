@@ -23,7 +23,7 @@ public class ReloadCommand extends BasicCommand implements Command
     @Override
     public boolean execute(CommandSender executor, String identifier, String[] args)
     {
-        WarpSettings.initialize(plugin.getDataFolder());
+        WarpSettings.initialize(plugin);
         executor.sendMessage("Reloading MyWarp config");
 
         return true;

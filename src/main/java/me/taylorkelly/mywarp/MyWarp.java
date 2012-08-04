@@ -62,7 +62,7 @@ public class MyWarp extends JavaPlugin {
         version = this.getDescription().getVersion();
         pm = getServer().getPluginManager();
         
-        WarpSettings.initialize(getDataFolder());
+        WarpSettings.initialize(this);
         
         libCheck();
         if(!sqlCheck()) { return; }
