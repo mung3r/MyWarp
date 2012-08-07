@@ -35,14 +35,20 @@ public class PermissionsHandler implements IPermissionsHandler {
 	public void checkPermissions() {
 		final PluginManager pluginManager = plugin.getServer().getPluginManager();
 
-        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null) {
-            if (!(handler instanceof VaultHandler)) {
-                permplugin = PermHandler.VAULT;
-                WarpLogger.info("Access Control: Using Vault");
-                handler = new VaultHandler(permissionProvider.getProvider());
+        try {
+            RegisteredServiceProvider<Permission> permissionProvider = Bukkit
+                    .getServicesManager().getRegistration(
+                            net.milkbowl.vault.permission.Permission.class);
+            if (permissionProvider != null) {
+                if (!(handler instanceof VaultHandler)) {
+                    permplugin = PermHandler.VAULT;
+                    WarpLogger.info("Access Control: Using Vault");
+                    handler = new VaultHandler(permissionProvider.getProvider());
+                }
+                return;
             }
-            return;
+        } catch (NoClassDefFoundError e) {
+            // Do nothing
         }
 
 		final Plugin permExPlugin = pluginManager.getPlugin("PermissionsEx");
