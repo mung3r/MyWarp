@@ -145,13 +145,24 @@ public class WarpList {
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
             if (warp.playerCanModify(player)) {
-                warp.publicAll = false;
-                WarpDataSource.publicizeWarp(warp, false);
-                player.sendMessage(ChatColor.AQUA + "You have privatized '" + name + "'");
-                player.sendMessage("If you'd like to invite others to it,");
-                player.sendMessage("Use: " + ChatColor.RED + "/warp invite <player> " + name);
+                if (playerCanBuildPrivateWarp(player)) {
+                    warp.publicAll = false;
+                    WarpDataSource.publicizeWarp(warp, false);
+                    player.sendMessage(ChatColor.AQUA + "You have privatized '" + name
+                            + "'");
+                    player.sendMessage("If you'd like to invite others to it,");
+                    player.sendMessage("Use: " + ChatColor.RED
+                            + "/warp invite <player> " + name);
+                } else {
+                    player.sendMessage(ChatColor.RED
+                            + "You have reached your max # of private warps "
+                            + ChatColor.YELLOW + "("
+                            + MyWarp.getWarpPermissions().maxPrivateWarps(player) + ")");
+                    player.sendMessage("Delete some of your warps to make more");
+                }
             } else {
-                player.sendMessage(ChatColor.RED + "You do not have permission to privatize '" + name + "'");
+                player.sendMessage(ChatColor.RED
+                        + "You do not have permission to privatize '" + name + "'");
             }
         } else {
             player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
@@ -195,11 +206,21 @@ public class WarpList {
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
             if (warp.playerCanModify(player)) {
-                warp.publicAll = true;
-                WarpDataSource.publicizeWarp(warp, true);
-                player.sendMessage(ChatColor.AQUA + "You have publicized '" + name + "'");
+                if (playerCanBuildPublicWarp(player)) {
+                    warp.publicAll = true;
+                    WarpDataSource.publicizeWarp(warp, true);
+                    player.sendMessage(ChatColor.AQUA + "You have publicized '" + name
+                            + "'");
+                } else {
+                    player.sendMessage(ChatColor.RED
+                            + "You have reached your max # of public warps "
+                            + ChatColor.YELLOW + "("
+                            + MyWarp.getWarpPermissions().maxPublicWarps(player) + ")");
+                    player.sendMessage("Delete some of your warps to make more");
+                }
             } else {
-                player.sendMessage(ChatColor.RED + "You do not have permission to publicize '" + name + "'");
+                player.sendMessage(ChatColor.RED
+                        + "You do not have permission to publicize '" + name + "'");
             }
         } else {
             player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
@@ -306,12 +327,36 @@ public class WarpList {
                 if (warp.playerIsCreator(giveeName)) {
                     player.sendMessage(ChatColor.RED + giveeName + " is already the owner.");
                 } else {
-                    warp.setCreator(giveeName);
-                    WarpDataSource.updateCreator(warp);
-                    player.sendMessage(ChatColor.AQUA + "You have given '" + name + "' to " + giveeName);
                     Player match = server.getPlayer(giveeName);
-                    if (match != null) {
-                        match.sendMessage(ChatColor.AQUA + "You've been given '" + name + "' by " + player.getName());
+                    if (match != null){ //match needs to be online since we can only check permissions for users who are online.
+                        if (warp.publicAll){
+                            if (playerCanBuildPublicWarp(match)){
+                                warp.setCreator(giveeName);
+                                WarpDataSource.updateCreator(warp);
+                                player.sendMessage(ChatColor.AQUA + "You have given '" + name + "' to " + giveeName);
+                                match.sendMessage(ChatColor.AQUA + "You've been given '" + name + "' by " + player.getName());
+                            } else {
+                                player.sendMessage(ChatColor.RED
+                                        + "Player " + match.getName() + " has reached his max # of public warps "
+                                        + ChatColor.YELLOW + "("
+                                        + MyWarp.getWarpPermissions().maxPublicWarps(player) + ")");
+                                player.sendMessage("Tell him to delete some of his warps to receive this one.");
+                            }
+                        } else {
+                            if (playerCanBuildPrivateWarp(match)){
+                                warp.setCreator(giveeName);
+                                WarpDataSource.updateCreator(warp);
+                                player.sendMessage(ChatColor.AQUA + "You have given '" + name + "' to " + giveeName);
+                                match.sendMessage(ChatColor.AQUA + "You've been given '" + name + "' by " + player.getName());
+                                
+                            } else {
+                                player.sendMessage(ChatColor.RED
+                                        + "Player " + match.getName() + " has reached his max # of private warps "
+                                        + ChatColor.YELLOW + "("
+                                        + MyWarp.getWarpPermissions().maxPrivateWarps(player) + ")");
+                                player.sendMessage("Tell him to delete some of his warps to receive this one.");
+                            }
+                        }
                     }
                 }
             } else {
