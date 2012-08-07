@@ -1,6 +1,9 @@
 #Enable OP permissions with SuperPerms
 opPermissions: true
 
+#Maximum number of warps any player can make
+maxTotal: 15
+
 #Maximum number of public warps any player can make
 maxPublic: 5
 
