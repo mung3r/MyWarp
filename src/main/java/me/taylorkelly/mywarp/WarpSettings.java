@@ -17,6 +17,7 @@ public class WarpSettings {
     private static final String settingsFile = "MyWarp.settings";
     public static File dataDir;
 
+    public static int maxTotal;
     public static int maxPublic;
     public static int maxPrivate;
     public static boolean adminsObeyLimits;
@@ -42,21 +43,22 @@ public class WarpSettings {
         File oldConfigFile  = new File(dataDir, settingsFile);
         if (oldConfigFile.exists()) {
             PropertiesFile file = new PropertiesFile(oldConfigFile);
-            
+
+            config.set("maxTotal", file.getInt("maxTotal", 15, "Maximum number of warps any player can make"));
             config.set("maxPublic", file.getInt("maxPublic", 5, "Maximum number of public warps any player can make"));
             config.set("maxPrivate", file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
             config.set("adminsObeyLimits", file.getBoolean("adminsObeyLimits", false, "Whether or not admins can disobey warp limits"));
             config.set("adminPrivateWarps", file.getBoolean("adminPrivateWarps", true, "Whether or not admins can see private warps in their list"));
             config.set("loadChunks", file.getBoolean("loadChunks", false, "Force sending of the chunk which people teleport to - default: false"));
-            
+
             config.set("usemySQL", file.getBoolean("usemySQL", false, "MySQL usage --  true = use MySQL database / false = use SQLite"));
-    		config.set("mySQLconn", file.getString("mySQLconn", "jdbc:mysql://localhost:3306/minecraft", "MySQL Connection (only if using MySQL)"));
-    		config.set("mySQLuname", file.getString("mySQLuname", "root", "MySQL Username (only if using MySQL)"));
-    		config.set("mySQLpass", file.getString("mySQLpass", "password", "MySQL Password (only if using MySQL)"));
-    		
-    		config.set("opPermissions", file.getBoolean("opPermissions", true, "Enable OP permissions with SuperPerms"));
-    		
-    		try {
+            config.set("mySQLconn", file.getString("mySQLconn", "jdbc:mysql://localhost:3306/minecraft", "MySQL Connection (only if using MySQL)"));
+            config.set("mySQLuname", file.getString("mySQLuname", "root", "MySQL Username (only if using MySQL)"));
+            config.set("mySQLpass", file.getString("mySQLpass", "password", "MySQL Password (only if using MySQL)"));
+
+            config.set("opPermissions", file.getBoolean("opPermissions", true, "Enable OP permissions with SuperPerms"));
+
+            try {
                 config.save(configFile);
                 if (!oldConfigFile.renameTo(new File(dataDir, settingsFile + ".old"))) {
                     WarpLogger.warning("Could not rename old settings file");
@@ -70,6 +72,7 @@ public class WarpSettings {
             }
         }
         
+        maxTotal = config.getInt("maxTotal");
         maxPublic = config.getInt("maxPublic");
         maxPrivate = config.getInt("maxPrivate");
         adminsObeyLimits = config.getBoolean("adminsObeyLimits");

@@ -9,6 +9,7 @@ import java.util.List;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
+import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -26,24 +27,53 @@ public class WarpList {
     }
 
     public void addWarp(String name, Player player) {
-        if (playerCanBuildPublicWarp(player)) {
-            if (warpList.containsKey(name)) {
-                player.sendMessage(ChatColor.RED + "Warp called '" + name + "' already exists.");
+        if (playerCanBuildWarp(player)) {
+            if (playerCanBuildPublicWarp(player)) {
+                if (warpList.containsKey(name)) {
+                    player.sendMessage(ChatColor.RED + "Warp called '" + name
+                            + "' already exists.");
+                } else {
+                    Warp warp = new Warp(name, player);
+                    warpList.put(name, warp);
+                    WarpDataSource.addWarp(warp);
+                    player.sendMessage(ChatColor.AQUA + "Successfully created '" + name
+                            + "'");
+                    player.sendMessage("If you'd like to privatize it,");
+                    player.sendMessage("Use: " + ChatColor.RED + "/warp private " + name);
+                }
             } else {
-                Warp warp = new Warp(name, player);
-                warpList.put(name, warp);
-                WarpDataSource.addWarp(warp);
-                player.sendMessage(ChatColor.AQUA + "Successfully created '" + name + "'");
-                player.sendMessage("If you'd like to privatize it,");
-                player.sendMessage("Use: " + ChatColor.RED + "/warp private " + name);
+                player.sendMessage(ChatColor.RED
+                        + "You have reached your max # of public warps "
+                        + ChatColor.YELLOW + "("
+                        + MyWarp.getWarpPermissions().maxPublicWarps(player) + ")");
+                player.sendMessage("Delete some of your warps to make more");
             }
         } else {
-            player.sendMessage(ChatColor.RED + "You have reached your max # of public warps " + ChatColor.YELLOW + "(" + MyWarp.getWarpPermissions().maxPublicWarps(player)
-                    + ")");
+            player.sendMessage(ChatColor.RED
+                    + "You have reached your max # of warps " + ChatColor.YELLOW
+                    + "(" + MyWarp.getWarpPermissions().maxTotalWarps(player) + ")");
             player.sendMessage("Delete some of your warps to make more");
         }
     }
 
+    private int numWarpsPlayer(Player player) {
+        int size = 0;
+        for (Warp warp : warpList.values()) {
+            String creator = warp.creator;
+            if (creator.equals(player.getName()))
+                size++;
+        }
+        return size;
+    }
+
+    private boolean playerCanBuildWarp(Player player) {
+        if(MyWarp.getWarpPermissions().isAdmin(player) && !WarpSettings.adminsObeyLimits) {
+            return true;
+        } else{
+            return numWarpsPlayer(player) < MyWarp.getWarpPermissions().maxTotalWarps(player);
+        }
+    }
+    
     private int numPublicWarpsPlayer(Player player) {
         int size = 0;
         for (Warp warp : warpList.values()) {
@@ -71,22 +101,33 @@ public class WarpList {
         }
     }
 
-
     public void addWarpPrivate(String name, Player player) {
-        if (playerCanBuildPrivateWarp(player)) {
-            if (warpList.containsKey(name)) {
-                player.sendMessage(ChatColor.RED + "Warp called '" + name + "' already exists.");
+        if (playerCanBuildWarp(player)) {
+            if (playerCanBuildPrivateWarp(player)) {
+                if (warpList.containsKey(name)) {
+                    player.sendMessage(ChatColor.RED + "Warp called '" + name
+                            + "' already exists.");
+                } else {
+                    Warp warp = new Warp(name, player, false);
+                    warpList.put(name, warp);
+                    WarpDataSource.addWarp(warp);
+                    player.sendMessage(ChatColor.AQUA + "Successfully created '" + name
+                            + "'");
+                    player.sendMessage("If you'd like to invite others to it,");
+                    player.sendMessage("Use: " + ChatColor.RED
+                            + "/warp invite <player> " + name);
+                }
             } else {
-                Warp warp = new Warp(name, player, false);
-                warpList.put(name, warp);
-                WarpDataSource.addWarp(warp);
-                player.sendMessage(ChatColor.AQUA + "Successfully created '" + name + "'");
-                player.sendMessage("If you'd like to invite others to it,");
-                player.sendMessage("Use: " + ChatColor.RED + "/warp invite <player> " + name);
+                player.sendMessage(ChatColor.RED
+                        + "You have reached your max # of private warps "
+                        + ChatColor.YELLOW + "("
+                        + MyWarp.getWarpPermissions().maxPrivateWarps(player) + ")");
+                player.sendMessage("Delete some of your warps to make more");
             }
         } else {
-            player.sendMessage(ChatColor.RED + "You have reached your max # of private warps " + ChatColor.YELLOW + "("
-                    + MyWarp.getWarpPermissions().maxPrivateWarps(player) + ")");
+            player.sendMessage(ChatColor.RED + "You have reached your max # of warps "
+                    + ChatColor.YELLOW + "("
+                    + MyWarp.getWarpPermissions().maxTotalWarps(player) + ")");
             player.sendMessage("Delete some of your warps to make more");
         }
     }
@@ -145,13 +186,33 @@ public class WarpList {
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
             if (warp.playerCanModify(player)) {
-                warp.publicAll = false;
-                WarpDataSource.publicizeWarp(warp, false);
-                player.sendMessage(ChatColor.AQUA + "You have privatized '" + name + "'");
-                player.sendMessage("If you'd like to invite others to it,");
-                player.sendMessage("Use: " + ChatColor.RED + "/warp invite <player> " + name);
+                if (playerCanBuildWarp(player)) {
+                    if (playerCanBuildPrivateWarp(player)) {
+                        warp.publicAll = false;
+                        WarpDataSource.publicizeWarp(warp, false);
+                        player.sendMessage(ChatColor.AQUA + "You have privatized '"
+                                + name + "'");
+                        player.sendMessage("If you'd like to invite others to it,");
+                        player.sendMessage("Use: " + ChatColor.RED
+                                + "/warp invite <player> " + name);
+                    } else {
+                        player.sendMessage(ChatColor.RED
+                                + "You have reached your max # of private warps "
+                                + ChatColor.YELLOW + "("
+                                + MyWarp.getWarpPermissions().maxPrivateWarps(player)
+                                + ")");
+                        player.sendMessage("Delete some of your warps to make more");
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED
+                            + "You have reached your max # of warps " + ChatColor.YELLOW
+                            + "(" + MyWarp.getWarpPermissions().maxTotalWarps(player)
+                            + ")");
+                    player.sendMessage("Delete some of your warps to make more");
+                }
             } else {
-                player.sendMessage(ChatColor.RED + "You do not have permission to privatize '" + name + "'");
+                player.sendMessage(ChatColor.RED
+                        + "You do not have permission to privatize '" + name + "'");
             }
         } else {
             player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
@@ -195,11 +256,30 @@ public class WarpList {
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
             if (warp.playerCanModify(player)) {
-                warp.publicAll = true;
-                WarpDataSource.publicizeWarp(warp, true);
-                player.sendMessage(ChatColor.AQUA + "You have publicized '" + name + "'");
+                if (playerCanBuildWarp(player)) {
+                    if (playerCanBuildPublicWarp(player)) {
+                        warp.publicAll = true;
+                        WarpDataSource.publicizeWarp(warp, true);
+                        player.sendMessage(ChatColor.AQUA + "You have publicized '"
+                                + name + "'");
+                    } else {
+                        player.sendMessage(ChatColor.RED
+                                + "You have reached your max # of public warps "
+                                + ChatColor.YELLOW + "("
+                                + MyWarp.getWarpPermissions().maxPublicWarps(player)
+                                + ")");
+                        player.sendMessage("Delete some of your warps to make more");
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED
+                            + "You have reached your max # of warps " + ChatColor.YELLOW
+                            + "(" + MyWarp.getWarpPermissions().maxTotalWarps(player)
+                            + ")");
+                    player.sendMessage("Delete some of your warps to make more");
+                }
             } else {
-                player.sendMessage(ChatColor.RED + "You do not have permission to publicize '" + name + "'");
+                player.sendMessage(ChatColor.RED
+                        + "You do not have permission to publicize '" + name + "'");
             }
         } else {
             player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
@@ -263,6 +343,30 @@ public class WarpList {
     public int getSize() {
         return warpList.size();
     }
+    
+    public ArrayList<Warp> getSortedWarpsPerCreator(Player player, String creator, int start, int size) {
+        ArrayList<Warp> ret = new ArrayList<Warp>();
+        List<String> names = new ArrayList<String>(warpList.keySet());
+        Collator collator = Collator.getInstance();
+        collator.setStrength(Collator.SECONDARY);
+        Collections.sort(names, collator);
+
+        int index = 0;
+        int currentCount = 0;
+        while (index < names.size() && ret.size() < size) {
+            String currName = names.get(index);
+            Warp warp = warpList.get(currName);
+            if (warp.playerCanWarp(player) && warp.playerIsCreator(creator)) {
+                if (currentCount >= start) {
+                    ret.add(warp);
+                } else {
+                    currentCount++;
+                }
+            }
+            index++;
+        }
+        return ret;
+    }
 
     public MatchList getMatches(String name, Player player) {
         ArrayList<Warp> exactMatches = new ArrayList<Warp>();
@@ -296,6 +400,30 @@ public class WarpList {
         }
         return new MatchList(exactMatches, matches);
     }
+    
+    public String getMatchingCreator(Player player, String creator) {
+        ArrayList<String> matches = new ArrayList<String>();
+        List<String> names = new ArrayList<String>(warpList.keySet());
+        Collator collator = Collator.getInstance();
+        collator.setStrength(Collator.SECONDARY);
+        Collections.sort(names, collator);
+
+        for (int i = 0; i < names.size(); i++) {
+            String currName = names.get(i);
+            Warp warp = warpList.get(currName);
+            if (warp.playerCanWarp(player)) {
+                if (warp.creator.equalsIgnoreCase(creator)) {
+                    return creator;
+                } else if (warp.creator.toLowerCase().contains(creator.toLowerCase()) && !matches.contains(warp.creator)) {
+                    matches.add(warp.creator);
+                }
+            }
+        }
+        if (matches.size() == 1) {
+            return matches.get(0);
+        }
+        return "";
+    }
 
     public void give(String name, Player player, String giveeName) {
         MatchList matches = this.getMatches(name, player);
@@ -304,18 +432,84 @@ public class WarpList {
             Warp warp = warpList.get(name);
             if (warp.playerCanModify(player)) {
                 if (warp.playerIsCreator(giveeName)) {
-                    player.sendMessage(ChatColor.RED + giveeName + " is already the owner.");
+                    player.sendMessage(ChatColor.RED + giveeName
+                            + " is already the owner.");
                 } else {
-                    warp.setCreator(giveeName);
-                    WarpDataSource.updateCreator(warp);
-                    player.sendMessage(ChatColor.AQUA + "You have given '" + name + "' to " + giveeName);
                     Player match = server.getPlayer(giveeName);
-                    if (match != null) {
-                        match.sendMessage(ChatColor.AQUA + "You've been given '" + name + "' by " + player.getName());
+                    if (match != null) { // match needs to be online
+                        if (warp.publicAll) {
+                            if (playerCanBuildWarp(match)) {
+                                if (playerCanBuildPublicWarp(match)) {
+                                    warp.setCreator(giveeName);
+                                    WarpDataSource.updateCreator(warp);
+                                    player.sendMessage(ChatColor.AQUA
+                                            + "You have given '" + name + "' to "
+                                            + giveeName);
+                                    match.sendMessage(ChatColor.AQUA
+                                            + "You've been given '" + name + "' by "
+                                            + player.getName());
+                                } else {
+                                    player.sendMessage(ChatColor.RED
+                                            + "Player "
+                                            + match.getName()
+                                            + " has reached his max # of public warps "
+                                            + ChatColor.YELLOW
+                                            + "("
+                                            + MyWarp.getWarpPermissions()
+                                                    .maxPublicWarps(player) + ")");
+                                    player.sendMessage("Tell him to delete some of his warps to receive this one.");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED
+                                        + "Player "
+                                        + match.getName()
+                                        + " has reached his max # of warps "
+                                        + ChatColor.YELLOW
+                                        + "("
+                                        + MyWarp.getWarpPermissions().maxTotalWarps(
+                                                player) + ")");
+                                player.sendMessage("Delete some of your warps to make more");
+                            }
+                        } else {
+                            if (playerCanBuildWarp(match)) {
+                                if (playerCanBuildPrivateWarp(match)) {
+                                    warp.setCreator(giveeName);
+                                    WarpDataSource.updateCreator(warp);
+                                    player.sendMessage(ChatColor.AQUA
+                                            + "You have given '" + name + "' to "
+                                            + giveeName);
+                                    match.sendMessage(ChatColor.AQUA
+                                            + "You've been given '" + name + "' by "
+                                            + player.getName());
+                                } else {
+                                    player.sendMessage(ChatColor.RED
+                                            + "Player "
+                                            + match.getName()
+                                            + " has reached his max # of private warps "
+                                            + ChatColor.YELLOW
+                                            + "("
+                                            + MyWarp.getWarpPermissions()
+                                                    .maxPrivateWarps(player) + ")");
+                                    player.sendMessage("Tell him to delete some of his warps to receive this one.");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED
+                                        + "Player "
+                                        + match.getName()
+                                        + " has reached his max # of warps "
+                                        + ChatColor.YELLOW
+                                        + "("
+                                        + MyWarp.getWarpPermissions().maxTotalWarps(
+                                                player) + ")");
+                                player.sendMessage("Tell him to delete some of his warps to receive this one.");
+                            }
+                        }
                     }
                 }
             } else {
-                player.sendMessage(ChatColor.RED + "You do not have permission to uninvite players from '" + name + "'");
+                player.sendMessage(ChatColor.RED
+                        + "You do not have permission to uninvite players from '" + name
+                        + "'");
             }
         } else {
             player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
@@ -326,6 +520,16 @@ public class WarpList {
         int count = 0;
         for (Warp warp : warpList.values()) {
             if (warp.playerCanWarp(player)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public double getMaxWarpsPerCreator(Player player, String creator) {
+        int count = 0;
+        for (Warp warp : warpList.values()) {
+            if (warp.playerCanWarp(player) && warp.playerIsCreator(creator)) {
                 count++;
             }
         }
