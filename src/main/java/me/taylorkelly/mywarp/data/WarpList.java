@@ -9,6 +9,7 @@ import java.util.List;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
+import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -342,6 +343,30 @@ public class WarpList {
     public int getSize() {
         return warpList.size();
     }
+    
+    public ArrayList<Warp> getSortedWarpsPerCreator(Player player, String creator, int start, int size) {
+        ArrayList<Warp> ret = new ArrayList<Warp>();
+        List<String> names = new ArrayList<String>(warpList.keySet());
+        Collator collator = Collator.getInstance();
+        collator.setStrength(Collator.SECONDARY);
+        Collections.sort(names, collator);
+
+        int index = 0;
+        int currentCount = 0;
+        while (index < names.size() && ret.size() < size) {
+            String currName = names.get(index);
+            Warp warp = warpList.get(currName);
+            if (warp.playerCanWarp(player) && warp.playerIsCreator(creator)) {
+                if (currentCount >= start) {
+                    ret.add(warp);
+                } else {
+                    currentCount++;
+                }
+            }
+            index++;
+        }
+        return ret;
+    }
 
     public MatchList getMatches(String name, Player player) {
         ArrayList<Warp> exactMatches = new ArrayList<Warp>();
@@ -374,6 +399,30 @@ public class WarpList {
             }
         }
         return new MatchList(exactMatches, matches);
+    }
+    
+    public String getMatchingCreator(Player player, String creator) {
+        ArrayList<String> matches = new ArrayList<String>();
+        List<String> names = new ArrayList<String>(warpList.keySet());
+        Collator collator = Collator.getInstance();
+        collator.setStrength(Collator.SECONDARY);
+        Collections.sort(names, collator);
+
+        for (int i = 0; i < names.size(); i++) {
+            String currName = names.get(i);
+            Warp warp = warpList.get(currName);
+            if (warp.playerCanWarp(player)) {
+                if (warp.creator.equalsIgnoreCase(creator)) {
+                    return creator;
+                } else if (warp.creator.toLowerCase().contains(creator.toLowerCase()) && !matches.contains(warp.creator)) {
+                    matches.add(warp.creator);
+                }
+            }
+        }
+        if (matches.size() == 1) {
+            return matches.get(0);
+        }
+        return "";
     }
 
     public void give(String name, Player player, String giveeName) {
@@ -471,6 +520,16 @@ public class WarpList {
         int count = 0;
         for (Warp warp : warpList.values()) {
             if (warp.playerCanWarp(player)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public double getMaxWarpsPerCreator(Player player, String creator) {
+        int count = 0;
+        for (Warp warp : warpList.values()) {
+            if (warp.playerCanWarp(player) && warp.playerIsCreator(creator)) {
                 count++;
             }
         }
