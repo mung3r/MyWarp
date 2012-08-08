@@ -80,10 +80,14 @@ public class WarpPermissions {
             return permissionsHandler.hasPermission(player, "mywarp.warp.basic.compass", true);
     }
 
+    public int maxTotalWarps(Player player) {
+        return WarpSettings.maxTotal;
+    }
+
     public int maxPrivateWarps(Player player) {
         return WarpSettings.maxPrivate;
     }
-    
+
     public int maxPublicWarps(Player player) {
         return WarpSettings.maxPublic;
     }
