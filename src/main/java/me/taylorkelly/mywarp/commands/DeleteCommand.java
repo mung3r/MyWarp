@@ -17,7 +17,7 @@ public class DeleteCommand extends BasicCommand implements Command
         setDescription("Deletes the warp §9<name>");
         setUsage("/warp delete §9<name>");
         setArgumentRange(1, 255);
-        setIdentifiers("delete");
+        setIdentifiers("delete", "remove");
         setPermission("mywarp.warp.basic.delete");
     }
 
