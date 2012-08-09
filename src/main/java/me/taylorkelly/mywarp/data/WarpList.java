@@ -316,27 +316,7 @@ public class WarpList {
     }
 
     public ArrayList<Warp> getSortedWarps(Player player, int start, int size) {
-        ArrayList<Warp> ret = new ArrayList<Warp>();
-        List<String> names = new ArrayList<String>(warpList.keySet());
-        Collator collator = Collator.getInstance();
-        collator.setStrength(Collator.SECONDARY);
-        Collections.sort(names, collator);
-
-        int index = 0;
-        int currentCount = 0;
-        while (index < names.size() && ret.size() < size) {
-            String currName = names.get(index);
-            Warp warp = warpList.get(currName);
-            if (warp.playerCanWarp(player)) {
-                if (currentCount >= start) {
-                    ret.add(warp);
-                } else {
-                    currentCount++;
-                }
-            }
-            index++;
-        }
-        return ret;
+        return getSortedWarpsPerCreator(player, null, start, size);
     }
 
     public int getSize() {
@@ -355,7 +335,7 @@ public class WarpList {
         while (index < names.size() && ret.size() < size) {
             String currName = names.get(index);
             Warp warp = warpList.get(currName);
-            if (warp.playerCanWarp(player) && warp.playerIsCreator(creator)) {
+            if (warp.playerCanWarp(player) && (creator != null ? warp.playerIsCreator(creator) : true)) {
                 if (currentCount >= start) {
                     ret.add(warp);
                 } else {
