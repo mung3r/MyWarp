@@ -9,7 +9,6 @@ import java.util.List;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
-import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
