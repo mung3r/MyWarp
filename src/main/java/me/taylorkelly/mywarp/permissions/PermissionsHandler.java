@@ -117,7 +117,7 @@ public class PermissionsHandler implements IPermissionsHandler {
 		if (permplugin == PermHandler.NONE) {
 			if (!(handler instanceof SuperpermsHandler)) {
 				WarpLogger.info("Access Control: Using SuperPerms");
-				handler = new SuperpermsHandler(this.plugin);
+				handler = new SuperpermsHandler();
 			}
 		}
 	}
