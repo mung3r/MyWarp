@@ -65,9 +65,9 @@ public class ListCommand extends BasicCommand implements Command
                 if (page < 1) {
                     executor.sendMessage(ChatColor.RED + "Page number can't be below 1.");
                     return true;
-                } else if (page > lister.getMaxPagesPerPlayer((Player) executor, creator)) {
+                } else if (page > lister.getMaxPagesPerCreator((Player) executor, creator)) {
                     executor.sendMessage(ChatColor.RED + "There are only "
-                            + lister.getMaxPages((Player) executor) + " pages of warps");
+                            + lister.getMaxPagesPerCreator((Player) executor, executor.getName()) + " pages of warps");
                     return true;
                 }
                 lister.setPage(page);

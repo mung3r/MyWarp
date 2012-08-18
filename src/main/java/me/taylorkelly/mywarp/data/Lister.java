@@ -106,7 +106,7 @@ public class Lister {
         return (int) Math.ceil(warpList.getMaxWarps(player) / (double) WARPS_PER_PAGE);
     }
 
-    public int getMaxPagesPerPlayer(Player player, String warpCreator) {
+    public int getMaxPagesPerCreator(Player player, String warpCreator) {
         String matchingWarpCreator = warpList.getMatchingCreator(player, warpCreator);
         return (int) Math.ceil(warpList.getMaxWarpsPerCreator(player, matchingWarpCreator)
                 / (double) WARPS_PER_PAGE);

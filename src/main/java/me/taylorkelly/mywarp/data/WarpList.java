@@ -185,28 +185,19 @@ public class WarpList {
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
             if (warp.playerCanModify(player)) {
-                if (playerCanBuildWarp(player)) {
-                    if (playerCanBuildPrivateWarp(player)) {
-                        warp.publicAll = false;
-                        WarpDataSource.publicizeWarp(warp, false);
-                        player.sendMessage(ChatColor.AQUA + "You have privatized '"
-                                + name + "'");
-                        player.sendMessage("If you'd like to invite others to it,");
-                        player.sendMessage("Use: " + ChatColor.RED
-                                + "/warp invite <player> " + name);
-                    } else {
-                        player.sendMessage(ChatColor.RED
-                                + "You have reached your max # of private warps "
-                                + ChatColor.YELLOW + "("
-                                + MyWarp.getWarpPermissions().maxPrivateWarps(player)
-                                + ")");
-                        player.sendMessage("Delete some of your warps to make more");
-                    }
+                if (playerCanBuildPrivateWarp(player)) {
+                    warp.publicAll = false;
+                    WarpDataSource.publicizeWarp(warp, false);
+                    player.sendMessage(ChatColor.AQUA + "You have privatized '" + name
+                            + "'");
+                    player.sendMessage("If you'd like to invite others to it,");
+                    player.sendMessage("Use: " + ChatColor.RED
+                            + "/warp invite <player> " + name);
                 } else {
                     player.sendMessage(ChatColor.RED
-                            + "You have reached your max # of warps " + ChatColor.YELLOW
-                            + "(" + MyWarp.getWarpPermissions().maxTotalWarps(player)
-                            + ")");
+                            + "You have reached your max # of private warps "
+                            + ChatColor.YELLOW + "("
+                            + MyWarp.getWarpPermissions().maxPrivateWarps(player) + ")");
                     player.sendMessage("Delete some of your warps to make more");
                 }
             } else {
@@ -255,25 +246,16 @@ public class WarpList {
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
             if (warp.playerCanModify(player)) {
-                if (playerCanBuildWarp(player)) {
-                    if (playerCanBuildPublicWarp(player)) {
-                        warp.publicAll = true;
-                        WarpDataSource.publicizeWarp(warp, true);
-                        player.sendMessage(ChatColor.AQUA + "You have publicized '"
-                                + name + "'");
-                    } else {
-                        player.sendMessage(ChatColor.RED
-                                + "You have reached your max # of public warps "
-                                + ChatColor.YELLOW + "("
-                                + MyWarp.getWarpPermissions().maxPublicWarps(player)
-                                + ")");
-                        player.sendMessage("Delete some of your warps to make more");
-                    }
+                if (playerCanBuildPublicWarp(player)) {
+                    warp.publicAll = true;
+                    WarpDataSource.publicizeWarp(warp, true);
+                    player.sendMessage(ChatColor.AQUA + "You have publicized '" + name
+                            + "'");
                 } else {
                     player.sendMessage(ChatColor.RED
-                            + "You have reached your max # of warps " + ChatColor.YELLOW
-                            + "(" + MyWarp.getWarpPermissions().maxTotalWarps(player)
-                            + ")");
+                            + "You have reached your max # of public warps "
+                            + ChatColor.YELLOW + "("
+                            + MyWarp.getWarpPermissions().maxPublicWarps(player) + ")");
                     player.sendMessage("Delete some of your warps to make more");
                 }
             } else {
