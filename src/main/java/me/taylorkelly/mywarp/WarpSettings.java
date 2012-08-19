@@ -28,7 +28,6 @@ public class WarpSettings {
     public static String mySQLpass;
     public static String mySQLconn;
 
-    public static boolean opPermissions;
     private static FileConfiguration config;
     private static File configFile;
     private static MyWarp plugin;
@@ -80,8 +79,6 @@ public class WarpSettings {
         mySQLconn = config.getString("mySQLconn");
         mySQLuname = config.getString("mySQLuname");
         mySQLpass = config.getString("mySQLpass");
-        
-        opPermissions = config.getBoolean("opPermissions");
         
         for (String key : config.getConfigurationSection("limits").getKeys(false)) {
             warpLimits.add(new WarpLimit(key, config

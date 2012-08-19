@@ -1,6 +1,3 @@
-#Enable OP permissions with SuperPerms
-opPermissions: true
-
 #MySQL Username (only if using MySQL)
 mySQLuname: root
 

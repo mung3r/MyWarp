@@ -1,6 +1,5 @@
 package me.taylorkelly.mywarp.permissions;
 
-import me.taylorkelly.mywarp.WarpSettings;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.entity.Player;
@@ -21,9 +20,6 @@ public class VaultHandler implements IPermissionsHandler {
 
 	@Override
 	public int getInteger(final Player player, final String node, final int defaultInt) {
-		if(player.isOp() && WarpSettings.opPermissions) {
-			return 0;
-		}
 		return defaultInt;
 	}
 }
