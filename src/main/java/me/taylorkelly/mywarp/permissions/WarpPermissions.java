@@ -81,15 +81,33 @@ public class WarpPermissions {
     }
 
     public int maxTotalWarps(Player player) {
-        return WarpSettings.maxTotal;
+        for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
+            if (permissionsHandler.hasPermission(player, "mywarp.limit."
+                    + WarpSettings.warpLimits.get(i).getName(), false)) {
+                return WarpSettings.warpLimits.get(i).getMaxTotal();
+            }
+        }
+        return 0;
     }
 
     public int maxPrivateWarps(Player player) {
-        return WarpSettings.maxPrivate;
+        for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
+            if (permissionsHandler.hasPermission(player, "mywarp.limit."
+                    + WarpSettings.warpLimits.get(i).getName(), false)) {
+                return WarpSettings.warpLimits.get(i).getMaxPrivate();
+            }
+        }
+        return 0;
     }
 
     public int maxPublicWarps(Player player) {
-        return WarpSettings.maxPublic;
+        for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
+            if (permissionsHandler.hasPermission(player, "mywarp.limit."
+                    + WarpSettings.warpLimits.get(i).getName(), false)) {
+                return WarpSettings.warpLimits.get(i).getMaxPublic();
+            }
+        }
+        return 0;
     }
 
     public boolean createSignWarp(Player player) {

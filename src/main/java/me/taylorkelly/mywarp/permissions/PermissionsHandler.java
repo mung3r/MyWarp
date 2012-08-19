@@ -1,10 +1,12 @@
 package me.taylorkelly.mywarp.permissions;
 
+import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -20,6 +22,7 @@ public class PermissionsHandler implements IPermissionsHandler {
 	public PermissionsHandler(final Plugin plugin) {
 		this.plugin = plugin;
 		checkPermissions();
+		registerLimitPermissions();
 	}
 
 	@Override
@@ -31,6 +34,19 @@ public class PermissionsHandler implements IPermissionsHandler {
 	public int getInteger(final Player player, final String node, int defaultInt) {
 		return handler.getInteger(player, node, defaultInt);
 	}
+	
+    public void registerLimitPermissions() {
+        for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
+            plugin.getServer()
+                    .getPluginManager()
+                    .addPermission(
+                            new org.bukkit.permissions.Permission(
+                                    "mywarp.limit."
+                                            + WarpSettings.warpLimits.get(i).getName(),
+                                    "Gives acess to the number of warps defined for this group in the config",
+                                    PermissionDefault.FALSE));
+        }
+    }
 	
 	public void checkPermissions() {
 		final PluginManager pluginManager = plugin.getServer().getPluginManager();

@@ -1,15 +1,6 @@
 #Enable OP permissions with SuperPerms
 opPermissions: true
 
-#Maximum number of warps any player can make
-maxTotal: 15
-
-#Maximum number of public warps any player can make
-maxPublic: 5
-
-#Maximum number of private warps any player can make
-maxPrivate: 10
-
 #MySQL Username (only if using MySQL)
 mySQLuname: root
 
@@ -30,3 +21,14 @@ loadChunks: false
 
 #Whether or not admins can disobey warp limits
 adminsObeyLimits: false
+
+#The maximum numbers of warps players can make if they have the corresponding mywarp.limit.GROUPNAME permission. You can define as many groups as you want.
+limits:
+  default:
+    maxTotal: 15
+    maxPublic: 5
+    maxPrivate: 10
+  user:
+    maxTotal: 8
+    maxPublic: 4
+    maxPrivate: 4
