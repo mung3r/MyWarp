@@ -79,6 +79,18 @@ public class WarpPermissions {
     public boolean compass(Player player) {
             return permissionsHandler.hasPermission(player, "mywarp.warp.basic.compass", true);
     }
+    
+    public boolean disobeyTotalLimit(Player player){
+        return permissionsHandler.hasPermission(player, "mywarp.limit.total.unlimited", false);
+    }
+    
+    public boolean disobeyPrivateLimit(Player player){
+        return permissionsHandler.hasPermission(player, "mywarp.limit.private.unlimited", false);
+    }
+    
+    public boolean disobeyPublicLimit(Player player){
+        return permissionsHandler.hasPermission(player, "mywarp.limit.public.unlimited", false);
+    }
 
     public int maxTotalWarps(Player player) {
         for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {

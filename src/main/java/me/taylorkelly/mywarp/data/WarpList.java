@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
 
 import org.bukkit.*;
@@ -66,7 +65,7 @@ public class WarpList {
     }
 
     private boolean playerCanBuildWarp(Player player) {
-        if(MyWarp.getWarpPermissions().isAdmin(player) && !WarpSettings.adminsObeyLimits) {
+        if(MyWarp.getWarpPermissions().disobeyTotalLimit(player)) {
             return true;
         } else{
             return numWarpsPlayer(player) < MyWarp.getWarpPermissions().maxTotalWarps(player);
@@ -85,7 +84,7 @@ public class WarpList {
     }
 
     private boolean playerCanBuildPublicWarp(Player player) {
-        if(MyWarp.getWarpPermissions().isAdmin(player) && !WarpSettings.adminsObeyLimits) {
+        if(MyWarp.getWarpPermissions().disobeyPublicLimit(player)) {
             return true;
         } else{
             return numPublicWarpsPlayer(player) < MyWarp.getWarpPermissions().maxPublicWarps(player);
@@ -93,7 +92,7 @@ public class WarpList {
     }
 
     private boolean playerCanBuildPrivateWarp(Player player) {
-        if(MyWarp.getWarpPermissions().isAdmin(player) && !WarpSettings.adminsObeyLimits) {
+        if(MyWarp.getWarpPermissions().disobeyPrivateLimit(player)) {
             return true;
         } else{
             return numPrivateWarpsPlayer(player) < MyWarp.getWarpPermissions().maxPrivateWarps(player);

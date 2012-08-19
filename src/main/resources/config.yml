@@ -19,9 +19,6 @@ mySQLpass: password
 #Force sending of the chunk which people teleport to - default: false
 loadChunks: false
 
-#Whether or not admins can disobey warp limits
-adminsObeyLimits: false
-
 #The maximum numbers of warps players can make if they have the corresponding mywarp.limit.GROUPNAME permission. You can define as many groups as you want.
 limits:
   default:

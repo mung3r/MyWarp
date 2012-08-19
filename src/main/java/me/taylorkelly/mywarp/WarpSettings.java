@@ -20,7 +20,6 @@ public class WarpSettings {
     public static File dataDir;
 
     public static ArrayList<WarpLimit> warpLimits;
-    public static boolean adminsObeyLimits;
     public static boolean adminPrivateWarps;
     public static boolean loadChunks;
     
@@ -50,7 +49,6 @@ public class WarpSettings {
                     + file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
             config.set("limits.default.maxPublic", file.getInt("maxPublic", 5, "Maximum number of public warps any player can make"));
             config.set("limits.default.maxPrivate", file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
-            config.set("adminsObeyLimits", file.getBoolean("adminsObeyLimits", false, "Whether or not admins can disobey warp limits"));
             config.set("adminPrivateWarps", file.getBoolean("adminPrivateWarps", true, "Whether or not admins can see private warps in their list"));
             config.set("loadChunks", file.getBoolean("loadChunks", false, "Force sending of the chunk which people teleport to - default: false"));
 
@@ -75,7 +73,6 @@ public class WarpSettings {
             }
         }
         
-        adminsObeyLimits = config.getBoolean("adminsObeyLimits");
         adminPrivateWarps = config.getBoolean("adminPrivateWarps");
         loadChunks = config.getBoolean("loadChunks");
         

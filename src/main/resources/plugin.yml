@@ -61,6 +61,21 @@ permissions:
   mywarp.warp.sign.create:
     description: Can make sign warps
     default: op
+  mywarp.limit.total.unlimited:
+    description: Can disobey total limit for warp creation
+    default: op
+  mywarp.limit.private.unlimited:
+    description: Can disobey limit for warp private creation
+    default: op
+  mywarp.limit.public.unlimited:
+    description: Can disobey limit for warp public creation
+    default: op
+  mywarp.limit.unlimited:
+    description: Can disobey all limits for warp creation
+    children:
+      mywarp.limit.total.unlimited: true
+      mywarp.limit.private.unlimited: true
+      mywarp.limit.public.unlimited: true
   mywarp.warp.basic.*:
     description: Basic /warp commands
     children:
