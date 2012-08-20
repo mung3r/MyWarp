@@ -16,7 +16,7 @@ import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class WarpDataSource {
 	public final static String sqlitedb = "/warps.db";
-    private final static String WARP_TABLE = "CREATE TABLE `warpTable` ("
+    private final static String WARP_TABLE = "CREATE TABLE `"+ WarpSettings.mySQLtable +"` ("
 	    + "`id` INTEGER PRIMARY KEY,"
 	    + "`name` varchar(32) NOT NULL DEFAULT 'warp',"
         + "`creator` varchar(32) NOT NULL DEFAULT 'Player',"
@@ -46,7 +46,7 @@ public class WarpDataSource {
             Connection conn = ConnectionManager.getConnection();
 
             statement = conn.createStatement();
-            set = statement.executeQuery("SELECT * FROM warpTable");
+            set = statement.executeQuery("SELECT * FROM "+ WarpSettings.mySQLtable);
             int size = 0;
             while (set.next()) {
                 size++;
@@ -87,7 +87,7 @@ public class WarpDataSource {
             Connection conn = ConnectionManager.getConnection();
 
             DatabaseMetaData dbm = conn.getMetaData();
-            rs = dbm.getTables(null, null, "warpTable", null);
+            rs = dbm.getTables(null, null, WarpSettings.mySQLtable, null);
             if (!rs.next())
                 return false;
             return true;
@@ -115,7 +115,7 @@ public class WarpDataSource {
     		
     		if(WarpSettings.usemySQL){ 
     			// We need to set auto increment on SQL.
-    			String sql = "ALTER TABLE `warpTable` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT ";
+    			String sql = "ALTER TABLE `"+ WarpSettings.mySQLtable +"` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT ";
     			WarpLogger.info("Modifying database for MySQL support");
     			st = conn.createStatement();
     			st.executeUpdate(sql);
@@ -132,7 +132,7 @@ public class WarpDataSource {
 	        		Connection sqliteconn = DriverManager.getConnection("jdbc:sqlite:" + WarpSettings.dataDir.getAbsolutePath() + sqlitedb);
 	        		sqliteconn.setAutoCommit(false);
 	        		Statement slstatement = sqliteconn.createStatement();
-	        		ResultSet slset = slstatement.executeQuery("SELECT * FROM warpTable");
+	        		ResultSet slset = slstatement.executeQuery("SELECT * FROM "+ WarpSettings.mySQLtable);
 	        		
 	        		int size = 0;
 	        		while (slset.next()) {
@@ -190,7 +190,7 @@ public class WarpDataSource {
             Connection conn = ConnectionManager.getConnection();
 
             ps = conn
-                    .prepareStatement("INSERT INTO warpTable (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, welcomeMessage) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                    .prepareStatement("INSERT INTO "+ WarpSettings.mySQLtable +" (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, welcomeMessage) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
             ps.setInt(1, warp.index);
             ps.setString(2, warp.name);
             ps.setString(3, warp.creator);
@@ -224,7 +224,7 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("DELETE FROM warpTable WHERE id = ?");
+            ps = conn.prepareStatement("DELETE FROM "+ WarpSettings.mySQLtable +" WHERE id = ?");
             ps.setInt(1, warp.index);
             ps.executeUpdate();
             conn.commit();
@@ -250,7 +250,7 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE warpTable SET publicAll = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET publicAll = ? WHERE id = ?");
             ps.setBoolean(1, publicAll);
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -277,7 +277,7 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE warpTable SET permissions = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET permissions = ? WHERE id = ?");
             ps.setString(1, warp.permissionsString());
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -304,7 +304,7 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE warpTable SET creator = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET creator = ? WHERE id = ?");
             ps.setString(1, warp.creator);
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -332,7 +332,7 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE warpTable SET welcomeMessage = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET welcomeMessage = ? WHERE id = ?");
             ps.setString(1, warp.welcomeMessage);
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -405,7 +405,7 @@ public class WarpDataSource {
     		DatabaseMetaData meta = conn.getMetaData();
 
     		ResultSet colRS = null;
-    		colRS = meta.getColumns(null, null, "warpTable", null);
+    		colRS = meta.getColumns(null, null, WarpSettings.mySQLtable, null);
     		while (colRS.next()) {
     			String colName = colRS.getString("COLUMN_NAME");
     			String colType = colRS.getString("TYPE_NAME");
@@ -413,7 +413,7 @@ public class WarpDataSource {
     			if (colName.equals(field) && !colType.equals(type))
     			{
     				Statement stm = conn.createStatement();
-    				stm.executeUpdate("ALTER TABLE warpTable MODIFY " + field + " " + type + "; ");
+    				stm.executeUpdate("ALTER TABLE "+ WarpSettings.mySQLtable +" MODIFY " + field + " " + type + "; ");
     				conn.commit();
     				stm.close();
     				break;

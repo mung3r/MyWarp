@@ -14,8 +14,9 @@ public class ConnectionManager {
         try {
         	if(WarpSettings.usemySQL == true) {
         		Class.forName("com.mysql.jdbc.Driver");
-        		conn = DriverManager.getConnection(WarpSettings.mySQLconn, WarpSettings.mySQLuname, WarpSettings.mySQLpass);
-        		conn.setAutoCommit(false);
+        		  String mySQLconn = "jdbc:mysql://" + WarpSettings.mySQLhost + ":" + WarpSettings.mySQLport + "/" + WarpSettings.mySQLdb;
+        		  conn = DriverManager.getConnection(mySQLconn, WarpSettings.mySQLuname, WarpSettings.mySQLpass);
+        		  conn.setAutoCommit(false);
         		return conn;
         	} else {
         		Class.forName("org.sqlite.JDBC");

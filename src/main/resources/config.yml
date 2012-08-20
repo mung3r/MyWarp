@@ -1,23 +1,5 @@
-#MySQL Username (only if using MySQL)
-mySQLuname: root
-
-#MySQL usage --  true = use MySQL database / false = use SQLite
-usemySQL: false
-
-#Whether or not admins can see private warps in their list
 adminPrivateWarps: true
-
-#MySQL Connection (only if using MySQL)
-mySQLconn: jdbc:mysql://localhost:3306/minecraft
-
-#MySQL Password (only if using MySQL)
-mySQLpass: password
-
-#Force sending of the chunk which people teleport to - default: false
 loadChunks: false
-
-#The maximum numbers of warps players can make if they have the corresponding mywarp.limit.GROUPNAME permission. You can define as many groups as you want.
-#Users who don't have any permission get access to the limits defined under default.
 limits:
   default:
     maxTotal: 15
@@ -27,3 +9,11 @@ limits:
     maxTotal: 8
     maxPublic: 4
     maxPrivate: 4
+mysql:
+  enabled: false
+  host: 'localhost'
+  port: 3306
+  database: 'minecraft'
+  table: 'warpTable'
+  username: 'root'
+  password: 'password'

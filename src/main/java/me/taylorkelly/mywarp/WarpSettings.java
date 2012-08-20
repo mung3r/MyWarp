@@ -1,12 +1,11 @@
 package me.taylorkelly.mywarp;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -27,13 +26,17 @@ public class WarpSettings {
     public static boolean loadChunks;
     
     public static boolean usemySQL;
+    public static String mySQLhost;
+    public static int mySQLport;
     public static String mySQLuname;
     public static String mySQLpass;
-    public static String mySQLconn;
+    public static String mySQLdb;
+    public static String mySQLtable;
 
     private static FileConfiguration config;
     private static File configFile;
     private static MyWarp plugin;
+
     
     public static void initialize(MyWarp plugin) {
         WarpSettings.plugin = plugin;
@@ -43,23 +46,32 @@ public class WarpSettings {
         
         warpLimits = new ArrayList<WarpLimit>();
         
+        ConfigurationSection confdatabase = config.getConfigurationSection("mysql");
+        ConfigurationSection conflimits = config.getConfigurationSection("limits");
+        
         File oldConfigFile  = new File(dataDir, settingsFile);
         if (oldConfigFile.exists()) {
             PropertiesFile file = new PropertiesFile(oldConfigFile);
-
-            config.set("limits.default.maxTotal", file.getInt("maxPublic", 5, "Maximum number of public warps any player can make")
-                    + file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
-            config.set("limits.default.maxPublic", file.getInt("maxPublic", 5, "Maximum number of public warps any player can make"));
-            config.set("limits.default.maxPrivate", file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
+            //port settings
             config.set("adminPrivateWarps", file.getBoolean("adminPrivateWarps", true, "Whether or not admins can see private warps in their list"));
             config.set("loadChunks", file.getBoolean("loadChunks", false, "Force sending of the chunk which people teleport to - default: false"));
 
-            config.set("usemySQL", file.getBoolean("usemySQL", false, "MySQL usage --  true = use MySQL database / false = use SQLite"));
-            config.set("mySQLconn", file.getString("mySQLconn", "jdbc:mysql://localhost:3306/minecraft", "MySQL Connection (only if using MySQL)"));
-            config.set("mySQLuname", file.getString("mySQLuname", "root", "MySQL Username (only if using MySQL)"));
-            config.set("mySQLpass", file.getString("mySQLpass", "password", "MySQL Password (only if using MySQL)"));
+            //port limits
+            conflimits.set("default.maxTotal", file.getInt("maxPublic", 5, "Maximum number of public warps any player can make")
+                    + file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
+            conflimits.set("default.maxPublic", file.getInt("maxPublic", 5, "Maximum number of public warps any player can make"));
+            conflimits.set("default.maxPrivate", file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
 
-            config.set("opPermissions", file.getBoolean("opPermissions", true, "Enable OP permissions with SuperPerms"));
+            //port database
+            String mySQLconn = file.getString("mySQLconn", "jdbc:mysql://localhost:3306/minecraft", "MySQL Connection (only if using MySQL)");
+            mySQLconn = mySQLconn.substring(mySQLconn.indexOf("//")+2);
+            String[] mySQLconnParts = mySQLconn.split("[\\W]");
+            confdatabase.set("enabled", file.getBoolean("usemySQL", false, "MySQL usage --  true = use MySQL database / false = use SQLite"));
+            confdatabase.set("host", mySQLconnParts[0]);
+            confdatabase.set("port", mySQLconnParts[1]);
+            confdatabase.set("database", mySQLconnParts[2]);
+            confdatabase.set("username", file.getString("mySQLuname", "root", "MySQL Username (only if using MySQL)"));
+            confdatabase.set("password", file.getString("mySQLpass", "password", "MySQL Password (only if using MySQL)"));
 
             try {
                 config.save(configFile);
@@ -75,23 +87,30 @@ public class WarpSettings {
             }
         }
         
+        //settings
         adminPrivateWarps = config.getBoolean("adminPrivateWarps");
         loadChunks = config.getBoolean("loadChunks");
         
-        usemySQL = config.getBoolean("usemySQL");
-        mySQLconn = config.getString("mySQLconn");
-        mySQLuname = config.getString("mySQLuname");
-        mySQLpass = config.getString("mySQLpass");
         
-        for (String key : config.getConfigurationSection("limits").getKeys(false)) {
-            if (key.equalsIgnoreCase("default")) {
-                defaultLimit = new WarpLimit(key, config.getInt("limits." + key
-                        + ".maxTotal"), config.getInt("limits." + key + ".maxPublic"),
-                        config.getInt("limits." + key + ".maxPrivate"));
+        // database
+        usemySQL = confdatabase.getBoolean("enabled");
+        mySQLhost = confdatabase.getString("host");
+        mySQLport = confdatabase.getInt("port");
+        mySQLuname = confdatabase.getString("username");
+        mySQLpass = confdatabase.getString("password");
+        mySQLdb = confdatabase.getString("database");
+        mySQLtable = confdatabase.getString("table");
+        
+        // limits
+        for (String key : conflimits.getKeys(false)) {
+            if (key.equals("default")) {
+                defaultLimit = new WarpLimit(key, conflimits.getInt(key + ".maxTotal"),
+                        conflimits.getInt(key + ".maxPublic"), conflimits.getInt(key
+                                + ".maxPrivate"));
             } else {
-                warpLimits.add(new WarpLimit(key, config.getInt("limits." + key
-                        + ".maxTotal"), config.getInt("limits." + key + ".maxPublic"),
-                        config.getInt("limits." + key + ".maxPrivate")));
+                warpLimits.add(new WarpLimit(key, conflimits.getInt(key + ".maxTotal"),
+                        conflimits.getInt(key + ".maxPublic"), conflimits.getInt(key
+                                + ".maxPrivate")));
             }
         }
         Collections.sort(warpLimits, new WarpLimitComparator());
@@ -105,24 +124,13 @@ public class WarpSettings {
             if (!file.exists()) {
                 file.getParentFile().mkdir();
                 file.createNewFile();
-                InputStream inputStream = plugin.getResource(file.getName());
-                FileOutputStream outputStream = new FileOutputStream(file);
-
-                byte[] buffer = new byte[8192];
-                int length = 0;
-                while ((length = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, length);
-                }
-
-                inputStream.close();
-                outputStream.close();
-
                 WarpLogger.info("Default config created successfully!");
             }
 
             config = plugin.getConfig();
             config.setDefaults(YamlConfiguration.loadConfiguration(plugin.getResource(file.getName())));
             config.options().copyDefaults(true);
+            config.save(file);
         }
         catch (Exception e) {
             WarpLogger.warning("Default config could not be created!");
