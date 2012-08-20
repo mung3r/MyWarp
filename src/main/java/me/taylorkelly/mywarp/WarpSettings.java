@@ -5,12 +5,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.taylorkelly.mywarp.data.WarpLimit;
 import me.taylorkelly.mywarp.utils.PropertiesFile;
+import me.taylorkelly.mywarp.utils.WarpLimitComparator;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class WarpSettings {
@@ -92,6 +94,7 @@ public class WarpSettings {
                         config.getInt("limits." + key + ".maxPrivate")));
             }
         }
+        Collections.sort(warpLimits, new WarpLimitComparator());
     }
     
     private static FileConfiguration getConfig(File file)
