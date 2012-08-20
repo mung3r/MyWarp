@@ -20,6 +20,7 @@ public class WarpSettings {
     public static File dataDir;
 
     public static ArrayList<WarpLimit> warpLimits;
+    public static WarpLimit defaultLimit;
     public static boolean adminPrivateWarps;
     public static boolean loadChunks;
     
@@ -81,10 +82,15 @@ public class WarpSettings {
         mySQLpass = config.getString("mySQLpass");
         
         for (String key : config.getConfigurationSection("limits").getKeys(false)) {
-            warpLimits.add(new WarpLimit(key, config
-                    .getInt("limits." + key + ".maxTotal"), config.getInt("limits."
-                    + key + ".maxPublic"), config
-                    .getInt("limits." + key + ".maxPrivate")));
+            if (key.equalsIgnoreCase("default")) {
+                defaultLimit = new WarpLimit(key, config.getInt("limits." + key
+                        + ".maxTotal"), config.getInt("limits." + key + ".maxPublic"),
+                        config.getInt("limits." + key + ".maxPrivate"));
+            } else {
+                warpLimits.add(new WarpLimit(key, config.getInt("limits." + key
+                        + ".maxTotal"), config.getInt("limits." + key + ".maxPublic"),
+                        config.getInt("limits." + key + ".maxPrivate")));
+            }
         }
     }
     

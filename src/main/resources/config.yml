@@ -17,6 +17,7 @@ mySQLpass: password
 loadChunks: false
 
 #The maximum numbers of warps players can make if they have the corresponding mywarp.limit.GROUPNAME permission. You can define as many groups as you want.
+#Users who don't have any permission get access to the limits defined under default.
 limits:
   default:
     maxTotal: 15

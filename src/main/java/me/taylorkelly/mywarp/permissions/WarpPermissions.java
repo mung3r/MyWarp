@@ -99,7 +99,7 @@ public class WarpPermissions {
                 return WarpSettings.warpLimits.get(i).getMaxTotal();
             }
         }
-        return 0;
+        return WarpSettings.defaultLimit.getMaxTotal();
     }
 
     public int maxPrivateWarps(Player player) {
@@ -109,7 +109,7 @@ public class WarpPermissions {
                 return WarpSettings.warpLimits.get(i).getMaxPrivate();
             }
         }
-        return 0;
+        return WarpSettings.defaultLimit.getMaxPrivate();
     }
 
     public int maxPublicWarps(Player player) {
@@ -119,7 +119,7 @@ public class WarpPermissions {
                 return WarpSettings.warpLimits.get(i).getMaxPublic();
             }
         }
-        return 0;
+        return WarpSettings.defaultLimit.getMaxPublic();
     }
 
     public boolean createSignWarp(Player player) {
