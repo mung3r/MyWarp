@@ -11,91 +11,87 @@ public class WarpPermissions {
 	public WarpPermissions(Plugin plugin) {
 		permissionsHandler = new PermissionsHandler(plugin);
 	}
-	
-	public int integer(Player player, String node, int defaultInt) {
-		return permissionsHandler.getInteger(player, node, defaultInt);
-	}
 
 	public boolean hasPermission(Player player, final String node, boolean defaultPerm) {
-	    return permissionsHandler.hasPermission(player, node, defaultPerm);
+	    return permissionsHandler.hasPermission(player, node);
 	}
 
     public boolean isAdmin(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.admin", player.isOp());
+        return permissionsHandler.hasPermission(player, "mywarp.admin");
     }
 
     public boolean warp(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.warp", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.warp");
     }
 
     public boolean delete(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.delete", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.delete");
     }
 
     public boolean list(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.list", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.list");
     }
 
     public boolean welcome(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.welcome", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.welcome");
     }
 
     public boolean search(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.search", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.search");
     }
 
     public boolean give(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.give", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.give");
     }
 
     public boolean invite(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.invite", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.invite");
     }
 
     public boolean uninvite(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.uninvite", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.uninvite");
     }
 
     public boolean canPublic(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.public", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.public");
     }
 
     public boolean canPrivate(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.private", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.soc.private");
     }
 
     public boolean signWarp(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.sign.warp", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.sign.warp");
     }
 
     public boolean privateCreate(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.createprivate", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.createprivate");
     }
     
     public boolean publicCreate(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.createpublic", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.createpublic");
     }
     
     public boolean compass(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.compass", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.basic.compass");
     }
     
     public boolean disobeyTotalLimit(Player player){
-        return permissionsHandler.hasPermission(player, "mywarp.limit.total.unlimited", false);
+        return permissionsHandler.hasPermission(player, "mywarp.limit.total.unlimited");
     }
     
     public boolean disobeyPrivateLimit(Player player){
-        return permissionsHandler.hasPermission(player, "mywarp.limit.private.unlimited", false);
+        return permissionsHandler.hasPermission(player, "mywarp.limit.private.unlimited");
     }
     
     public boolean disobeyPublicLimit(Player player){
-        return permissionsHandler.hasPermission(player, "mywarp.limit.public.unlimited", false);
+        return permissionsHandler.hasPermission(player, "mywarp.limit.public.unlimited");
     }
 
     public int maxTotalWarps(Player player) {
         for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
             if (permissionsHandler.hasPermission(player, "mywarp.limit."
-                    + WarpSettings.warpLimits.get(i).getName(), false)) {
+                    + WarpSettings.warpLimits.get(i).getName())) {
                 return WarpSettings.warpLimits.get(i).getMaxTotal();
             }
         }
@@ -105,7 +101,7 @@ public class WarpPermissions {
     public int maxPrivateWarps(Player player) {
         for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
             if (permissionsHandler.hasPermission(player, "mywarp.limit."
-                    + WarpSettings.warpLimits.get(i).getName(), false)) {
+                    + WarpSettings.warpLimits.get(i).getName())) {
                 return WarpSettings.warpLimits.get(i).getMaxPrivate();
             }
         }
@@ -115,7 +111,7 @@ public class WarpPermissions {
     public int maxPublicWarps(Player player) {
         for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
             if (permissionsHandler.hasPermission(player, "mywarp.limit."
-                    + WarpSettings.warpLimits.get(i).getName(), false)) {
+                    + WarpSettings.warpLimits.get(i).getName())) {
                 return WarpSettings.warpLimits.get(i).getMaxPublic();
             }
         }
@@ -123,6 +119,6 @@ public class WarpPermissions {
     }
 
     public boolean createSignWarp(Player player) {
-            return permissionsHandler.hasPermission(player, "mywarp.warp.sign.create", true);
+            return permissionsHandler.hasPermission(player, "mywarp.warp.sign.create");
     }
 }

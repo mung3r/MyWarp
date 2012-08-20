@@ -5,11 +5,7 @@ import org.bukkit.entity.Player;
 public class NullHandler implements IPermissionsHandler {
 	
 	@Override
-	public boolean hasPermission(final Player player, final String node, boolean defaultPerm) {
+	public boolean hasPermission(final Player player, final String node) {
 		return false;
-	}
-	
-	public int getInteger(final Player player, final String node, int defaultInt) {
-		return defaultInt;
 	}
 }

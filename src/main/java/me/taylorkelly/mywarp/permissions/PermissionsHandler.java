@@ -13,7 +13,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class PermissionsHandler implements IPermissionsHandler {
 	private enum PermHandler {
-		VAULT, PERMISSIONSEX, PERMISSIONS3, PERMISSIONS2, GROUPMANAGER, BPERMISSIONS, BPERMISSIONS2, SUPERPERMS, NONE
+		VAULT, PERMISSIONSEX, PERMISSIONS3, PERMISSIONS2, GROUPMANAGER, SUPERPERMS, NONE
 	}
 	private static PermHandler permplugin = PermHandler.NONE;
 	private transient IPermissionsHandler handler = new NullHandler();
@@ -26,15 +26,10 @@ public class PermissionsHandler implements IPermissionsHandler {
 	}
 
 	@Override
-	public boolean hasPermission(final Player player, final String node, boolean defaultPerm) {
-		return handler.hasPermission(player, node, defaultPerm);
+	public boolean hasPermission(final Player player, final String node) {
+		return handler.hasPermission(player, node);
 	}
 
-	@Override
-	public int getInteger(final Player player, final String node, int defaultInt) {
-		return handler.getInteger(player, node, defaultInt);
-	}
-	
     public void registerLimitPermissions() {
         for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
             plugin.getServer()
@@ -43,7 +38,7 @@ public class PermissionsHandler implements IPermissionsHandler {
                             new org.bukkit.permissions.Permission(
                                     "mywarp.limit."
                                             + WarpSettings.warpLimits.get(i).getName(),
-                                    "Gives acess to the number of warps defined for this group in the config",
+                                    "Gives acess to the number of warps defined for "+ WarpSettings.warpLimits.get(i).getName() + " in the config",
                                     PermissionDefault.FALSE));
         }
     }
@@ -77,27 +72,6 @@ public class PermissionsHandler implements IPermissionsHandler {
 			}
 			return;
 		}
-
-		final Plugin bPermPlugin = pluginManager.getPlugin("bPermissions");
-		if (bPermPlugin != null && bPermPlugin.isEnabled()) {
-			if (bPermPlugin.getDescription().getVersion().charAt(0) == '2') {
-				if (!(handler instanceof BPermissions2Handler)) {
-					permplugin = PermHandler.BPERMISSIONS2;
-					String version = bPermPlugin.getDescription().getVersion();
-					WarpLogger.info("Access Control: Using bPermissions"+ version);
-					handler = new BPermissions2Handler();
-				}
-			} else {
-				if (!(handler instanceof BPermissionsHandler)) {
-					permplugin = PermHandler.BPERMISSIONS;
-					String version = bPermPlugin.getDescription().getVersion();
-					WarpLogger.info("Access Control: Using bPermissions"+ version);
-					handler = new BPermissionsHandler();
-				}
-			}
-			return;
-		}
-
 
 		final Plugin GMplugin = pluginManager.getPlugin("GroupManager");
 		if (GMplugin != null && GMplugin.isEnabled()) {

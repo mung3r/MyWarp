@@ -13,15 +13,8 @@ public class Permissions3Handler implements IPermissionsHandler {
 	}
 
 	@Override
-	public boolean hasPermission(final Player player, final String node, boolean defaultPerm) {
+	public boolean hasPermission(final Player player, final String node) {
 		return handler.has(player, node);
-	}
-
-	@Override
-	public int getInteger(final Player player, final String node, final int defaultInt) {
-		String playername = player.getName();
-		String world = player.getWorld().getName();
-		return handler.getPermissionInteger(world, playername, node);
 	}
 }
 
