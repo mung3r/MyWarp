@@ -16,7 +16,7 @@ public class ListCommand extends BasicCommand implements Command
         super("List");
         this.plugin = plugin;
         setDescription("List the warps you can visit");
-        setUsage("/warp list §8[owner] §8[page#]");
+        setUsage("/warp list §8[owner] §9[page#]");
         setArgumentRange(0, 2);
         setIdentifiers("list");
         setPermission("mywarp.warp.basic.list");
