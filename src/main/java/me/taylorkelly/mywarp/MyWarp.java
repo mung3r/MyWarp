@@ -24,6 +24,7 @@ import me.taylorkelly.mywarp.commands.ReloadCommand;
 import me.taylorkelly.mywarp.commands.ListAllCommand;
 import me.taylorkelly.mywarp.commands.SearchCommand;
 import me.taylorkelly.mywarp.commands.UninviteCommand;
+import me.taylorkelly.mywarp.commands.UpdateCommand;
 import me.taylorkelly.mywarp.commands.WarpToCommand;
 import me.taylorkelly.mywarp.commands.WelcomeCommand;
 import me.taylorkelly.mywarp.data.WarpList;
@@ -98,6 +99,7 @@ public class MyWarp extends JavaPlugin {
         commandHandler.addCommand(new ListAllCommand(this));
         commandHandler.addCommand(new PointCommand(this));
         commandHandler.addCommand(new SearchCommand(this));
+        commandHandler.addCommand(new UpdateCommand(this));
         commandHandler.addCommand(new WelcomeCommand(this));
         commandHandler.addCommand(new WarpToCommand(this));
 

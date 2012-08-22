@@ -37,6 +37,9 @@ permissions:
   mywarp.warp.basic.createpublic:
     description: Allowed to create public warps
     default: op
+  mywarp.warp.basic.update:
+    description: Allowed to update warps
+    default: op
   mywarp.warp.basic.compass:
     description: Compass can be used
     default: op
@@ -86,6 +89,7 @@ permissions:
       mywarp.warp.basic.search: true
       mywarp.warp.basic.createprivate: true
       mywarp.warp.basic.createpublic: true
+      mywarp.warp.basic.update: true
       mywarp.warp.basic.compass: true
   mywarp.warp.soc.*:
     description: Social /warp commands

@@ -325,6 +325,38 @@ public class WarpDataSource {
             }
         }
     }
+    
+    public static void updateLocation(Warp warp) {
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        try {
+            Connection conn = ConnectionManager.getConnection();
+
+            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE id = ?");
+            ps.setString(1, warp.world);
+            ps.setDouble(2, warp.x);
+            ps.setInt(3, warp.y);
+            ps.setDouble(4, warp.z);
+            ps.setInt(5, warp.yaw);
+            ps.setInt(6, warp.pitch);
+            ps.setInt(7, warp.index);
+            ps.executeUpdate();
+            conn.commit();
+        } catch (SQLException ex) {
+            WarpLogger.severe("Warp Location Exception", ex);
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (set != null) {
+                    set.close();
+                }
+            } catch (SQLException ex) {
+                WarpLogger.severe("Warp Location Exception (on close)", ex);
+            }
+        }
+    }
 
     public static void updateWelcomeMessage(Warp warp) {
         PreparedStatement ps = null;

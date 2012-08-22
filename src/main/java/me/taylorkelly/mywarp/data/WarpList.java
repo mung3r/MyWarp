@@ -496,6 +496,23 @@ public class WarpList {
         }
         return count;
     }
+    
+    public void updateLocation(String name, Player player) {
+        MatchList matches = this.getMatches(name, player);
+        name = matches.getMatch(name);
+        if (warpList.containsKey(name)) {
+            Warp warp = warpList.get(name);
+            if (warp.playerCanModify(player)) {
+                warp.setLocation(player.getLocation());
+                WarpDataSource.updateLocation(warp);
+                player.sendMessage(ChatColor.AQUA + "You have updated '" + name + "'");
+            } else {
+                player.sendMessage(ChatColor.RED + "You do not have permission to update '" + name + "'");
+            }
+        } else {
+            player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+        }
+    }
 
     public void welcomeMessage(String name, Player player) {
         MatchList matches = this.getMatches(name, player);

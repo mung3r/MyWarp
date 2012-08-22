@@ -168,6 +168,15 @@ public class Warp {
     public String toString() {
         return name;
     }
+    
+    public void setLocation (Location location){
+        this.world = location.getWorld().getName();
+        this.x = location.getX();
+        this.y = location.getBlockY();
+        this.z = location.getZ();
+        this.yaw = Math.round(location.getYaw()) % 360;
+        this.pitch = Math.round(location.getPitch()) % 360;
+    }
 
     public Location getLocation(Server server) {
         World currWorld = null;
