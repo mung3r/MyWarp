@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.safety.SafeTeleport;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -115,7 +116,7 @@ public class Warp {
         return publicAll;
     }
 
-    public void warp(Player player, Server server) {
+    public boolean warp(Player player, Server server) {
         World currWorld = null;
         if (world.equals("0")) {
             currWorld = server.getWorlds().get(0);
@@ -124,13 +125,10 @@ public class Warp {
         }
         if (currWorld != null) {
             Location location = new Location(currWorld, x, y, z, yaw, pitch);
-            while (currWorld.getBlockAt(location).getType() != Material.AIR) {
-                location.setY(location.getY() + 1.0);
-                location = currWorld.getBlockAt(location).getLocation();
-            }
-            player.teleport(location);
+            return SafeTeleport.safeTeleport(player, location, name);
         } else {
             player.sendMessage(ChatColor.RED + "World " + world + " doesn't exist.");
+            return false;
         }
     }
 

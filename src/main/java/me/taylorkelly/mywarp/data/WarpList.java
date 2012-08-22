@@ -151,8 +151,9 @@ public class WarpList {
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
             if (warp.playerCanWarp(player)) {
-                warp.warp(player, server);
-                player.sendMessage(ChatColor.AQUA + warp.welcomeMessage);
+                if (warp.warp(player, server)){
+                    player.sendMessage(ChatColor.AQUA + warp.welcomeMessage);
+                }
             } else {
                 player.sendMessage(ChatColor.RED + "You do not have permission to warp to '" + name + "'");
             }
