@@ -19,6 +19,10 @@ public class WarpSettings {
     private static final String CONFIG_FILE = "config.yml";
     private static final String settingsFile = "MyWarp.settings";
     public static File dataDir;
+    
+    public static boolean useWarpSafety;
+    public static int searchRadius;
+    public static int verticalTolerance;
 
     public static ArrayList<WarpLimit> warpLimits;
     public static WarpLimit defaultLimit;
@@ -46,6 +50,7 @@ public class WarpSettings {
         
         warpLimits = new ArrayList<WarpLimit>();
         
+        ConfigurationSection confsafety = config.getConfigurationSection("warpSafety");
         ConfigurationSection confdatabase = config.getConfigurationSection("mysql");
         ConfigurationSection conflimits = config.getConfigurationSection("limits");
         
@@ -91,6 +96,10 @@ public class WarpSettings {
         adminPrivateWarps = config.getBoolean("adminPrivateWarps");
         loadChunks = config.getBoolean("loadChunks");
         
+        //saftey
+        useWarpSafety = confsafety.getBoolean("enabled");
+        searchRadius = confsafety.getInt("searchRadius");
+        verticalTolerance =confsafety.getInt("verticalTolerance");
         
         // database
         usemySQL = confdatabase.getBoolean("enabled");

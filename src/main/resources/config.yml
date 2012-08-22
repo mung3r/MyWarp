@@ -1,5 +1,9 @@
 adminPrivateWarps: true
 loadChunks: false
+warpSafety:
+  enabled: true
+  searchRadius: 5
+  verticalTolerance: 5
 limits:
   default:
     maxTotal: 15

@@ -1,14 +1,13 @@
 package me.taylorkelly.mywarp.safety;
 
+import me.taylorkelly.mywarp.WarpSettings;
+
 import org.bukkit.Location;
 
 public class SafeLocation {
 
-    private static final int DEFAULT_TOLERANCE = 5;
-    private static final int DEFAULT_RADIUS = 5;
-
     public static Location getSafeLocation(Location l) {
-        return getSafeLocation(l, DEFAULT_TOLERANCE, DEFAULT_RADIUS);
+        return getSafeLocation(l, WarpSettings.verticalTolerance, WarpSettings.searchRadius);
     }
 
     public static String getKoords(Location l) {

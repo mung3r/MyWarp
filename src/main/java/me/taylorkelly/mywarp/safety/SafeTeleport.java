@@ -1,5 +1,7 @@
 package me.taylorkelly.mywarp.safety;
 
+import me.taylorkelly.mywarp.WarpSettings;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,17 +13,23 @@ public class SafeTeleport {
         if (isHalfBlock(l.getBlock().getType())) {
             l.add(0, 1, 0);
         }
-        Location safe = SafeLocation.getSafeLocation(l);
-        if (safe == null) {
-            player.sendMessage(ChatColor.RED + "Warp " + name
-                    + " isn't safe. Also no safe loaction could be found close to it.");
-            return false;
-        }
-        if (safe != l) {
-            player.teleport(safe);
-            player.sendMessage(ChatColor.RED + "Warp " + name
-                    + "isn't safe. You were teleported to the closest safe location.");
-            return false;
+        if (WarpSettings.useWarpSafety){
+            Location safe = SafeLocation.getSafeLocation(l);
+            if (safe == null) {
+                player.sendMessage(ChatColor.RED
+                        + "Warp "
+                        + name
+                        + " isn't safe. Also no safe loaction could be found close to it.");
+                return false;
+            }
+            if (safe != l) {
+                player.teleport(safe);
+                player.sendMessage(ChatColor.RED
+                        + "Warp "
+                        + name
+                        + "isn't safe. You were teleported to the closest safe location.");
+                return false;
+            }
         }
         player.teleport(l);
         return true;
