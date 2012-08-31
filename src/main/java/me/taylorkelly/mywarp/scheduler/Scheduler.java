@@ -46,7 +46,7 @@ public class Scheduler {
     public static Schedule playerCooldown(MyWarp plugin, Player player, Cooldown cooldown) {
         return new Schedule(player.getName(), cooldown, System.currentTimeMillis(),
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
-                        new PlayerTimer(new PlayerCooldown()),
+                        new PlayerTimer(new PlayerCooldown(player)),
                         cooldown.getMinecraftLong()), false);
     }
 
@@ -105,7 +105,7 @@ public class Scheduler {
      */
     public static Schedule generalCooldown(MyWarp plugin, Time time) {
         return new Schedule(null, time, System.currentTimeMillis(), Bukkit
-                .getScheduler().scheduleSyncDelayedTask(plugin, new PlayerCooldown(),
+                .getScheduler().scheduleSyncDelayedTask(plugin, null,
                         time.getMinecraftLong()), false);
     }
 

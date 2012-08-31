@@ -187,9 +187,11 @@ public class WarpList {
                         } else {
                             Scheduler.schedulePlayerTimer(Scheduler.playerWarmup(
                                     plugin, player, warmup, cooldown, warp, server));
-                            player.sendMessage(ChatColor.AQUA
+                            if (WarpSettings.warmUpNotify){
+                                player.sendMessage(ChatColor.AQUA
                                     + "You will be teleported to '" + warp.name
                                     + "' in " + warmup.getInt() + " seconds.");
+                            }
                         }
                     }
 
