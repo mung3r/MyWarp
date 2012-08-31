@@ -17,4 +17,9 @@ public class VaultHandler implements IPermissionsHandler {
 	public boolean hasPermission(final Player player, final String node) {
 	    return permission.has(player, node);
 	}
+
+    @Override
+    public boolean playerHasGroup(Player player, String group) {
+        return permission.playerInGroup(player, group);
+    }
 }

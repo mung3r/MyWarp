@@ -12,8 +12,11 @@ public class PermissionsExHandler implements IPermissionsHandler {
 
 	@Override
 	public boolean hasPermission(final Player player, final String node) {
-		String playername = player.getName();
-		String playerworld = player.getWorld().getName();
-		return manager.has(playername, node, playerworld);
+		return manager.has(player.getName(), node, player.getWorld().getName());
 	}
+
+    @Override
+    public boolean playerHasGroup(Player player, String group) {
+        return manager.getUser(player.getName()).inGroup(group, player.getWorld().getName());
+    }
 }

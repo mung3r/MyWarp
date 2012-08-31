@@ -50,13 +50,6 @@
       <version>5.1.21</version>
     </dependency>
     <dependency>
-      <groupId>com.nijikokun.bukkit.Permissions.Permissions</groupId>
-      <artifactId>Permissions</artifactId>
-      <version>3.1.6</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/Permissions.jar</systemPath>
-    </dependency>
-    <dependency>
       <groupId>org.anjocaido.groupmanager.GroupManager</groupId>
       <artifactId>GroupManager</artifactId>
       <version>1.9.42</version>
@@ -69,6 +62,13 @@
       <version>1.19.2</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/PermissionsEx.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>de.bananaco.permissions.Permissions</groupId>
+    	<artifactId>bPermissions2</artifactId>
+    	<version>2.9.18b</version>
+    	<scope>system</scope>
+    	<systemPath>${project.basedir}/lib/bpermissions.jar</systemPath>
     </dependency>
   </dependencies>
   <build>

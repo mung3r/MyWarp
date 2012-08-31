@@ -8,4 +8,9 @@ public class NullHandler implements IPermissionsHandler {
 	public boolean hasPermission(final Player player, final String node) {
 		return false;
 	}
+
+    @Override
+    public boolean playerHasGroup(Player player, String group) {
+        return false;
+    }
 }

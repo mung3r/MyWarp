@@ -8,5 +8,10 @@ public class SuperpermsHandler implements IPermissionsHandler {
 	public boolean hasPermission(final Player player, final String node) {
 		return player.hasPermission(node);
 	}
+
+    @Override
+    public boolean playerHasGroup(Player player, String group) {
+        return false;
+    }
 }
 
