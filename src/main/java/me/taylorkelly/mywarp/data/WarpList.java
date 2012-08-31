@@ -180,7 +180,7 @@ public class WarpList {
                     } else {
                         if (MyWarp.getWarpPermissions().disobeyWarmup(player)) {
                             if (warp.warp(player, server)) {
-                                player.sendMessage(ChatColor.AQUA + warp.welcomeMessage);
+                                player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
                             }
                             if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
                                 Scheduler.schedulePlayerTimer(Scheduler
@@ -198,7 +198,7 @@ public class WarpList {
                     }
 
                 } else if (warp.warp(player, server)) {
-                    player.sendMessage(ChatColor.AQUA + warp.welcomeMessage);
+                    player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
                 }
             } else {
                 player.sendMessage(ChatColor.RED
@@ -647,7 +647,7 @@ public class WarpList {
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
             warp.warp(invitee, server);
-            invitee.sendMessage(ChatColor.AQUA + warp.welcomeMessage);
+            invitee.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(invitee));
             admin.sendMessage(ChatColor.AQUA + "Successfully warped " + invitee.getName());
         } else {
             admin.sendMessage(ChatColor.RED + "No such warp '" + name + "'");

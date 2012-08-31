@@ -62,7 +62,7 @@ public class Warp {
         this.pitch = Math.round(location.getPitch()) % 360;
         this.publicAll = true;
         this.permissions = new ArrayList<String>();
-        this.welcomeMessage = "Welcome to '" + name + "'";
+        this.welcomeMessage = "Welcome to '%warp%', %player%.";
     }
 
     public Warp(String name, Player creator, boolean b) {
@@ -78,7 +78,7 @@ public class Warp {
         this.pitch = Math.round(creator.getLocation().getPitch()) % 360;
         this.publicAll = b;
         this.permissions = new ArrayList<String>();
-        this.welcomeMessage = "Welcome to '" + name + "'";
+        this.welcomeMessage = "Welcome to '%warp%', %player%.";
     }
 
     private ArrayList<String> processList(String permissions) {
@@ -191,5 +191,10 @@ public class Warp {
             Location location = new Location(currWorld, x, y, z, yaw, pitch);
             return location;
         }
+    }
+    
+    public String getSpecificWelcomeMessage(Player player) {
+        return welcomeMessage.replaceAll("%player%", player.getName())
+                .replaceAll("%warp%", name).replaceAll("%creator%", creator);
     }
 }

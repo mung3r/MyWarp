@@ -28,7 +28,7 @@ public class PlayerWarmup implements Runnable {
     @Override
     public void run() {
         if (warp.warp(player, server)) {
-            player.sendMessage(ChatColor.AQUA + warp.welcomeMessage);
+            player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
         }
         if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
             Scheduler.schedulePlayerTimer(Scheduler.playerCooldown(plugin, player,
