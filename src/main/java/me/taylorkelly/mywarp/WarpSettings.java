@@ -35,6 +35,7 @@ public class WarpSettings {
     public static boolean useTimers;
     public static boolean coolDownNotify;
     public static boolean warmUpNotify;
+    public static boolean abortOnMove;
     public static ArrayList<Cooldown> warpCooldowns;
     public static Cooldown defaultCooldown;
     public static ArrayList<Warmup> warpWarmups;
@@ -135,6 +136,7 @@ public class WarpSettings {
         useTimers = conftimers.getBoolean("enabled");
         coolDownNotify = conftimers.getBoolean("coolDownNotify");
         warmUpNotify = conftimers.getBoolean("warmUpNotify");
+        abortOnMove = conftimers.getBoolean("abortOnMove");
         for (String key : conftimerscool.getKeys(false)) {
             if (key.equals("default")) {
                 defaultCooldown = new Cooldown (key, conftimerscool.getDouble(key));
