@@ -35,6 +35,7 @@ import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.sql.ConnectionManager;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
@@ -55,6 +56,7 @@ public class MyWarp extends JavaPlugin {
     @Override
     public void onDisable() {
         ConnectionManager.closeConnection();
+        Bukkit.getServer().getScheduler().cancelTasks(this);
     }
 
     @Override
@@ -81,8 +83,8 @@ public class MyWarp extends JavaPlugin {
             return;
         }
 
-        warpList = new WarpList(getServer());
-        warpPermissions = new WarpPermissions(this);        
+        warpList = new WarpList(getServer(), this);
+        warpPermissions = new WarpPermissions(this);
         blockListener = new MWBlockListener(this);
         playerListener = new MWPlayerListener(this);
 

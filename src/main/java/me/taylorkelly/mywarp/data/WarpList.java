@@ -7,8 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.scheduler.Scheduler;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
-
+import me.taylorkelly.mywarp.timer.Cooldown;
+import me.taylorkelly.mywarp.timer.PlayerTimer;
+import me.taylorkelly.mywarp.timer.Warmup;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -16,10 +20,12 @@ public class WarpList {
     private HashMap<String, Warp> warpList;
     private Server server;
     private HashMap<String, Warp> welcomeMessage;
+    private MyWarp plugin;
 
-    public WarpList(Server server) {
+    public WarpList(Server server, MyWarp plugin) {
         welcomeMessage = new HashMap<String, Warp>();
         this.server = server;
+        this.plugin = plugin;
         WarpDataSource.initialize();
         warpList = WarpDataSource.getMap();
     }
@@ -150,17 +156,55 @@ public class WarpList {
         name = matches.getMatch(name);
         if (warpList.containsKey(name)) {
             Warp warp = warpList.get(name);
+
             if (warp.playerCanWarp(player)) {
-                if (warp.warp(player, server)){
+                if (WarpSettings.useTimers) {
+                    Cooldown cooldown = MyWarp.getWarpPermissions().getCooldown(player);
+                    Warmup warmup = MyWarp.getWarpPermissions().getWarmup(player);
+
+                    if (PlayerTimer.isActive(player.getName(), cooldown)) {
+                        player.sendMessage(ChatColor.RED
+                                + "You need to wait "
+                                + PlayerTimer.getRemainingTime(player.getName(),
+                                        cooldown)
+                                + " seconds before you can warp again.");
+
+                    } else if (PlayerTimer.isActive(player.getName(), warmup)) {
+                        player.sendMessage(ChatColor.RED
+                                + "You need to wait "
+                                + PlayerTimer.getRemainingTime(player.getName(), warmup)
+                                + " seconds untill you are teleported.");
+
+                    } else {
+                        if (MyWarp.getWarpPermissions().disobeyWarmup(player)) {
+                            if (warp.warp(player, server)) {
+                                player.sendMessage(ChatColor.AQUA + warp.welcomeMessage);
+                            }
+                            if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
+                                Scheduler.schedulePlayerTimer(Scheduler
+                                        .playerCooldown(plugin, player, cooldown));
+                            }
+                        } else {
+                            Scheduler.schedulePlayerTimer(Scheduler.playerWarmup(
+                                    plugin, player, warmup, cooldown, warp, server));
+                            player.sendMessage(ChatColor.AQUA
+                                    + "You will be teleported to '" + warp.name
+                                    + "' in " + warmup.getInt() + " seconds.");
+                        }
+                    }
+
+                } else if (warp.warp(player, server)) {
                     player.sendMessage(ChatColor.AQUA + warp.welcomeMessage);
                 }
             } else {
-                player.sendMessage(ChatColor.RED + "You do not have permission to warp to '" + name + "'");
+                player.sendMessage(ChatColor.RED
+                        + "You do not have permission to warp to '" + name + "'");
             }
         } else {
             player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
         }
     }
+    
 
     public void deleteWarp(String name, Player player) {
         MatchList matches = this.getMatches(name, player);

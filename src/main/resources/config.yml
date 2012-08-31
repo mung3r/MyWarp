@@ -13,6 +13,14 @@ limits:
     maxTotal: 8
     maxPublic: 4
     maxPrivate: 4
+timers:
+  enabled: true
+  cooldowns:
+    default: 15
+    user: 30
+  warmups:
+    default: 15
+    user: 30
 mysql:
   enabled: false
   host: 'localhost'

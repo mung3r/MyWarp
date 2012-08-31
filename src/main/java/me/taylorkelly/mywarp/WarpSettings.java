@@ -10,6 +10,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.taylorkelly.mywarp.data.WarpLimit;
+import me.taylorkelly.mywarp.timer.Cooldown;
+import me.taylorkelly.mywarp.timer.Warmup;
 import me.taylorkelly.mywarp.utils.PropertiesFile;
 import me.taylorkelly.mywarp.utils.WarpLimitComparator;
 import me.taylorkelly.mywarp.utils.WarpLogger;
@@ -20,14 +22,21 @@ public class WarpSettings {
     private static final String settingsFile = "MyWarp.settings";
     public static File dataDir;
     
+    public static boolean adminPrivateWarps;
+    public static boolean loadChunks;
+    
     public static boolean useWarpSafety;
     public static int searchRadius;
     public static int verticalTolerance;
 
     public static ArrayList<WarpLimit> warpLimits;
     public static WarpLimit defaultLimit;
-    public static boolean adminPrivateWarps;
-    public static boolean loadChunks;
+
+    public static boolean useTimers;
+    public static ArrayList<Cooldown> warpCooldowns;
+    public static Cooldown defaultCooldown;
+    public static ArrayList<Warmup> warpWarmups;
+    public static Warmup defaultWarmup;
     
     public static boolean usemySQL;
     public static String mySQLhost;
@@ -49,10 +58,15 @@ public class WarpSettings {
         config = getConfig(configFile);
         
         warpLimits = new ArrayList<WarpLimit>();
+        warpCooldowns = new ArrayList<Cooldown>();
+        warpWarmups = new ArrayList<Warmup>();
         
         ConfigurationSection confsafety = config.getConfigurationSection("warpSafety");
-        ConfigurationSection confdatabase = config.getConfigurationSection("mysql");
         ConfigurationSection conflimits = config.getConfigurationSection("limits");
+        ConfigurationSection conftimers = config.getConfigurationSection("timers");
+        ConfigurationSection conftimerscool = conftimers.getConfigurationSection("cooldowns");
+        ConfigurationSection conftimerswarm = conftimers.getConfigurationSection("warmups");
+        ConfigurationSection confdatabase = config.getConfigurationSection("mysql");
         
         File oldConfigFile  = new File(dataDir, settingsFile);
         if (oldConfigFile.exists()) {
@@ -92,24 +106,15 @@ public class WarpSettings {
             }
         }
         
-        //settings
+        // settings
         adminPrivateWarps = config.getBoolean("adminPrivateWarps");
         loadChunks = config.getBoolean("loadChunks");
-        
-        //saftey
+
+        // saftey
         useWarpSafety = confsafety.getBoolean("enabled");
         searchRadius = confsafety.getInt("searchRadius");
-        verticalTolerance =confsafety.getInt("verticalTolerance");
-        
-        // database
-        usemySQL = confdatabase.getBoolean("enabled");
-        mySQLhost = confdatabase.getString("host");
-        mySQLport = confdatabase.getInt("port");
-        mySQLuname = confdatabase.getString("username");
-        mySQLpass = confdatabase.getString("password");
-        mySQLdb = confdatabase.getString("database");
-        mySQLtable = confdatabase.getString("table");
-        
+        verticalTolerance = confsafety.getInt("verticalTolerance");
+
         // limits
         for (String key : conflimits.getKeys(false)) {
             if (key.equals("default")) {
@@ -123,6 +128,35 @@ public class WarpSettings {
             }
         }
         Collections.sort(warpLimits, new WarpLimitComparator());
+        
+        // timers
+        useTimers = conftimers.getBoolean("enabled");
+        for (String key : conftimerscool.getKeys(false)) {
+            if (key.equals("default")) {
+                defaultCooldown = new Cooldown (key, conftimerscool.getDouble(key));
+            } else {
+                warpCooldowns.add(new Cooldown (key, conftimerscool.getDouble(key)));
+            }
+        }
+        Collections.sort(warpCooldowns);
+        for (String key : conftimerswarm.getKeys(false)) {
+            if (key.equals("default")) {
+                defaultWarmup = new Warmup (key, conftimerswarm.getDouble(key));
+            } else {
+                warpWarmups.add(new Warmup (key, conftimerswarm.getDouble(key)));
+            }
+        }
+        Collections.sort(warpCooldowns);
+
+        // database
+        usemySQL = confdatabase.getBoolean("enabled");
+        mySQLhost = confdatabase.getString("host");
+        mySQLport = confdatabase.getInt("port");
+        mySQLuname = confdatabase.getString("username");
+        mySQLpass = confdatabase.getString("password");
+        mySQLdb = confdatabase.getString("database");
+        mySQLtable = confdatabase.getString("table");
+
     }
     
     private static FileConfiguration getConfig(File file)

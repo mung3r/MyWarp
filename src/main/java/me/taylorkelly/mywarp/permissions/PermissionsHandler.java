@@ -23,6 +23,7 @@ public class PermissionsHandler implements IPermissionsHandler {
 		this.plugin = plugin;
 		checkPermissions();
 		registerLimitPermissions();
+		registerTimerPermissions();
 	}
 
 	@Override
@@ -40,6 +41,29 @@ public class PermissionsHandler implements IPermissionsHandler {
                                             + WarpSettings.warpLimits.get(i).getName(),
                                     "Gives acess to the number of warps defined for "+ WarpSettings.warpLimits.get(i).getName() + " in the config",
                                     PermissionDefault.FALSE));
+        }
+    }
+    
+    public void registerTimerPermissions() {
+        for (int i = 0; i < WarpSettings.warpCooldowns.size(); i++) {
+            plugin.getServer()
+                    .getPluginManager()
+                    .addPermission(
+                            new org.bukkit.permissions.Permission("mywarp.cooldown."
+                                    + WarpSettings.warpCooldowns.get(i).name,
+                                    "User is affected by the cooldowns defined for "
+                                            + WarpSettings.warpCooldowns.get(i).name
+                                            + " in the config", PermissionDefault.FALSE));
+        }
+        for (int i = 0; i < WarpSettings.warpWarmups.size(); i++) {
+            plugin.getServer()
+                    .getPluginManager()
+                    .addPermission(
+                            new org.bukkit.permissions.Permission("mywarp.warmup."
+                                    + WarpSettings.warpWarmups.get(i).name,
+                                    "User is affected by the warmups defined for "
+                                            + WarpSettings.warpWarmups.get(i).name
+                                            + " in the config", PermissionDefault.FALSE));
         }
     }
 	

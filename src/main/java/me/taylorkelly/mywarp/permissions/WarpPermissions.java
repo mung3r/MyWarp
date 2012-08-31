@@ -1,6 +1,8 @@
 package me.taylorkelly.mywarp.permissions;
 
 import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.timer.Cooldown;
+import me.taylorkelly.mywarp.timer.Warmup;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -116,6 +118,34 @@ public class WarpPermissions {
             }
         }
         return WarpSettings.defaultLimit.getMaxPublic();
+    }
+    
+    public boolean disobeyCooldown(Player player){
+        return permissionsHandler.hasPermission(player, "mywarp.cooldown.disobey");
+    }
+    
+    public Cooldown getCooldown(Player player) {
+        for (int i = 0; i < WarpSettings.warpCooldowns.size(); i++) {
+            if (permissionsHandler.hasPermission(player, "mywarp.cooldown."
+                    + WarpSettings.warpCooldowns.get(i).name)) {
+                return WarpSettings.warpCooldowns.get(i);
+            }
+        }
+        return WarpSettings.defaultCooldown;
+    }
+    
+    public boolean disobeyWarmup(Player player){
+        return permissionsHandler.hasPermission(player, "mywarp.warmup.disobey");
+    }
+    
+    public Warmup getWarmup(Player player) {
+        for (int i = 0; i < WarpSettings.warpWarmups.size(); i++) {
+            if (permissionsHandler.hasPermission(player, "mywarp.warmup."
+                    + WarpSettings.warpWarmups.get(i).name)) {
+                return WarpSettings.warpWarmups.get(i);
+            }
+        }
+        return WarpSettings.defaultWarmup;
     }
 
     public boolean createSignWarp(Player player) {

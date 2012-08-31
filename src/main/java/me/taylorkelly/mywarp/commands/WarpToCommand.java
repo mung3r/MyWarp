@@ -22,16 +22,15 @@ public class WarpToCommand extends BasicCommand implements Command
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args)
+    public boolean execute(final CommandSender executor, String identifier, final String[] args)
     {
         if (executor instanceof Player) {
             plugin.getWarpList().warpTo(StringUtils.join(args, ' '), (Player) executor);
-        }
-        else {
+            
+        } else {
             executor.sendMessage("Console cannot warp to locations!");
         }
 
         return true;
     }
-
 }
