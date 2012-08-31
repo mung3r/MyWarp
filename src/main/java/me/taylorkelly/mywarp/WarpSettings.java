@@ -13,7 +13,6 @@ import me.taylorkelly.mywarp.data.WarpLimit;
 import me.taylorkelly.mywarp.timer.Cooldown;
 import me.taylorkelly.mywarp.timer.Warmup;
 import me.taylorkelly.mywarp.utils.PropertiesFile;
-import me.taylorkelly.mywarp.utils.WarpLimitComparator;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class WarpSettings {
@@ -131,7 +130,7 @@ public class WarpSettings {
                                 + ".maxPrivate")));
             }
         }
-        Collections.sort(warpLimits, new WarpLimitComparator());
+        Collections.sort(warpLimits);
         
         // timers
         useTimers = conftimers.getBoolean("enabled");
@@ -154,7 +153,8 @@ public class WarpSettings {
                 warpWarmups.add(new Warmup (key, conftimerswarm.getDouble(key)));
             }
         }
-        Collections.sort(warpCooldowns);
+        Collections.sort(warpWarmups);
+        
 
         // database
         usemySQL = confdatabase.getBoolean("enabled");

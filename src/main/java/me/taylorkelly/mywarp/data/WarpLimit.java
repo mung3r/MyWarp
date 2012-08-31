@@ -1,6 +1,6 @@
 package me.taylorkelly.mywarp.data;
 
-public class WarpLimit {
+public class WarpLimit implements Comparable<WarpLimit> {
 
     private String name;
     private int maxTotal;
@@ -12,6 +12,11 @@ public class WarpLimit {
         this.maxTotal = maxTotal;
         this.maxPublic = maxPublic;
         this.maxPrivate = maxPrivate;
+    }
+
+    @Override
+    public int compareTo(WarpLimit l) {
+        return name.compareTo(l.name);
     }
 
     public String getName() {
@@ -29,4 +34,5 @@ public class WarpLimit {
     public int getMaxPrivate() {
         return maxPrivate;
     }
+
 }

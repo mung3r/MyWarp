@@ -133,11 +133,11 @@ public class WarpPermissions {
         }
         return WarpSettings.defaultCooldown;
     }
-    
-    public boolean disobeyWarmup(Player player){
+
+    public boolean disobeyWarmup(Player player) {
         return permissionsHandler.hasPermission(player, "mywarp.warmup.disobey");
     }
-    
+
     public Warmup getWarmup(Player player) {
         for (int i = 0; i < WarpSettings.warpWarmups.size(); i++) {
             if (permissionsHandler.hasPermission(player, "mywarp.warmup."

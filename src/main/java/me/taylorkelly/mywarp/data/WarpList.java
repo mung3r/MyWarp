@@ -13,7 +13,9 @@ import me.taylorkelly.mywarp.sql.WarpDataSource;
 import me.taylorkelly.mywarp.timer.Cooldown;
 import me.taylorkelly.mywarp.timer.PlayerTimer;
 import me.taylorkelly.mywarp.timer.Warmup;
-import org.bukkit.*;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 public class WarpList {
