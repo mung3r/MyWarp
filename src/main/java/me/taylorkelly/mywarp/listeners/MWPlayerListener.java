@@ -68,22 +68,21 @@ public class MWPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled() || !WarpSettings.abortOnMove) {
             return;
-
-        if (WarpSettings.abortOnMove) {
-            Player player = event.getPlayer();
-            Warmup warmup = MyWarp.getWarpPermissions().getWarmup(player);
-            if (PlayerTimer.isActive(player.getName(), warmup)) {
-                Location fromLoc = event.getFrom();
-                Location toLoc = event.getTo();
-                if (fromLoc.getBlockX() != toLoc.getBlockX() || fromLoc.getBlockY() != toLoc.getBlockY() || fromLoc.getBlockZ() != toLoc.getBlockZ()) {
-                    PlayerTimer.endTimer(player.getName(), warmup);
-                    player.sendMessage(ChatColor.RED
-                            + " You mustn't move while warming up. Your "
-                            + ChatColor.RESET + "/warp" + ChatColor.RED
-                            + " was canceled.");
-                }
+        }
+        Player player = event.getPlayer();
+        Warmup warmup = MyWarp.getWarpPermissions().getWarmup(player);
+        if (PlayerTimer.isActive(player.getName(), warmup)) {
+            Location fromLoc = event.getFrom();
+            Location toLoc = event.getTo();
+            if (fromLoc.getBlockX() != toLoc.getBlockX()
+                    || fromLoc.getBlockY() != toLoc.getBlockY()
+                    || fromLoc.getBlockZ() != toLoc.getBlockZ()) {
+                PlayerTimer.endTimer(player.getName(), warmup);
+                player.sendMessage(ChatColor.RED
+                        + " You mustn't move while warming up. Your " + ChatColor.RESET
+                        + "/warp" + ChatColor.RED + " was canceled.");
             }
         }
     }

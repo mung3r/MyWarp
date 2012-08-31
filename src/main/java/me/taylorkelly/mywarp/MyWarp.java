@@ -30,6 +30,7 @@ import me.taylorkelly.mywarp.commands.WelcomeCommand;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.griefcraft.Updater;
 import me.taylorkelly.mywarp.listeners.MWBlockListener;
+import me.taylorkelly.mywarp.listeners.MWEntityListener;
 import me.taylorkelly.mywarp.listeners.MWPlayerListener;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.sql.ConnectionManager;
@@ -44,8 +45,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MyWarp extends JavaPlugin {
 
     private WarpList warpList;
-    private MWPlayerListener playerListener;
     private MWBlockListener blockListener;
+    private MWEntityListener entityListener;
+    private MWPlayerListener playerListener;
+    
     public String name;
     public String version;
     private Updater updater;
@@ -86,9 +89,11 @@ public class MyWarp extends JavaPlugin {
         warpList = new WarpList(getServer(), this);
         warpPermissions = new WarpPermissions(this);
         blockListener = new MWBlockListener(this);
+        entityListener = new MWEntityListener(this);
         playerListener = new MWPlayerListener(this);
 
         pm.registerEvents(blockListener, this);
+        pm.registerEvents(entityListener, this);
         pm.registerEvents(playerListener, this);
 
         commandHandler = new CommandHandler(this);

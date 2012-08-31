@@ -18,6 +18,7 @@ timers:
   coolDownNotify: false
   warmUpNotify: true
   abortOnMove: false
+  abortOnDamage: false
   cooldowns:
     default: 15
     user: 30
