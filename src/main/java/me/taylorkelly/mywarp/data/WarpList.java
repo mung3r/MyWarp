@@ -11,7 +11,8 @@ import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.scheduler.Scheduler;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
 import me.taylorkelly.mywarp.timer.Cooldown;
-import me.taylorkelly.mywarp.timer.PlayerTimer;
+import me.taylorkelly.mywarp.timer.PlayerCooldown;
+import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import me.taylorkelly.mywarp.timer.Warmup;
 
 import org.bukkit.ChatColor;
@@ -164,17 +165,16 @@ public class WarpList {
                     Cooldown cooldown = MyWarp.getWarpPermissions().getCooldown(player);
                     Warmup warmup = MyWarp.getWarpPermissions().getWarmup(player);
 
-                    if (PlayerTimer.isActive(player.getName(), cooldown)) {
+                    if (PlayerCooldown.isActive(player.getName())) {
                         player.sendMessage(ChatColor.RED
                                 + "You need to wait "
-                                + PlayerTimer.getRemainingTime(player.getName(),
-                                        cooldown)
+                                + PlayerCooldown.getRemainingTime(player.getName())
                                 + " seconds before you can warp again.");
 
-                    } else if (PlayerTimer.isActive(player.getName(), warmup)) {
+                    } else if (PlayerWarmup.isActive(player.getName())) {
                         player.sendMessage(ChatColor.RED
                                 + "You need to wait "
-                                + PlayerTimer.getRemainingTime(player.getName(), warmup)
+                                + PlayerWarmup.getRemainingTime(player.getName())
                                 + " seconds untill you are teleported.");
 
                     } else {
@@ -183,11 +183,11 @@ public class WarpList {
                                 player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
                             }
                             if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
-                                Scheduler.schedulePlayerTimer(Scheduler
+                                Scheduler.schedulePlayerCooldown(Scheduler
                                         .playerCooldown(plugin, player, cooldown));
                             }
                         } else {
-                            Scheduler.schedulePlayerTimer(Scheduler.playerWarmup(
+                            Scheduler.schedulePlayerWarmup(Scheduler.playerWarmup(
                                     plugin, player, warmup, cooldown, warp, server));
                             if (WarpSettings.warmUpNotify){
                                 player.sendMessage(ChatColor.AQUA

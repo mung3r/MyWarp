@@ -5,12 +5,10 @@ import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.SignWarp;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
-import me.taylorkelly.mywarp.timer.PlayerTimer;
-import me.taylorkelly.mywarp.timer.Warmup;
+import me.taylorkelly.mywarp.timer.PlayerWarmup;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -71,19 +69,19 @@ public class MWPlayerListener implements Listener {
         if (event.isCancelled() || !WarpSettings.abortOnMove) {
             return;
         }
+
+        if (event.getFrom().getX() == event.getTo().getX()
+                && event.getFrom().getY() == event.getTo().getY()
+                && event.getFrom().getZ() == event.getTo().getZ()) {
+            return;
+        }
+
         Player player = event.getPlayer();
-        Warmup warmup = MyWarp.getWarpPermissions().getWarmup(player);
-        if (PlayerTimer.isActive(player.getName(), warmup)) {
-            Location fromLoc = event.getFrom();
-            Location toLoc = event.getTo();
-            if (fromLoc.getBlockX() != toLoc.getBlockX()
-                    || fromLoc.getBlockY() != toLoc.getBlockY()
-                    || fromLoc.getBlockZ() != toLoc.getBlockZ()) {
-                PlayerTimer.endTimer(player.getName(), warmup);
-                player.sendMessage(ChatColor.RED
-                        + " You mustn't move while warming up. Your " + ChatColor.RESET
-                        + "/warp" + ChatColor.RED + " was canceled.");
-            }
+        if (PlayerWarmup.isActive(player.getName())) {
+            PlayerWarmup.endTimer(player.getName());
+            player.sendMessage(ChatColor.RED
+                    + " You mustn't move while warming up. Your " + ChatColor.RESET
+                    + "/warp" + ChatColor.RED + " was canceled.");
         }
     }
 }

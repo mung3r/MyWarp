@@ -25,6 +25,7 @@ import me.taylorkelly.mywarp.scheduler.ScheduledTask;
  * 
  */
 public interface Timer {
-    public static Set<ScheduledTask> ptask = new HashSet<ScheduledTask>();
+    public static Set<ScheduledTask> pctask = new HashSet<ScheduledTask>();
+    public static Set<ScheduledTask> pwtask = new HashSet<ScheduledTask>();
     public static Set<ScheduledTask> gtask = new HashSet<ScheduledTask>();
 }

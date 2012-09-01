@@ -5,7 +5,6 @@ import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.timer.Cooldown;
 import me.taylorkelly.mywarp.timer.GeneralTimer;
 import me.taylorkelly.mywarp.timer.PlayerCooldown;
-import me.taylorkelly.mywarp.timer.PlayerTimer;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import me.taylorkelly.mywarp.timer.Time;
 import me.taylorkelly.mywarp.timer.Warmup;
@@ -46,7 +45,7 @@ public class Scheduler {
     public static Schedule playerCooldown(MyWarp plugin, Player player, Cooldown cooldown) {
         return new Schedule(player.getName(), cooldown, System.currentTimeMillis(),
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
-                        new PlayerTimer(new PlayerCooldown(player)),
+                        new PlayerCooldown(player),
                         cooldown.getMinecraftLong()), false);
     }
 
@@ -79,9 +78,8 @@ public class Scheduler {
             Cooldown cooldown, Warp warp, Server server) {
         return new Schedule(player.getName(), warmup, System.currentTimeMillis(), Bukkit
                 .getScheduler().scheduleSyncDelayedTask(
-                        plugin,
-                        new PlayerTimer(new PlayerWarmup(plugin, player, cooldown, warp,
-                                server)), warmup.getMinecraftLong()), false);
+                        plugin,new PlayerWarmup(plugin, player, cooldown, warp,
+                                server), warmup.getMinecraftLong()), false);
     }
 
     /**
@@ -116,8 +114,19 @@ public class Scheduler {
      * @param schedule
      *            the schedule
      */
-    public static void schedulePlayerTimer(Schedule schedule) {
-        PlayerTimer.ptask.add(schedule);
+    public static void schedulePlayerCooldown(Schedule schedule) {
+        PlayerCooldown.pctask.add(schedule);
+    }
+    
+    /**
+     * Schedules a new player timer Uses the Schedule passed along for
+     * information schedulePlayerCooldown(schedule(this, player, cooldown);
+     * 
+     * @param schedule
+     *            the schedule
+     */
+    public static void schedulePlayerWarmup(Schedule schedule) {
+        PlayerCooldown.pwtask.add(schedule);
     }
 
     /**
