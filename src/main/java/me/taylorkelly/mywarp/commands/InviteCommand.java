@@ -8,12 +8,10 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class InviteCommand extends BasicCommand implements Command
-{
+public class InviteCommand extends BasicCommand implements Command {
     private MyWarp plugin;
 
-    public InviteCommand(MyWarp plugin)
-    {
+    public InviteCommand(MyWarp plugin) {
         super("Invite");
         this.plugin = plugin;
         setDescription("Invite §8<player>§e to §9<name>");
@@ -24,16 +22,24 @@ public class InviteCommand extends BasicCommand implements Command
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args)
-    {
+    public boolean execute(CommandSender executor, String identifier, String[] args) {
         if (executor instanceof Player) {
-            Player invitee = plugin.getServer().getPlayer(args[0]);
-            // TODO Change to matchPlayer
-            String inviteeName = (invitee == null) ? args[0] : invitee.getName();
+            if (args[0].startsWith("g:")) {
+                String inviteeGroup = args[0].substring(2);
+                plugin.getWarpList().inviteGroup(
+                        StringUtils.join(Arrays.asList(args).subList(1, args.length),
+                                ' '), (Player) executor, inviteeGroup);
+            } else {
+                Player invitee = plugin.getServer().getPlayer(args[0]);
+                // TODO Change to matchPlayer
+                String inviteeName = (invitee == null) ? args[0] : invitee.getName();
 
-            plugin.getWarpList().invite(StringUtils.join(Arrays.asList(args).subList(1, args.length), ' '), (Player) executor, inviteeName);
-        }
-        else {
+                plugin.getWarpList().invitePlayer(
+                        StringUtils.join(Arrays.asList(args).subList(1, args.length),
+                                ' '), (Player) executor, inviteeName);
+            }
+
+        } else {
             executor.sendMessage("Console cannot invite warps for themselves!");
         }
 

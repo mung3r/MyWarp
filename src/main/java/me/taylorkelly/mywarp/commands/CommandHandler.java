@@ -112,7 +112,7 @@ public class CommandHandler {
 
         Player player = (Player) sender;
         if (warpPermissions != null) {
-            return warpPermissions.hasPermission(player, permString, false);
+            return warpPermissions.hasPermission(player, permString);
         }
         return player.hasPermission(permString);
     }

@@ -20,13 +20,15 @@ public class Warp {
     public double z;
     public int yaw;
     public int pitch;
+    public int visits;
     public boolean publicAll;
     public String welcomeMessage;
     public ArrayList<String> permissions;
+    public ArrayList<String> groupPermissions;
     public static int nextIndex = 1;
 
     public Warp(int index, String name, String creator, String world, double x, int y, double z, int yaw, int pitch, boolean publicAll, String permissions,
-            String welcomeMessage) {
+            String groupPermissions, String welcomeMessage, int visits) {
         this.index = index;
         this.name = name;
         this.creator = creator;
@@ -38,7 +40,9 @@ public class Warp {
         this.yaw = yaw;
         this.publicAll = publicAll;
         this.permissions = processList(permissions);
+        this.groupPermissions = processList(groupPermissions);
         this.welcomeMessage = welcomeMessage;
+        this.visits = visits;
         if (index > nextIndex) {
             nextIndex = index;
         }
@@ -62,7 +66,9 @@ public class Warp {
         this.pitch = Math.round(location.getPitch()) % 360;
         this.publicAll = true;
         this.permissions = new ArrayList<String>();
+        this.groupPermissions = new ArrayList<String>();
         this.welcomeMessage = "Welcome to '%warp%', %player%.";
+        this.visits = 0;
     }
 
     public Warp(String name, Player creator, boolean b) {
@@ -78,7 +84,9 @@ public class Warp {
         this.pitch = Math.round(creator.getLocation().getPitch()) % 360;
         this.publicAll = b;
         this.permissions = new ArrayList<String>();
+        this.groupPermissions = new ArrayList<String>();
         this.welcomeMessage = "Welcome to '%warp%', %player%.";
+        this.visits = 0;
     }
 
     private ArrayList<String> processList(String permissions) {
@@ -101,6 +109,15 @@ public class Warp {
         }
         return ret.toString();
     }
+    
+    public String groupPermissionsString() {
+        StringBuilder ret = new StringBuilder();
+        for (String name : groupPermissions) {
+            ret.append(name);
+            ret.append(",");
+        }
+        return ret.toString();
+    }
 
     public boolean playerCanWarp(Player player) {
         if (creator.equals(player.getName())) {
@@ -108,6 +125,12 @@ public class Warp {
         }
         if (permissions.contains(player.getName())) {
             return true;
+        }
+        
+        for (int i = 0; i < groupPermissions.size(); i++){
+            if (MyWarp.getWarpPermissions().playerHasGroup(player, groupPermissions.get(i))){
+                return true;
+            }
         }
         if (MyWarp.getWarpPermissions().isAdmin(player) && WarpSettings.adminPrivateWarps) {
             return true;
@@ -125,6 +148,7 @@ public class Warp {
         }
         if (currWorld != null) {
             Location location = new Location(currWorld, x, y, z, yaw, pitch);
+            visits++;
             return SafeTeleport.safeTeleport(player, location, name);
         } else {
             player.sendMessage(ChatColor.RED + "World " + world + " doesn't exist.");
@@ -138,9 +162,21 @@ public class Warp {
         }
         return false;
     }
+    
+    public void inviteGroup(String group) {
+        groupPermissions.add(group);
+    }
+    
+    public boolean groupIsInvited(String group) {
+        return groupPermissions.contains(group);
+    }
 
     public void invite(String player) {
         permissions.add(player);
+    }
+    
+    public void uninviteGroup(String group) {
+        groupPermissions.remove(group);
     }
 
     public boolean playerIsInvited(String player) {

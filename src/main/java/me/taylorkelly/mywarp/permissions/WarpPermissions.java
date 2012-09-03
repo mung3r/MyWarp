@@ -14,9 +14,13 @@ public class WarpPermissions {
 		permissionsHandler = new PermissionsHandler(plugin);
 	}
 
-	public boolean hasPermission(Player player, final String node, boolean defaultPerm) {
-	    return permissionsHandler.hasPermission(player, node);
-	}
+    public boolean hasPermission(Player player, final String node) {
+        return permissionsHandler.hasPermission(player, node);
+    }
+
+    public boolean playerHasGroup(Player player, String group) {
+        return permissionsHandler.playerHasGroup(player, group);
+    }
 
     public boolean isAdmin(Player player) {
         return permissionsHandler.hasPermission(player, "mywarp.admin");

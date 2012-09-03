@@ -28,7 +28,9 @@ public class WarpDataSource {
         + "`pitch` smallint NOT NULL DEFAULT '0',"
         + "`publicAll` boolean NOT NULL DEFAULT '1',"
         + "`permissions` text,"
+        + "`groupPermissions` text,"
         + "`welcomeMessage` varchar(100) NOT NULL DEFAULT ''"
+        + "`visits` int DEFAULT '0',"
         + ");";
 
     public static void initialize() {
@@ -61,8 +63,10 @@ public class WarpDataSource {
                 int pitch = set.getInt("pitch");
                 boolean publicAll = set.getBoolean("publicAll");
                 String permissions = set.getString("permissions");
+                String groupPermissions = set.getString("groupPermissions");
                 String welcomeMessage = set.getString("welcomeMessage");
-                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, welcomeMessage);
+                int visits = set.getInt("visits");
+                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits);
                 ret.put(name, warp);
             }
             WarpLogger.info("" + size + " warps loaded");
@@ -148,8 +152,10 @@ public class WarpDataSource {
 	        			int pitch = slset.getInt("pitch");
 	        			boolean publicAll = slset.getBoolean("publicAll");
 	        			String permissions = slset.getString("permissions");
+	        			String groupPermissions = slset.getString("groupPermissions");
 	        			String welcomeMessage = slset.getString("welcomeMessage");
-	        			Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, welcomeMessage);
+	        			int visits = slset.getInt("visits");
+	        			Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits);
 	        			addWarp(warp);
 	        		}
 	        		WarpLogger.info("Imported " + size + " warps from " + sqlitedb);
@@ -188,9 +194,10 @@ public class WarpDataSource {
         PreparedStatement ps = null;
         try {
             Connection conn = ConnectionManager.getConnection();
+            WarpLogger.info("visits: " + warp.visits);
 
             ps = conn
-                    .prepareStatement("INSERT INTO "+ WarpSettings.mySQLtable +" (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, welcomeMessage) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                    .prepareStatement("INSERT INTO "+ WarpSettings.mySQLtable +" (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             ps.setInt(1, warp.index);
             ps.setString(2, warp.name);
             ps.setString(3, warp.creator);
@@ -202,7 +209,9 @@ public class WarpDataSource {
             ps.setInt(9, warp.pitch);
             ps.setBoolean(10, warp.publicAll);
             ps.setString(11, warp.permissionsString());
-            ps.setString(12, warp.welcomeMessage);
+            ps.setString(12, warp.groupPermissionsString());
+            ps.setString(13, warp.welcomeMessage);
+            ps.setInt(14, warp.visits);
             ps.executeUpdate();
             conn.commit();
         } catch (SQLException ex) {
@@ -297,6 +306,33 @@ public class WarpDataSource {
             }
         }
     }
+    
+    public static void updateGroupPermissions(Warp warp) {
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        try {
+            Connection conn = ConnectionManager.getConnection();
+
+            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET groupPermissions = ? WHERE id = ?");
+            ps.setString(1, warp.groupPermissionsString());
+            ps.setInt(2, warp.index);
+            ps.executeUpdate();
+            conn.commit();
+        } catch (SQLException ex) {
+            WarpLogger.severe("Warp GroupPermissions Exception", ex);
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (set != null) {
+                    set.close();
+                }
+            } catch (SQLException ex) {
+                WarpLogger.severe("Warp GroupPermissions Exception (on close)", ex);
+            }
+        }
+    }
 
     public static void updateCreator(Warp warp) {
         PreparedStatement ps = null;
@@ -387,8 +423,17 @@ public class WarpDataSource {
     }
     
     public static void dbTblCheck() {
-    	// Add future modifications to the table structure here
-    	
+        // Add future modifications to the table structure here
+        updateDB(
+                "SELECT `groupPermissions` FROM " + WarpSettings.mySQLtable,
+                "ALTER TABLE "
+                        + WarpSettings.mySQLtable
+                        + " ADD `groupPermissions` text AFTER permissions NOT NULL DEFAULT ''",
+                "ALTER TABLE " + WarpSettings.mySQLtable
+                        + " ADD `groupPermissions` text AFTER permissions NOT NULL");
+
+        updateDB("SELECT `visits` FROM " + WarpSettings.mySQLtable, "ALTER TABLE "
+                + WarpSettings.mySQLtable + " ADD `visits` int DEFAULT '0'");
     }
 
     public static void updateDB(String test, String sql) {

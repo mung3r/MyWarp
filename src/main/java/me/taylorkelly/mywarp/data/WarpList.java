@@ -257,7 +257,7 @@ public class WarpList {
         }
     }
 
-    public void invite(String name, Player player, String inviteeName) {
+    public void invitePlayer(String name, Player player, String inviteeName) {
         MatchList matches = this.getMatches(name, player);
         name = matches.getMatch(name);
         if (warpList.containsKey(name)) {
@@ -282,6 +282,30 @@ public class WarpList {
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "You do not have permission to invite players to '" + name + "'");
+            }
+        } else {
+            player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+        }
+    }
+    
+    public void inviteGroup(String name, Player player, String inviteeName) {
+        MatchList matches = this.getMatches(name, player);
+        name = matches.getMatch(name);
+        if (warpList.containsKey(name)) {
+            Warp warp = warpList.get(name);
+            if (warp.playerCanModify(player)) {
+                if (warp.groupIsInvited(inviteeName)) {
+                    player.sendMessage(ChatColor.RED + inviteeName + " is already invited to this warp.");
+                } else {
+                    warp.inviteGroup(inviteeName);
+                    WarpDataSource.updatePermissions(warp);
+                    player.sendMessage(ChatColor.AQUA + "You have invited group " + inviteeName + " to '" + name + "'");
+                    if (warp.publicAll) {
+                        player.sendMessage(ChatColor.RED + "But '" + name + "' is still public.");
+                    }
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "You do not have permission to invite groups to '" + name + "'");
             }
         } else {
             player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
@@ -315,7 +339,7 @@ public class WarpList {
         }
     }
 
-    public void uninvite(String name, Player player, String inviteeName) {
+    public void uninvitePlayer(String name, Player player, String inviteeName) {
         MatchList matches = this.getMatches(name, player);
         name = matches.getMatch(name);
         if (warpList.containsKey(name)) {
@@ -327,7 +351,7 @@ public class WarpList {
                     player.sendMessage(ChatColor.RED + "You can't uninvite yourself. You're the creator!");
                 } else {
                     warp.uninvite(inviteeName);
-                    WarpDataSource.updatePermissions(warp);
+                    WarpDataSource.updateGroupPermissions(warp);
                     player.sendMessage(ChatColor.AQUA + "You have uninvited " + inviteeName + " from '" + name + "'");
                     if (warp.publicAll) {
                         player.sendMessage(ChatColor.RED + "But '" + name + "' is still public.");
@@ -339,6 +363,30 @@ public class WarpList {
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "You do not have permission to uninvite players from '" + name + "'");
+            }
+        } else {
+            player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+        }
+    }
+    
+    public void uninviteGroup(String name, Player player, String inviteeName) {
+        MatchList matches = this.getMatches(name, player);
+        name = matches.getMatch(name);
+        if (warpList.containsKey(name)) {
+            Warp warp = warpList.get(name);
+            if (warp.playerCanModify(player)) {
+                if (!warp.groupIsInvited(inviteeName)) {
+                    player.sendMessage(ChatColor.RED + inviteeName + " is not invited to this warp.");
+                } else {
+                    warp.uninviteGroup(inviteeName);
+                    WarpDataSource.updateGroupPermissions(warp);
+                    player.sendMessage(ChatColor.AQUA + "You have uninvited group " + inviteeName + " from '" + name + "'");
+                    if (warp.publicAll) {
+                        player.sendMessage(ChatColor.RED + "But '" + name + "' is still public.");
+                    }
+                }
+            } else {
+                player.sendMessage(ChatColor.RED + "You do not have permission to uninvite groups from '" + name + "'");
             }
         } else {
             player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
