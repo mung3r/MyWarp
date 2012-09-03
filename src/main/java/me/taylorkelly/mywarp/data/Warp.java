@@ -231,6 +231,7 @@ public class Warp {
     
     public String getSpecificWelcomeMessage(Player player) {
         return welcomeMessage.replaceAll("%player%", player.getName())
-                .replaceAll("%warp%", name).replaceAll("%creator%", creator);
+                .replaceAll("%warp%", name).replaceAll("%creator%", creator)
+                .replaceAll("%visits%", Integer.toString(visits));
     }
 }
