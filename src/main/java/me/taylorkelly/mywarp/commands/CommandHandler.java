@@ -61,7 +61,7 @@ public class CommandHandler {
             	identifierBuilder.append(' ').append(arguments[i]);
             }
             
-            String identifier = identifierBuilder.toString().trim();            
+            String identifier = identifierBuilder.toString().trim();
             if (identifier.isEmpty()) {
                 identifier = "warp";
             }
