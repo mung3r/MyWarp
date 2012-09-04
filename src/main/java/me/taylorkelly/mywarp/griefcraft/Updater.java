@@ -26,13 +26,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
+
+import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class Updater {
 
-	private Logger logger = Logger.getLogger("Minecraft");
-
-	private final static String UPDATE_SITE = "https://raw.github.com/mung3r/MyWarp/master/";
+	private final static String UPDATE_SITE = "https://raw.github.com/TheE/MyWarp/master/";
 
 	private List<UpdaterFile> needsUpdating = new ArrayList<UpdaterFile>();
 
@@ -44,11 +43,29 @@ public class Updater {
 
 		for (String path : paths) {
 			File file = new File(path);
+			WarpLogger.info("File: " + path + " needs update?");
+			if (file != null){
+			    WarpLogger.info("Is null.");
+			}
+			if (!file.exists()){
+                WarpLogger.info("Doesn't exist.");
+            }
+			if (!file.isDirectory()){
+                WarpLogger.info("Is directory.");
+            }
+			if (file != null && !file.exists() && !file.isDirectory()) {
+			    WarpLogger.info("Yes.");
+			} else {
+			    WarpLogger.info("No.");
+			}
 
 			if (file != null && !file.exists() && !file.isDirectory()) {
 				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + path);
 				updaterFile.setLocalLocation(path);
 				needsUpdating.add(updaterFile);
+			}
+			for (UpdaterFile update : needsUpdating){
+			    WarpLogger.info("Updates needed for: " + update.toString());
 			}
 		}
 	}
@@ -95,18 +112,18 @@ public class Updater {
 		if (folder.exists() && !folder.isDirectory()) {
 			throw new Exception("Folder \"lib\" cannot be created ! It is a file!");
 		} else if (!folder.exists()) {
-			logger.info("Creating folder : lib");
+			WarpLogger.info("Creating folder : lib");
 			folder.mkdir();
 		}
 
-		logger.info("Need to download " + needsUpdating.size() + " object(s)");
+		WarpLogger.info("Need to download " + needsUpdating.size() + " object(s)");
 
 		Iterator<UpdaterFile> iterator = needsUpdating.iterator();
 		
 		while(iterator.hasNext()) {
 			UpdaterFile item = iterator.next();
 			
-			logger.info(" - Downloading file : " + item.getRemoteLocation());
+			WarpLogger.info(" - Downloading file : " + item.getRemoteLocation());
 
 			URL url = new URL(item.getRemoteLocation());
 			File file = new File(item.getLocalLocation());
@@ -123,7 +140,7 @@ public class Updater {
 			inputStream.close();
 			outputStream.close();
 
-			logger.info("  + Download complete");
+			WarpLogger.info("  + Download complete");
 			iterator.remove();
 		}
 	}
