@@ -43,29 +43,11 @@ public class Updater {
 
 		for (String path : paths) {
 			File file = new File(path);
-			WarpLogger.info("File: " + path + " needs update?");
-			if (file != null){
-			    WarpLogger.info("Is null.");
-			}
-			if (!file.exists()){
-                WarpLogger.info("Doesn't exist.");
-            }
-			if (!file.isDirectory()){
-                WarpLogger.info("Is directory.");
-            }
-			if (file != null && !file.exists() && !file.isDirectory()) {
-			    WarpLogger.info("Yes.");
-			} else {
-			    WarpLogger.info("No.");
-			}
 
 			if (file != null && !file.exists() && !file.isDirectory()) {
 				UpdaterFile updaterFile = new UpdaterFile(UPDATE_SITE + path);
 				updaterFile.setLocalLocation(path);
 				needsUpdating.add(updaterFile);
-			}
-			for (UpdaterFile update : needsUpdating){
-			    WarpLogger.info("Updates needed for: " + update.toString());
 			}
 		}
 	}
