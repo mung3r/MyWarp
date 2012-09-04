@@ -77,7 +77,7 @@ public class MWPlayerListener implements Listener {
         }
 
         Player player = event.getPlayer();
-        if (PlayerWarmup.isActive(player.getName())) {
+        if (PlayerWarmup.isActive(player.getName()) && !warpPermissions.disobeyWarmupMoveAbort(player)) {
             PlayerWarmup.endTimer(player.getName());
             player.sendMessage(ChatColor.RED
                     + " You mustn't move while warming up. Your " + ChatColor.RESET

@@ -95,6 +95,12 @@ permissions:
   mywarp.warmup.disobey:
     description: Can disobey any warmup
     default: op
+  mywarp.warmup.disobey.dmgabort:
+    description: Can take damage while warming up
+    default: op
+  mywarp.warmup.disobey.moveabort:
+    description: Can move damage while warming up
+    default: op
   mywarp.limit.unlimited:
     description: Can disobey all limits for warp creation
     children:

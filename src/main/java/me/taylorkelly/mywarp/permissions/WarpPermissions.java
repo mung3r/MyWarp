@@ -141,6 +141,14 @@ public class WarpPermissions {
     public boolean disobeyWarmup(Player player) {
         return permissionsHandler.hasPermission(player, "mywarp.warmup.disobey");
     }
+    
+    public boolean disobeyWarmupMoveAbort(Player player) {
+        return permissionsHandler.hasPermission(player, "mywarp.warmup.disobey.moveabort");
+    }
+    
+    public boolean disobeyWarmupDmgAbort(Player player) {
+        return permissionsHandler.hasPermission(player, "mywarp.warmup.disobey.dmgabort");
+    }
 
     public Warmup getWarmup(Player player) {
         for (int i = 0; i < WarpSettings.warpWarmups.size(); i++) {
