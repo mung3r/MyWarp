@@ -11,6 +11,7 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.scheduler.ScheduledTask;
 import me.taylorkelly.mywarp.scheduler.Scheduler;
+import me.taylorkelly.mywarp.sql.WarpDataSource;
 
 // TODO: Auto-generated Javadoc
 /*  Copyright (c) 2012, Nick Porillo milkywayz@mail.com
@@ -51,6 +52,8 @@ public class PlayerWarmup implements Runnable, Timer {
     @Override
     public void run() {
         if (warp.warp(player, server)) {
+            warp.visits++;
+            WarpDataSource.updateVisits(warp);
             player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
         }
         if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {

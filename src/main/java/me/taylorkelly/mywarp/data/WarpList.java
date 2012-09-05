@@ -180,8 +180,11 @@ public class WarpList {
                     } else {
                         if (MyWarp.getWarpPermissions().disobeyWarmup(player)) {
                             if (warp.warp(player, server)) {
+                                warp.visits++;
+                                WarpDataSource.updateVisits(warp);
                                 player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
                             }
+                            
                             if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
                                 Scheduler.schedulePlayerCooldown(Scheduler
                                         .playerCooldown(plugin, player, cooldown));

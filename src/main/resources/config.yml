@@ -1,5 +1,6 @@
-adminPrivateWarps: true
-loadChunks: false
+settings:
+  adminPrivateWarps: true
+  loadChunks: false
 warpSafety:
   enabled: true
   searchRadius: 5

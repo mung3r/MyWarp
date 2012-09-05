@@ -194,7 +194,6 @@ public class WarpDataSource {
         PreparedStatement ps = null;
         try {
             Connection conn = ConnectionManager.getConnection();
-            WarpLogger.info("visits: " + warp.visits);
 
             ps = conn
                     .prepareStatement("INSERT INTO "+ WarpSettings.mySQLtable +" (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
@@ -390,6 +389,33 @@ public class WarpDataSource {
                 }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Location Exception (on close)", ex);
+            }
+        }
+    }
+    
+    public static void updateVisits(Warp warp) {
+        PreparedStatement ps = null;
+        ResultSet set = null;
+        try {
+            Connection conn = ConnectionManager.getConnection();
+
+            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET visits = ? WHERE id = ?");
+            ps.setInt(1, warp.visits);
+            ps.setInt(2, warp.index);
+            ps.executeUpdate();
+            conn.commit();
+        } catch (SQLException ex) {
+            WarpLogger.severe("Warp Visits Exception", ex);
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                if (set != null) {
+                    set.close();
+                }
+            } catch (SQLException ex) {
+                WarpLogger.severe("Warp Visits Exception (on close)", ex);
             }
         }
     }

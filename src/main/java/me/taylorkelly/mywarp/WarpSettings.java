@@ -64,6 +64,7 @@ public class WarpSettings {
         warpCooldowns = new ArrayList<Cooldown>();
         warpWarmups = new ArrayList<Warmup>();
         
+        ConfigurationSection confsettings = config.getConfigurationSection("settings");
         ConfigurationSection confsafety = config.getConfigurationSection("warpSafety");
         ConfigurationSection conflimits = config.getConfigurationSection("limits");
         ConfigurationSection conftimers = config.getConfigurationSection("timers");
@@ -75,8 +76,8 @@ public class WarpSettings {
         if (oldConfigFile.exists()) {
             PropertiesFile file = new PropertiesFile(oldConfigFile);
             //port settings
-            config.set("adminPrivateWarps", file.getBoolean("adminPrivateWarps", true, "Whether or not admins can see private warps in their list"));
-            config.set("loadChunks", file.getBoolean("loadChunks", false, "Force sending of the chunk which people teleport to - default: false"));
+            confsettings.set("adminPrivateWarps", file.getBoolean("adminPrivateWarps", true, "Whether or not admins can see private warps in their list"));
+            confsettings.set("loadChunks", file.getBoolean("loadChunks", false, "Force sending of the chunk which people teleport to - default: false"));
 
             //port limits
             conflimits.set("default.maxTotal", file.getInt("maxPublic", 5, "Maximum number of public warps any player can make")
@@ -110,8 +111,8 @@ public class WarpSettings {
         }
         
         // settings
-        adminPrivateWarps = config.getBoolean("adminPrivateWarps");
-        loadChunks = config.getBoolean("loadChunks");
+        adminPrivateWarps = confsettings.getBoolean("adminPrivateWarps");
+        loadChunks = confsettings.getBoolean("loadChunks");
 
         // saftey
         useWarpSafety = confsafety.getBoolean("enabled");
