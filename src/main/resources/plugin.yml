@@ -1,9 +1,11 @@
 name: MyWarp
-version: 2.3
-author: spathizilla
+version: 2.4
+author: thee
 authors:
   - tkelly
   - flames
+  - spathizilla
+  - mung3r
 softdepend:
   - Vault
 main: me.taylorkelly.mywarp.MyWarp
