@@ -4,8 +4,8 @@
   <groupId>me.taylorkelly.mywarp</groupId>
   <artifactId>MyWarp</artifactId>
   <name>MyWarp</name>
-  <version>2.3-b${BUILD_NUMBER}</version>
-  <url>http://www.bukkit.org</url>
+  <version>2.4-b${BUILD_NUMBER}</version>
+  <url>http://dev.bukkit.org/server-mods/mywarp-legacy/</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
