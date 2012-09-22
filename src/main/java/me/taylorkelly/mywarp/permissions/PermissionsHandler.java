@@ -27,9 +27,8 @@ public class PermissionsHandler implements IPermissionsHandler {
         registerTimerPermissions();
     }
 
-    @Override
     public boolean hasPermission(final Player player, final String node) {
-        return handler.hasPermission(player, node);
+        return player.hasPermission(node);
     }
 
     @Override

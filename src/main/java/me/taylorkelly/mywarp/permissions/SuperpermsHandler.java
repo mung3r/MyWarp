@@ -4,14 +4,9 @@ import org.bukkit.entity.Player;
 
 public class SuperpermsHandler implements IPermissionsHandler {
 	
-	@Override
-	public boolean hasPermission(final Player player, final String node) {
-		return player.hasPermission(node);
-	}
-
     @Override
     public boolean playerHasGroup(Player player, String group) {
-        return false;
+        return player.hasPermission("mywarp.group." + group);
     }
 }
 

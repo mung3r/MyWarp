@@ -12,12 +12,6 @@ public class GroupManagerHandler implements IPermissionsHandler {
 		manager = ((GroupManager)permissionsPlugin);
 	}
 
-	@Override
-	public boolean hasPermission(final Player player, final String node) {
-		AnjoPermissionsHandler handler = manager.getWorldsHolder().getWorldPermissions(player);
-		return handler.has(player, node);
-	}
-
     @Override
     public boolean playerHasGroup(Player player, String group) {
         AnjoPermissionsHandler handler = manager.getWorldsHolder().getWorldPermissions(player);
