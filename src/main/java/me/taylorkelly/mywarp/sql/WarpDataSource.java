@@ -29,8 +29,8 @@ public class WarpDataSource {
         + "`publicAll` boolean NOT NULL DEFAULT '1',"
         + "`permissions` text,"
         + "`groupPermissions` text,"
-        + "`welcomeMessage` varchar(100) NOT NULL DEFAULT ''"
-        + "`visits` int DEFAULT '0',"
+        + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
+        + "`visits` int DEFAULT '0'"
         + ");";
 
     public static void initialize() {
