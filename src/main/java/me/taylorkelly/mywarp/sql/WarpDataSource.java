@@ -22,7 +22,7 @@ public class WarpDataSource {
         + "`creator` varchar(32) NOT NULL DEFAULT 'Player',"
         + "`world` varchar(32) NOT NULL DEFAULT '0',"
         + "`x` DOUBLE NOT NULL DEFAULT '0',"
-        + "`y` tinyint NOT NULL DEFAULT '0',"
+        + "`y` smallint NOT NULL DEFAULT '0',"
         + "`z` DOUBLE NOT NULL DEFAULT '0',"
         + "`yaw` smallint NOT NULL DEFAULT '0',"
         + "`pitch` smallint NOT NULL DEFAULT '0',"
@@ -48,7 +48,7 @@ public class WarpDataSource {
             Connection conn = ConnectionManager.getConnection();
 
             statement = conn.createStatement();
-            set = statement.executeQuery("SELECT * FROM "+ WarpSettings.mySQLtable);
+            set = statement.executeQuery("SELECT * FROM " + WarpSettings.mySQLtable);
             int size = 0;
             while (set.next()) {
                 size++;
@@ -66,7 +66,8 @@ public class WarpDataSource {
                 String groupPermissions = set.getString("groupPermissions");
                 String welcomeMessage = set.getString("welcomeMessage");
                 int visits = set.getInt("visits");
-                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits);
+                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch,
+                        publicAll, permissions, groupPermissions, welcomeMessage, visits);
                 ret.put(name, warp);
             }
             WarpLogger.info("" + size + " warps loaded");
@@ -79,7 +80,7 @@ public class WarpDataSource {
                 if (set != null)
                     set.close();
             } catch (SQLException ex) {
-            	WarpLogger.severe("Warp Load Exception (on close)");
+                WarpLogger.severe("Warp Load Exception (on close)");
             }
         }
         return ret;
@@ -109,85 +110,93 @@ public class WarpDataSource {
     }
 
     private static void createTable() {
-    	Statement st = null;
-    	try {
-    		WarpLogger.info("Creating Database...");
-    		Connection conn = ConnectionManager.getConnection();
-    		st = conn.createStatement();
-    		st.executeUpdate(WARP_TABLE);
-    		conn.commit();
-    		
-    		if(WarpSettings.usemySQL){ 
-    			// We need to set auto increment on SQL.
-    			String sql = "ALTER TABLE `"+ WarpSettings.mySQLtable +"` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT ";
-    			WarpLogger.info("Modifying database for MySQL support");
-    			st = conn.createStatement();
-    			st.executeUpdate(sql);
-    			conn.commit();
-    			
-    			// Check for old warps.db and import to mysql
-    			File sqlitefile = new File(WarpSettings.dataDir.getAbsolutePath() + sqlitedb);
-    			if (!sqlitefile.exists()) {
-    				WarpLogger.info("Could not find old " + sqlitedb);
-    				return;
-    			} else {
-	    			WarpLogger.info("Trying to import warps from warps.db");
-	        		Class.forName("org.sqlite.JDBC");
-	        		Connection sqliteconn = DriverManager.getConnection("jdbc:sqlite:" + WarpSettings.dataDir.getAbsolutePath() + sqlitedb);
-	        		sqliteconn.setAutoCommit(false);
-	        		Statement slstatement = sqliteconn.createStatement();
-	        		ResultSet slset = slstatement.executeQuery("SELECT * FROM "+ WarpSettings.mySQLtable);
-	        		
-	        		int size = 0;
-	        		while (slset.next()) {
-	        			size++;
-	        			int index = slset.getInt("id");
-	        			String name = slset.getString("name");
-	        			String creator = slset.getString("creator");
-	        			String world = slset.getString("world");
-	        			double x = slset.getDouble("x");
-	        			int y = slset.getInt("y");
-	        			double z = slset.getDouble("z");
-	        			int yaw = slset.getInt("yaw");
-	        			int pitch = slset.getInt("pitch");
-	        			boolean publicAll = slset.getBoolean("publicAll");
-	        			String permissions = slset.getString("permissions");
-	        			String groupPermissions = slset.getString("groupPermissions");
-	        			String welcomeMessage = slset.getString("welcomeMessage");
-	        			int visits = slset.getInt("visits");
-	        			Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits);
-	        			addWarp(warp);
-	        		}
-	        		WarpLogger.info("Imported " + size + " warps from " + sqlitedb);
-	        		WarpLogger.info("Renaming " + sqlitedb + " to " + sqlitedb + ".old");
-	        		if (!sqlitefile.renameTo(new File(WarpSettings.dataDir.getAbsolutePath(), sqlitedb + ".old"))) {
-	    				WarpLogger.warning("Failed to rename " + sqlitedb + "! Please rename this manually!");
-	    			}
-	        		if (slstatement != null) {
-        				slstatement.close();
-        			}
-        			if (slset != null) {
-        				slset.close();
-        			}
-    				
-    				if (sqliteconn != null) {
-        				sqliteconn.close();
-    				}
-    			}
-    		}
-    	} catch (SQLException e) {
-    		WarpLogger.severe("Create Table Exception", e);
-    	} catch (ClassNotFoundException e) {
+        Statement st = null;
+        try {
+            WarpLogger.info("Creating Database...");
+            Connection conn = ConnectionManager.getConnection();
+            st = conn.createStatement();
+            st.executeUpdate(WARP_TABLE);
+            conn.commit();
+
+            if (WarpSettings.usemySQL) {
+                // We need to set auto increment on SQL.
+                String sql = "ALTER TABLE `" + WarpSettings.mySQLtable
+                        + "` CHANGE `id` `id` INT NOT NULL AUTO_INCREMENT ";
+                WarpLogger.info("Modifying database for MySQL support");
+                st = conn.createStatement();
+                st.executeUpdate(sql);
+                conn.commit();
+
+                // Check for old warps.db and import to mysql
+                File sqlitefile = new File(WarpSettings.dataDir.getAbsolutePath()
+                        + sqlitedb);
+                if (!sqlitefile.exists()) {
+                    WarpLogger.info("Could not find old " + sqlitedb);
+                    return;
+                } else {
+                    WarpLogger.info("Trying to import warps from warps.db");
+                    Class.forName("org.sqlite.JDBC");
+                    Connection sqliteconn = DriverManager.getConnection("jdbc:sqlite:"
+                            + WarpSettings.dataDir.getAbsolutePath() + sqlitedb);
+                    sqliteconn.setAutoCommit(false);
+                    Statement slstatement = sqliteconn.createStatement();
+                    ResultSet slset = slstatement.executeQuery("SELECT * FROM "
+                            + WarpSettings.mySQLtable);
+
+                    int size = 0;
+                    while (slset.next()) {
+                        size++;
+                        int index = slset.getInt("id");
+                        String name = slset.getString("name");
+                        String creator = slset.getString("creator");
+                        String world = slset.getString("world");
+                        double x = slset.getDouble("x");
+                        int y = slset.getInt("y");
+                        double z = slset.getDouble("z");
+                        int yaw = slset.getInt("yaw");
+                        int pitch = slset.getInt("pitch");
+                        boolean publicAll = slset.getBoolean("publicAll");
+                        String permissions = slset.getString("permissions");
+                        String groupPermissions = slset.getString("groupPermissions");
+                        String welcomeMessage = slset.getString("welcomeMessage");
+                        int visits = slset.getInt("visits");
+                        Warp warp = new Warp(index, name, creator, world, x, y, z, yaw,
+                                pitch, publicAll, permissions, groupPermissions,
+                                welcomeMessage, visits);
+                        addWarp(warp);
+                    }
+                    WarpLogger.info("Imported " + size + " warps from " + sqlitedb);
+                    WarpLogger.info("Renaming " + sqlitedb + " to " + sqlitedb + ".old");
+                    if (!sqlitefile.renameTo(new File(WarpSettings.dataDir
+                            .getAbsolutePath(), sqlitedb + ".old"))) {
+                        WarpLogger.warning("Failed to rename " + sqlitedb
+                                + "! Please rename this manually!");
+                    }
+                    if (slstatement != null) {
+                        slstatement.close();
+                    }
+                    if (slset != null) {
+                        slset.close();
+                    }
+
+                    if (sqliteconn != null) {
+                        sqliteconn.close();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            WarpLogger.severe("Create Table Exception", e);
+        } catch (ClassNotFoundException e) {
             WarpLogger.severe("You need the SQLite library.", e);
-    	} finally {
-    		try {
-    			if (st != null) {
-    				st.close();
-    			}
-    		} catch (SQLException e) {
-    			WarpLogger.severe("Could not create the table (on close)");
-    		}
-    	}
+        } finally {
+            try {
+                if (st != null) {
+                    st.close();
+                }
+            } catch (SQLException e) {
+                WarpLogger.severe("Could not create the table (on close)");
+            }
+        }
     }
 
     public static void addWarp(Warp warp) {
@@ -196,7 +205,9 @@ public class WarpDataSource {
             Connection conn = ConnectionManager.getConnection();
 
             ps = conn
-                    .prepareStatement("INSERT INTO "+ WarpSettings.mySQLtable +" (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    .prepareStatement("INSERT INTO "
+                            + WarpSettings.mySQLtable
+                            + " (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             ps.setInt(1, warp.index);
             ps.setString(2, warp.name);
             ps.setString(3, warp.creator);
@@ -232,7 +243,8 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("DELETE FROM "+ WarpSettings.mySQLtable +" WHERE id = ?");
+            ps = conn.prepareStatement("DELETE FROM " + WarpSettings.mySQLtable
+                    + " WHERE id = ?");
             ps.setInt(1, warp.index);
             ps.executeUpdate();
             conn.commit();
@@ -258,7 +270,8 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET publicAll = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE " + WarpSettings.mySQLtable
+                    + " SET publicAll = ? WHERE id = ?");
             ps.setBoolean(1, publicAll);
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -285,7 +298,8 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET permissions = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE " + WarpSettings.mySQLtable
+                    + " SET permissions = ? WHERE id = ?");
             ps.setString(1, warp.permissionsString());
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -305,14 +319,15 @@ public class WarpDataSource {
             }
         }
     }
-    
+
     public static void updateGroupPermissions(Warp warp) {
         PreparedStatement ps = null;
         ResultSet set = null;
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET groupPermissions = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE " + WarpSettings.mySQLtable
+                    + " SET groupPermissions = ? WHERE id = ?");
             ps.setString(1, warp.groupPermissionsString());
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -339,7 +354,8 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET creator = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE " + WarpSettings.mySQLtable
+                    + " SET creator = ? WHERE id = ?");
             ps.setString(1, warp.creator);
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -360,14 +376,17 @@ public class WarpDataSource {
             }
         }
     }
-    
+
     public static void updateLocation(Warp warp) {
         PreparedStatement ps = null;
         ResultSet set = null;
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE id = ?");
+            ps = conn
+                    .prepareStatement("UPDATE "
+                            + WarpSettings.mySQLtable
+                            + " SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE id = ?");
             ps.setString(1, warp.world);
             ps.setDouble(2, warp.x);
             ps.setInt(3, warp.y);
@@ -392,14 +411,15 @@ public class WarpDataSource {
             }
         }
     }
-    
+
     public static void updateVisits(Warp warp) {
         PreparedStatement ps = null;
         ResultSet set = null;
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET visits = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE " + WarpSettings.mySQLtable
+                    + " SET visits = ? WHERE id = ?");
             ps.setInt(1, warp.visits);
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -426,7 +446,8 @@ public class WarpDataSource {
         try {
             Connection conn = ConnectionManager.getConnection();
 
-            ps = conn.prepareStatement("UPDATE "+ WarpSettings.mySQLtable +" SET welcomeMessage = ? WHERE id = ?");
+            ps = conn.prepareStatement("UPDATE " + WarpSettings.mySQLtable
+                    + " SET welcomeMessage = ? WHERE id = ?");
             ps.setString(1, warp.welcomeMessage);
             ps.setInt(2, warp.index);
             ps.executeUpdate();
@@ -447,86 +468,86 @@ public class WarpDataSource {
             }
         }
     }
-    
+
     public static void dbTblCheck() {
         // Add future modifications to the table structure here
-        updateDB(
-                "SELECT `groupPermissions` FROM " + WarpSettings.mySQLtable,
-                "ALTER TABLE "
-                        + WarpSettings.mySQLtable
-                        + " ADD `groupPermissions` text AFTER permissions NOT NULL DEFAULT ''",
+        updateFieldType("y", "smallint");
+
+        updateDB("SELECT `groupPermissions` FROM " + WarpSettings.mySQLtable,
                 "ALTER TABLE " + WarpSettings.mySQLtable
-                        + " ADD `groupPermissions` text AFTER permissions NOT NULL");
+                        + " ADD `groupPermissions` text AFTER permissions");
 
         updateDB("SELECT `visits` FROM " + WarpSettings.mySQLtable, "ALTER TABLE "
                 + WarpSettings.mySQLtable + " ADD `visits` int DEFAULT '0'");
     }
 
     public static void updateDB(String test, String sql) {
-    	// Use same sql for both mysql/sqlite
-    	updateDB(test, sql, sql);
+        // Use same sql for both mysql/sqlite
+        updateDB(test, sql, sql);
     }
 
     public static void updateDB(String test, String sqlite, String mysql) {
-    	// Allowing for differences in the SQL statements for mysql/sqlite.
-    	try {
-    		Connection conn = ConnectionManager.getConnection();
-    		Statement statement = conn.createStatement();
-    		statement.executeQuery(test);
-    		statement.close();
-    	} catch(SQLException ex) {
-    		WarpLogger.info("Updating database");
-    		// Failed the test so we need to execute the updates
-    		try {
-    			String[] query;
-    			if (WarpSettings.usemySQL) {
-    				query = mysql.split(";");
-    			} else { 
-    				query = sqlite.split(";");
-    			}
+        // Allowing for differences in the SQL statements for mysql/sqlite.
+        try {
+            Connection conn = ConnectionManager.getConnection();
+            Statement statement = conn.createStatement();
+            statement.executeQuery(test);
+            statement.close();
+        } catch (SQLException ex) {
+            WarpLogger.info("Updating database...");
+            // Failed the test so we need to execute the updates
+            try {
+                String[] query;
+                if (WarpSettings.usemySQL) {
+                    query = mysql.split(";");
+                } else {
+                    query = sqlite.split(";");
+                }
 
-    			Connection conn = ConnectionManager.getConnection();
-    			Statement sqlst = conn.createStatement();
-    			for (String qry : query) {
-    				sqlst.executeUpdate(qry);
-    			}
-    			conn.commit();
-    			sqlst.close();
-    		} catch (SQLException exc) {
-    			WarpLogger.severe("Failed to update the database to the new version - ", exc);
-    			ex.printStackTrace();
-    		}	
-    	}
+                Connection conn = ConnectionManager.getConnection();
+                Statement sqlst = conn.createStatement();
+                for (String qry : query) {
+                    sqlst.executeUpdate(qry);
+                }
+                conn.commit();
+                sqlst.close();
+            } catch (SQLException exc) {
+                WarpLogger.severe("Failed to update the database to the new version - ",
+                        exc);
+                ex.printStackTrace();
+            }
+        }
     }
-
+    // y, smallint
     public static void updateFieldType(String field, String type) {
-    	try {
-    		if (!WarpSettings.usemySQL) return;
-    		WarpLogger.info("Updating database");
-    		
-    		Connection conn = ConnectionManager.getConnection();
-    		DatabaseMetaData meta = conn.getMetaData();
+        try {
+            if (!WarpSettings.usemySQL)
+                return;
 
-    		ResultSet colRS = null;
-    		colRS = meta.getColumns(null, null, WarpSettings.mySQLtable, null);
-    		while (colRS.next()) {
-    			String colName = colRS.getString("COLUMN_NAME");
-    			String colType = colRS.getString("TYPE_NAME");
-    			
-    			if (colName.equals(field) && !colType.equals(type))
-    			{
-    				Statement stm = conn.createStatement();
-    				stm.executeUpdate("ALTER TABLE "+ WarpSettings.mySQLtable +" MODIFY " + field + " " + type + "; ");
-    				conn.commit();
-    				stm.close();
-    				break;
-    			}
-    		}
-    		colRS.close();
-    	} catch(SQLException ex) {
-    		WarpLogger.severe("Failed to update the database to the new version - ", ex);
-    		ex.printStackTrace();
-    	}
+            Connection conn = ConnectionManager.getConnection();
+            DatabaseMetaData meta = conn.getMetaData();
+
+            ResultSet colRS = null;
+            colRS = meta.getColumns(null, null, WarpSettings.mySQLtable, null);
+            while (colRS.next()) {
+                String colName = colRS.getString("COLUMN_NAME");
+                String colType = colRS.getString("TYPE_NAME");
+
+                if (colName.equals(field) && !colType.toLowerCase().equals(type)) {
+                    WarpLogger.info("Updating database...");
+                    Statement stm = conn.createStatement();
+                    stm.executeUpdate("ALTER TABLE " + WarpSettings.mySQLtable
+                            + " MODIFY " + field + " " + type + "; ");
+                    conn.commit();
+                    stm.close();
+                    break;
+                }
+            }
+            colRS.close();
+        } catch (SQLException ex) {
+            WarpLogger.severe("Failed to update the database to the new version - ", ex);
+            ex.printStackTrace();
+        }
     }
 
 }
