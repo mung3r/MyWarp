@@ -201,6 +201,8 @@ public class WarpList {
                     }
 
                 } else if (warp.warp(player, server)) {
+                    warp.visits++;
+                    WarpDataSource.updateVisits(warp);
                     player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
                 }
             } else {
