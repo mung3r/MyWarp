@@ -53,7 +53,6 @@ public class WarpSettings {
     private static File configFile;
     private static MyWarp plugin;
 
-    
     public static void initialize(MyWarp plugin) {
         WarpSettings.plugin = plugin;
         dataDir = plugin.getDataFolder();

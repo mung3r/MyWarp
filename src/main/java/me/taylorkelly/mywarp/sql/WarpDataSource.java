@@ -15,10 +15,10 @@ import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class WarpDataSource {
-	public final static String sqlitedb = "/warps.db";
+    public final static String sqlitedb = "/warps.db";
     private final static String WARP_TABLE = "CREATE TABLE `"+ WarpSettings.mySQLtable +"` ("
-	    + "`id` INTEGER PRIMARY KEY,"
-	    + "`name` varchar(32) NOT NULL DEFAULT 'warp',"
+                + "`id` INTEGER PRIMARY KEY,"
+        + "`name` varchar(32) NOT NULL DEFAULT 'warp',"
         + "`creator` varchar(32) NOT NULL DEFAULT 'Player',"
         + "`world` varchar(32) NOT NULL DEFAULT '0',"
         + "`x` DOUBLE NOT NULL DEFAULT '0',"
@@ -28,7 +28,7 @@ public class WarpDataSource {
         + "`pitch` smallint NOT NULL DEFAULT '0',"
         + "`publicAll` boolean NOT NULL DEFAULT '1',"
         + "`permissions` text,"
-        + "`groupPermissions` text,"
+        + "`groupPermissions` text NOT NULL,"
         + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
         + "`visits` int DEFAULT '0'"
         + ");";
@@ -157,9 +157,20 @@ public class WarpDataSource {
                         int pitch = slset.getInt("pitch");
                         boolean publicAll = slset.getBoolean("publicAll");
                         String permissions = slset.getString("permissions");
-                        String groupPermissions = slset.getString("groupPermissions");
+                        String groupPermissions = "";
+                        try {
+                            groupPermissions = slset.getString("groupPermissions");
+                        } catch (SQLException ex) {
+                            //groupPermissions might not exist since it was added later, ignoring it.
+                        }
+                        
                         String welcomeMessage = slset.getString("welcomeMessage");
-                        int visits = slset.getInt("visits");
+                        int visits = 0;
+                        try {
+                            visits = slset.getInt("visits");
+                        } catch (SQLException ex) {
+                            //visits might not exist since it was added later, ignoring it.
+                        }
                         Warp warp = new Warp(index, name, creator, world, x, y, z, yaw,
                                 pitch, publicAll, permissions, groupPermissions,
                                 welcomeMessage, visits);
@@ -473,12 +484,16 @@ public class WarpDataSource {
         // Add future modifications to the table structure here
         updateFieldType("y", "smallint");
 
-        updateDB("SELECT `groupPermissions` FROM " + WarpSettings.mySQLtable,
+        updateDB(
+                "SELECT `groupPermissions` FROM " + WarpSettings.mySQLtable,
                 "ALTER TABLE " + WarpSettings.mySQLtable
-                        + " ADD `groupPermissions` text AFTER permissions");
+                        + " ADD COLUMN `groupPermissions` text NOT NULL DEFAULT ''",
+                "ALTER TABLE "
+                        + WarpSettings.mySQLtable
+                        + " ADD COLUMN `groupPermissions` text NOT NULL AFTER `permissions`");
 
         updateDB("SELECT `visits` FROM " + WarpSettings.mySQLtable, "ALTER TABLE "
-                + WarpSettings.mySQLtable + " ADD `visits` int DEFAULT '0'");
+                + WarpSettings.mySQLtable + " ADD COLUMN `visits` int DEFAULT '0'");
     }
 
     public static void updateDB(String test, String sql) {
@@ -518,7 +533,7 @@ public class WarpDataSource {
             }
         }
     }
-    // y, smallint
+
     public static void updateFieldType(String field, String type) {
         try {
             if (!WarpSettings.usemySQL)
