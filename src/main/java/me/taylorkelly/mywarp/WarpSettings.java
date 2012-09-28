@@ -23,6 +23,7 @@ public class WarpSettings {
     
     public static boolean adminPrivateWarps;
     public static boolean loadChunks;
+    public static boolean warpEffect;
     
     public static boolean useWarpSafety;
     public static int searchRadius;
@@ -112,6 +113,7 @@ public class WarpSettings {
         // settings
         adminPrivateWarps = confsettings.getBoolean("adminPrivateWarps");
         loadChunks = confsettings.getBoolean("loadChunks");
+        warpEffect = confsettings.getBoolean("warpEffect");
 
         // saftey
         useWarpSafety = confsafety.getBoolean("enabled");

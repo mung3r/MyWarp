@@ -3,6 +3,7 @@ package me.taylorkelly.mywarp.safety;
 import me.taylorkelly.mywarp.WarpSettings;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ public class SafeTeleport {
                 return false;
             }
             if (safe != l) {
+                warpEffect(player.getLocation());
                 player.teleport(safe);
                 player.sendMessage(ChatColor.RED
                         + "Warp "
@@ -31,8 +33,17 @@ public class SafeTeleport {
                 return false;
             }
         }
+        warpEffect(player.getLocation());
         player.teleport(l);
         return true;
+    }
+    
+    private static void warpEffect(Location loc) {
+        if (WarpSettings.warpEffect) {
+            loc.getWorld().playEffect(loc, Effect.SMOKE, 4);
+            loc.getWorld().playEffect(loc, Effect.SMOKE, 4);
+            loc.getWorld().playEffect(loc, Effect.SMOKE, 4);
+        }
     }
 
     private static boolean isHalfBlock(Material type) {
