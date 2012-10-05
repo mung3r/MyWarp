@@ -1,6 +1,7 @@
 package me.taylorkelly.mywarp.permissions;
 
 import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.data.WarpLimit;
 import me.taylorkelly.mywarp.timer.Cooldown;
 import me.taylorkelly.mywarp.timer.Warmup;
 
@@ -95,33 +96,33 @@ public class WarpPermissions {
     }
 
     public int maxTotalWarps(Player player) {
-        for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
+        for (WarpLimit warpLimit : WarpSettings.warpLimits) {
             if (permissionsHandler.hasPermission(player, "mywarp.limit."
-                    + WarpSettings.warpLimits.get(i).getName())) {
-                return WarpSettings.warpLimits.get(i).getMaxTotal();
+                    + warpLimit.name)) {
+                return warpLimit.maxTotal;
             }
         }
-        return WarpSettings.defaultLimit.getMaxTotal();
+        return WarpSettings.defaultLimit.maxTotal;
     }
 
     public int maxPrivateWarps(Player player) {
-        for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
+        for (WarpLimit warpLimit : WarpSettings.warpLimits) {
             if (permissionsHandler.hasPermission(player, "mywarp.limit."
-                    + WarpSettings.warpLimits.get(i).getName())) {
-                return WarpSettings.warpLimits.get(i).getMaxPrivate();
+                    + warpLimit.name)) {
+                return warpLimit.maxPrivate;
             }
         }
-        return WarpSettings.defaultLimit.getMaxPrivate();
+        return WarpSettings.defaultLimit.maxPrivate;
     }
 
     public int maxPublicWarps(Player player) {
-        for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
+        for (WarpLimit warpLimit : WarpSettings.warpLimits) {
             if (permissionsHandler.hasPermission(player, "mywarp.limit."
-                    + WarpSettings.warpLimits.get(i).getName())) {
-                return WarpSettings.warpLimits.get(i).getMaxPublic();
+                    + warpLimit.name)) {
+                return warpLimit.maxPublic;
             }
         }
-        return WarpSettings.defaultLimit.getMaxPublic();
+        return WarpSettings.defaultLimit.maxPublic;
     }
     
     public boolean disobeyCooldown(Player player){

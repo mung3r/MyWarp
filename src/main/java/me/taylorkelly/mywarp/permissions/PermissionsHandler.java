@@ -1,6 +1,9 @@
 package me.taylorkelly.mywarp.permissions;
 
 import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.data.WarpLimit;
+import me.taylorkelly.mywarp.timer.Cooldown;
+import me.taylorkelly.mywarp.timer.Warmup;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 import net.milkbowl.vault.permission.Permission;
 
@@ -19,12 +22,13 @@ public class PermissionsHandler implements IPermissionsHandler {
     private static PermHandler permplugin = PermHandler.NONE;
     private transient IPermissionsHandler handler = new NullHandler();
     private final transient Plugin plugin;
+    private static PluginManager pm;
 
     public PermissionsHandler(final Plugin plugin) {
         this.plugin = plugin;
+        PermissionsHandler.pm = plugin.getServer().getPluginManager();
         checkPermissions();
-        registerLimitPermissions();
-        registerTimerPermissions();
+        registerPermissions();
     }
 
     public boolean hasPermission(final Player player, final String node) {
@@ -36,39 +40,30 @@ public class PermissionsHandler implements IPermissionsHandler {
         return handler.playerHasGroup(player, group);
     }
 
-    public void registerLimitPermissions() {
-        for (int i = 0; i < WarpSettings.warpLimits.size(); i++) {
-            plugin.getServer()
-                    .getPluginManager()
-                    .addPermission(
-                            new org.bukkit.permissions.Permission("mywarp.limit."
-                                    + WarpSettings.warpLimits.get(i).getName(),
-                                    "Gives acess to the number of warps defined for "
-                                            + WarpSettings.warpLimits.get(i).getName()
-                                            + " in the config", PermissionDefault.FALSE));
+    // Only register permissions here that can't be registered in plugin.yml!!!
+    public void registerPermissions() {
+        // warp.limit permissions
+        for (WarpLimit warpLimit : WarpSettings.warpLimits) {
+            pm.addPermission(new org.bukkit.permissions.Permission("mywarp.limit."
+                    + warpLimit.name,
+                    "Gives acess to the number of warps defined for "
+                            + warpLimit.name + " in the config",
+                    PermissionDefault.FALSE));
         }
-    }
 
-    public void registerTimerPermissions() {
-        for (int i = 0; i < WarpSettings.warpCooldowns.size(); i++) {
-            plugin.getServer()
-                    .getPluginManager()
-                    .addPermission(
-                            new org.bukkit.permissions.Permission("mywarp.cooldown."
-                                    + WarpSettings.warpCooldowns.get(i).name,
-                                    "User is affected by the cooldowns defined for "
-                                            + WarpSettings.warpCooldowns.get(i).name
-                                            + " in the config", PermissionDefault.FALSE));
+        // warp.cooldown permissions
+        for (Cooldown warpCooldown : WarpSettings.warpCooldowns) {
+            pm.addPermission(new org.bukkit.permissions.Permission("mywarp.cooldown."
+                    + warpCooldown.name,
+                    "User is affected by the cooldowns defined for " + warpCooldown.name
+                            + " in the config", PermissionDefault.FALSE));
         }
-        for (int i = 0; i < WarpSettings.warpWarmups.size(); i++) {
-            plugin.getServer()
-                    .getPluginManager()
-                    .addPermission(
-                            new org.bukkit.permissions.Permission("mywarp.warmup."
-                                    + WarpSettings.warpWarmups.get(i).name,
-                                    "User is affected by the warmups defined for "
-                                            + WarpSettings.warpWarmups.get(i).name
-                                            + " in the config", PermissionDefault.FALSE));
+
+        // warp.warmup permissions
+        for (Warmup warpWarmup : WarpSettings.warpWarmups) {
+            pm.addPermission(new org.bukkit.permissions.Permission("mywarp.warmup."
+                    + warpWarmup.name, "User is affected by the warmups defined for "
+                    + warpWarmup.name + " in the config", PermissionDefault.FALSE));
         }
     }
 
