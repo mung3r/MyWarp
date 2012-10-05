@@ -12,6 +12,7 @@ import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.scheduler.ScheduledTask;
 import me.taylorkelly.mywarp.scheduler.Scheduler;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
+import me.taylorkelly.mywarp.utils.WarpLogger;
 
 // TODO: Auto-generated Javadoc
 /*  Copyright (c) 2012, Nick Porillo milkywayz@mail.com
@@ -60,8 +61,16 @@ public class PlayerWarmup implements Runnable, Timer {
             Scheduler.schedulePlayerCooldown(Scheduler.playerCooldown(plugin, player,
                     cooldown));
         }
-        fix();
-        // Runs whenever a timer is over
+
+        //Removes corresponding ScheduledTask from pwtask
+        Iterator<ScheduledTask> itr = pwtask.iterator();
+        while (itr.hasNext()) {
+            ScheduledTask s = itr.next();
+            if (s.getPlayerName() == player.getName()) {
+                itr.remove();
+                return;
+            }
+        }
     }
 
     /**
@@ -71,7 +80,8 @@ public class PlayerWarmup implements Runnable, Timer {
         Iterator<ScheduledTask> itr = pwtask.iterator();
         while (itr.hasNext()) {
             ScheduledTask s = itr.next();
-            if (s.getEndTime() <= System.currentTimeMillis()) {
+            long curTime = System.currentTimeMillis();
+            if (s.getEndTime() <= curTime) {
                 itr.remove();
             }
         }
