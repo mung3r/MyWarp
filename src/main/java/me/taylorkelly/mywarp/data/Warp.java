@@ -127,8 +127,8 @@ public class Warp {
             return true;
         }
         
-        for (int i = 0; i < groupPermissions.size(); i++){
-            if (MyWarp.getWarpPermissions().playerHasGroup(player, groupPermissions.get(i))){
+        for (String group : groupPermissions){
+            if (MyWarp.getWarpPermissions().playerHasGroup(player, group)){
                 return true;
             }
         }

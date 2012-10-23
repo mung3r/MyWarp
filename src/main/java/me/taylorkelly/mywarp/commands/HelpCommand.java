@@ -66,7 +66,6 @@ public class HelpCommand extends BasicCommand implements Command
         }
 
         executor.sendMessage("§cFor more info on a particular command, type §f/<command> ?");
-
         return true;
     }
 }

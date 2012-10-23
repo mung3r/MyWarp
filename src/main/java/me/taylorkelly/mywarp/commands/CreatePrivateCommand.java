@@ -3,15 +3,14 @@ package me.taylorkelly.mywarp.commands;
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CreatePrivateCommand extends BasicCommand implements Command
-{
+public class CreatePrivateCommand extends BasicCommand implements Command {
     private MyWarp plugin;
 
-    public CreatePrivateCommand(MyWarp plugin)
-    {
+    public CreatePrivateCommand(MyWarp plugin) {
         super("pcreate");
         this.plugin = plugin;
         setDescription("Create a new private warp called §9<name>");
@@ -22,15 +21,42 @@ public class CreatePrivateCommand extends BasicCommand implements Command
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args)
-    {
+    public boolean execute(CommandSender executor, String identifier, String[] args) {
         if (executor instanceof Player) {
-            plugin.getWarpList().addWarpPrivate(StringUtils.join(args, ' '), (Player) executor);
-        }
-        else {
-            executor.sendMessage("Console cannot create private warps for themselves!");
-        }
+            Player player = (Player) executor;
+            String name = StringUtils.join(args, ' ');
 
-        return true;
+            if (!plugin.getWarpList().playerCanBuildWarp(player)) {
+                player.sendMessage(ChatColor.RED
+                        + "You have reached your max # of warps " + ChatColor.YELLOW
+                        + "(" + MyWarp.getWarpPermissions().maxTotalWarps(player) + ")");
+                player.sendMessage("Delete some of your warps to make more");
+                return true;
+            }
+
+            if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
+                player.sendMessage(ChatColor.RED
+                        + "You have reached your max # of private warps "
+                        + ChatColor.YELLOW + "("
+                        + MyWarp.getWarpPermissions().maxPrivateWarps(player) + ")");
+                player.sendMessage("Delete some of your warps to make more");
+                return true;
+            }
+
+            if (plugin.getWarpList().warpExists(name)) {
+                player.sendMessage(ChatColor.RED + "Warp called '" + name
+                        + "' already exists.");
+                return true;
+            }
+
+            plugin.getWarpList().addWarpPrivate(name, player);
+            player.sendMessage(ChatColor.AQUA + "Successfully created '" + name + "'");
+            player.sendMessage("If you'd like to invite others to it,");
+            player.sendMessage("Use: " + ChatColor.RED + "/warp invite <player> " + name);
+            return true;
+        } else {
+            executor.sendMessage("Console cannot create private warps for themselves!");
+            return true;
+        }
     }
 }

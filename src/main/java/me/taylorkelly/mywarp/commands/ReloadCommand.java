@@ -26,7 +26,6 @@ public class ReloadCommand extends BasicCommand implements Command
         plugin.reloadConfig();
         WarpSettings.initialize(plugin);
         executor.sendMessage("Reloading MyWarp config");
-
         return true;
     }
 

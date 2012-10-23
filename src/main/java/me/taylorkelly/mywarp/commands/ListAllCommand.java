@@ -5,12 +5,10 @@ import me.taylorkelly.mywarp.MyWarp;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ListAllCommand extends BasicCommand implements Command
-{
+public class ListAllCommand extends BasicCommand implements Command {
     private MyWarp plugin;
 
-    public ListAllCommand(MyWarp plugin)
-    {
+    public ListAllCommand(MyWarp plugin) {
         super("ListAll");
         this.plugin = plugin;
         setDescription("List the warps you can visit");
@@ -21,15 +19,14 @@ public class ListAllCommand extends BasicCommand implements Command
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args)
-    {
+    public boolean execute(CommandSender executor, String identifier, String[] args) {
+        Player player = null;
+
         if (executor instanceof Player) {
-            plugin.getWarpList().list((Player) executor);
-        }
-        else {
-            executor.sendMessage("Console cannot list warps for themselves!");
+            player = (Player) executor;
         }
 
+        plugin.getWarpList().list(executor, player);
         return true;
     }
 }

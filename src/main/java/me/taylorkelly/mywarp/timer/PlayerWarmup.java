@@ -3,16 +3,11 @@ package me.taylorkelly.mywarp.timer;
 import java.util.Iterator;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.scheduler.ScheduledTask;
 import me.taylorkelly.mywarp.scheduler.Scheduler;
-import me.taylorkelly.mywarp.sql.WarpDataSource;
-import me.taylorkelly.mywarp.utils.WarpLogger;
 
 // TODO: Auto-generated Javadoc
 /*  Copyright (c) 2012, Nick Porillo milkywayz@mail.com
@@ -33,16 +28,13 @@ public class PlayerWarmup implements Runnable, Timer {
     private MyWarp plugin;
     private Player player;
     private Cooldown cooldown;
-    private Warp warp;
-    private Server server;
+    private String warp;
 
-    public PlayerWarmup(MyWarp plugin, Player player, Cooldown cooldown, Warp warp,
-            Server server) {
+    public PlayerWarmup(MyWarp plugin, Player player, Cooldown cooldown, String warp) {
         this.plugin = plugin;
         this.player = player;
         this.cooldown = cooldown;
         this.warp = warp;
-        this.server = server;
     }
 
     /*
@@ -52,11 +44,7 @@ public class PlayerWarmup implements Runnable, Timer {
      */
     @Override
     public void run() {
-        if (warp.warp(player, server)) {
-            warp.visits++;
-            WarpDataSource.updateVisits(warp);
-            player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
-        }
+        plugin.getWarpList().warpTo(warp, player);
         if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
             Scheduler.schedulePlayerCooldown(Scheduler.playerCooldown(plugin, player,
                     cooldown));

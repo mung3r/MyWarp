@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.scheduler.ScheduledTask;
-import me.taylorkelly.mywarp.utils.WarpLogger;
 
 // TODO: Auto-generated Javadoc
 /*  Copyright (c) 2012, Nick Porillo milkywayz@mail.com
