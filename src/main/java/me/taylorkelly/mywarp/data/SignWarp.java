@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.data;
 
+import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
@@ -10,7 +11,15 @@ public class SignWarp {
      * Precondition: Only call if isSignWarp() returned true
      */
     public static void warpSign(Sign sign, WarpList list, Player player) {
-        list.warpTo(sign.getLine(2), player);
+        String name = sign.getLine(2);
+        Warp warp = list.getWarp(name);
+
+        if (!warp.playerCanWarp(player)) {
+            player.sendMessage(ChatColor.RED
+                    + "You do not have permission to warp to '" + name + "'");
+        } else {
+            list.warpTo(name, player);
+        }
     }
     
     public static void createSignWarp(SignChangeEvent sign) {
