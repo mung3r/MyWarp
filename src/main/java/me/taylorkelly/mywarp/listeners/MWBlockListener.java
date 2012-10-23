@@ -11,27 +11,25 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-public class MWBlockListener implements Listener
-{
-  private WarpPermissions warpPermissions;
+public class MWBlockListener implements Listener {
+    private WarpPermissions warpPermissions;
 
-  public MWBlockListener(MyWarp plugin)
-  {
-      warpPermissions = MyWarp.getWarpPermissions();
-  }
+    public MWBlockListener(MyWarp plugin) {
+        warpPermissions = MyWarp.getWarpPermissions();
+    }
 
-  @EventHandler(priority = EventPriority.MONITOR)
-  public void onSignChange(SignChangeEvent event)
-  {
-    Player player = event.getPlayer();
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onSignChange(SignChangeEvent event) {
+        Player player = event.getPlayer();
 
-    if (SignWarp.isSignWarp(event))
-      if (warpPermissions.createSignWarp(player)) {
-        player.sendMessage(ChatColor.AQUA + "Successfully created a SignWarp");
-      }
-      else {
-        player.sendMessage(ChatColor.RED + "You do not have permission to create a SignWarp");
-        event.setCancelled(true);
-      }
-  }
+        if (SignWarp.isSignWarp(event))
+            if (warpPermissions.createSignWarp(player)) {
+                SignWarp.createSignWarp(event);
+                player.sendMessage(ChatColor.AQUA + "Successfully created a SignWarp");
+            } else {
+                player.sendMessage(ChatColor.RED
+                        + "You do not have permission to create a SignWarp.");
+                event.setCancelled(true);
+            }
+    }
 }

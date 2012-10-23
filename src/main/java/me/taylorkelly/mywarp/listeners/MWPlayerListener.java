@@ -43,7 +43,7 @@ public class MWPlayerListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         if (this.warpList.waitingForWelcome(player)) {
@@ -77,7 +77,8 @@ public class MWPlayerListener implements Listener {
         }
 
         Player player = event.getPlayer();
-        if (PlayerWarmup.isActive(player.getName()) && !warpPermissions.disobeyWarmupMoveAbort(player)) {
+        if (PlayerWarmup.isActive(player.getName())
+                && !warpPermissions.disobeyWarmupMoveAbort(player)) {
             PlayerWarmup.endTimer(player.getName());
             player.sendMessage(ChatColor.RED
                     + " You mustn't move while warming up. Your " + ChatColor.RESET

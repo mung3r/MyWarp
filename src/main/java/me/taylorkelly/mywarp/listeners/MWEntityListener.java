@@ -12,13 +12,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class MWEntityListener implements Listener {
-    
+
     private WarpPermissions warpPermissions;
-    
+
     public MWEntityListener() {
         warpPermissions = MyWarp.getWarpPermissions();
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.isCancelled() || !(event.getEntity() instanceof Player)
@@ -28,7 +28,8 @@ public class MWEntityListener implements Listener {
 
         Player victim = (Player) event.getEntity();
 
-        if (PlayerWarmup.isActive(victim.getName()) && !warpPermissions.disobeyWarmupDmgAbort(victim)) {
+        if (PlayerWarmup.isActive(victim.getName())
+                && !warpPermissions.disobeyWarmupDmgAbort(victim)) {
             PlayerWarmup.endTimer(victim.getName());
             victim.sendMessage(ChatColor.RED
                     + " You mustn't take damage while warming up. Your "
