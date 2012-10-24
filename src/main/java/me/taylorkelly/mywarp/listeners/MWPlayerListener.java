@@ -6,9 +6,9 @@ import me.taylorkelly.mywarp.data.SignWarp;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -21,6 +21,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.material.Button;
+import org.bukkit.material.Lever;
 
 public class MWPlayerListener implements Listener {
     private WarpList warpList;
@@ -35,11 +37,62 @@ public class MWPlayerListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             Block block = event.getClickedBlock();
-            if (((block.getState() instanceof Sign))
-                    && (SignWarp.isSignWarp((Sign) block.getState()))
-                    && (warpPermissions.signWarp(event.getPlayer())))
-                SignWarp.warpSign((Sign) block.getState(), this.warpList,
-                        event.getPlayer());
+            Player player = event.getPlayer();
+
+            if (block.getState() instanceof Sign
+                    && SignWarp.isSignWarp((Sign) block.getState())) {
+
+                if (!warpPermissions.signWarp(player)) {
+                    player.sendMessage(ChatColor.RED
+                            + "You do not have permission to use SignWarps.");
+                } else {
+                    SignWarp.warpSign((Sign) block.getState(), this.warpList, player);
+                }
+
+            } else if (block.getType() == Material.STONE_BUTTON) {
+                Button button = (Button) block.getState().getData();
+                Block behind = block.getRelative(button.getAttachedFace(), 2);
+
+                if (behind.getState() instanceof Sign) {
+                    org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind
+                            .getState().getData();
+                    Sign signBut = (Sign) behind.getState();
+
+                    if (signMat.getFacing() == button.getAttachedFace()
+                            && SignWarp.isSignWarp(signBut)) {
+
+                        if (!warpPermissions.signWarp(player)) {
+                            player.sendMessage(ChatColor.RED
+                                    + "You do not have permission to use SignWarps.");
+                        } else {
+                            SignWarp.warpSign(signBut, this.warpList,
+                                    player);
+                        }
+                    }
+                }
+            }  else if (block.getType() == Material.LEVER) {
+                Lever lever = (Lever) block.getState().getData();
+                Block behind = block.getRelative(lever.getAttachedFace(), 2);
+
+                if (behind.getState() instanceof Sign) {
+                    org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind
+                            .getState().getData();
+                    Sign signBut = (Sign) behind.getState();
+
+                    if (signMat.getFacing() == lever.getAttachedFace()
+                            && SignWarp.isSignWarp(signBut)) {
+
+                        if (!warpPermissions.signWarp(player)) {
+                            player.sendMessage(ChatColor.RED
+                                    + "You do not have permission to use SignWarps.");
+                        } else {
+                            SignWarp.warpSign(signBut, this.warpList,
+                                    player);
+                        }
+                    }
+                }
+            }
+
         }
     }
 
