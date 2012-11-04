@@ -2,6 +2,8 @@ package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
 
+import me.taylorkelly.mywarp.LanguageManager;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,7 +32,6 @@ public class Searcher {
         MatchList matches = warpList.getMatches(name, player);
         this.exactMatches = matches.exactMatches;
         this.matches = matches.matches;
-
     }
 
     public void sendWarpMatches(ArrayList<Warp> warps) {
@@ -44,29 +45,26 @@ public class Searcher {
                 color = ChatColor.RED.toString();
             }
             String creator = player != null ? (warp.creator.equalsIgnoreCase(player
-                    .getName()) ? "you" : warp.creator) : warp.creator;
+                    .getName()) ? LanguageManager.getString("list.you") : warp.creator) : warp.creator;
             int x = (int) Math.round(warp.x);
             int y = warp.y;
             int z = (int) Math.round(warp.z);
             executor.sendMessage(color + "'" + warp.name + "'" + ChatColor.WHITE
-                    + " by " + creator + " @(" + x + ", " + y + ", " + z + ")");
+                    + LanguageManager.getColorlessString("list.by") + creator + " @(" + x + ", " + y + ", " + z + ")");
         }
     }
 
     public void search() {
 
         if (exactMatches.size() == 0 && matches.size() == 0) {
-            executor.sendMessage(ChatColor.RED + "No warp matches for search: "
-                    + ChatColor.GRAY + query);
+            executor.sendMessage(LanguageManager.getString("search.noMatches").replaceAll("%query%", query));
         } else {
             if (exactMatches.size() > 0) {
-                executor.sendMessage(ChatColor.YELLOW + "Exact matches for search: "
-                        + ChatColor.GRAY + query);
+                executor.sendMessage(LanguageManager.getString("search.exactMatches").replaceAll("%query%", query));
                 sendWarpMatches(exactMatches);
             }
             if (matches.size() > 0) {
-                executor.sendMessage(ChatColor.YELLOW + "Partial matches for search: "
-                        + ChatColor.GRAY + query);
+                executor.sendMessage(LanguageManager.getString("search.partitalMatches").replaceAll("%query%", query));
                 sendWarpMatches(matches);
             }
         }

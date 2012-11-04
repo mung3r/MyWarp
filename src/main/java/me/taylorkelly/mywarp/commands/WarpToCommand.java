@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
@@ -10,7 +11,6 @@ import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import me.taylorkelly.mywarp.timer.Warmup;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -36,15 +36,14 @@ public class WarpToCommand extends BasicCommand implements Command {
                     player);
 
             if (!plugin.getWarpList().warpExists(name)) {
-                player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+                player.sendMessage(LanguageManager.getString("error.noSuchWarp").replaceAll("%warp%", name));
                 return true;
             }
 
             Warp warp = plugin.getWarpList().getWarp(name);
 
             if (!warp.playerCanWarp(player)) {
-                player.sendMessage(ChatColor.RED
-                        + "You do not have permission to warp to '" + name + "'");
+                player.sendMessage(LanguageManager.getString("error.noPermission.warpto").replaceAll("%warp%", name));
                 return true;
             }
 
@@ -53,16 +52,12 @@ public class WarpToCommand extends BasicCommand implements Command {
                 Warmup warmup = MyWarp.getWarpPermissions().getWarmup(player);
 
                 if (PlayerCooldown.isActive(player.getName())) {
-                    player.sendMessage(ChatColor.RED + "You need to wait "
-                            + PlayerCooldown.getRemainingTime(player.getName())
-                            + " seconds before you can warp again.");
+                    player.sendMessage(LanguageManager.getString("timer.cooldown.cooling").replaceAll("%seconds%", Integer.toString(PlayerCooldown.getRemainingTime(player.getName()))));
                     return true;
                 }
 
                 if (PlayerWarmup.isActive(player.getName())) {
-                    player.sendMessage(ChatColor.RED + "You need to wait "
-                            + PlayerWarmup.getRemainingTime(player.getName())
-                            + " seconds untill you are teleported.");
+                    player.sendMessage(LanguageManager.getString("timer.warmup.warming").replaceAll("%seconds%", Integer.toString(PlayerWarmup.getRemainingTime(player.getName()))));
                     return true;
                 }
 
@@ -80,8 +75,7 @@ public class WarpToCommand extends BasicCommand implements Command {
                         warmup, cooldown, name));
 
                 if (WarpSettings.warmUpNotify) {
-                    player.sendMessage(ChatColor.AQUA + "You will be teleported to '"
-                            + warp.name + "' in " + warmup.getInt() + " seconds.");
+                    player.sendMessage(LanguageManager.getString("timer.warmup.warming").replaceAll("%warp%", name).replaceAll("%seconds%", Integer.toString(warmup.getInt())));
                 }
                 return true;
 
@@ -90,7 +84,7 @@ public class WarpToCommand extends BasicCommand implements Command {
                 return true;
             }
         } else {
-            executor.sendMessage("Console cannot warp to locations!");
+            executor.sendMessage(LanguageManager.getString("error.consoleSender.warpto"));
             return true;
         }
     }

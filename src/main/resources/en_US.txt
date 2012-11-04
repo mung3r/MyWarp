@@ -1,0 +1,80 @@
+﻿error.consoleSender.create:$cConsole cannot create warps for themself!
+error.consoleSender.point:$cConsole cannot point its compass to warps!
+error.consoleSender.update:$cConsole cannot update warps for themself!
+error.consoleSender.warpto:$cConsole cannot warp to locations!
+error.consoleSender.weclome:$cConsole cannot change welcome messages for themselves!
+error.create.warpExists:$cWarp called '%warp%' already exists.
+error.give.isOwner:$c%player% is already the owner.
+error.invite.creator:$c%player% is the creator, of course he is invited.
+error.invite.invited.group:$cGroup '%group%' is already invited to this warp.
+error.invite.invited.player:$c%player% is already invited to this warp.
+error.noPermission.delete:$cYou do not have permission to delete '%warp%'.
+error.noPermission.give:$cYou do not have permission to give %warp% to %player%.
+error.noPermission.invite.groups:$cYou do not have permission to invite groups to '%warp%'.
+error.noPermission.invite.players:$cYou do not have permission to invite players to '%warp%'.
+error.noPermission.point:$cYou do not have permission to point to '%warp%'.
+error.noPermission.private:$cYou do not have permission to privatize '%warp%'.
+error.noPermission.public:$cYou do not have permission to publicize '%warp%'.
+error.noPermission.uninvite.groups:$cYou do not have permission to uninvite groups to '%warp%'.
+error.noPermission.uninvite.players:$cYou do not have permission to uninvite players to '%warp%'.
+error.noPermission.update:$cYou do not have permission to update %warp%'s position.
+error.noPermission.warpto:$cYou do not have permission to warp to '%warp%'.
+error.noPermission.welcome:$cYou do not have permission to change %warp%'s welcome message.
+error.noPermission:$cInsufficient permission.
+error.noSuchWarp:$cNo such warp '%warp%'.
+error.playerOffline.give:$c%player% needs needs to be online to receive warps.
+error.playerOffline.warpto:$cYou cannot warp a player who is offline.
+error.uninvite.creator:$cYou cannot uninvite yourself. You're the creator!
+error.uninvite.notInvited.group:$cGroup '%group%' is not invited to this warp.
+error.uninvite.notInvited.player:$c%player% is not invited to this warp.
+error.warpto.noSuchWorld:$cWorld '%world%' does not exist.
+limit.private.reached.player:$c%player% has reached his max # of private warps $e(%maxPrivate%)%n$fTell him to delete some of his warps to receive this one.
+limit.private.reached:$cYou have reached your max # of private warps $e(%maxPrivate%)%n$fDelete some of your warps to make more.
+limit.public.reached.player:$c%player% has reached his max # of public warps $e(%maxPublic%)%n$fTell him to delete some of his warps to receive this one.
+limit.public.reached:$cYou have reached your max # of public warps $e(%maxPublic%)%n$fDelete some of your warps to make more.
+limit.total.reached.player:$c%player% has reached his max # of warps $e(%maxTotal%)%n$fTell him to delete some of his warps to receive this one.
+limit.total.reached:$cYou have reached your max # of warps $e(%maxTotal%)%n$fDelete some of your warps to make more.
+list.by:by
+list.console:$cThe console does not own any warps.
+list.noWarps:$cThere are no warps to list.
+list.page.negative:$cPage number can't be below 1.
+list.page.toHigh:$cThere are only %pages% pages of warps.
+list.page:Page
+list.you:you
+reload.config:Config has been reloaded successfully!
+safety.found:$cWarp '%warp% is not safe. You were teleported to the closest safe location.
+safety.notFound:$cWarp '%warp%' is not safe. Also no safe loaction could be found close to it.
+search.exactMatches:$eExact matches for search: $7%query%.
+search.noMatches:$cNo matches for search: $7%query%.
+search.partitalMatches:$ePartial matches for search: $7%query%.
+sign.created:$bSuccessfully created a SignWarp.
+sign.noPermission.create:$cYou do not have permission to create SignWarps.
+sign.noPermission.createToWarp:$cYou do not have permission to create a SignWarp to '%warp%'.
+sign.noPermission.use:$cYou do not have permission to use SignWarps.
+timer.cooldown.cooling:$cYou still need to wait %seconds% seconds before you can warp again.
+timer.cooldown.ended:$bYou have cooled down, feel free to use $f/warp $bagain.
+timer.warmup.started:$bYou will be teleported to '%warp%' in %seconds% seconds.
+timer.warmup.warming:$cYou still need to wait %seconds% seconds before you are teleported.
+warp.create.private:$bSuccessfully created '%warp%'%n$fIf you'd like to invite others to it,%n$fUse: $c/warp invite <player> %warp%
+warp.create.public:$bSuccessfully created '%warp%'%n$fIf you'd like to privatize it,%n$fUse: $c/warp private %warp%
+warp.default.welcomeMessage:Welcome to '%warp%', %player%.
+warp.delete:$bYou have deleted '%warp%'.
+warp.give.given:$bYou have given '%warp%' to %player%.
+warp.give.received:$bYou have been given '%warp%' by %player%.
+warp.invite.group.private:$bYou have invited group %group% to '%warp%'.
+warp.invite.group.public:$bYou have invited group %group% to '%warp%'.%n$cBut '%warp%' is still public.
+warp.invite.invited:$bYou've been invited to warp '%warp%'%n$fUse: $c/warp %warp% $fto warp to it.
+warp.invite.player.private:$bYou have invited %player% to '%warp%'.
+warp.invite.player.public:$bYou have invited %player% to '%warp%'.%n$cBut '%warp%' is still public.
+warp.point:$bYour compass now guides you to '%warp%'.
+warp.private:$bYou have privatized '%warp%'%n$fIf you'd like to invite others to it,%n$fUse: $c/warp invite <player> %warp%
+warp.public:$bYou have publicized '&warp%.
+warp.uninvite.group.private:$bYou have uninvited group %group% from '%warp%'.%n$cBut '%warp%' is still public.
+warp.uninvite.group.public:$bYou have uninvited group %group% from '%warp%'.
+warp.uninvite.player.private:$bYou have uninvited %player% from '%warp%'.%n$cBut '%warp%' is still public.
+warp.uninvite.player.public:$bYou have uninvited %player% from '%warp%'.
+warp.uninvite.uninvited:$bYou have been uninvited from '%warp%'. Sorry.
+warp.update:$bYou have updated %warp%'s position.
+warp.warpto.player:§bSuccessfully warped %player%.
+warp.welcome.enter:$bEnter the welcome message for '%warp%.
+warp.welcome.received:$bChanged welcome message for '%warp% to:

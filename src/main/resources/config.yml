@@ -1,7 +1,9 @@
-settings:
+﻿settings:
   adminPrivateWarps: true
   loadChunks: false
   warpEffect: true
+locale:
+  locale: en_US
 warpSafety:
   enabled: true
   searchRadius: 5

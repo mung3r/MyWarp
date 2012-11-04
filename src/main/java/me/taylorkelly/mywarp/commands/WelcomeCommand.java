@@ -1,10 +1,10 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,25 +29,23 @@ public class WelcomeCommand extends BasicCommand implements Command {
                     player);
 
             if (!plugin.getWarpList().warpExists(name)) {
-                player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+                player.sendMessage(LanguageManager.getString("error.noSuchWarp").replaceAll("%warp%", name));
                 return true;
             }
 
             Warp warp = plugin.getWarpList().getWarp(name);
 
             if (!warp.playerCanModify(player)) {
-                player.sendMessage(ChatColor.RED
-                        + "You do not have permission to modify '" + name + "'");
+                player.sendMessage(LanguageManager.getString("error.noPermission.update").replaceAll("%warp%", name));
                 return true;
             }
 
             plugin.getWarpList().welcomeMessage(name, player);
-            player.sendMessage(ChatColor.AQUA + "Enter the welcome message for '" + name
-                    + "'");
+            player.sendMessage(LanguageManager.getString("warp.welcome.enter").replaceAll("%warp%", name));
             return true;
 
         } else {
-            executor.sendMessage("Console cannot change warp welcome messages!");
+            executor.sendMessage(LanguageManager.getString("error.consoleSender.welcome"));
             return true;
         }
     }

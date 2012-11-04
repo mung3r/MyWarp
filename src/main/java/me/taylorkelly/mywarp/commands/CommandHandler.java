@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.utils.WarpLogger;
@@ -47,32 +48,35 @@ public class CommandHandler {
         return new ArrayList<Command>(commands.values());
     }
 
-    public boolean dispatch(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
-      
-    	String[] arguments;
+    public boolean dispatch(CommandSender sender, org.bukkit.command.Command command,
+            String label, String[] args) {
+
+        String[] arguments;
         if (args.length < 1) {
             arguments = new String[] { "help" };
         } else {
-        	arguments = args;
+            arguments = args;
         }
-        
+
         for (int argsIncluded = arguments.length; argsIncluded >= 0; argsIncluded--) {
-        	StringBuilder identifierBuilder = new StringBuilder();
+            StringBuilder identifierBuilder = new StringBuilder();
             for (int i = 0; i < argsIncluded; i++) {
-            	identifierBuilder.append(' ').append(arguments[i]);
+                identifierBuilder.append(' ').append(arguments[i]);
             }
-            
+
             String identifier = identifierBuilder.toString().trim();
             if (identifier.isEmpty()) {
                 identifier = "warp";
             }
-            
+
             for (Command cmd : commands.values()) {
                 if (cmd.isIdentifier(sender, identifier)) {
-                    String[] realArgs = Arrays.copyOfRange(arguments, argsIncluded, arguments.length);
+                    String[] realArgs = Arrays.copyOfRange(arguments, argsIncluded,
+                            arguments.length);
 
                     if (!cmd.isInProgress(sender)) {
-                        if (realArgs.length < cmd.getMinArguments() || realArgs.length > cmd.getMaxArguments()) {
+                        if (realArgs.length < cmd.getMinArguments()
+                                || realArgs.length > cmd.getMaxArguments()) {
                             displayCommandHelp(cmd, sender);
                             return true;
                         } else if (realArgs.length > 0 && "?".equals(realArgs[0])) {
@@ -82,7 +86,8 @@ public class CommandHandler {
                     }
 
                     if (!hasPermission(sender, cmd.getPermission())) {
-                        sender.sendMessage("Insufficient permission.");
+                        sender.sendMessage(LanguageManager
+                                .getString("error.noPermission"));
                         return true;
                     }
 

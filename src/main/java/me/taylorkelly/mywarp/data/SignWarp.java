@@ -1,6 +1,7 @@
 package me.taylorkelly.mywarp.data;
 
-import org.bukkit.ChatColor;
+import me.taylorkelly.mywarp.LanguageManager;
+
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
@@ -15,8 +16,7 @@ public class SignWarp {
         Warp warp = list.getWarp(name);
 
         if (!warp.playerCanWarp(player)) {
-            player.sendMessage(ChatColor.RED
-                    + "You do not have permission to warp to '" + name + "'");
+            player.sendMessage(LanguageManager.getString("error.noPermission.warpto").replaceAll("%warp%", name));
         } else {
             list.warpTo(name, player);
         }

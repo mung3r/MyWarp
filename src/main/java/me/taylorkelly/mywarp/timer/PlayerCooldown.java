@@ -3,9 +3,9 @@ package me.taylorkelly.mywarp.timer;
 import java.util.Iterator;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.scheduler.ScheduledTask;
 
@@ -39,9 +39,7 @@ public class PlayerCooldown implements Runnable, Timer {
     @Override
     public void run() {
         if (WarpSettings.coolDownNotify) {
-            player.sendMessage(ChatColor.AQUA
-                    + "You have cooled down, feel free to use " + ChatColor.RESET
-                    + "/warp" + ChatColor.AQUA + " again.");
+            player.sendMessage(LanguageManager.getString("timer.cooldown.ended"));
         }
 
         //Removes corresponding ScheduledTask from pctask

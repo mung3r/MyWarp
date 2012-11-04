@@ -1,10 +1,10 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -33,20 +33,19 @@ public class DeleteCommand extends BasicCommand implements Command {
                 .getMatche(StringUtils.join(args, ' '), player);
 
         if (!plugin.getWarpList().warpExists(name)) {
-            executor.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+            executor.sendMessage(LanguageManager.getString("error.noSuchWarp").replaceAll("%warp%", name));
             return true;
         }
 
         Warp warp = plugin.getWarpList().getWarp(name);
 
         if (player != null ? !warp.playerCanModify(player) : false) {
-            executor.sendMessage(ChatColor.RED
-                    + "You do not have permission to delete '" + name + "'");
+            executor.sendMessage(LanguageManager.getString("error.noPermission.delete").replaceAll("%warp%", name));
             return true;
         }
 
         plugin.getWarpList().deleteWarp(name);
-        executor.sendMessage(ChatColor.AQUA + "You have deleted '" + name + "'");
+        executor.sendMessage(LanguageManager.getString("warp.delete").replaceAll("%warp%", name));
         return true;
     }
 }

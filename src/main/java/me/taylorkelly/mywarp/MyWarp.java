@@ -48,7 +48,7 @@ public class MyWarp extends JavaPlugin {
     private MWBlockListener blockListener;
     private MWEntityListener entityListener;
     private MWPlayerListener playerListener;
-    
+
     public String name;
     public String version;
     private Updater updater;
@@ -67,11 +67,16 @@ public class MyWarp extends JavaPlugin {
         name = this.getDescription().getName();
         version = this.getDescription().getVersion();
         pm = getServer().getPluginManager();
-        
+
         WarpSettings.initialize(this);
-        
+        LanguageManager.initialize(this);
+
         libCheck();
-        if(!sqlCheck()) { return; }
+        if (!sqlCheck()) {
+            return;
+        }
+        
+        
 
         File newDatabase = new File(getDataFolder(), "warps.db");
         File oldDatabase = new File("homes-warps.db");
@@ -97,7 +102,7 @@ public class MyWarp extends JavaPlugin {
         pm.registerEvents(playerListener, this);
 
         commandHandler = new CommandHandler(this);
-        
+
         // basic commands
         commandHandler.addCommand(new CreateCommand(this));
         commandHandler.addCommand(new CreatePrivateCommand(this));
@@ -127,8 +132,7 @@ public class MyWarp extends JavaPlugin {
         WarpLogger.info(name + " " + version + " enabled");
     }
 
-
-    private void libCheck(){
+    private void libCheck() {
         updater = new Updater();
         try {
             updater.check();
@@ -136,17 +140,17 @@ public class MyWarp extends JavaPlugin {
         } catch (Exception e) {
         }
     }
-    
+
     private boolean sqlCheck() {
         Connection conn = ConnectionManager.initialize();
         if (conn == null) {
             WarpLogger.severe("Could not establish SQL connection. Disabling MyWarp");
             getServer().getPluginManager().disablePlugin(this);
             return false;
-        } 
+        }
         return true;
     }
-    
+
     private void updateFiles(File oldDatabase, File newDatabase) {
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
@@ -157,13 +161,14 @@ public class MyWarp extends JavaPlugin {
         try {
             newDatabase.createNewFile();
         } catch (IOException ex) {
-        	WarpLogger.severe("Could not create new database file", ex);
+            WarpLogger.severe("Could not create new database file", ex);
         }
         copyFile(oldDatabase, newDatabase);
     }
 
     /**
      * File copier from xZise
+     * 
      * @param fromFile
      * @param toFile
      */
@@ -196,9 +201,10 @@ public class MyWarp extends JavaPlugin {
             }
         }
     }
-    
+
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel,
+            String[] args) {
         return commandHandler.dispatch(sender, command, commandLabel, args);
     }
 
@@ -210,15 +216,15 @@ public class MyWarp extends JavaPlugin {
         }
         return true;
     }
-    
+
     public static WarpPermissions getWarpPermissions() {
         return warpPermissions;
     }
-    
+
     public WarpList getWarpList() {
         return warpList;
     }
-    
+
     public CommandHandler getCommandHandler() {
         return commandHandler;
     }

@@ -1,10 +1,10 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -32,31 +32,25 @@ public class PrivateCommand extends BasicCommand implements Command {
                 .getMatche(StringUtils.join(args, ' '), player);
 
         if (!plugin.getWarpList().warpExists(name)) {
-            executor.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+            executor.sendMessage(LanguageManager.getString("error.noSuchWarp").replaceAll("%warp%", name));
             return true;
         }
 
         Warp warp = plugin.getWarpList().getWarp(name);
 
         if (player != null ? !warp.playerCanModify(player) : false) {
-            executor.sendMessage(ChatColor.RED
-                    + "You do not have permission to privatize '" + name + "'");
+            executor.sendMessage(LanguageManager.getString("error.noPermission.private"));
             return true;
         }
 
         if (player != null ? !plugin.getWarpList().playerCanBuildPrivateWarp(player)
                 : false) {
-            executor.sendMessage(ChatColor.RED
-                    + "You have reached your max # of private warps " + ChatColor.YELLOW
-                    + "(" + MyWarp.getWarpPermissions().maxPrivateWarps(player) + ")");
-            executor.sendMessage("Delete some of your warps to make more");
+            executor.sendMessage(LanguageManager.getString("limit.private.reached").replaceAll("%maxPrivate%", Integer.toString(MyWarp.getWarpPermissions().maxPrivateWarps(player))));
             return true;
         }
 
         plugin.getWarpList().privatize(name);
-        executor.sendMessage(ChatColor.AQUA + "You have privatized '" + name + "'");
-        executor.sendMessage("If you'd like to invite others to it,");
-        executor.sendMessage("Use: " + ChatColor.RED + "/warp invite <player> " + name);
+        executor.sendMessage(LanguageManager.getString("warp.private").replaceAll("%warp%", name));
         return true;
     }
 }

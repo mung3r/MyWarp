@@ -25,6 +25,8 @@ public class WarpSettings {
     public static boolean loadChunks;
     public static boolean warpEffect;
     
+    public static String locale;
+    
     public static boolean useWarpSafety;
     public static int searchRadius;
     public static int verticalTolerance;
@@ -65,6 +67,7 @@ public class WarpSettings {
         warpWarmups = new ArrayList<Warmup>();
         
         ConfigurationSection confsettings = config.getConfigurationSection("settings");
+        ConfigurationSection conflocale = config.getConfigurationSection("locale");
         ConfigurationSection confsafety = config.getConfigurationSection("warpSafety");
         ConfigurationSection conflimits = config.getConfigurationSection("limits");
         ConfigurationSection conftimers = config.getConfigurationSection("timers");
@@ -114,6 +117,9 @@ public class WarpSettings {
         adminPrivateWarps = confsettings.getBoolean("adminPrivateWarps");
         loadChunks = confsettings.getBoolean("loadChunks");
         warpEffect = confsettings.getBoolean("warpEffect");
+        
+        //language
+        locale = conflocale.getString("locale");
 
         // saftey
         useWarpSafety = confsafety.getBoolean("enabled");

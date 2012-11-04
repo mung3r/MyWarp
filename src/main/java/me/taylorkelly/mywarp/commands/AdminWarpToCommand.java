@@ -2,11 +2,11 @@ package me.taylorkelly.mywarp.commands;
 
 import java.util.Arrays;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,26 +37,24 @@ public class AdminWarpToCommand extends BasicCommand implements Command {
                 player);
 
         if (!plugin.getWarpList().warpExists(name)) {
-            executor.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+            executor.sendMessage(LanguageManager.getString("error.noSuchWarp").replaceAll("%warp%", name));
             return true;
         }
 
         Warp warp = plugin.getWarpList().getWarp(name);
 
         if (player != null ? !warp.playerCanWarp(player) : false) {
-            executor.sendMessage(ChatColor.RED
-                    + "You do not have permission to warp to '" + name + "'");
+            executor.sendMessage(LanguageManager.getString("error.noPermission.warpto").replaceAll("%warp%", name));
             return true;
         }
 
         if (invitee == null) {
-            executor.sendMessage(ChatColor.RED
-                    + "You can not warp a player who is not online.");
+            executor.sendMessage(LanguageManager.getString("error.playerOffline.warpto"));
             return true;
         }
 
         plugin.getWarpList().warpTo(name, invitee);
-        executor.sendMessage(ChatColor.AQUA + "Successfully warped " + invitee.getName());
+        executor.sendMessage(LanguageManager.getString("warp.warpto.player"));
         return true;
     }
 }

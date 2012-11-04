@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
 import org.bukkit.ChatColor;
@@ -143,7 +144,7 @@ public class WarpList {
     public void inviteGroup(String name, String inviteeName) {
         Warp warp = warpList.get(name);
         warp.inviteGroup(inviteeName);
-        WarpDataSource.updatePermissions(warp);
+        WarpDataSource.updateGroupPermissions(warp);
     }
 
     public void publicize(String name) {
@@ -155,7 +156,7 @@ public class WarpList {
     public void uninvitePlayer(String name, String inviteeName) {
         Warp warp = warpList.get(name);
         warp.uninvite(inviteeName);
-        WarpDataSource.updateGroupPermissions(warp);
+        WarpDataSource.updatePermissions(warp);
     }
 
     public void uninviteGroup(String name, String inviteeName) {
@@ -296,8 +297,7 @@ public class WarpList {
             Warp warp = welcomeMessage.get(player.getName());
             warp.welcomeMessage = message;
             WarpDataSource.updateWelcomeMessage(warp);
-            player.sendMessage(ChatColor.AQUA + "Changed welcome message for '"
-                    + warp.name + "' to:");
+            player.sendMessage(LanguageManager.getString("warp.welcome.received"));
             player.sendMessage(message);
         }
 

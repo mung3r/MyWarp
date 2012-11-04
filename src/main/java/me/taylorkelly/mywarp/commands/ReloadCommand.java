@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 
@@ -25,7 +26,7 @@ public class ReloadCommand extends BasicCommand implements Command
     {
         plugin.reloadConfig();
         WarpSettings.initialize(plugin);
-        executor.sendMessage("Reloading MyWarp config");
+        executor.sendMessage(LanguageManager.getString("reload.config"));
         return true;
     }
 

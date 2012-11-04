@@ -1,9 +1,9 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Lister;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,11 +35,10 @@ public class ListCommand extends BasicCommand implements Command {
             if (args[0].matches("-?\\d+(\\.\\d+)?")) {
                 int page = Integer.parseInt(args[0]);
                 if (page < 1) {
-                    executor.sendMessage(ChatColor.RED + "Page number can't be below 1.");
+                    executor.sendMessage(LanguageManager.getString("list.negativePage"));
                     return true;
                 } else if (page > lister.getMaxPages(player)) {
-                    executor.sendMessage(ChatColor.RED + "There are only "
-                            + lister.getMaxPages(player) + " pages of warps");
+                    executor.sendMessage(LanguageManager.getString("list.page.toHigh".replaceAll("%pages%", Integer.toString(lister.getMaxPages(player)))));
                     return true;
                 }
                 lister.setPage(page);
@@ -48,7 +47,7 @@ public class ListCommand extends BasicCommand implements Command {
                     if (executor instanceof Player) {
                         lister.setWarpCreator(player.getName());
                     } else {
-                        executor.sendMessage("Console does not own any warps.");
+                        executor.sendMessage(LanguageManager.getString("list.console"));
                         return true;
                     }
 
@@ -63,7 +62,7 @@ public class ListCommand extends BasicCommand implements Command {
                 if (executor instanceof Player) {
                     lister.setWarpCreator(player.getName());
                 } else {
-                    executor.sendMessage("Console does not own any warps.");
+                    executor.sendMessage(LanguageManager.getString("list.console"));
                     return true;
                 }
             } else {
@@ -72,12 +71,10 @@ public class ListCommand extends BasicCommand implements Command {
             lister.setWarpCreator(creator);
             int page = Integer.parseInt(args[1]);
             if (page < 1) {
-                executor.sendMessage(ChatColor.RED + "Page number can't be below 1.");
+                executor.sendMessage(LanguageManager.getString("list.negativePage"));
                 return true;
             } else if (page > lister.getMaxPagesPerCreator(player, creator)) {
-                executor.sendMessage(ChatColor.RED + "There are only "
-                        + lister.getMaxPagesPerCreator(player, creator)
-                        + " pages of warps");
+                executor.sendMessage(LanguageManager.getString("list.page.toHigh".replaceAll("%pages%", Integer.toString(lister.getMaxPagesPerCreator(player, creator)))));
                 return true;
             }
             lister.setPage(page);

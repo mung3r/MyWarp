@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.listeners;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.SignWarp;
@@ -43,8 +44,7 @@ public class MWPlayerListener implements Listener {
                     && SignWarp.isSignWarp((Sign) block.getState())) {
 
                 if (!warpPermissions.signWarp(player)) {
-                    player.sendMessage(ChatColor.RED
-                            + "You do not have permission to use SignWarps.");
+                    player.sendMessage(LanguageManager.getString("sign.noPermission.use"));
                 } else {
                     SignWarp.warpSign((Sign) block.getState(), this.warpList, player);
                 }
@@ -62,8 +62,7 @@ public class MWPlayerListener implements Listener {
                             && SignWarp.isSignWarp(signBut)) {
 
                         if (!warpPermissions.signWarp(player)) {
-                            player.sendMessage(ChatColor.RED
-                                    + "You do not have permission to use SignWarps.");
+                            player.sendMessage(LanguageManager.getString("sign.noPermission.use"));
                         } else {
                             SignWarp.warpSign(signBut, this.warpList,
                                     player);
@@ -83,8 +82,7 @@ public class MWPlayerListener implements Listener {
                             && SignWarp.isSignWarp(signBut)) {
 
                         if (!warpPermissions.signWarp(player)) {
-                            player.sendMessage(ChatColor.RED
-                                    + "You do not have permission to use SignWarps.");
+                            player.sendMessage(LanguageManager.getString("sign.noPermission.use"));
                         } else {
                             SignWarp.warpSign(signBut, this.warpList,
                                     player);

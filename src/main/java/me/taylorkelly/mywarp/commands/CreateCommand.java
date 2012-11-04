@@ -1,9 +1,9 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,35 +27,25 @@ public class CreateCommand extends BasicCommand implements Command {
             String name = StringUtils.join(args, ' ');
 
             if (!plugin.getWarpList().playerCanBuildWarp(player)) {
-                player.sendMessage(ChatColor.RED
-                        + "You have reached your max # of warps " + ChatColor.YELLOW
-                        + "(" + MyWarp.getWarpPermissions().maxTotalWarps(player) + ")");
-                player.sendMessage("Delete some of your warps to make more");
+                player.sendMessage(LanguageManager.getString("limit.total.reached").replaceAll("%maxTotal%", Integer.toString(MyWarp.getWarpPermissions().maxTotalWarps(player))));
                 return true;
             }
 
             if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
-                player.sendMessage(ChatColor.RED
-                        + "You have reached your max # of public warps "
-                        + ChatColor.YELLOW + "("
-                        + MyWarp.getWarpPermissions().maxPublicWarps(player) + ")");
-                player.sendMessage("Delete some of your warps to make more");
+                player.sendMessage(LanguageManager.getString("limit.public.reached").replaceAll("%maxPublic%", Integer.toString(MyWarp.getWarpPermissions().maxPublicWarps(player))));
                 return true;
             }
 
             if (plugin.getWarpList().warpExists(name)) {
-                player.sendMessage(ChatColor.RED + "Warp called '" + name
-                        + "' already exists.");
+                player.sendMessage(LanguageManager.getString("error.create.warpExists").replaceAll("%warp%", name));
                 return true;
             }
 
             plugin.getWarpList().addWarp(name, player);
-            player.sendMessage(ChatColor.AQUA + "Successfully created '" + name + "'");
-            player.sendMessage("If you'd like to privatize it,");
-            player.sendMessage("Use: " + ChatColor.RED + "/warp private " + name);
+            player.sendMessage(LanguageManager.getString("warp.create.public").replaceAll("%warp%", name));
             return true;
         } else {
-            executor.sendMessage("Console cannot create warps for themselve!");
+            executor.sendMessage(LanguageManager.getString("error.consoleSender.create"));
             return true;
         }
     }

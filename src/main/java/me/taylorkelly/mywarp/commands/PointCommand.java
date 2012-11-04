@@ -1,10 +1,10 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,24 +29,22 @@ public class PointCommand extends BasicCommand implements Command {
                     player);
 
             if (!plugin.getWarpList().warpExists(name)) {
-                player.sendMessage(ChatColor.RED + "No such warp '" + name + "'");
+                player.sendMessage(LanguageManager.getString("error.noSuchWarp").replaceAll("%warp%", name));
                 return true;
             }
 
             Warp warp = plugin.getWarpList().getWarp(name);
 
             if (!warp.playerCanWarp(player)) {
-                player.sendMessage(ChatColor.RED
-                        + "You do not have permission to point to: '" + name + "'");
+                player.sendMessage(LanguageManager.getString("error.noPermission.point").replaceAll("%warp%", name));
                 return true;
             }
 
             plugin.getWarpList().point(StringUtils.join(args, ' '), (Player) executor);
-            player.sendMessage(ChatColor.AQUA + "Your compass now guides you to '"
-                    + name + "'");
+            player.sendMessage(LanguageManager.getString("warp.point").replaceAll("%warp%", name));
             return true;
         } else {
-            executor.sendMessage("Console cannot point its compass to warps!");
+            executor.sendMessage(LanguageManager.getString("error.consoleSender.point"));
             return true;
         }
     }

@@ -2,9 +2,11 @@ package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.safety.SafeTeleport;
+import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -27,7 +29,8 @@ public class Warp {
     public ArrayList<String> groupPermissions;
     public static int nextIndex = 1;
 
-    public Warp(int index, String name, String creator, String world, double x, int y, double z, int yaw, int pitch, boolean publicAll, String permissions,
+    public Warp(int index, String name, String creator, String world, double x, int y,
+            double z, int yaw, int pitch, boolean publicAll, String permissions,
             String groupPermissions, String welcomeMessage, int visits) {
         this.index = index;
         this.name = name;
@@ -67,7 +70,7 @@ public class Warp {
         this.publicAll = true;
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = "Welcome to '%warp%', %player%.";
+        this.welcomeMessage = LanguageManager.getString("warp.default.welcomeMessage");
         this.visits = 0;
     }
 
@@ -85,7 +88,7 @@ public class Warp {
         this.publicAll = b;
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = "Welcome to '%warp%', %player%.";
+        this.welcomeMessage = LanguageManager.getString("warp.default.welcomeMessage");
         this.visits = 0;
     }
 
@@ -109,7 +112,7 @@ public class Warp {
         }
         return ret.toString();
     }
-    
+
     public String groupPermissionsString() {
         StringBuilder ret = new StringBuilder();
         for (String name : groupPermissions) {
@@ -126,13 +129,14 @@ public class Warp {
         if (permissions.contains(player.getName())) {
             return true;
         }
-        
-        for (String group : groupPermissions){
-            if (MyWarp.getWarpPermissions().playerHasGroup(player, group)){
+
+        for (String group : groupPermissions) {
+            if (MyWarp.getWarpPermissions().playerHasGroup(player, group)) {
                 return true;
             }
         }
-        if (MyWarp.getWarpPermissions().isAdmin(player) && WarpSettings.adminPrivateWarps) {
+        if (MyWarp.getWarpPermissions().isAdmin(player)
+                && WarpSettings.adminPrivateWarps) {
             return true;
         }
 
@@ -150,7 +154,7 @@ public class Warp {
             Location location = new Location(currWorld, x, y, z, yaw, pitch);
             return SafeTeleport.safeTeleport(player, location, name);
         } else {
-            player.sendMessage(ChatColor.RED + "World " + world + " doesn't exist.");
+            player.sendMessage(LanguageManager.getString("error.warpto.noSuchWorld").replaceAll("%world%", world));
             return false;
         }
     }
@@ -161,19 +165,29 @@ public class Warp {
         }
         return false;
     }
-    
+
     public void inviteGroup(String group) {
         groupPermissions.add(group);
+        //TODO remove this
+        WarpLogger.info("invited group: " + group + ", groupPermissions:");
+        for (String i : groupPermissions){
+            WarpLogger.info(i);
+        }
     }
-    
+
     public boolean groupIsInvited(String group) {
+      //TODO remove this
+        WarpLogger.info("group: " + group + ", groupPermissions:");
+        for (String i : groupPermissions){
+            WarpLogger.info(i);
+        }
         return groupPermissions.contains(group);
     }
 
     public void invite(String player) {
         permissions.add(player);
     }
-    
+
     public void uninviteGroup(String group) {
         groupPermissions.remove(group);
     }
@@ -203,8 +217,8 @@ public class Warp {
     public String toString() {
         return name;
     }
-    
-    public void setLocation (Location location){
+
+    public void setLocation(Location location) {
         this.world = location.getWorld().getName();
         this.x = location.getX();
         this.y = location.getBlockY();
@@ -227,7 +241,7 @@ public class Warp {
             return location;
         }
     }
-    
+
     public String getSpecificWelcomeMessage(Player player) {
         return welcomeMessage.replaceAll("%player%", player.getName())
                 .replaceAll("%warp%", name).replaceAll("%creator%", creator)

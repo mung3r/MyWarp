@@ -2,6 +2,8 @@ package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
 
+import me.taylorkelly.mywarp.LanguageManager;
+
 import org.angelsl.minecraft.randomshit.fontwidth.MinecraftFontWidthCalculator;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -51,15 +53,15 @@ public class Lister {
 
     public void list() {
         if (maxPages == 0) {
-            executor.sendMessage("There are no warps to list.");
+            executor.sendMessage(LanguageManager.getString("list.noWarps"));
         } else {
-            String intro = "------------------- Page " + page + "/" + maxPages
+            String intro = "------------------- " + LanguageManager.getColorlessString("list.page") + " " + page + "/" + maxPages
                     + " -------------------";
             executor.sendMessage(ChatColor.YELLOW + intro);
             for (Warp warp : sortedWarps) {
                 String name = warp.name;
                 String creator = player != null ? (warp.creator.equalsIgnoreCase(player
-                        .getName()) ? "you" : warp.creator) : warp.creator;
+                        .getName()) ? LanguageManager.getColorlessString("list.you") : warp.creator) : warp.creator;
                 int x = (int) Math.round(warp.x);
                 int y = warp.y;
                 int z = (int) Math.round(warp.z);
@@ -73,7 +75,7 @@ public class Lister {
                 }
 
                 String location = " @(" + x + ", " + y + ", " + z + ")";
-                String creatorString = (warp.publicAll ? "(+)" : "(-)") + " by "
+                String creatorString = (warp.publicAll ? "(+)" : "(-)") + " " + LanguageManager.getColorlessString("list.by") + " "
                         + creator;
 
                 // Find remaining length left
