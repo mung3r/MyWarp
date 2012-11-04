@@ -92,6 +92,12 @@ public class BlockSafety {
             return false;
         case ENDER_PORTAL:
             return false;
+        case WOOD_BUTTON:
+            return false;
+        case CARROT:
+            return false;
+        case POTATO:
+            return false;
         default:
             return true;
         }

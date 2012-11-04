@@ -41,30 +41,34 @@ public class SafeTeleport {
     }
 
     private static boolean isHalfBlock(Material type) {
-        switch (type.getId()) {
-        case 44:
+        switch (type) {
+        case STEP:
             return true;
-        case 126:
+        case WOOD_STEP:
             return true;
-        case 53:
+        case WOOD_STAIRS:
             return true;
-        case 67:
+        case COBBLESTONE_STAIRS:
             return true;
-        case 92:
+        case CAKE_BLOCK:
             return true;
-        case 108:
+        case BRICK_STAIRS:
             return true;
-        case 109:
+        case SMOOTH_STAIRS:
             return true;
-        case 114:
+        case NETHER_BRICK_STAIRS:
             return true;
-        case 128:
+        case SANDSTONE_STAIRS:
             return true;
-        case 134:
+        case SPRUCE_WOOD_STAIRS:
             return true;
-        case 135:
+        case BIRCH_WOOD_STAIRS:
             return true;
-        case 136:
+        case JUNGLE_WOOD_STAIRS:
+            return true;
+        case SKULL:
+            return true;
+        case FLOWER_POT:
             return true;
         default:
             return false;
