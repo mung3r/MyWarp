@@ -27,7 +27,21 @@ public class LanguageManager {
         LanguageManager.plugin = plugin;
 
         createLanguageFile("en_US");
-        loadLanguage(WarpSettings.locale);
+        try {
+            loadLanguage(WarpSettings.locale);
+            WarpLogger.info("Using localization: " + WarpSettings.locale);
+        } catch (IOException e) {
+            WarpLogger.severe("Could not load file: ." + File.separator
+                    + plugin.getDataFolder().getName() + File.separator
+                    + WarpSettings.locale + ".txt, defaulting to en_US");
+            try {
+                loadLanguage("en_US");
+            } catch (IOException e1) {
+                WarpLogger.severe("Could not load file: ." + File.separator
+                        + plugin.getDataFolder().getName() + File.separator
+                        + WarpSettings.locale + ".txt");
+            }
+        }
     }
 
     private static void createLanguageFile(String name) {
@@ -122,24 +136,19 @@ public class LanguageManager {
         }
     }
 
-    private static void loadLanguage(String locale) {
+    private static void loadLanguage(String locale) throws IOException {
         if (!locale.equals("en_US")) {
             checkLanguageFile(locale, "en_US");
         }
-
         File f = new File(plugin.getDataFolder(), locale + ".txt");
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(f), "UTF-8"));
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                languageMap.put(line.split("\\:", 2)[0], line.split("\\:", 2)[1]);
-            }
-            br.close();
-        } catch (Exception e) {
-            WarpLogger.severe("Could not find file: " + plugin.getDataFolder().getName()
-                    + File.separator + locale + ".txt");
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(
+                new FileInputStream(f), "UTF-8"));
+        String line = "";
+        while ((line = br.readLine()) != null) {
+            languageMap.put(line.split("\\:", 2)[0], line.split("\\:", 2)[1]);
         }
+        br.close();
     }
 
     public static String getString(String s) {
