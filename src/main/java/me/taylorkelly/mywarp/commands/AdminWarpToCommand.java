@@ -16,8 +16,8 @@ public class AdminWarpToCommand extends BasicCommand implements Command {
     public AdminWarpToCommand(MyWarp plugin) {
         super("WarpPlayer");
         this.plugin = plugin;
-        setDescription("Warp §8<player>§e to §9<name>");
-        setUsage("/warp player §8<player> §9<name>");
+        setDescription(LanguageManager.getString("help.description.adminWarpTo"));
+        setUsage("/warp player §8<" + LanguageManager.getColorlessString("help.usage.player") + "> §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(2, 255);
         setIdentifiers("player");
         setPermission("mywarp.admin");

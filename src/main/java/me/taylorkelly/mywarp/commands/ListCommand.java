@@ -13,8 +13,8 @@ public class ListCommand extends BasicCommand implements Command {
     public ListCommand(MyWarp plugin) {
         super("List");
         this.plugin = plugin;
-        setDescription("List the warps you can visit");
-        setUsage("/warp list §8[owner] §9[page#]");
+        setDescription(LanguageManager.getString("help.description.list"));
+        setUsage("/warp list §8[" + LanguageManager.getColorlessString("help.usage.owner") + "] §9[" + LanguageManager.getColorlessString("help.usage.pageNumber") + "]");
         setArgumentRange(0, 2);
         setIdentifiers("list");
         setPermission("mywarp.warp.basic.list");

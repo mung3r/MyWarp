@@ -16,8 +16,8 @@ public class InviteCommand extends BasicCommand implements Command {
     public InviteCommand(MyWarp plugin) {
         super("Invite");
         this.plugin = plugin;
-        setDescription("Invite §8<player>§e to §9<name>");
-        setUsage("/warp invite §8<player> §9<name>");
+        setDescription(LanguageManager.getString("help.description.invite"));
+        setUsage("/warp invite §8<" + LanguageManager.getColorlessString("help.usage.player") + "|" + LanguageManager.getColorlessString("help.usage.group") + "> §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(2, 255);
         setIdentifiers("invite");
         setPermission("mywarp.warp.soc.invite.player");

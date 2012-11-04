@@ -19,6 +19,7 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -101,9 +102,9 @@ public class CommandHandler {
     }
 
     private void displayCommandHelp(Command cmd, CommandSender sender) {
-        sender.sendMessage("§cCommand:§e " + cmd.getName());
-        sender.sendMessage("§cDescription:§e " + cmd.getDescription());
-        sender.sendMessage("§cUsage:§e " + cmd.getUsage());
+        sender.sendMessage(ChatColor.RED + LanguageManager.getColorlessString("help.command") + ": " + ChatColor.YELLOW + cmd.getName());
+        sender.sendMessage(ChatColor.RED + LanguageManager.getColorlessString("help.description") + ": " + ChatColor.YELLOW + cmd.getDescription());
+        sender.sendMessage(ChatColor.RED + LanguageManager.getColorlessString("help.usage") + ": " + ChatColor.YELLOW + cmd.getUsage());
         if (cmd.getNotes() != null) {
             for (String note : cmd.getNotes()) {
                 sender.sendMessage("§e" + note);

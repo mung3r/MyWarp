@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.command.CommandSender;
@@ -11,7 +12,7 @@ public class ListAllCommand extends BasicCommand implements Command {
     public ListAllCommand(MyWarp plugin) {
         super("ListAll");
         this.plugin = plugin;
-        setDescription("List the warps you can visit");
+        setDescription(LanguageManager.getString("help.description.listAll"));
         setUsage("/warp slist");
         setArgumentRange(0, 0);
         setIdentifiers("slist");

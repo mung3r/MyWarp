@@ -14,8 +14,8 @@ public class PrivateCommand extends BasicCommand implements Command {
     public PrivateCommand(MyWarp plugin) {
         super("Private");
         this.plugin = plugin;
-        setDescription("Make §9<name>§e a private warp");
-        setUsage("/warp private §9<name>");
+        setDescription(LanguageManager.getString("help.description.private"));
+        setUsage("/warp private §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(1, 255);
         setIdentifiers("private");
         setPermission("mywarp.warp.soc.private");

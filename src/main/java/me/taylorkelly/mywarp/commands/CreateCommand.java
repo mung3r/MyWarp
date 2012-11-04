@@ -13,8 +13,8 @@ public class CreateCommand extends BasicCommand implements Command {
     public CreateCommand(MyWarp plugin) {
         super("Create");
         this.plugin = plugin;
-        setDescription("Create a new warp called §9<name>");
-        setUsage("/warp create|set §9<name>");
+        setDescription(LanguageManager.getString("help.description.create"));
+        setUsage("/warp create|set §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(1, 255);
         setIdentifiers("create", "set");
         setPermission("mywarp.warp.basic.createpublic");

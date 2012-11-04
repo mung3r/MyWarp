@@ -20,8 +20,8 @@ public class WarpToCommand extends BasicCommand implements Command {
     public WarpToCommand(MyWarp plugin) {
         super("WarpTo");
         this.plugin = plugin;
-        setDescription("Warp to §9<name>");
-        setUsage("/warp §9<name>");
+        setDescription(LanguageManager.getString("help.description.warpTo"));
+        setUsage("/warp §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(1, 255);
         setIdentifiers("warp", "mywarp", "mw");
         setPermission("mywarp.warp.basic.warp");

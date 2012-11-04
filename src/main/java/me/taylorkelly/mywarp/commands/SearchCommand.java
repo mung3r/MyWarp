@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.commands;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Searcher;
 
@@ -13,8 +14,8 @@ public class SearchCommand extends BasicCommand implements Command {
     public SearchCommand(MyWarp plugin) {
         super("Search");
         this.plugin = plugin;
-        setDescription("Searches for warps related to §9<query>");
-        setUsage("/warp search §9<query>");
+        setDescription(LanguageManager.getString("help.description.search"));
+        setUsage("/warp search §9<" + LanguageManager.getColorlessString("help.usage.query") + ">");
         setArgumentRange(1, 255);
         setIdentifiers("search");
         setPermission("mywarp.warp.basic.search");

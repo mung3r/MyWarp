@@ -15,8 +15,8 @@ public class GiveCommand extends BasicCommand implements Command {
     public GiveCommand(MyWarp plugin) {
         super("Give");
         this.plugin = plugin;
-        setDescription("Give your warp §9<name>§e to §8<player>");
-        setUsage("/warp give §8<player> §9<name>");
+        setDescription(LanguageManager.getString("help.description.give"));
+        setUsage("/warp give §8<" + LanguageManager.getColorlessString("help.usage.player") + "> §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(2, 255);
         setIdentifiers("give");
         setPermission("mywarp.warp.soc.give");

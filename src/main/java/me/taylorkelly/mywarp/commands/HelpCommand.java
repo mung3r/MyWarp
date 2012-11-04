@@ -3,6 +3,7 @@ package me.taylorkelly.mywarp.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.command.CommandSender;
@@ -16,8 +17,8 @@ public class HelpCommand extends BasicCommand implements Command
     {
         super("Help");
         this.plugin = plugin;
-        setDescription("Displays the help menu");
-        setUsage("/warp help §8[page#]");
+        setDescription(LanguageManager.getString("help.description.help"));
+        setUsage("/warp help §8[" + LanguageManager.getColorlessString("help.usage.pageNumber") + "]");
         setArgumentRange(0, 1);
         setIdentifiers("help");
     }

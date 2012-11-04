@@ -14,8 +14,8 @@ public class PublicCommand extends BasicCommand implements Command {
     public PublicCommand(MyWarp plugin) {
         super("Public");
         this.plugin = plugin;
-        setDescription("Make §9<name>§e a public warp");
-        setUsage("/warp public §9<name>");
+        setDescription(LanguageManager.getString("help.description.public"));
+        setUsage("/warp public §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(1, 255);
         setIdentifiers("public");
         setPermission("mywarp.warp.soc.public");

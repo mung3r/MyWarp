@@ -143,7 +143,7 @@ public class LanguageManager {
     }
 
     public static String getString(String s) {
-        return languageMap.get(s) != null ? ChatColor.translateAlternateColorCodes('$',
+        return languageMap.get(s) != null ? ChatColor.translateAlternateColorCodes('§',
                 languageMap.get(s)).replaceAll("%n", "\n") : s;
     }
 
