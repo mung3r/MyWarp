@@ -1,10 +1,10 @@
 package me.taylorkelly.mywarp.listeners;
 
+import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.EventHandler;
@@ -31,9 +31,7 @@ public class MWEntityListener implements Listener {
         if (PlayerWarmup.isActive(victim.getName())
                 && !warpPermissions.disobeyWarmupDmgAbort(victim)) {
             PlayerWarmup.endTimer(victim.getName());
-            victim.sendMessage(ChatColor.RED
-                    + " You mustn't take damage while warming up. Your "
-                    + ChatColor.RESET + "/warp" + ChatColor.RED + " was canceled.");
+            victim.sendMessage(LanguageManager.getString("timer.warmup.canceled.damage"));
         }
     }
 }

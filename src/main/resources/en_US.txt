@@ -79,6 +79,8 @@ sign.noPermission.createToWarp:§cYou do not have permission to create a SignWar
 sign.noPermission.use:§cYou do not have permission to use SignWarps.
 timer.cooldown.cooling:§cYou still need to wait %seconds% seconds before you can warp again.
 timer.cooldown.ended:§bYou have cooled down, feel free to use §f/warp §bagain.
+timer.warmup.canceled.damage:§cYou must not take damage while warming up. Your §f/warp §cwas canceled.
+timer.warmup.canceled.move:§cYou must not move while warming up. Your §f/warp §cwas canceled.
 timer.warmup.started:§bYou will be teleported to '%warp%' in %seconds% seconds.
 timer.warmup.warming:§cYou still need to wait %seconds% seconds before you are teleported.
 warp.create.private:§bSuccessfully created '%warp%'%n§fIf you'd like to invite others to it,%n§fUse: §c/warp invite <player> %warp%

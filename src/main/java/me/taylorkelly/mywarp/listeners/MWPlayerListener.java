@@ -7,7 +7,6 @@ import me.taylorkelly.mywarp.data.SignWarp;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -116,9 +115,7 @@ public class MWPlayerListener implements Listener {
         if (PlayerWarmup.isActive(player.getName())
                 && !warpPermissions.disobeyWarmupMoveAbort(player)) {
             PlayerWarmup.endTimer(player.getName());
-            player.sendMessage(ChatColor.RED
-                    + " You mustn't move while warming up. Your " + ChatColor.RESET
-                    + "/warp" + ChatColor.RED + " was canceled.");
+            player.sendMessage(LanguageManager.getString("timer.warmup.canceled.move"));
         }
     }
 }
