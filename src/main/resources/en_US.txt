@@ -67,6 +67,8 @@ list.page.negative:§cPage number can't be below 1.
 list.page.toHigh:§cThere are only %pages% pages of warps.
 list.page:Page
 list.you:you
+listAll.list:§bYou can warp to:
+listAll.noWarps:§cYou cannot access any warps.
 reload.config:Config has been reloaded successfully!
 safety.found:§cWarp '%warp% is not safe. You were teleported to the closest safe location.
 safety.notFound:§cWarp '%warp%' is not safe. Also no safe loaction could be found close to it.
