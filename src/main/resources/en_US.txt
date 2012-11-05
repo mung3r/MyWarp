@@ -1,6 +1,6 @@
-﻿error.consoleSender.create:§cConsole cannot create warps for themself!
+﻿error.consoleSender.create:§cConsole cannot create warps for themselves!
 error.consoleSender.point:§cConsole cannot point its compass to warps!
-error.consoleSender.update:§cConsole cannot update warps for themself!
+error.consoleSender.update:§cConsole cannot update warps for themselves!
 error.consoleSender.warpto:§cConsole cannot warp to locations!
 error.consoleSender.weclome:§cConsole cannot change welcome messages for themselves!
 error.create.warpExists:§cWarp called '%warp%' already exists.
