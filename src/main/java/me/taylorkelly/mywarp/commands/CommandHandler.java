@@ -17,8 +17,6 @@ import java.util.Map;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
-import me.taylorkelly.mywarp.utils.WarpLogger;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -114,7 +112,6 @@ public class CommandHandler {
 
     public boolean hasPermission(CommandSender sender, String permString) {
         if (!(sender instanceof Player) || permString == null || permString.isEmpty()) {
-            WarpLogger.info("return true;");
             return true;
         }
 

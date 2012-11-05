@@ -92,7 +92,7 @@ public class LanguageManager {
 
         while (scan.hasNextLine()) {
             String line = scan.nextLine();
-            map.put(line.split("\\:", 2)[0], line.split("\\:", 2)[1]);
+            map.put(line.split(":", 2)[0], line.split(":", 2)[1]);
         }
 
         File f = new File(plugin.getDataFolder() + File.separator + name + ".txt");
@@ -102,7 +102,8 @@ public class LanguageManager {
                         new FileInputStream(f), "UTF-8"));
                 String line = "";
                 while ((line = br.readLine()) != null) {
-                    String key = line.split("\\:", 2)[0];
+                    if (line.split(":", 2).length != 2) continue;
+                    String key = line.split(":", 2)[0];
                     if (map.containsKey(key))
                         map.remove(key);
                 }
@@ -146,7 +147,8 @@ public class LanguageManager {
                 new FileInputStream(f), "UTF-8"));
         String line = "";
         while ((line = br.readLine()) != null) {
-            languageMap.put(line.split("\\:", 2)[0], line.split("\\:", 2)[1]);
+            if (line.split(":", 2).length != 2) continue;
+            languageMap.put(line.split(":", 2)[0], line.split(":", 2)[1]);
         }
         br.close();
     }
