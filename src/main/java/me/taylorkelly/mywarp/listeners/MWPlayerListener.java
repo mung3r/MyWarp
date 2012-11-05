@@ -22,8 +22,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.material.Button;
-import org.bukkit.material.Lever;
+import org.bukkit.material.Attachable;
 
 public class MWPlayerListener implements Listener {
     private WarpList warpList;
@@ -38,59 +37,45 @@ public class MWPlayerListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             Block block = event.getClickedBlock();
-            Player player = event.getPlayer();
 
             if (block.getState() instanceof Sign
                     && SignWarp.isSignWarp((Sign) block.getState())) {
 
-                if (!warpPermissions.signWarp(player)) {
-                    player.sendMessage(LanguageManager.getString("sign.noPermission.use"));
-                } else {
-                    SignWarp.warpSign((Sign) block.getState(), this.warpList, player);
+                if (!warpPermissions.signWarp(event.getPlayer())) {
+                    event.getPlayer().sendMessage(
+                            LanguageManager.getString("sign.noPermission.use"));
+                    return;
                 }
+                SignWarp.warpSign((Sign) block.getState(), this.warpList,
+                        event.getPlayer());
 
-            } else if (block.getType() == Material.STONE_BUTTON) {
-                Button button = (Button) block.getState().getData();
-                Block behind = block.getRelative(button.getAttachedFace(), 2);
+            } else {
+                if (block.getType() == Material.STONE_BUTTON
+                        || block.getType() == Material.WOOD_BUTTON
+                        || block.getType() == Material.LEVER) {
 
-                if (behind.getState() instanceof Sign) {
+                    Attachable attachable = (Attachable) block.getState().getData();
+                    Block behind = block.getRelative(attachable.getAttachedFace(), 2);
+
+                    if (!(behind.getState() instanceof Sign))
+                        return;
+
                     org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind
                             .getState().getData();
                     Sign signBut = (Sign) behind.getState();
 
-                    if (signMat.getFacing() == button.getAttachedFace()
-                            && SignWarp.isSignWarp(signBut)) {
+                    if (!(signMat.getFacing() == attachable.getAttachedFace() && SignWarp
+                            .isSignWarp(signBut)))
+                        return;
 
-                        if (!warpPermissions.signWarp(player)) {
-                            player.sendMessage(LanguageManager.getString("sign.noPermission.use"));
-                        } else {
-                            SignWarp.warpSign(signBut, this.warpList,
-                                    player);
-                        }
+                    if (!warpPermissions.signWarp(event.getPlayer())) {
+                        event.getPlayer().sendMessage(
+                                LanguageManager.getString("sign.noPermission.use"));
+                        return;
                     }
-                }
-            }  else if (block.getType() == Material.LEVER) {
-                Lever lever = (Lever) block.getState().getData();
-                Block behind = block.getRelative(lever.getAttachedFace(), 2);
-
-                if (behind.getState() instanceof Sign) {
-                    org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind
-                            .getState().getData();
-                    Sign signBut = (Sign) behind.getState();
-
-                    if (signMat.getFacing() == lever.getAttachedFace()
-                            && SignWarp.isSignWarp(signBut)) {
-
-                        if (!warpPermissions.signWarp(player)) {
-                            player.sendMessage(LanguageManager.getString("sign.noPermission.use"));
-                        } else {
-                            SignWarp.warpSign(signBut, this.warpList,
-                                    player);
-                        }
-                    }
+                    SignWarp.warpSign(signBut, this.warpList, event.getPlayer());
                 }
             }
-
         }
     }
 
