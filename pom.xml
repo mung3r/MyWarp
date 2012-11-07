@@ -89,6 +89,7 @@
 				<directory>${basedir}/src/main/resources/</directory>
 				<includes>
 					<include>en_US.txt</include>
+					<include>de_DE.txt</include>
 				</includes>
 			</resource>
 		</resources>

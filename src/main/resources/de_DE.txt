@@ -1,0 +1,112 @@
+﻿#German localization for MyWarp (by thee)
+#This file is UTF-8 encoded, respect this when editing.
+error.consoleSender.create:§cDie Konsole kann selbst keine Warps erstellen!
+error.consoleSender.point:§cDie Konsole kann ihren Kompass nicht auf Warps ausrichten!
+error.consoleSender.update:§cDie Konsole kann Warps nichts selbst aktualisieren!
+error.consoleSender.warpto:§cDie Konsole kann sich nicht selbst zu Warps teleportieren!
+error.consoleSender.weclome:§cDie Konsole kann nicht selbst die Willkommensnachricht von Warps ändern!
+error.create.warpExists:§cEin Warp namens '%warp%' existiert bereits.
+error.give.isOwner:§cDieser Warp gehört bereits %player%.
+error.invite.creator:§c%player% hat diesen Warp erstellt, natürlich ist er eingeladen.
+error.invite.invited.group:§Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
+error.invite.invited.player:§c%player% ist bereits zu diesem Warp eingeladen.
+error.noPermission.delete:§cDir fehlen die Rechte um '%warp%' zu löschen.
+error.noPermission.give:§cDir fehlen die Rechte um %warp% an %player% abzugeben.
+error.noPermission.invite.groups:§cDir fehlen die Rechte um Gruppen nach '%warp%' einzuladen.
+error.noPermission.invite.players:§cDir fehlen die Rechte um Spieler nach '%warp%' einzuladen.
+error.noPermission.point:§cDir fehlen die Rechte um deinen Kompass auf '%warp%' auszurichten.
+error.noPermission.private:§cDir fehlen die Rechte um '%warp%' zu privatisieren.
+error.noPermission.public:§cDir fehlen die Rechte um '%warp%' zu veröffentlichen.
+error.noPermission.uninvite.groups:§cDir fehlen die Rechte um Gruppen von '%warp%' auszuladen.
+error.noPermission.uninvite.players:§cDir fehlen die Rechte um Spieler von '%warp%' auszuladen.
+error.noPermission.update:§cDir fehlen die Rechte um %warp%s Position zu aktualisieren.
+error.noPermission.warpto:§cDir fehlen die Rechte um dich zu '%warp%' zu teleportieren.
+error.noPermission.welcome:§cDir fehlen die Rechte um %warp%s Willkommensnachricht zu ändern.
+error.noPermission:§cUnzureichende Rechte.
+error.noSuchWarp:§cDer Warp '%warp%' existiert nicht.
+error.playerOffline.give:§c%player% muss online sein, um Warps empfangen zu können.
+error.playerOffline.warpto:§cDu kannst keinen Spieler teleportieren, der offline ist..
+error.uninvite.creator:§cDu kannst dich nicht selbst ausladen. Du bist der Ersteller!
+error.uninvite.notInvited.group:§cDie Gruppe '%group%' ist nicht zu diesem Warp eingeladen.
+error.uninvite.notInvited.player:§c%player% ist nicht zu diesem Warp eingeladen.
+error.warpto.noSuchWorld:§cDie Welt '%world%' exisitiert nicht.
+help.command:Befehl
+help.description.adminWarpTo:Teleportiere §8<Spieler>§e zu §9<Name>
+help.description.create:Erstellt einen neuen Warp namens §9<Name>
+help.description.createPrivate:Erstellt einen neuen privaten Warp namens §9<Name>
+help.description.delete:Entfernt den Warp namens §9<Name>
+help.description.give:Gibt deinen Warp namens §9<Name>§e an §8<Spieler>
+help.description.help:Zeigt das Hilfemenü an
+help.description.invite:Lädt §8<Spieler>§e zum Warp namens §9<Name> ein
+help.description.list:Listet alle Warp aus, die du besuchen kannst
+help.description.listAll:Listet alle Warp aus, die du besuchen kannst
+help.description.point:Richtet deinen Kompass auf den Warp namens §9<Name> aus
+help.description.private:Privatisiert den Warp namens §9<Name>
+help.description.public:Veröffentlicht den Warp namens §9<Name>
+help.description.reload:Lädt die Konfiguration neu
+help.description.search:Sucht nach Warps, die dem §9<Suchwort> ähnlich sind
+help.description.uninvite:Lädt §8<Spieler|Gruppe>§e vom Warp namens §9<Name> aus
+help.description.update:Aktualisiert den Warp namens §9<Name> mit deiner aktuellen Position
+help.description.warpTo:Teleportiert dich zu §9<Name>
+help.description.welcome:Ändert die Willkommensnachricht von §9<Name>
+help.description:Beschreibung
+help.usage.name:Name
+help.usage.owner:Ersteller
+help.usage.pageNumber:Seite#
+help.usage.player:Spieler
+help.usage.query:Suchwort
+help.usage:Benutzung
+limit.private.reached.player:§c%player% hat sein Maximum an privaten Warps erreicht §e(%maxPrivate%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
+limit.private.reached:§cDu hast dein Maximum an privaten Warps erreicht §e(%maxPrivate%)%n§fLösche einige deiner Warps, um neue zu erstellen.
+limit.public.reached.player:§c%player% hat sein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
+limit.public.reached:§cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)%n§fLösche einige deiner Warps, um neue zu erstellen.
+limit.total.reached.player:§c%player% hat sein Maximum an Warps erreicht §e(%maxTotal%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
+limit.total.reached:§cDu hast dein Maximum an Warps erreicht §e(%maxTotal%)%n§fLösche einige deiner Warps, um neue zu erstellen.
+list.by:von
+list.console:§cDie Konsole besitzt keine Warps.
+list.noWarps:§cEs gibt keine Warps, die aufgelistet werden könnten.
+list.page.negative:§cDie Seitenummer kann nicht kleiner als eins sein.
+list.page.toHigh:§cEs gibt nur %pages% Seiten.
+list.page:Seite
+list.you:dir
+listAll.list:§bDu kannst folgende Warps benutzen:
+listAll.noWarps:§cDu kannst aktuell keine Warps benutzen.
+reload.config:Die Konfiguration wurde erfolgreich neu geladen!
+safety.found:§cDer Warp '%warp% ist nicht sicher. Du wurdest zum sichersten Ort in dessen Nähe teleportiert.
+safety.notFound:§cDer Warp '%warp% ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden.
+search.exactMatches:§eGenau Treffer für die Suche nach: §7%query%.
+search.noMatches:§cKein Treffer für die Suche nach: §7%query%.
+search.partitalMatches:§eTeilweise Treffer für die Suche nach: §7%query%.
+sign.created:§bDer Schild-Warp wurde erfolgreich erstellt.
+sign.noPermission.create:§cDir fehlen die Rechte um einen SchildWarp zu erstellen.
+sign.noPermission.createToWarp:§cDir fehlen die Rechte um einen SchildWarp nach '%warp%' zu erstellen.
+sign.noPermission.use:§cDir fehlen die Rechte um SchildWarps zu nutzen.
+timer.cooldown.cooling:§cDu musst noch %seconds% Sekunden warten, bevor du dich wieder warpen kannst.
+timer.cooldown.ended:§bDu bist abgekühlt und kannst §f/warp §b wieder nutzen.
+timer.warmup.canceled.damage:§cDu darfst keinen Schaden nehmen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
+timer.warmup.canceled.move:§cDu darfst dich nicht bewegen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
+timer.warmup.started:§bDu wirst in %seconds% Sekunden zu '%warp%' teleportiert.
+timer.warmup.warming:§cDu musst noch %seconds% Sekunden warten, bevor du teleportiert wirst.
+warp.create.private:§bWarp '%warp%' wurde erfolgreich erstellt%n§fWenn du andere Spieler einladen möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%
+warp.create.public:§bWarp '%warp%' wurde erfolgreich erstellt%n§fWenn du ihn Privatisieren möchtest,%n§fNutze: §c/warp private %warp%
+warp.default.welcomeMessage:Willkommen am Warp '%warp%', %player%.
+warp.delete:§bDu hast '%warp%' gelöscht.
+warp.give.given:§bDu hast '%warp%' an %player% abgegeben.
+warp.give.received:§bDu hast '%warp%' von %player% erhalten.
+warp.invite.group.private:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.
+warp.invite.group.public:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+warp.invite.invited:§bDu wurdest zum Warp '%warp%' eingeladen.%n§fNutze: §c/warp %warp% §fum dich zu ihm zu teleportieren.
+warp.invite.player.private:§bDu hast %player% zu '%warp%' eingeladen.
+warp.invite.player.public:§bDu hast %player% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+warp.point:§bDein Kompass zeigt jetzt auf '%warp%'.
+warp.private:§bDu hast '%warp%' privatisiert.%n§fWenn du andere Spieler einladen möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%
+warp.public:§bDu hast '&warp%' veröffentlicht.
+warp.uninvite.group.private:§bDu hast die Gruppe %group% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+warp.uninvite.group.public:§bDu hast die Gruppe %group% von '%warp%' ausgeladen.
+warp.uninvite.player.private:§bDu hast %player% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+warp.uninvite.player.public:§bDu hast %player% von '%warp%' ausgeladen.
+warp.uninvite.uninvited:§bDu wurdest von '%warp%' ausgeladen. Entschuldige.
+warp.update:§bDu hast %warp%s Position aktualisiert.
+warp.warpto.player:§b%player% wurde erfolgreich teleportiert.
+warp.welcome.enter:§bGibt die neue Willkommensnachricht für '%warp% ein.
+warp.welcome.received:§bDei neue Willkommensnachricht für '%warp% lautet:

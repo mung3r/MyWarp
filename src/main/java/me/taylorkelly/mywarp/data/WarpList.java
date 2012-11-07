@@ -239,8 +239,7 @@ public class WarpList {
         collator.setStrength(Collator.SECONDARY);
         Collections.sort(names, collator);
 
-        for (int i = 0; i < names.size(); i++) {
-            String currName = names.get(i);
+        for (String currName : names) {
             Warp warp = warpList.get(currName);
             if (player != null ? warp.playerCanWarp(player) : true) {
                 if (warp.creator.equalsIgnoreCase(creator)) {
