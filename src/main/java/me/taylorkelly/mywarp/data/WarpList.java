@@ -9,6 +9,8 @@ import java.util.List;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.sql.WarpDataSource;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -109,7 +111,7 @@ public class WarpList {
         if (warp.warp(player, server)) {
             warp.visits++;
             WarpDataSource.updateVisits(warp);
-            player.sendMessage(warp.getSpecificWelcomeMessage(player));
+            player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
         }
     }
 

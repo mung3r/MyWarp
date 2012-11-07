@@ -22,7 +22,7 @@ error.noPermission.warpto:§cYou do not have permission to warp to '%warp%'.
 error.noPermission.welcome:§cYou do not have permission to change %warp%'s welcome message.
 error.noPermission:§cInsufficient permission.
 error.noSuchWarp:§cNo such warp '%warp%'.
-error.playerOffline.give:§c%player% needs needs to be online to receive warps.
+error.playerOffline.give:§c%player% needs to be online to receive warps.
 error.playerOffline.warpto:§cYou cannot warp a player who is offline.
 error.uninvite.creator:§cYou cannot uninvite yourself. You're the creator!
 error.uninvite.notInvited.group:§cGroup '%group%' is not invited to this warp.
@@ -98,7 +98,7 @@ warp.invite.player.private:§bYou have invited %player% to '%warp%'.
 warp.invite.player.public:§bYou have invited %player% to '%warp%'.%n§cBut '%warp%' is still public.
 warp.point:§bYour compass now guides you to '%warp%'.
 warp.private:§bYou have privatized '%warp%'%n§fIf you'd like to invite others to it,%n§fUse: §c/warp invite <player> %warp%
-warp.public:§bYou have publicized '&warp%.
+warp.public:§bYou have publicized '&warp%'.
 warp.uninvite.group.private:§bYou have uninvited group %group% from '%warp%'.%n§cBut '%warp%' is still public.
 warp.uninvite.group.public:§bYou have uninvited group %group% from '%warp%'.
 warp.uninvite.player.private:§bYou have uninvited %player% from '%warp%'.%n§cBut '%warp%' is still public.

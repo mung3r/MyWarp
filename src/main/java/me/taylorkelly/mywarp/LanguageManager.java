@@ -27,6 +27,7 @@ public class LanguageManager {
         LanguageManager.plugin = plugin;
 
         createLanguageFile("en_US");
+        createLanguageFile("de_DE");
         try {
             loadLanguage(WarpSettings.locale);
             WarpLogger.info("Using localization: " + WarpSettings.locale);
@@ -138,7 +139,7 @@ public class LanguageManager {
     }
 
     private static void loadLanguage(String locale) throws IOException {
-        if (!locale.equals("en_US")) {
+        if (!(locale.equals("en_US") && locale.equals("de_DE"))) {
             checkLanguageFile(locale, "en_US");
         }
         File f = new File(plugin.getDataFolder(), locale + ".txt");
