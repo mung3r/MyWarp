@@ -16,6 +16,7 @@ import java.util.Scanner;
 import org.bukkit.ChatColor;
 
 import me.taylorkelly.mywarp.utils.WarpLogger;
+import me.taylorkelly.mywarp.utils.UnicodeBOMInputStream;
 
 public class LanguageManager {
 
@@ -87,12 +88,19 @@ public class LanguageManager {
     }
 
     private static void checkLanguageFile(String name, String original) {
-        Scanner scan = new Scanner(plugin.getResource("lang/" + original + ".txt"),
-                "UTF-8");
+        Scanner scan;
+        try {
+            scan = new Scanner(new UnicodeBOMInputStream(plugin.getResource("lang/"
+                    + original + ".txt")).skipBOM(), "UTF-8");
+        } catch (IOException e1) {
+            scan = new Scanner(plugin.getResource("lang/" + original + ".txt"), "UTF-8");
+        }
         HashMap<String, String> map = new HashMap<String, String>();
 
         while (scan.hasNextLine()) {
             String line = scan.nextLine();
+            if (line.startsWith("#"))
+                continue;
             map.put(line.split(":", 2)[0], line.split(":", 2)[1]);
         }
 
@@ -103,7 +111,8 @@ public class LanguageManager {
                         new FileInputStream(f), "UTF-8"));
                 String line = "";
                 while ((line = br.readLine()) != null) {
-                    if (line.split(":", 2).length != 2) continue;
+                    if (line.startsWith("#") || line.split(":", 2).length != 2)
+                        continue;
                     String key = line.split(":", 2)[0];
                     if (map.containsKey(key))
                         map.remove(key);
@@ -145,10 +154,11 @@ public class LanguageManager {
         File f = new File(plugin.getDataFolder(), locale + ".txt");
 
         BufferedReader br = new BufferedReader(new InputStreamReader(
-                new FileInputStream(f), "UTF-8"));
+                new UnicodeBOMInputStream(new FileInputStream(f)).skipBOM(), "UTF-8"));
         String line = "";
         while ((line = br.readLine()) != null) {
-            if (line.split(":", 2).length != 2) continue;
+            if (line.startsWith("#") || line.split(":", 2).length != 2)
+                continue;
             languageMap.put(line.split(":", 2)[0], line.split(":", 2)[1]);
         }
         br.close();
