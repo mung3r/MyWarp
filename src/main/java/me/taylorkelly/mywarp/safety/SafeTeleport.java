@@ -14,24 +14,30 @@ public class SafeTeleport {
         if (isHalfBlock(l.getBlock().getType())) {
             l.add(0, 1, 0);
         }
-        if (WarpSettings.useWarpSafety){
+        if (WarpSettings.useWarpSafety) {
             Location safe = SafeLocation.getSafeLocation(l);
             if (safe == null) {
-                player.sendMessage(LanguageManager.getString("safety.notFound").replaceAll("%warp%", name));
+                player.sendMessage(LanguageManager.getString("safety.notFound")
+                        .replaceAll("%warp%", name));
                 return false;
             }
             if (safe != l) {
                 warpEffect(player.getLocation());
                 player.teleport(safe);
-                player.sendMessage(LanguageManager.getString("safety.found").replaceAll("%warp%", name));
+                player.sendMessage(LanguageManager.getString("safety.found").replaceAll(
+                        "%warp%", name));
                 return false;
             }
         }
         warpEffect(player.getLocation());
+
+        if (WarpSettings.loadChunks)
+            l.getChunk().load();
+
         player.teleport(l);
         return true;
     }
-    
+
     private static void warpEffect(Location loc) {
         if (WarpSettings.warpEffect) {
             loc.getWorld().playEffect(loc, Effect.SMOKE, 4);

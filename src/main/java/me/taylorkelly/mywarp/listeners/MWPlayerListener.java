@@ -7,9 +7,7 @@ import me.taylorkelly.mywarp.data.SignWarp;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
-import org.bukkit.Chunk;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -20,7 +18,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.material.Attachable;
 
 public class MWPlayerListener implements Listener {
@@ -85,17 +82,6 @@ public class MWPlayerListener implements Listener {
             this.warpList.setWelcomeMessage(player, event.getMessage());
             this.warpList.notWaiting(player);
             event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (WarpSettings.loadChunks) {
-            World world = event.getPlayer().getWorld();
-            Chunk chunk = world.getChunkAt(event.getTo());
-            int x = chunk.getX();
-            int z = chunk.getZ();
-            world.refreshChunk(x, z);
         }
     }
 

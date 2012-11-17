@@ -15,8 +15,8 @@ import java.util.Scanner;
 
 import org.bukkit.ChatColor;
 
-import me.taylorkelly.mywarp.utils.WarpLogger;
 import me.taylorkelly.mywarp.utils.UnicodeBOMInputStream;
+import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class LanguageManager {
 
