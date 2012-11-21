@@ -32,7 +32,7 @@ public class SafeTeleport {
         warpEffect(player.getLocation());
 
         if (WarpSettings.loadChunks)
-            l.getChunk().load();
+            l.getWorld().refreshChunk(l.getBlockX(), l.getBlockZ());
 
         player.teleport(l);
         return true;

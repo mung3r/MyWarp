@@ -100,7 +100,7 @@ warp.invite.player.private:§bDu hast %player% zu '%warp%' eingeladen.
 warp.invite.player.public:§bDu hast %player% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
 warp.point:§bDein Kompass zeigt jetzt auf '%warp%'.
 warp.private:§bDu hast '%warp%' privatisiert.%n§fWenn du andere Spieler einladen möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%
-warp.public:§bDu hast '&warp%' veröffentlicht.
+warp.public:§bDu hast '%warp%' veröffentlicht.
 warp.uninvite.group.private:§bDu hast die Gruppe %group% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
 warp.uninvite.group.public:§bDu hast die Gruppe %group% von '%warp%' ausgeladen.
 warp.uninvite.player.private:§bDu hast %player% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
