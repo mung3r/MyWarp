@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,12 +27,12 @@ import me.taylorkelly.mywarp.commands.UpdateCommand;
 import me.taylorkelly.mywarp.commands.WarpToCommand;
 import me.taylorkelly.mywarp.commands.WelcomeCommand;
 import me.taylorkelly.mywarp.data.WarpList;
-import me.taylorkelly.mywarp.griefcraft.Updater;
+import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
+import me.taylorkelly.mywarp.dataconnections.NoConnectionException;
 import me.taylorkelly.mywarp.listeners.MWBlockListener;
 import me.taylorkelly.mywarp.listeners.MWEntityListener;
 import me.taylorkelly.mywarp.listeners.MWPlayerListener;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
-import me.taylorkelly.mywarp.sql.ConnectionManager;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.Bukkit;
@@ -51,14 +50,14 @@ public class MyWarp extends JavaPlugin {
 
     public String name;
     public String version;
-    private Updater updater;
     private PluginManager pm;
     private CommandHandler commandHandler;
     private static WarpPermissions warpPermissions;
+    public static ConnectionManager connectionManager;
 
     @Override
     public void onDisable() {
-        ConnectionManager.closeConnection();
+        connectionManager.close();
         Bukkit.getServer().getScheduler().cancelTasks(this);
     }
 
@@ -71,24 +70,19 @@ public class MyWarp extends JavaPlugin {
         WarpSettings.initialize(this);
         LanguageManager.initialize(this);
 
-        libCheck();
-        if (!sqlCheck()) {
+        try {
+            connectionManager = new ConnectionManager();
+        } catch (NoConnectionException e) {
+            WarpLogger
+                    .severe("Could not establish database connection. Disabling MyWarp.");
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        
-        
 
         File newDatabase = new File(getDataFolder(), "warps.db");
         File oldDatabase = new File("homes-warps.db");
         if (!newDatabase.exists() && oldDatabase.exists()) {
             updateFiles(oldDatabase, newDatabase);
-        }
-
-        Connection conn = ConnectionManager.initialize();
-        if (conn == null) {
-            WarpLogger.severe("Could not establish SQL connection. Disabling MyWarp");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
         }
 
         warpList = new WarpList(getServer());
@@ -130,25 +124,6 @@ public class MyWarp extends JavaPlugin {
         commandHandler.addCommand(new ReloadCommand(this));
 
         WarpLogger.info(name + " " + version + " enabled");
-    }
-
-    private void libCheck() {
-        updater = new Updater();
-        try {
-            updater.check();
-            updater.update();
-        } catch (Exception e) {
-        }
-    }
-
-    private boolean sqlCheck() {
-        Connection conn = ConnectionManager.initialize();
-        if (conn == null) {
-            WarpLogger.severe("Could not establish SQL connection. Disabling MyWarp");
-            getServer().getPluginManager().disablePlugin(this);
-            return false;
-        }
-        return true;
     }
 
     private void updateFiles(File oldDatabase, File newDatabase) {

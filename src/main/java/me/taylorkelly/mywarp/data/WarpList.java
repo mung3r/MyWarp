@@ -8,7 +8,7 @@ import java.util.List;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.sql.WarpDataSource;
+//import me.taylorkelly.mywarp.sql.WarpDataSource;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -23,8 +23,8 @@ public class WarpList {
     public WarpList(Server server) {
         welcomeMessage = new HashMap<String, Warp>();
         this.server = server;
-        WarpDataSource.initialize();
-        warpList = WarpDataSource.getMap();
+        //MyWarp.connectionManager.initialize();
+        warpList = MyWarp.connectionManager.getMap();
     }
 
     public boolean warpExists(String name) {
@@ -34,7 +34,7 @@ public class WarpList {
     public void addWarp(String name, Player player) {
         Warp warp = new Warp(name, player);
         warpList.put(name, warp);
-        WarpDataSource.addWarp(warp);
+        MyWarp.connectionManager.addWarp(warp);
     }
 
     private int numWarpsPlayer(Player player) {
@@ -88,7 +88,7 @@ public class WarpList {
     public void addWarpPrivate(String name, Player player) {
         Warp warp = new Warp(name, player, false);
         warpList.put(name, warp);
-        WarpDataSource.addWarp(warp);
+        MyWarp.connectionManager.addWarp(warp);
     }
 
     private int numPrivateWarpsPlayer(Player player) {
@@ -110,7 +110,7 @@ public class WarpList {
         Warp warp = warpList.get(name);
         if (warp.warp(player, server)) {
             warp.visits++;
-            WarpDataSource.updateVisits(warp);
+            MyWarp.connectionManager.updateVisits(warp);
             player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
         }
     }
@@ -127,43 +127,43 @@ public class WarpList {
     public void deleteWarp(String name) {
         Warp warp = warpList.get(name);
         warpList.remove(name);
-        WarpDataSource.deleteWarp(warp);
+        MyWarp.connectionManager.deleteWarp(warp);
     }
 
     public void privatize(String name) {
         Warp warp = warpList.get(name);
         warp.publicAll = false;
-        WarpDataSource.publicizeWarp(warp, false);
+        MyWarp.connectionManager.publicizeWarp(warp, false);
     }
 
     public void invitePlayer(String name, String inviteeName) {
         Warp warp = warpList.get(name);
         warp.invite(inviteeName);
-        WarpDataSource.updatePermissions(warp);
+        MyWarp.connectionManager.updatePermissions(warp);
     }
 
     public void inviteGroup(String name, String inviteeName) {
         Warp warp = warpList.get(name);
         warp.inviteGroup(inviteeName);
-        WarpDataSource.updateGroupPermissions(warp);
+        MyWarp.connectionManager.updateGroupPermissions(warp);
     }
 
     public void publicize(String name) {
         Warp warp = warpList.get(name);
         warp.publicAll = true;
-        WarpDataSource.publicizeWarp(warp, true);
+        MyWarp.connectionManager.publicizeWarp(warp, true);
     }
 
     public void uninvitePlayer(String name, String inviteeName) {
         Warp warp = warpList.get(name);
         warp.uninvite(inviteeName);
-        WarpDataSource.updatePermissions(warp);
+        MyWarp.connectionManager.updatePermissions(warp);
     }
 
     public void uninviteGroup(String name, String inviteeName) {
         Warp warp = warpList.get(name);
         warp.uninviteGroup(inviteeName);
-        WarpDataSource.updateGroupPermissions(warp);
+        MyWarp.connectionManager.updateGroupPermissions(warp);
     }
 
     public ArrayList<Warp> getSortedWarps(Player player, int start, int size) {
@@ -259,7 +259,7 @@ public class WarpList {
     public void give(String name, Player givee) {
         Warp warp = warpList.get(name);
         warp.setCreator(givee.getName());
-        WarpDataSource.updateCreator(warp);
+        MyWarp.connectionManager.updateCreator(warp);
     }
 
     public double getMaxWarps(Player player) {
@@ -280,7 +280,7 @@ public class WarpList {
     public void updateLocation(String name, Player player) {
         Warp warp = warpList.get(name);
         warp.setLocation(player.getLocation());
-        WarpDataSource.updateLocation(warp);
+        MyWarp.connectionManager.updateLocation(warp);
     }
 
     public void welcomeMessage(String name, Player player) {
@@ -296,7 +296,7 @@ public class WarpList {
         if (welcomeMessage.containsKey(player.getName())) {
             Warp warp = welcomeMessage.get(player.getName());
             warp.welcomeMessage = message;
-            WarpDataSource.updateWelcomeMessage(warp);
+            MyWarp.connectionManager.updateWelcomeMessage(warp);
             player.sendMessage(LanguageManager.getString("warp.welcome.received"));
             player.sendMessage(message);
         }
