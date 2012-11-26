@@ -60,7 +60,7 @@ public class ListCommand extends BasicCommand implements Command {
             String creator = null;
             if (args[0].equals("own")) {
                 if (executor instanceof Player) {
-                    lister.setWarpCreator(player.getName());
+                    creator = player.getName();
                 } else {
                     executor.sendMessage(LanguageManager.getString("list.console"));
                     return true;
