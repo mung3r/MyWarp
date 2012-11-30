@@ -40,7 +40,7 @@ public class PermissionsHandler implements IPermissionsHandler {
         return handler.playerHasGroup(player, group);
     }
 
-    // Only register permissions here that can't be registered in plugin.yml!!!
+    // Only register permissions here that cannot be registered in plugin.yml!!!
     public void registerPermissions() {
         // warp.limit permissions
         for (WarpLimit warpLimit : WarpSettings.warpLimits) {
@@ -77,7 +77,7 @@ public class PermissionsHandler implements IPermissionsHandler {
             if (permissionProvider != null) {
                 if (!(handler instanceof VaultHandler)) {
                     permplugin = PermHandler.VAULT;
-                    WarpLogger.info("Access Control: Using Vault");
+                    WarpLogger.info("Using Vault for group support");
                     handler = new VaultHandler(permissionProvider.getProvider());
                 }
                 return;
@@ -91,7 +91,7 @@ public class PermissionsHandler implements IPermissionsHandler {
             if (!(handler instanceof PermissionsExHandler)) {
                 permplugin = PermHandler.PERMISSIONSEX;
                 String version = permExPlugin.getDescription().getVersion();
-                WarpLogger.info("Access Control: Using PermissionsEx v" + version);
+                WarpLogger.info("Using PermissionsEx v" + version);
                 handler = new PermissionsExHandler();
             }
             return;
@@ -103,7 +103,7 @@ public class PermissionsHandler implements IPermissionsHandler {
                 if (!(handler instanceof BPermissions2Handler)) {
                     permplugin = PermHandler.BPERMISSIONS2;
                     String version = bPermPlugin.getDescription().getVersion();
-                    WarpLogger.info("Access Control: Using bPermissions v" + version);
+                    WarpLogger.info("Using bPermissions v" + version + " for group support");
                     handler = new BPermissions2Handler();
                 }
             }
@@ -115,7 +115,7 @@ public class PermissionsHandler implements IPermissionsHandler {
             if (!(handler instanceof GroupManagerHandler)) {
                 permplugin = PermHandler.GROUPMANAGER;
                 String version = GMplugin.getDescription().getVersion();
-                WarpLogger.info("Access Control: Using GroupManager v" + version);
+                WarpLogger.info("Using GroupManager v" + version + " for group support");
                 handler = new GroupManagerHandler(GMplugin);
             }
             return;
@@ -123,7 +123,7 @@ public class PermissionsHandler implements IPermissionsHandler {
 
         if (permplugin == PermHandler.NONE) {
             if (!(handler instanceof SuperpermsHandler)) {
-                WarpLogger.info("Access Control: Using SuperPerms");
+                WarpLogger.info("Using SuperPerms for group support");
                 handler = new SuperpermsHandler();
             }
         }
