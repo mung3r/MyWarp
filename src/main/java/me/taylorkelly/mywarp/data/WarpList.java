@@ -8,6 +8,7 @@ import java.util.List;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.utils.WarpLogger;
 //import me.taylorkelly.mywarp.sql.WarpDataSource;
 
 import org.bukkit.ChatColor;
@@ -23,8 +24,8 @@ public class WarpList {
     public WarpList(Server server) {
         welcomeMessage = new HashMap<String, Warp>();
         this.server = server;
-        //MyWarp.connectionManager.initialize();
         warpList = MyWarp.connectionManager.getMap();
+        WarpLogger.info(warpList.size() + " warps loaded");
     }
 
     public boolean warpExists(String name) {
@@ -33,6 +34,11 @@ public class WarpList {
 
     public void addWarp(String name, Player player) {
         Warp warp = new Warp(name, player);
+        warpList.put(name, warp);
+        MyWarp.connectionManager.addWarp(warp);
+    }
+    
+    public void addWarp(String name, Warp warp) {
         warpList.put(name, warp);
         MyWarp.connectionManager.addWarp(warp);
     }

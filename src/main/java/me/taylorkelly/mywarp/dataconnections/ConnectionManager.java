@@ -11,8 +11,8 @@ public class ConnectionManager implements DataConnection {
 
     private DataConnection handler;
 
-    public ConnectionManager() throws NoConnectionException {
-        if (WarpSettings.usemySQL) {
+    public ConnectionManager(boolean useMySQL, boolean createIfNotExist, boolean updateIfNecessary) throws DataConnectionException {
+        if (useMySQL) {
             // Use MySQL
             handler = new MySQLConnection("jdbc:mysql://" + WarpSettings.mySQLhost + ":"
                     + WarpSettings.mySQLport + "/" + WarpSettings.mySQLdb,
@@ -20,25 +20,31 @@ public class ConnectionManager implements DataConnection {
                     WarpSettings.mySQLtable);
         } else {
             // Use SQLite
+            
+            //Ugly way to prevent JDBC from creating an empty file upon connection.
+            if (!createIfNotExist) {
+                File database = new File(WarpSettings.dataDir.getAbsolutePath(), "warps.db");
+                if (!database.exists()) {
+                    throw new DataConnectionException(
+                            "Database 'warps.db' does not exist.");
+                }
+            }
+
             try {
                 // Manually load SQLite driver. DriveManager is unable to
                 // identify it as the driver does not follow JDBC 4.0 standards.
                 Class.forName("org.sqlite.JDBC");
             } catch (ClassNotFoundException e) {
                 WarpLogger.severe("Unable to find SQLite library.");
-                throw new NoConnectionException();
+                throw new DataConnectionException();
             }
             handler = new SQLiteConnection("jdbc:sqlite://"
                     + WarpSettings.dataDir.getAbsolutePath() + File.separator
                     + "warps.db", "warpTable");
         }
 
-        if (!checkDB()) {
-            throw new NoConnectionException();
-        }
-        if (!updateDB()) {
-            throw new NoConnectionException();
-        }
+        checkDB(createIfNotExist);
+        updateDB(updateIfNecessary);
     }
 
     @Override
@@ -47,13 +53,13 @@ public class ConnectionManager implements DataConnection {
     }
 
     @Override
-    public boolean checkDB() {
-        return handler.checkDB();
+    public void checkDB(boolean createIfNotExist) throws DataConnectionException {
+        handler.checkDB(createIfNotExist);
     }
 
     @Override
-    public boolean updateDB() {
-        return handler.updateDB();
+    public void updateDB(boolean updateIfNecessary) throws DataConnectionException {
+        handler.updateDB(updateIfNecessary);
     }
 
     @Override

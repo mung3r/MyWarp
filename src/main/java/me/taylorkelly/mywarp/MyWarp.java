@@ -11,6 +11,7 @@ import me.taylorkelly.mywarp.commands.CreatePrivateCommand;
 import me.taylorkelly.mywarp.commands.DeleteCommand;
 import me.taylorkelly.mywarp.commands.GiveCommand;
 import me.taylorkelly.mywarp.commands.HelpCommand;
+import me.taylorkelly.mywarp.commands.ImportCommand;
 import me.taylorkelly.mywarp.commands.InviteCommand;
 import me.taylorkelly.mywarp.commands.ListCommand;
 import me.taylorkelly.mywarp.commands.PointCommand;
@@ -25,7 +26,7 @@ import me.taylorkelly.mywarp.commands.WarpToCommand;
 import me.taylorkelly.mywarp.commands.WelcomeCommand;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
-import me.taylorkelly.mywarp.dataconnections.NoConnectionException;
+import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.listeners.MWBlockListener;
 import me.taylorkelly.mywarp.listeners.MWEntityListener;
 import me.taylorkelly.mywarp.listeners.MWPlayerListener;
@@ -70,8 +71,8 @@ public class MyWarp extends JavaPlugin {
         LanguageManager.initialize(this);
 
         try {
-            connectionManager = new ConnectionManager();
-        } catch (NoConnectionException e) {
+            connectionManager = new ConnectionManager(WarpSettings.usemySQL, true, true);
+        } catch (DataConnectionException e) {
             WarpLogger
                     .severe("Could not establish database connection. Disabling MyWarp.");
             getServer().getPluginManager().disablePlugin(this);
@@ -121,6 +122,7 @@ public class MyWarp extends JavaPlugin {
         // admin commands
         commandHandler.addCommand(new AdminWarpToCommand(this));
         commandHandler.addCommand(new ReloadCommand(this));
+        commandHandler.addCommand(new ImportCommand(this));
 
         WarpLogger.info(name + " " + version + " enabled");
     }

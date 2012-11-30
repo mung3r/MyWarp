@@ -79,8 +79,7 @@ public class MySQLConnection implements DataConnection {
     }
 
     @Override
-    public boolean checkDB() {
-        boolean sucessfull = true;
+    public void checkDB(boolean createIfNotExist) throws DataConnectionException {
         Statement stmnt = null;
 
         try {
@@ -89,12 +88,16 @@ public class MySQLConnection implements DataConnection {
             stmnt = conn.createStatement();
 
             if (!JDBCUtil.tableExists(dbm, table)) {
-                stmnt.execute(WARP_TABLE);
+                if (createIfNotExist) {
+                    stmnt.execute(WARP_TABLE);
+                } else {
+                    throw new DataConnectionException("Table '" + table + "' does not exist.");
+                }
             }
 
         } catch (SQLException ex) {
             WarpLogger.severe("Table Check Exception: " + ex);
-            sucessfull = false;
+            throw new DataConnectionException(ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -107,12 +110,10 @@ public class MySQLConnection implements DataConnection {
                 WarpLogger.severe("Table Check Exception (on close): " + ex);
             }
         }
-        return sucessfull;
     }
 
     @Override
-    public boolean updateDB() {
-        boolean sucessfull = true;
+    public void updateDB(boolean updateIfNecessary) throws DataConnectionException {
         Statement stmnt = null;
 
         try {
@@ -122,23 +123,35 @@ public class MySQLConnection implements DataConnection {
 
             // changes 'y' to smallint, changed with 2.4
             if (!JDBCUtil.columnIsDataType(dbm, table, "y", "smallint")) {
-                stmnt.execute("ALTER TABLE " + table + " MODIFY `y` smallint");
+                if (updateIfNecessary) {
+                    stmnt.execute("ALTER TABLE " + table + " MODIFY `y` smallint");
+                } else {
+                    throw new DataConnectionException("Column 'y' has the wrong data type.");
+                }
             }
             // groupPermissions, added with 2.4
             if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "groupPermissions")) {
-                stmnt.execute("ALTER TABLE "
-                        + table
-                        + " ADD COLUMN `groupPermissions` text NOT NULL AFTER `permissions`");
+                if (updateIfNecessary) {
+                    stmnt.execute("ALTER TABLE "
+                            + table
+                            + " ADD COLUMN `groupPermissions` text NOT NULL AFTER `permissions`");
+                } else {
+                    throw new DataConnectionException("Column 'groupPermissions' does not exist.");
+                }
             }
             // visits, added with 2.4
             if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "visits")) {
-                stmnt.execute("ALTER TABLE " + table
-                        + " ADD COLUMN `visits` int DEFAULT '0'");
+                if (updateIfNecessary) {
+                    stmnt.execute("ALTER TABLE " + table
+                            + " ADD COLUMN `visits` int DEFAULT '0'");
+                } else {
+                    throw new DataConnectionException("Column 'visits' does not exist.");
+                }
             }
 
         } catch (SQLException ex) {
             WarpLogger.severe("Table Update Exception: " + ex);
-            sucessfull = false;
+            throw new DataConnectionException(ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -151,7 +164,6 @@ public class MySQLConnection implements DataConnection {
                 WarpLogger.severe("Table Update Exception (on close): " + ex);
             }
         }
-        return sucessfull;
     }
 
     @Override
@@ -165,9 +177,7 @@ public class MySQLConnection implements DataConnection {
             stmnt = conn.createStatement();
 
             rsWarstmnt = stmnt.executeQuery("SELECT * FROM " + table);
-            int size = 0;
             while (rsWarstmnt.next()) {
-                size++;
                 int index = rsWarstmnt.getInt("id");
                 String name = rsWarstmnt.getString("name");
                 String creator = rsWarstmnt.getString("creator");
@@ -186,7 +196,6 @@ public class MySQLConnection implements DataConnection {
                         publicAll, permissions, groupPermissions, welcomeMessage, visits);
                 ret.put(name, warp);
             }
-            WarpLogger.info("" + size + " warps loaded");
         } catch (SQLException ex) {
             WarpLogger.severe("Warp Load Exception: " + ex);
         } finally {

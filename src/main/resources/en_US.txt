@@ -7,6 +7,8 @@ error.consoleSender.warpto:§cConsole cannot warp to locations!
 error.consoleSender.weclome:§cConsole cannot change welcome messages for themselves!
 error.create.warpExists:§cWarp called '%warp%' already exists.
 error.give.isOwner:§c%player% is already the owner.
+error.import.exists:§cWarp '%warp%' already exists. Skipping...
+error.import.noConnection:§cCould not establish database connection to import warps:
 error.invite.creator:§c%player% is the creator, of course he is invited.
 error.invite.invited.group:§cGroup '%group%' is already invited to this warp.
 error.invite.invited.player:§c%player% is already invited to this warp.
@@ -37,6 +39,7 @@ help.description.createPrivate:Create a new private warp called §9<name>
 help.description.delete:Deletes the warp §9<name>
 help.description.give:Give your warp §9<name>§e to §8<player>
 help.description.help:Displays the help menu
+help.description.import:Imports warps from §9<SQLite|MySQL>
 help.description.invite:Invite §8<player>§e to §9<name>
 help.description.list:List the warps you can visit
 help.description.listAll:List the warps you can visit

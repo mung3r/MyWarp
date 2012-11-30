@@ -7,6 +7,8 @@ error.consoleSender.warpto:§cDie Konsole kann sich nicht selbst zu Warps telepo
 error.consoleSender.weclome:§cDie Konsole kann nicht selbst die Willkommensnachricht von Warps ändern!
 error.create.warpExists:§cEin Warp namens '%warp%' existiert bereits.
 error.give.isOwner:§cDieser Warp gehört bereits %player%.
+error.import.exists:§cWarp '%warp%' existiert bereits. Überspringe ihn...
+error.import.noConnection:§cEs konnte keine Verbindung zum Import aufgebaut werden:
 error.invite.creator:§c%player% hat diesen Warp erstellt, natürlich ist er eingeladen.
 error.invite.invited.group:§Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
 error.invite.invited.player:§c%player% ist bereits zu diesem Warp eingeladen.
@@ -37,6 +39,7 @@ help.description.createPrivate:Erstellt einen neuen privaten Warp namens §9<Nam
 help.description.delete:Entfernt den Warp namens §9<Name>
 help.description.give:Gibt deinen Warp namens §9<Name>§e an §8<Spieler>
 help.description.help:Zeigt das Hilfemenü an
+help.description.import:Importiert Warps aus §9<SQLite|MySQL>
 help.description.invite:Lädt §8<Spieler>§e zum Warp namens §9<Name> ein
 help.description.list:Listet alle Warp aus, die du besuchen kannst
 help.description.listAll:Listet alle Warp aus, die du besuchen kannst
