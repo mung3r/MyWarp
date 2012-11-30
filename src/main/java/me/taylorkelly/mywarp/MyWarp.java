@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import me.taylorkelly.mywarp.commands.AdminWarpToCommand;
 import me.taylorkelly.mywarp.commands.CommandHandler;
 import me.taylorkelly.mywarp.commands.CreateCommand;
@@ -57,7 +54,9 @@ public class MyWarp extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        connectionManager.close();
+        if (connectionManager != null) {
+            connectionManager.close();
+        }
         Bukkit.getServer().getScheduler().cancelTasks(this);
     }
 
@@ -147,7 +146,7 @@ public class MyWarp extends JavaPlugin {
      * @param fromFile
      * @param toFile
      */
-    private static void copyFile(File fromFile, File toFile) {
+    private void copyFile(File fromFile, File toFile) {
         FileInputStream from = null;
         FileOutputStream to = null;
         try {
@@ -160,7 +159,7 @@ public class MyWarp extends JavaPlugin {
                 to.write(buffer, 0, bytesRead);
             }
         } catch (IOException ex) {
-            Logger.getLogger(MyWarp.class.getName()).log(Level.SEVERE, null, ex);
+            WarpLogger.severe("Failed to rename " + fromFile.getName() + "to " + toFile.getName() + ": ", ex);
         } finally {
             if (from != null) {
                 try {
@@ -181,15 +180,6 @@ public class MyWarp extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String commandLabel,
             String[] args) {
         return commandHandler.dispatch(sender, command, commandLabel, args);
-    }
-
-    public static boolean isInteger(String string) {
-        try {
-            Integer.parseInt(string);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
     }
 
     public static WarpPermissions getWarpPermissions() {

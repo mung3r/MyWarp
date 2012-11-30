@@ -1,9 +1,11 @@
 package me.taylorkelly.mywarp.dataconnections;
 
+import java.io.File;
 import java.util.HashMap;
 
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class ConnectionManager implements DataConnection {
 
@@ -18,14 +20,25 @@ public class ConnectionManager implements DataConnection {
                     WarpSettings.mySQLtable);
         } else {
             // Use SQLite
-            handler = new SQLiteConnection("jdbc:sqlite:"
-                    + WarpSettings.dataDir.getAbsolutePath() + "/warps.db", "warpTable");
+            try {
+                // Manually load SQLite driver. DriveManager is unable to
+                // identify it as the driver does not follow JDBC 4.0 standards.
+                Class.forName("org.sqlite.JDBC");
+            } catch (ClassNotFoundException e) {
+                WarpLogger.severe("Unable to find SQLite library.");
+                throw new NoConnectionException();
+            }
+            handler = new SQLiteConnection("jdbc:sqlite://"
+                    + WarpSettings.dataDir.getAbsolutePath() + File.separator
+                    + "warps.db", "warpTable");
         }
 
-        if (!checkDB())
+        if (!checkDB()) {
             throw new NoConnectionException();
-        if (!updateDB())
+        }
+        if (!updateDB()) {
             throw new NoConnectionException();
+        }
     }
 
     @Override

@@ -48,9 +48,6 @@ public class SQLiteConnection implements DataConnection {
                 + "`groupPermissions` text NOT NULL,"
                 + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
                 + "`visits` int DEFAULT '0'" + ");";
-
-        checkDB();
-        updateDB();
     }
 
     private Connection getConnection() throws SQLException {
@@ -73,6 +70,7 @@ public class SQLiteConnection implements DataConnection {
 
     @Override
     public boolean checkDB() {
+        boolean sucessfull = true;
         Statement stmnt = null;
 
         try {
@@ -85,21 +83,25 @@ public class SQLiteConnection implements DataConnection {
 
         } catch (SQLException ex) {
             WarpLogger.severe("Table Check Exception: " + ex);
-            return false;
+            sucessfull = false;
         } finally {
             try {
-                if (stmnt != null)
+                if (stmnt != null) {
                     stmnt.close();
-                conn.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 WarpLogger.severe("Table Check Exception (on close): " + ex);
             }
         }
-        return true;
+        return sucessfull;
     }
 
     @Override
     public boolean updateDB() {
+        boolean sucessfull = true;
         Statement stmnt = null;
 
         try {
@@ -109,27 +111,32 @@ public class SQLiteConnection implements DataConnection {
 
             // changing 'y' to smallint is not necessary in SQLite
             // groupPermissions, added with 2.4
-            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "groupPermissions"))
+            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "groupPermissions")) {
                 stmnt.execute("ALTER TABLE " + table
                         + " ADD COLUMN `groupPermissions` text NOT NULL DEFAULT ''");
+            }
             // visits, added with 2.4
-            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "visits"))
+            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "visits")) {
                 stmnt.execute("ALTER TABLE " + table
                         + " ADD COLUMN `visits` int DEFAULT '0'");
+            }
 
         } catch (SQLException ex) {
             WarpLogger.severe("Table Update Exception: " + ex);
-            return false;
+            sucessfull = false;
         } finally {
             try {
-                if (stmnt != null)
+                if (stmnt != null) {
                     stmnt.close();
-                conn.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 WarpLogger.severe("Table Update Exception (on close): " + ex);
             }
         }
-        return true;
+        return sucessfull;
     }
 
     @Override
@@ -169,11 +176,15 @@ public class SQLiteConnection implements DataConnection {
             WarpLogger.severe("Warp Load Exception: " + ex);
         } finally {
             try {
-                if (stmnt != null)
+                if (stmnt != null) {
                     stmnt.close();
-                if (rsWarstmnt != null)
+                }
+                if (rsWarstmnt != null) {
                     rsWarstmnt.close();
-                conn.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Load Exception (on close):" + ex);
             }
@@ -214,7 +225,9 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                conn.close();
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Insert Exception (on close): ", ex);
             }
@@ -241,6 +254,9 @@ public class SQLiteConnection implements DataConnection {
                 }
                 if (set != null) {
                     set.close();
+                }
+                if (conn != null) {
+                    conn.close();
                 }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Delete Exception (on close): ", ex);
@@ -270,6 +286,9 @@ public class SQLiteConnection implements DataConnection {
                 if (set != null) {
                     set.close();
                 }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Publicize Exception (on close): ", ex);
             }
@@ -298,6 +317,9 @@ public class SQLiteConnection implements DataConnection {
                 }
                 if (set != null) {
                     set.close();
+                }
+                if (conn != null) {
+                    conn.close();
                 }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Creator Exception (on close): ", ex);
@@ -335,6 +357,9 @@ public class SQLiteConnection implements DataConnection {
                 if (set != null) {
                     set.close();
                 }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Location Exception (on close): ", ex);
             }
@@ -362,6 +387,9 @@ public class SQLiteConnection implements DataConnection {
                 }
                 if (set != null) {
                     set.close();
+                }
+                if (conn != null) {
+                    conn.close();
                 }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Permissions Exception (on close): ", ex);
@@ -392,6 +420,9 @@ public class SQLiteConnection implements DataConnection {
                 if (set != null) {
                     set.close();
                 }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp GroupPermissions Exception (on close): ", ex);
             }
@@ -421,6 +452,9 @@ public class SQLiteConnection implements DataConnection {
                 if (set != null) {
                     set.close();
                 }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Visits Exception (on close): ", ex);
             }
@@ -448,6 +482,9 @@ public class SQLiteConnection implements DataConnection {
                 }
                 if (set != null) {
                     set.close();
+                }
+                if (conn != null) {
+                    conn.close();
                 }
             } catch (SQLException ex) {
                 WarpLogger.severe("Warp Creator Exception (on close): ", ex);
