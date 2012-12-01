@@ -20,7 +20,7 @@ public class AdminWarpToCommand extends BasicCommand implements Command {
         setUsage("/warp player §8<" + LanguageManager.getColorlessString("help.usage.player") + "> §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(2, 255);
         setIdentifiers("player");
-        setPermission("mywarp.admin");
+        setPermission("mywarp.admin.warpto");
     }
 
     @Override

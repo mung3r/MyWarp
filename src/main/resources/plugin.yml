@@ -15,8 +15,20 @@ commands:
     description: All of the MyWarp commands
     usage: /<command> help - Displays the help for MyWarp
 permissions:
-  mywarp.admin:
-    description: Admin
+  mywarp.admin.accessAll:
+    description: Can access all warps
+    default: op
+  mywarp.admin.modifyAll:
+    description: Can modify all warps
+    default: op
+  mywarp.admin.import:
+    description: Can import warps from MySQL or SQLite
+    default: op
+  mywarp.admin.reload:
+    description: Can reload the configuration
+    default: op
+  mywarp.admin.warpto:
+    description: Can warp other players to warps
     default: op
   mywarp.warp.basic.warp:
     description: Usage of /warp
@@ -109,6 +121,12 @@ permissions:
       mywarp.limit.total.unlimited: true
       mywarp.limit.private.unlimited: true
       mywarp.limit.public.unlimited: true
+  mywarp.admin.*:
+       mywarp.admin.accessAll: true
+       mywarp.admin.modifyAll: true
+       mywarp.admin.import: true
+       mywarp.admin.reload: true
+       mywarp.admin.warpto: true
   mywarp.warp.basic.*:
     description: Basic /warp commands
     children:
@@ -144,4 +162,4 @@ permissions:
     description: Full access
     children:
       mywarp.warp.*: true
-      mywarp.admin: true
+      mywarp.admin.*: true

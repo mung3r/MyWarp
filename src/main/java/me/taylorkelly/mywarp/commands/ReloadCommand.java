@@ -18,7 +18,7 @@ public class ReloadCommand extends BasicCommand implements Command
         setUsage("/warp reload");
         setArgumentRange(0, 0);
         setIdentifiers("reload");
-        setPermission("mywarp.admin");
+        setPermission("mywarp.admin.reload");
     }
 
     @Override

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.safety.SafeTeleport;
-import me.taylorkelly.mywarp.utils.WarpLogger;
 
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class Warp {
@@ -135,8 +135,7 @@ public class Warp {
                 return true;
             }
         }
-        if (MyWarp.getWarpPermissions().isAdmin(player)
-                && WarpSettings.adminPrivateWarps) {
+        if (MyWarp.getWarpPermissions().canAccessAll(player)) {
             return true;
         }
 
@@ -168,19 +167,9 @@ public class Warp {
 
     public void inviteGroup(String group) {
         groupPermissions.add(group);
-        //TODO remove this
-        WarpLogger.info("invited group: " + group + ", groupPermissions:");
-        for (String i : groupPermissions){
-            WarpLogger.info(i);
-        }
     }
 
     public boolean groupIsInvited(String group) {
-      //TODO remove this
-        WarpLogger.info("group: " + group + ", groupPermissions:");
-        for (String i : groupPermissions){
-            WarpLogger.info(i);
-        }
         return groupPermissions.contains(group);
     }
 
@@ -204,7 +193,7 @@ public class Warp {
         if (creator.equals(player.getName())) {
             return true;
         }
-        if (MyWarp.getWarpPermissions().isAdmin(player)) {
+        if (MyWarp.getWarpPermissions().canModifyAll(player)) {
             return true;
         }
         return false;

@@ -1,5 +1,4 @@
 settings:
-  adminPrivateWarps: true
   loadChunks: false
   warpEffect: true
 locale:

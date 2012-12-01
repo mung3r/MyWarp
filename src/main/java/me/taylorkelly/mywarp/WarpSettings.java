@@ -21,7 +21,6 @@ public class WarpSettings {
     private static final String settingsFile = "MyWarp.settings";
     public static File dataDir;
     
-    public static boolean adminPrivateWarps;
     public static boolean loadChunks;
     public static boolean warpEffect;
     
@@ -108,13 +107,12 @@ public class WarpSettings {
                     WarpLogger.info("Successfully ported old settings file");
                 }
             }
-            catch (IOException e) {
-                WarpLogger.severe("Failed to port old settings file", e);
+            catch (IOException ex) {
+                WarpLogger.severe("Failed to port old settings file", ex);
             }
         }
         
         // settings
-        adminPrivateWarps = confsettings.getBoolean("adminPrivateWarps");
         loadChunks = confsettings.getBoolean("loadChunks");
         warpEffect = confsettings.getBoolean("warpEffect");
         
