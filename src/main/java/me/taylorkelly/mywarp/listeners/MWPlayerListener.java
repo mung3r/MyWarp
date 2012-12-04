@@ -9,6 +9,7 @@ import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,16 +54,18 @@ public class MWPlayerListener implements Listener {
                     Attachable attachable = (Attachable) block.getState().getData();
                     Block behind = block.getRelative(attachable.getAttachedFace(), 2);
 
-                    if (!(behind.getState() instanceof Sign))
+                    if (!(behind.getState() instanceof Sign)) {
                         return;
+                    }
 
                     org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind
                             .getState().getData();
                     Sign signBut = (Sign) behind.getState();
 
                     if (!(signMat.getFacing() == attachable.getAttachedFace() && SignWarp
-                            .isSignWarp(signBut)))
+                            .isSignWarp(signBut))) {
                         return;
+                    }
 
                     if (!warpPermissions.signWarp(event.getPlayer())) {
                         event.getPlayer().sendMessage(
@@ -71,6 +74,29 @@ public class MWPlayerListener implements Listener {
                     }
                     SignWarp.warpSign(signBut, this.warpList, event.getPlayer());
                 }
+            }
+        }
+
+        if (event.getAction().equals(Action.PHYSICAL)) {
+            if (event.getClickedBlock().getType() == Material.WOOD_PLATE
+                    || event.getClickedBlock().getType() == Material.STONE_PLATE) {
+                Block twoBelow = event.getClickedBlock().getRelative(BlockFace.DOWN, 2);
+
+                if (!(twoBelow.getState() instanceof Sign)) {
+                    return;
+                }
+                Sign signBelow = (Sign) twoBelow.getState();
+
+                if (!(SignWarp.isSignWarp(signBelow))) {
+                    return;
+                }
+
+                if (!warpPermissions.signWarp(event.getPlayer())) {
+                    event.getPlayer().sendMessage(
+                            LanguageManager.getString("sign.noPermission.use"));
+                    return;
+                }
+                SignWarp.warpSign(signBelow, this.warpList, event.getPlayer());
             }
         }
     }
