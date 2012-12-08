@@ -14,6 +14,12 @@ public class SignWarp {
      */
     public static void warpSign(Sign sign, WarpList list, Player player) {
         String name = sign.getLine(2);
+        
+        if (!list.warpExists(name)) {
+            player.sendMessage(LanguageManager.getString(
+                    "error.noSuchWarp").replaceAll("%warp%", name));
+            return;
+        }
         Warp warp = list.getWarp(name);
 
         if (!warp.playerCanWarp(player)) {
