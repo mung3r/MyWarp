@@ -24,15 +24,17 @@ public class SafeTeleport {
             if (safe != l) {
                 warpEffect(player.getLocation());
                 player.teleport(safe);
-                player.sendMessage(LanguageManager.getString("safety.found").replaceAll(
-                        "%warp%", name));
+                player.sendMessage(LanguageManager.getString("safety.found")
+                        .replaceAll("%warp%", name));
                 return false;
             }
         }
         warpEffect(player.getLocation());
 
-        if (WarpSettings.loadChunks)
+        if (WarpSettings.loadChunks
+                && !l.getWorld().isChunkLoaded(l.getBlockX(), l.getBlockZ())) {
             l.getWorld().refreshChunk(l.getBlockX(), l.getBlockZ());
+        }
 
         player.teleport(l);
         return true;
