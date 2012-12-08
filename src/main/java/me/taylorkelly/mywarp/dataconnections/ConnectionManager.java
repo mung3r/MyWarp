@@ -20,16 +20,6 @@ public class ConnectionManager implements DataConnection {
                     WarpSettings.mySQLtable);
         } else {
             // Use SQLite
-            
-            //Ugly way to prevent JDBC from creating an empty file upon connection.
-            if (!createIfNotExist) {
-                File database = new File(WarpSettings.dataDir.getAbsolutePath(), "warps.db");
-                if (!database.exists()) {
-                    throw new DataConnectionException(
-                            "Database 'warps.db' does not exist.");
-                }
-            }
-
             try {
                 // Manually load SQLite driver. DriveManager is unable to
                 // identify it as the driver does not follow JDBC 4.0 standards.

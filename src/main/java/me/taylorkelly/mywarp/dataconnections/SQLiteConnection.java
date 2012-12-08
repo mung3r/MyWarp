@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.dataconnections;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -9,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
+import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
@@ -70,6 +72,13 @@ public class SQLiteConnection implements DataConnection {
 
     @Override
     public void checkDB(boolean createIfNotExist) throws DataConnectionException {
+        // Ugly way to prevent JDBC from creating an empty file upon connection.
+        if (!createIfNotExist) {
+            File database = new File(WarpSettings.dataDir.getAbsolutePath(), "warps.db");
+            if (!database.exists()) {
+                throw new DataConnectionException("Database 'warps.db' does not exist.");
+            }
+        }
         Statement stmnt = null;
 
         try {
