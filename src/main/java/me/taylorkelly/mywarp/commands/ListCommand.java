@@ -14,14 +14,19 @@ public class ListCommand extends BasicCommand implements Command {
         super("List");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.list"));
-        setUsage("/warp list §8[" + LanguageManager.getColorlessString("help.usage.owner") + "] §9[" + LanguageManager.getColorlessString("help.usage.pageNumber") + "]");
+        setUsage("/warp list §8["
+                + LanguageManager.getColorlessString("help.usage.owner")
+                + "] §9["
+                + LanguageManager.getColorlessString("help.usage.pageNumber")
+                + "]");
         setArgumentRange(0, 2);
         setIdentifiers("list");
         setPermission("mywarp.warp.basic.list");
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args) {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         Player player = null;
         if (executor instanceof Player) {
             player = (Player) executor;
@@ -35,10 +40,15 @@ public class ListCommand extends BasicCommand implements Command {
             if (args[0].matches("-?\\d+(\\.\\d+)?")) {
                 int page = Integer.parseInt(args[0]);
                 if (page < 1) {
-                    executor.sendMessage(LanguageManager.getString("list.negativePage"));
+                    executor.sendMessage(LanguageManager
+                            .getString("list.negativePage"));
                     return true;
                 } else if (page > lister.getMaxPages(player)) {
-                    executor.sendMessage(LanguageManager.getString("list.page.toHigh".replaceAll("%pages%", Integer.toString(lister.getMaxPages(player)))));
+                    executor.sendMessage(LanguageManager
+                            .getString("list.page.toHigh"
+                                    .replaceAll("%pages%", Integer
+                                            .toString(lister
+                                                    .getMaxPages(player)))));
                     return true;
                 }
                 lister.setPage(page);
@@ -47,7 +57,8 @@ public class ListCommand extends BasicCommand implements Command {
                     if (executor instanceof Player) {
                         lister.setWarpCreator(player.getName());
                     } else {
-                        executor.sendMessage(LanguageManager.getString("list.console"));
+                        executor.sendMessage(LanguageManager
+                                .getString("list.console"));
                         return true;
                     }
 
@@ -62,7 +73,8 @@ public class ListCommand extends BasicCommand implements Command {
                 if (executor instanceof Player) {
                     creator = player.getName();
                 } else {
-                    executor.sendMessage(LanguageManager.getString("list.console"));
+                    executor.sendMessage(LanguageManager
+                            .getString("list.console"));
                     return true;
                 }
             } else {
@@ -71,10 +83,14 @@ public class ListCommand extends BasicCommand implements Command {
             lister.setWarpCreator(creator);
             int page = Integer.parseInt(args[1]);
             if (page < 1) {
-                executor.sendMessage(LanguageManager.getString("list.negativePage"));
+                executor.sendMessage(LanguageManager
+                        .getString("list.negativePage"));
                 return true;
             } else if (page > lister.getMaxPagesPerCreator(player, creator)) {
-                executor.sendMessage(LanguageManager.getString("list.page.toHigh".replaceAll("%pages%", Integer.toString(lister.getMaxPagesPerCreator(player, creator)))));
+                executor.sendMessage(LanguageManager
+                        .getString("list.page.toHigh".replaceAll("%pages%",
+                                Integer.toString(lister.getMaxPagesPerCreator(
+                                        player, creator)))));
                 return true;
             }
             lister.setPage(page);

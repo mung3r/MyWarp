@@ -8,30 +8,29 @@ import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.command.CommandSender;
 
-public class HelpCommand extends BasicCommand implements Command
-{
+public class HelpCommand extends BasicCommand implements Command {
     private static final int CMDS_PER_PAGE = 8;
     private MyWarp plugin;
 
-    public HelpCommand(MyWarp plugin)
-    {
+    public HelpCommand(MyWarp plugin) {
         super("Help");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.help"));
-        setUsage("/warp help §8[" + LanguageManager.getColorlessString("help.usage.pageNumber") + "]");
+        setUsage("/warp help §8["
+                + LanguageManager.getColorlessString("help.usage.pageNumber")
+                + "]");
         setArgumentRange(0, 1);
         setIdentifiers("help");
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args)
-    {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         int page = 0;
         if (args.length != 0) {
             try {
                 page = Integer.parseInt(args[0]) - 1;
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
             }
         }
 
@@ -41,7 +40,8 @@ public class HelpCommand extends BasicCommand implements Command
         // Build list of permitted commands
         for (Command command : sortCommands) {
             if (command.isShownOnHelpMenu()) {
-                if (plugin.getCommandHandler().hasPermission(executor, command.getPermission())) {
+                if (plugin.getCommandHandler().hasPermission(executor,
+                        command.getPermission())) {
                     commands.add(command);
                 }
             }
@@ -55,7 +55,8 @@ public class HelpCommand extends BasicCommand implements Command
         if (page >= numPages || page < 0) {
             page = 0;
         }
-        executor.sendMessage("§c-----[ " + "§fMyWarp Help <" + (page + 1) + "/" + numPages + ">§c ]-----");
+        executor.sendMessage("§c-----[ " + "§fMyWarp Help <" + (page + 1) + "/"
+                + numPages + ">§c ]-----");
         int start = page * CMDS_PER_PAGE;
         int end = start + CMDS_PER_PAGE;
         if (end > commands.size()) {

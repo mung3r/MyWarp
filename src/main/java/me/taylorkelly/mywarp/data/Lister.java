@@ -38,14 +38,15 @@ public class Lister {
         this.page = page;
         int start = (page - 1) * WARPS_PER_PAGE;
         if (warpCreator == null) {
-            sortedWarps = warpList.getSortedWarps(player, start, WARPS_PER_PAGE);
+            sortedWarps = warpList
+                    .getSortedWarps(player, start, WARPS_PER_PAGE);
             maxPages = (int) Math.ceil(warpList.getMaxWarps(player)
                     / (double) WARPS_PER_PAGE);
         } else {
-            String matchingWarpCreator = warpList
-                    .getMatchingCreator(player, warpCreator);
-            sortedWarps = warpList.getSortedWarpsPerCreator(player, matchingWarpCreator,
-                    start, WARPS_PER_PAGE);
+            String matchingWarpCreator = warpList.getMatchingCreator(player,
+                    warpCreator);
+            sortedWarps = warpList.getSortedWarpsPerCreator(player,
+                    matchingWarpCreator, start, WARPS_PER_PAGE);
             maxPages = (int) Math.ceil(warpList.getMaxWarpsPerCreator(player,
                     matchingWarpCreator) / (double) WARPS_PER_PAGE);
         }
@@ -55,18 +56,21 @@ public class Lister {
         if (maxPages == 0) {
             executor.sendMessage(LanguageManager.getString("list.noWarps"));
         } else {
-            String intro = "------------------- " + LanguageManager.getColorlessString("list.page") + " " + page + "/" + maxPages
-                    + " -------------------";
+            String intro = "------------------- "
+                    + LanguageManager.getColorlessString("list.page") + " "
+                    + page + "/" + maxPages + " -------------------";
             executor.sendMessage(ChatColor.YELLOW + intro);
             for (Warp warp : sortedWarps) {
                 String name = warp.name;
-                String creator = player != null ? (warp.creator.equalsIgnoreCase(player
-                        .getName()) ? LanguageManager.getColorlessString("list.you") : warp.creator) : warp.creator;
+                String creator = player != null ? (warp.creator
+                        .equalsIgnoreCase(player.getName()) ? LanguageManager
+                        .getColorlessString("list.you") : warp.creator)
+                        : warp.creator;
                 int x = (int) Math.round(warp.x);
                 int y = warp.y;
                 int z = (int) Math.round(warp.z);
                 String color;
-                if (player != null ? warp.playerIsCreator(player.getName()) : false) {
+                if (player != null && warp.playerIsCreator(player.getName())) {
                     color = ChatColor.AQUA.toString();
                 } else if (warp.publicAll) {
                     color = ChatColor.GREEN.toString();
@@ -75,7 +79,8 @@ public class Lister {
                 }
 
                 String location = " @(" + x + ", " + y + ", " + z + ")";
-                String creatorString = (warp.publicAll ? "(+)" : "(-)") + " " + LanguageManager.getColorlessString("list.by") + " "
+                String creatorString = (warp.publicAll ? "(+)" : "(-)") + " "
+                        + LanguageManager.getColorlessString("list.by") + " "
                         + creator;
 
                 // Find remaining length left
@@ -83,7 +88,8 @@ public class Lister {
                         - MinecraftFontWidthCalculator.getStringWidth("''"
                                 + creatorString + location);
 
-                int nameLength = MinecraftFontWidthCalculator.getStringWidth(name);
+                int nameLength = MinecraftFontWidthCalculator
+                        .getStringWidth(name);
                 if (left > nameLength) {
                     name = "'" + name + "'" + ChatColor.WHITE + creatorString
                             + whitespace(left - nameLength);
@@ -108,11 +114,13 @@ public class Lister {
     }
 
     public int getMaxPages(Player player) {
-        return (int) Math.ceil(warpList.getMaxWarps(player) / (double) WARPS_PER_PAGE);
+        return (int) Math.ceil(warpList.getMaxWarps(player)
+                / (double) WARPS_PER_PAGE);
     }
 
     public int getMaxPagesPerCreator(Player player, String warpCreator) {
-        String matchingWarpCreator = warpList.getMatchingCreator(player, warpCreator);
+        String matchingWarpCreator = warpList.getMatchingCreator(player,
+                warpCreator);
         return (int) Math.ceil(warpList.getMaxWarpsPerCreator(player,
                 matchingWarpCreator) / (double) WARPS_PER_PAGE);
     }

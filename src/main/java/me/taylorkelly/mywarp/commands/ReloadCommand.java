@@ -6,12 +6,10 @@ import me.taylorkelly.mywarp.WarpSettings;
 
 import org.bukkit.command.CommandSender;
 
-public class ReloadCommand extends BasicCommand implements Command
-{
+public class ReloadCommand extends BasicCommand implements Command {
     private MyWarp plugin;
 
-    public ReloadCommand(MyWarp plugin)
-    {
+    public ReloadCommand(MyWarp plugin) {
         super("Reload");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.reload"));
@@ -22,7 +20,8 @@ public class ReloadCommand extends BasicCommand implements Command
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args) {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         plugin.reloadConfig();
         WarpSettings.initialize(plugin);
         LanguageManager.initialize(plugin);

@@ -25,7 +25,8 @@ public class ImportCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args) {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         boolean importMySQL;
 
         if (args[0].equalsIgnoreCase("mysql")) {
@@ -38,15 +39,18 @@ public class ImportCommand extends BasicCommand implements Command {
 
         try {
             int counter = 0;
-            ConnectionManager importConnection = new ConnectionManager(importMySQL, false, true);
+            ConnectionManager importConnection = new ConnectionManager(
+                    importMySQL, false, true);
             HashMap<String, Warp> importedWarps = importConnection.getMap();
 
-            for (Entry<String, Warp> importedWarpEntry : importedWarps.entrySet()) {
+            for (Entry<String, Warp> importedWarpEntry : importedWarps
+                    .entrySet()) {
                 String name = importedWarpEntry.getKey();
                 Warp importedWarp = importedWarpEntry.getValue();
 
                 if (plugin.getWarpList().warpExists(name)) {
-                    executor.sendMessage(LanguageManager.getString("error.import.exists").replaceAll("%warp%", name));
+                    executor.sendMessage(LanguageManager.getString(
+                            "error.import.exists").replaceAll("%warp%", name));
                 } else {
                     plugin.getWarpList().addWarp(name, importedWarp);
                     counter++;
@@ -55,7 +59,8 @@ public class ImportCommand extends BasicCommand implements Command {
             executor.sendMessage(counter + " warps were imported sucessfully.");
             return true;
         } catch (DataConnectionException ex) {
-            executor.sendMessage(LanguageManager.getString("error.import.noConnection") + ex.getMessage());
+            executor.sendMessage(LanguageManager
+                    .getString("error.import.noConnection") + ex.getMessage());
             return true;
         }
     }

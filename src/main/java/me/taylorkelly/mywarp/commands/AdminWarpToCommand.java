@@ -16,15 +16,20 @@ public class AdminWarpToCommand extends BasicCommand implements Command {
     public AdminWarpToCommand(MyWarp plugin) {
         super("WarpPlayer");
         this.plugin = plugin;
-        setDescription(LanguageManager.getString("help.description.adminWarpTo"));
-        setUsage("/warp player §8<" + LanguageManager.getColorlessString("help.usage.player") + "> §9<" + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setDescription(LanguageManager
+                .getString("help.description.adminWarpTo"));
+        setUsage("/warp player §8<"
+                + LanguageManager.getColorlessString("help.usage.player")
+                + "> §9<"
+                + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(2, 255);
         setIdentifiers("player");
         setPermission("mywarp.admin.warpto");
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args) {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         Player player = null;
 
         if (executor instanceof Player) {
@@ -33,23 +38,26 @@ public class AdminWarpToCommand extends BasicCommand implements Command {
 
         Player invitee = plugin.getServer().getPlayer(args[0]);
         String name = plugin.getWarpList().getMatche(
-                StringUtils.join(Arrays.asList(args).subList(1, args.length), ' '),
-                player);
+                StringUtils.join(Arrays.asList(args).subList(1, args.length),
+                        ' '), player);
 
         if (!plugin.getWarpList().warpExists(name)) {
-            executor.sendMessage(LanguageManager.getString("error.noSuchWarp").replaceAll("%warp%", name));
+            executor.sendMessage(LanguageManager.getString("error.noSuchWarp")
+                    .replaceAll("%warp%", name));
             return true;
         }
 
         Warp warp = plugin.getWarpList().getWarp(name);
 
-        if (player != null ? !warp.playerCanWarp(player) : false) {
-            executor.sendMessage(LanguageManager.getString("error.noPermission.warpto").replaceAll("%warp%", name));
+        if (player != null && !warp.playerCanWarp(player)) {
+            executor.sendMessage(LanguageManager.getString(
+                    "error.noPermission.warpto").replaceAll("%warp%", name));
             return true;
         }
 
         if (invitee == null) {
-            executor.sendMessage(LanguageManager.getString("error.playerOffline.warpto"));
+            executor.sendMessage(LanguageManager
+                    .getString("error.playerOffline.warpto"));
             return true;
         }
 

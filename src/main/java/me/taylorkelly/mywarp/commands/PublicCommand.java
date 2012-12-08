@@ -24,14 +24,15 @@ public class PublicCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args) {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         Player player = null;
 
         if (executor instanceof Player) {
             player = (Player) executor;
         }
-        String name = plugin.getWarpList()
-                .getMatche(StringUtils.join(args, ' '), player);
+        String name = plugin.getWarpList().getMatche(
+                StringUtils.join(args, ' '), player);
 
         if (!plugin.getWarpList().warpExists(name)) {
             executor.sendMessage(LanguageManager.getString("error.noSuchWarp")
@@ -41,24 +42,26 @@ public class PublicCommand extends BasicCommand implements Command {
 
         Warp warp = plugin.getWarpList().getWarp(name);
 
-        if (player != null ? !warp.playerCanModify(player) : false) {
-            executor.sendMessage(LanguageManager.getString("error.noPermission.public"));
+        if (player != null && !warp.playerCanModify(player)) {
+            executor.sendMessage(LanguageManager
+                    .getString("error.noPermission.public"));
             return true;
         }
 
-        if (player != null ? (WarpSettings.useWarpLimits && !plugin.getWarpList()
-                .playerCanBuildPrivateWarp(player)) : false) {
-            executor.sendMessage(LanguageManager.getString("limit.public.reached")
-                    .replaceAll(
-                            "%maxPublic%",
-                            Integer.toString(MyWarp.getWarpPermissions().maxPublicWarps(
-                                    player))));
+        if (player != null
+                && (WarpSettings.useWarpLimits && !plugin.getWarpList()
+                        .playerCanBuildPrivateWarp(player))) {
+            executor.sendMessage(LanguageManager.getString(
+                    "limit.public.reached").replaceAll(
+                    "%maxPublic%",
+                    Integer.toString(MyWarp.getWarpPermissions()
+                            .maxPublicWarps(player))));
             return true;
         }
 
         plugin.getWarpList().publicize(name);
-        executor.sendMessage(LanguageManager.getString("warp.public").replaceAll(
-                "%warp%", name));
+        executor.sendMessage(LanguageManager.getString("warp.public")
+                .replaceAll("%warp%", name));
         return true;
     }
 }

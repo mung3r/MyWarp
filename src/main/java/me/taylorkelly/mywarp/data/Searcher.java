@@ -37,34 +37,39 @@ public class Searcher {
     public void sendWarpMatches(ArrayList<Warp> warps) {
         for (Warp warp : warps) {
             String color;
-            if (player != null ? warp.playerIsCreator(player.getName()) : true) {
+            if (player == null || warp.playerIsCreator(player.getName())) {
                 color = ChatColor.AQUA.toString();
             } else if (warp.publicAll) {
                 color = ChatColor.GREEN.toString();
             } else {
                 color = ChatColor.RED.toString();
             }
-            String creator = player != null ? (warp.creator.equalsIgnoreCase(player
-                    .getName()) ? LanguageManager.getString("list.you") : warp.creator) : warp.creator;
+            String creator = player != null ? (warp.creator
+                    .equalsIgnoreCase(player.getName()) ? LanguageManager
+                    .getString("list.you") : warp.creator) : warp.creator;
             int x = (int) Math.round(warp.x);
             int y = warp.y;
             int z = (int) Math.round(warp.z);
-            executor.sendMessage(color + "'" + warp.name + "'" + ChatColor.WHITE
-                    + LanguageManager.getColorlessString("list.by") + creator + " @(" + x + ", " + y + ", " + z + ")");
+            executor.sendMessage(color + "'" + warp.name + "'"
+                    + ChatColor.WHITE
+                    + LanguageManager.getColorlessString("list.by") + creator
+                    + " @(" + x + ", " + y + ", " + z + ")");
         }
     }
 
     public void search() {
-
         if (exactMatches.size() == 0 && matches.size() == 0) {
-            executor.sendMessage(LanguageManager.getString("search.noMatches").replaceAll("%query%", query));
+            executor.sendMessage(LanguageManager.getString("search.noMatches")
+                    .replaceAll("%query%", query));
         } else {
             if (exactMatches.size() > 0) {
-                executor.sendMessage(LanguageManager.getString("search.exactMatches").replaceAll("%query%", query));
+                executor.sendMessage(LanguageManager.getString(
+                        "search.exactMatches").replaceAll("%query%", query));
                 sendWarpMatches(exactMatches);
             }
             if (matches.size() > 0) {
-                executor.sendMessage(LanguageManager.getString("search.partitalMatches").replaceAll("%query%", query));
+                executor.sendMessage(LanguageManager.getString(
+                        "search.partitalMatches").replaceAll("%query%", query));
                 sendWarpMatches(matches);
             }
         }

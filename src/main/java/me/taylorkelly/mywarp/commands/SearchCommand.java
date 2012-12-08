@@ -15,14 +15,16 @@ public class SearchCommand extends BasicCommand implements Command {
         super("Search");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.search"));
-        setUsage("/warp search §9<" + LanguageManager.getColorlessString("help.usage.query") + ">");
+        setUsage("/warp search §9<"
+                + LanguageManager.getColorlessString("help.usage.query") + ">");
         setArgumentRange(1, 255);
         setIdentifiers("search");
         setPermission("mywarp.warp.basic.search");
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args) {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         Player player = null;
 
         if (executor instanceof Player) {

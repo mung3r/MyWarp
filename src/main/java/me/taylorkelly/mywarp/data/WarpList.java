@@ -37,7 +37,7 @@ public class WarpList {
         warpList.put(name, warp);
         MyWarp.connectionManager.addWarp(warp);
     }
-    
+
     public void addWarp(String name, Warp warp) {
         warpList.put(name, warp);
         MyWarp.connectionManager.addWarp(warp);
@@ -57,8 +57,8 @@ public class WarpList {
         if (MyWarp.getWarpPermissions().disobeyTotalLimit(player)) {
             return true;
         } else {
-            return numWarpsPlayer(player) < MyWarp.getWarpPermissions().maxTotalWarps(
-                    player);
+            return numWarpsPlayer(player) < MyWarp.getWarpPermissions()
+                    .maxTotalWarps(player);
         }
     }
 
@@ -117,7 +117,8 @@ public class WarpList {
         if (warp.warp(player, server)) {
             warp.visits++;
             MyWarp.connectionManager.updateVisits(warp);
-            player.sendMessage(ChatColor.AQUA + warp.getSpecificWelcomeMessage(player));
+            player.sendMessage(ChatColor.AQUA
+                    + warp.getSpecificWelcomeMessage(player));
         }
     }
 
@@ -180,8 +181,8 @@ public class WarpList {
         return warpList.size();
     }
 
-    public ArrayList<Warp> getSortedWarpsPerCreator(Player player, String creator,
-            int start, int size) {
+    public ArrayList<Warp> getSortedWarpsPerCreator(Player player,
+            String creator, int start, int size) {
         ArrayList<Warp> ret = new ArrayList<Warp>();
         List<String> names = new ArrayList<String>(warpList.keySet());
         Collator collator = Collator.getInstance();
@@ -193,8 +194,8 @@ public class WarpList {
         while (index < names.size() && ret.size() < size) {
             String currName = names.get(index);
             Warp warp = warpList.get(currName);
-            if ((player != null ? warp.playerCanWarp(player) : true)
-                    && (creator != null ? warp.playerIsCreator(creator) : true)) {
+            if ((player == null || warp.playerCanWarp(player))
+                    && (creator == null || warp.playerIsCreator(creator))) {
                 if (currentCount >= start) {
                     ret.add(warp);
                 } else {
@@ -217,7 +218,7 @@ public class WarpList {
 
         for (String currName : names) {
             Warp warp = warpList.get(currName);
-            if (player != null ? warp.playerCanWarp(player) : true) {
+            if (player == null || warp.playerCanWarp(player)) {
                 if (warp.name.equalsIgnoreCase(name)) {
                     exactMatches.add(warp);
                 } else if (warp.name.toLowerCase().contains(name.toLowerCase())) {
@@ -247,10 +248,11 @@ public class WarpList {
 
         for (String currName : names) {
             Warp warp = warpList.get(currName);
-            if (player != null ? warp.playerCanWarp(player) : true) {
+            if (player == null || warp.playerCanWarp(player)) {
                 if (warp.creator.equalsIgnoreCase(creator)) {
                     return creator;
-                } else if (warp.creator.toLowerCase().contains(creator.toLowerCase())
+                } else if (warp.creator.toLowerCase().contains(
+                        creator.toLowerCase())
                         && !matches.contains(warp.creator)) {
                     matches.add(warp.creator);
                 }
@@ -275,8 +277,8 @@ public class WarpList {
     public double getMaxWarpsPerCreator(Player player, String creator) {
         int count = 0;
         for (Warp warp : warpList.values()) {
-            if ((player != null ? warp.playerCanWarp(player) : true)
-                    && (creator != null ? warp.playerIsCreator(creator) : true)) {
+            if ((player == null || warp.playerCanWarp(player))
+                    && (creator == null || warp.playerIsCreator(creator))) {
                 count++;
             }
         }
@@ -303,7 +305,8 @@ public class WarpList {
             Warp warp = welcomeMessage.get(player.getName());
             warp.welcomeMessage = message;
             MyWarp.connectionManager.updateWelcomeMessage(warp);
-            player.sendMessage(LanguageManager.getString("warp.welcome.received"));
+            player.sendMessage(LanguageManager
+                    .getString("warp.welcome.received"));
             player.sendMessage(message);
         }
 
@@ -320,7 +323,8 @@ public class WarpList {
             executor.sendMessage(LanguageManager.getString("alist.noWarps"));
         } else {
             executor.sendMessage(LanguageManager.getString("alist.list"));
-            executor.sendMessage(results.toString().replace("[", "").replace("]", ""));
+            executor.sendMessage(results.toString().replace("[", "")
+                    .replace("]", ""));
         }
     }
 
@@ -334,7 +338,7 @@ public class WarpList {
 
         for (String name : names) {
             Warp warp = warpList.get(name);
-            if (player != null ? warp.playerCanWarp(player) : true) {
+            if (player == null || warp.playerCanWarp(player)) {
                 results.add(warp);
             }
         }

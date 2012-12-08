@@ -23,34 +23,35 @@ public class CreateCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args) {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         if (executor instanceof Player) {
             Player player = (Player) executor;
             String name = StringUtils.join(args, ' ');
 
             if (WarpSettings.useWarpLimits) {
                 if (!plugin.getWarpList().playerCanBuildWarp(player)) {
-                    player.sendMessage(LanguageManager.getString("limit.total.reached")
-                            .replaceAll(
-                                    "%maxTotal%",
-                                    Integer.toString(MyWarp.getWarpPermissions()
-                                            .maxTotalWarps(player))));
+                    player.sendMessage(LanguageManager.getString(
+                            "limit.total.reached").replaceAll(
+                            "%maxTotal%",
+                            Integer.toString(MyWarp.getWarpPermissions()
+                                    .maxTotalWarps(player))));
                     return true;
                 }
 
                 if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
-                    player.sendMessage(LanguageManager.getString("limit.public.reached")
-                            .replaceAll(
-                                    "%maxPublic%",
-                                    Integer.toString(MyWarp.getWarpPermissions()
-                                            .maxPublicWarps(player))));
+                    player.sendMessage(LanguageManager.getString(
+                            "limit.public.reached").replaceAll(
+                            "%maxPublic%",
+                            Integer.toString(MyWarp.getWarpPermissions()
+                                    .maxPublicWarps(player))));
                     return true;
                 }
             }
 
             if (plugin.getWarpList().warpExists(name)) {
-                player.sendMessage(LanguageManager.getString("error.create.warpExists")
-                        .replaceAll("%warp%", name));
+                player.sendMessage(LanguageManager.getString(
+                        "error.create.warpExists").replaceAll("%warp%", name));
                 return true;
             }
 
@@ -59,7 +60,8 @@ public class CreateCommand extends BasicCommand implements Command {
                     .replaceAll("%warp%", name));
             return true;
         } else {
-            executor.sendMessage(LanguageManager.getString("error.consoleSender.create"));
+            executor.sendMessage(LanguageManager
+                    .getString("error.consoleSender.create"));
             return true;
         }
     }

@@ -20,7 +20,8 @@ public class ListAllCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier, String[] args) {
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args) {
         Player player = null;
 
         if (executor instanceof Player) {

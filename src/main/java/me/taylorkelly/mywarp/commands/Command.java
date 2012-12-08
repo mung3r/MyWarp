@@ -6,7 +6,8 @@ public interface Command {
 
     public void cancelInteraction(CommandSender executor);
 
-    public boolean execute(CommandSender executor, String identifier, String[] args);
+    public boolean execute(CommandSender executor, String identifier,
+            String[] args);
 
     public String getDescription();
 

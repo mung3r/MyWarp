@@ -47,8 +47,8 @@ public class CommandHandler {
         return new ArrayList<Command>(commands.values());
     }
 
-    public boolean dispatch(CommandSender sender, org.bukkit.command.Command command,
-            String label, String[] args) {
+    public boolean dispatch(CommandSender sender,
+            org.bukkit.command.Command command, String label, String[] args) {
 
         String[] arguments;
         if (args.length < 1) {
@@ -70,15 +70,16 @@ public class CommandHandler {
 
             for (Command cmd : commands.values()) {
                 if (cmd.isIdentifier(sender, identifier)) {
-                    String[] realArgs = Arrays.copyOfRange(arguments, argsIncluded,
-                            arguments.length);
+                    String[] realArgs = Arrays.copyOfRange(arguments,
+                            argsIncluded, arguments.length);
 
                     if (!cmd.isInProgress(sender)) {
                         if (realArgs.length < cmd.getMinArguments()
                                 || realArgs.length > cmd.getMaxArguments()) {
                             displayCommandHelp(cmd, sender);
                             return true;
-                        } else if (realArgs.length > 0 && "?".equals(realArgs[0])) {
+                        } else if (realArgs.length > 0
+                                && "?".equals(realArgs[0])) {
                             displayCommandHelp(cmd, sender);
                             return true;
                         }
@@ -100,9 +101,15 @@ public class CommandHandler {
     }
 
     private void displayCommandHelp(Command cmd, CommandSender sender) {
-        sender.sendMessage(ChatColor.RED + LanguageManager.getColorlessString("help.command") + ": " + ChatColor.YELLOW + cmd.getName());
-        sender.sendMessage(ChatColor.RED + LanguageManager.getColorlessString("help.description") + ": " + ChatColor.YELLOW + cmd.getDescription());
-        sender.sendMessage(ChatColor.RED + LanguageManager.getColorlessString("help.usage") + ": " + ChatColor.YELLOW + cmd.getUsage());
+        sender.sendMessage(ChatColor.RED
+                + LanguageManager.getColorlessString("help.command") + ": "
+                + ChatColor.YELLOW + cmd.getName());
+        sender.sendMessage(ChatColor.RED
+                + LanguageManager.getColorlessString("help.description") + ": "
+                + ChatColor.YELLOW + cmd.getDescription());
+        sender.sendMessage(ChatColor.RED
+                + LanguageManager.getColorlessString("help.usage") + ": "
+                + ChatColor.YELLOW + cmd.getUsage());
         if (cmd.getNotes() != null) {
             for (String note : cmd.getNotes()) {
                 sender.sendMessage("§e" + note);
@@ -111,7 +118,8 @@ public class CommandHandler {
     }
 
     public boolean hasPermission(CommandSender sender, String permString) {
-        if (!(sender instanceof Player) || permString == null || permString.isEmpty()) {
+        if (!(sender instanceof Player) || permString == null
+                || permString.isEmpty()) {
             return true;
         }
 
