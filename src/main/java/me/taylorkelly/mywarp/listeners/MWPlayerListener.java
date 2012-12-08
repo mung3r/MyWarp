@@ -46,38 +46,34 @@ public class MWPlayerListener implements Listener {
                 SignWarp.warpSign((Sign) block.getState(), this.warpList,
                         event.getPlayer());
 
-            } else {
-                if (block.getType() == Material.STONE_BUTTON
-                        || block.getType() == Material.WOOD_BUTTON
-                        || block.getType() == Material.LEVER) {
+            } else if (block.getType() == Material.STONE_BUTTON
+                    || block.getType() == Material.WOOD_BUTTON
+                    || block.getType() == Material.LEVER) {
 
-                    Attachable attachable = (Attachable) block.getState().getData();
-                    Block behind = block.getRelative(attachable.getAttachedFace(), 2);
+                Attachable attachable = (Attachable) block.getState().getData();
+                Block behind = block.getRelative(attachable.getAttachedFace(), 2);
 
-                    if (!(behind.getState() instanceof Sign)) {
-                        return;
-                    }
-
-                    org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind
-                            .getState().getData();
-                    Sign signBut = (Sign) behind.getState();
-
-                    if (!(signMat.getFacing() == attachable.getAttachedFace() && SignWarp
-                            .isSignWarp(signBut))) {
-                        return;
-                    }
-
-                    if (!warpPermissions.signWarp(event.getPlayer())) {
-                        event.getPlayer().sendMessage(
-                                LanguageManager.getString("sign.noPermission.use"));
-                        return;
-                    }
-                    SignWarp.warpSign(signBut, this.warpList, event.getPlayer());
+                if (!(behind.getState() instanceof Sign)) {
+                    return;
                 }
-            }
-        }
 
-        if (event.getAction().equals(Action.PHYSICAL)) {
+                org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind
+                        .getState().getData();
+                Sign signBut = (Sign) behind.getState();
+
+                if (!(signMat.getFacing() == attachable.getAttachedFace() && SignWarp
+                        .isSignWarp(signBut))) {
+                    return;
+                }
+
+                if (!warpPermissions.signWarp(event.getPlayer())) {
+                    event.getPlayer().sendMessage(
+                            LanguageManager.getString("sign.noPermission.use"));
+                    return;
+                }
+                SignWarp.warpSign(signBut, this.warpList, event.getPlayer());
+            }
+        } else if (event.getAction().equals(Action.PHYSICAL)) {
             if (event.getClickedBlock().getType() == Material.WOOD_PLATE
                     || event.getClickedBlock().getType() == Material.STONE_PLATE) {
                 Block twoBelow = event.getClickedBlock().getRelative(BlockFace.DOWN, 2);

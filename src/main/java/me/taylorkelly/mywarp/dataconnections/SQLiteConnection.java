@@ -69,7 +69,7 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void checkDB(boolean createIfNotExist) throws DataConnectionException{
+    public void checkDB(boolean createIfNotExist) throws DataConnectionException {
         Statement stmnt = null;
 
         try {
@@ -81,7 +81,8 @@ public class SQLiteConnection implements DataConnection {
                 if (createIfNotExist) {
                     stmnt.execute(WARP_TABLE);
                 } else {
-                    throw new DataConnectionException("Table '" + table + "' does not exist.");
+                    throw new DataConnectionException("Table '" + table
+                            + "' does not exist.");
                 }
             }
 
@@ -118,7 +119,8 @@ public class SQLiteConnection implements DataConnection {
                     stmnt.execute("ALTER TABLE " + table
                             + " ADD COLUMN `groupPermissions` text NOT NULL DEFAULT ''");
                 } else {
-                    throw new DataConnectionException("Column 'groupPermissions' does not exist.");
+                    throw new DataConnectionException(
+                            "Column 'groupPermissions' does not exist.");
                 }
             }
             // visits, added with 2.4
@@ -152,28 +154,28 @@ public class SQLiteConnection implements DataConnection {
     public HashMap<String, Warp> getMap() {
         HashMap<String, Warp> ret = new HashMap<String, Warp>();
         Statement stmnt = null;
-        ResultSet rsWarstmnt = null;
+        ResultSet rsWarps = null;
 
         try {
             conn = getConnection();
             stmnt = conn.createStatement();
 
-            rsWarstmnt = stmnt.executeQuery("SELECT * FROM " + table);
-            while (rsWarstmnt.next()) {
-                int index = rsWarstmnt.getInt("id");
-                String name = rsWarstmnt.getString("name");
-                String creator = rsWarstmnt.getString("creator");
-                String world = rsWarstmnt.getString("world");
-                double x = rsWarstmnt.getDouble("x");
-                int y = rsWarstmnt.getInt("y");
-                double z = rsWarstmnt.getDouble("z");
-                int yaw = rsWarstmnt.getInt("yaw");
-                int pitch = rsWarstmnt.getInt("pitch");
-                boolean publicAll = rsWarstmnt.getBoolean("publicAll");
-                String permissions = rsWarstmnt.getString("permissions");
-                String groupPermissions = rsWarstmnt.getString("groupPermissions");
-                String welcomeMessage = rsWarstmnt.getString("welcomeMessage");
-                int visits = rsWarstmnt.getInt("visits");
+            rsWarps = stmnt.executeQuery("SELECT * FROM " + table);
+            while (rsWarps.next()) {
+                int index = rsWarps.getInt("id");
+                String name = rsWarps.getString("name");
+                String creator = rsWarps.getString("creator");
+                String world = rsWarps.getString("world");
+                double x = rsWarps.getDouble("x");
+                int y = rsWarps.getInt("y");
+                double z = rsWarps.getDouble("z");
+                int yaw = rsWarps.getInt("yaw");
+                int pitch = rsWarps.getInt("pitch");
+                boolean publicAll = rsWarps.getBoolean("publicAll");
+                String permissions = rsWarps.getString("permissions");
+                String groupPermissions = rsWarps.getString("groupPermissions");
+                String welcomeMessage = rsWarps.getString("welcomeMessage");
+                int visits = rsWarps.getInt("visits");
                 Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch,
                         publicAll, permissions, groupPermissions, welcomeMessage, visits);
                 ret.put(name, warp);
@@ -185,8 +187,8 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (rsWarstmnt != null) {
-                    rsWarstmnt.close();
+                if (rsWarps != null) {
+                    rsWarps.close();
                 }
                 if (conn != null) {
                     conn.close();
@@ -244,7 +246,6 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void deleteWarp(Warp warp) {
         PreparedStatement stmnt = null;
-        ResultSet set = null;
         try {
             conn = getConnection();
 
@@ -258,9 +259,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (set != null) {
-                    set.close();
-                }
                 if (conn != null) {
                     conn.close();
                 }
@@ -273,7 +271,7 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void publicizeWarp(Warp warp, boolean publicAll) {
         PreparedStatement stmnt = null;
-        ResultSet set = null;
+
         try {
             conn = getConnection();
 
@@ -289,9 +287,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (set != null) {
-                    set.close();
-                }
                 if (conn != null) {
                     conn.close();
                 }
@@ -305,7 +300,7 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void updateCreator(Warp warp) {
         PreparedStatement stmnt = null;
-        ResultSet set = null;
+
         try {
             conn = getConnection();
 
@@ -321,9 +316,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (set != null) {
-                    set.close();
-                }
                 if (conn != null) {
                     conn.close();
                 }
@@ -337,7 +329,7 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void updateLocation(Warp warp) {
         PreparedStatement stmnt = null;
-        ResultSet set = null;
+
         try {
             conn = getConnection();
 
@@ -360,9 +352,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (set != null) {
-                    set.close();
-                }
                 if (conn != null) {
                     conn.close();
                 }
@@ -375,7 +364,7 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void updatePermissions(Warp warp) {
         PreparedStatement stmnt = null;
-        ResultSet set = null;
+
         try {
             conn = getConnection();
 
@@ -391,9 +380,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (set != null) {
-                    set.close();
-                }
                 if (conn != null) {
                     conn.close();
                 }
@@ -407,7 +393,7 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void updateGroupPermissions(Warp warp) {
         PreparedStatement stmnt = null;
-        ResultSet set = null;
+
         try {
             conn = getConnection();
 
@@ -423,9 +409,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (set != null) {
-                    set.close();
-                }
                 if (conn != null) {
                     conn.close();
                 }
@@ -439,7 +422,7 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void updateVisits(Warp warp) {
         PreparedStatement stmnt = null;
-        ResultSet set = null;
+
         try {
             conn = getConnection();
 
@@ -455,9 +438,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (set != null) {
-                    set.close();
-                }
                 if (conn != null) {
                     conn.close();
                 }
@@ -470,7 +450,7 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void updateWelcomeMessage(Warp warp) {
         PreparedStatement stmnt = null;
-        ResultSet set = null;
+
         try {
             conn = getConnection();
 
@@ -485,9 +465,6 @@ public class SQLiteConnection implements DataConnection {
             try {
                 if (stmnt != null) {
                     stmnt.close();
-                }
-                if (set != null) {
-                    set.close();
                 }
                 if (conn != null) {
                     conn.close();
