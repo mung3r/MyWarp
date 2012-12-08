@@ -2,6 +2,7 @@ package me.taylorkelly.mywarp.commands;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.WarpSettings;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -26,6 +27,7 @@ public class CreatePrivateCommand extends BasicCommand implements Command {
             Player player = (Player) executor;
             String name = StringUtils.join(args, ' ');
 
+            if (WarpSettings.useWarpLimits) {
             if (!plugin.getWarpList().playerCanBuildWarp(player)) {
                 player.sendMessage(LanguageManager.getString("limit.total.reached").replaceAll("%maxTotal%", Integer.toString(MyWarp.getWarpPermissions().maxTotalWarps(player))));
                 return true;
@@ -34,6 +36,7 @@ public class CreatePrivateCommand extends BasicCommand implements Command {
             if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
                 player.sendMessage(LanguageManager.getString("limit.private.reached").replaceAll("%maxPrivate%", Integer.toString(MyWarp.getWarpPermissions().maxPrivateWarps(player))));
                 return true;
+            }
             }
 
             if (plugin.getWarpList().warpExists(name)) {

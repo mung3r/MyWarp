@@ -30,6 +30,7 @@ public class WarpSettings {
     public static int searchRadius;
     public static int verticalTolerance;
 
+    public static boolean useWarpLimits;
     public static ArrayList<WarpLimit> warpLimits;
     public static WarpLimit defaultLimit;
 
@@ -125,6 +126,7 @@ public class WarpSettings {
         verticalTolerance = confsafety.getInt("verticalTolerance");
 
         // limits
+        useWarpLimits = conflimits.getBoolean("enabled");
         for (String key : conflimits.getKeys(false)) {
             if (key.equals("default")) {
                 defaultLimit = new WarpLimit(key, conflimits.getInt(key + ".maxTotal"),

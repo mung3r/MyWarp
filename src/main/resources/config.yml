@@ -8,6 +8,7 @@ warpSafety:
   searchRadius: 5
   verticalTolerance: 5
 limits:
+  enabled: true
   default:
     maxTotal: 15
     maxPublic: 5
