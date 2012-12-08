@@ -1,4 +1,5 @@
 settings:
+  controlWorldAccess: false
   loadChunks: false
   warpEffect: true
 locale:

@@ -21,6 +21,7 @@ public class WarpSettings {
     private static final String settingsFile = "MyWarp.settings";
     public static File dataDir;
     
+    public static boolean worldAccess;
     public static boolean loadChunks;
     public static boolean warpEffect;
     
@@ -114,6 +115,7 @@ public class WarpSettings {
         }
         
         // settings
+        worldAccess = confsettings.getBoolean("controlWorldAccess");
         loadChunks = confsettings.getBoolean("loadChunks");
         warpEffect = confsettings.getBoolean("warpEffect");
         

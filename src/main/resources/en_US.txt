@@ -24,6 +24,7 @@ error.noPermission.uninvite.players:§cYou do not have permission to uninvite pl
 error.noPermission.update:§cYou do not have permission to update %warp%'s position.
 error.noPermission.warpto:§cYou do not have permission to warp to '%warp%'.
 error.noPermission.welcome:§cYou do not have permission to change %warp%'s welcome message.
+error.noPermission.world:§cYou do not have permission to access a warp in %world%.
 error.noPermission:§cInsufficient permission.
 error.noSuchWarp:§cNo such warp '%warp%'.
 error.playerOffline.give:§c%player% needs to be online to receive warps.

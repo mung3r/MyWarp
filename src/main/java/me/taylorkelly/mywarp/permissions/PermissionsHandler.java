@@ -1,5 +1,8 @@
 package me.taylorkelly.mywarp.permissions;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.WarpLimit;
 import me.taylorkelly.mywarp.timer.Cooldown;
@@ -8,6 +11,7 @@ import me.taylorkelly.mywarp.utils.WarpLogger;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
@@ -42,33 +46,52 @@ public class PermissionsHandler implements IPermissionsHandler {
 
     // Only register permissions here that cannot be registered in plugin.yml!!!
     public void registerPermissions() {
-        // warp.limit permissions
+        // mywarp.limit permissions
         for (WarpLimit warpLimit : WarpSettings.warpLimits) {
-            pm.addPermission(new org.bukkit.permissions.Permission("mywarp.limit."
-                    + warpLimit.name,
-                    "Gives acess to the number of warps defined for "
-                            + warpLimit.name + " in the config",
+            pm.addPermission(new org.bukkit.permissions.Permission(
+                    "mywarp.limit." + warpLimit.name,
+                    "Gives acess to the number of warps defined for '"
+                            + warpLimit.name + "' in the config",
                     PermissionDefault.FALSE));
         }
 
-        // warp.cooldown permissions
+        // mywarp.cooldown permissions
         for (Cooldown warpCooldown : WarpSettings.warpCooldowns) {
-            pm.addPermission(new org.bukkit.permissions.Permission("mywarp.cooldown."
-                    + warpCooldown.name,
-                    "User is affected by the cooldowns defined for " + warpCooldown.name
-                            + " in the config", PermissionDefault.FALSE));
+            pm.addPermission(new org.bukkit.permissions.Permission(
+                    "mywarp.cooldown." + warpCooldown.name,
+                    "User is affected by the cooldowns defined for '"
+                            + warpCooldown.name + "' in the config",
+                    PermissionDefault.FALSE));
         }
 
-        // warp.warmup permissions
+        // mywarp.warmup permissions
         for (Warmup warpWarmup : WarpSettings.warpWarmups) {
-            pm.addPermission(new org.bukkit.permissions.Permission("mywarp.warmup."
-                    + warpWarmup.name, "User is affected by the warmups defined for "
-                    + warpWarmup.name + " in the config", PermissionDefault.FALSE));
+            pm.addPermission(new org.bukkit.permissions.Permission(
+                    "mywarp.warmup." + warpWarmup.name,
+                    "User is affected by the warmups defined for '"
+                            + warpWarmup.name + "' in the config",
+                    PermissionDefault.FALSE));
         }
+
+        // mywarp.warp.world permissions
+        Map<String, Boolean> worldMap = new LinkedHashMap<String, Boolean>();
+        for (World world : plugin.getServer().getWorlds()) {
+            pm.addPermission(new org.bukkit.permissions.Permission(
+                    "mywarp.warp.world." + world.getName(),
+                    "User may warp to worlds in world '" + world.getName()
+                            + "'", PermissionDefault.OP));
+            worldMap.put("mywarp.warp.world." + world.getName(), true);
+        }
+        worldMap.put("mywarp.warp.world.currentworld", true);
+
+        pm.addPermission(new org.bukkit.permissions.Permission(
+                "mywarp.warp.world.*", "User may warp to all worlds",
+                PermissionDefault.OP, worldMap));
     }
 
     public void checkPermissions() {
-        final PluginManager pluginManager = plugin.getServer().getPluginManager();
+        final PluginManager pluginManager = plugin.getServer()
+                .getPluginManager();
 
         try {
             RegisteredServiceProvider<Permission> permissionProvider = Bukkit
@@ -103,7 +126,8 @@ public class PermissionsHandler implements IPermissionsHandler {
                 if (!(handler instanceof BPermissions2Handler)) {
                     permplugin = PermHandler.BPERMISSIONS2;
                     String version = bPermPlugin.getDescription().getVersion();
-                    WarpLogger.info("Using bPermissions v" + version + " for group support");
+                    WarpLogger.info("Using bPermissions v" + version
+                            + " for group support");
                     handler = new BPermissions2Handler();
                 }
             }
@@ -115,7 +139,8 @@ public class PermissionsHandler implements IPermissionsHandler {
             if (!(handler instanceof GroupManagerHandler)) {
                 permplugin = PermHandler.GROUPMANAGER;
                 String version = GMplugin.getDescription().getVersion();
-                WarpLogger.info("Using GroupManager v" + version + " for group support");
+                WarpLogger.info("Using GroupManager v" + version
+                        + " for group support");
                 handler = new GroupManagerHandler(GMplugin);
             }
             return;

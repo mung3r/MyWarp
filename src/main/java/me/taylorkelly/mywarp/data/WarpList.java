@@ -53,6 +53,17 @@ public class WarpList {
         return size;
     }
 
+    public boolean playerCanAccessWorld(Player player, String worldName) {
+        if (player.getWorld().getName().equals(worldName)
+                && MyWarp.getWarpPermissions().canWarpInsideWorld(player)) {
+            return true;
+        }
+        if (MyWarp.getWarpPermissions().canWarpToWorld(player, worldName)) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean playerCanBuildWarp(Player player) {
         if (MyWarp.getWarpPermissions().disobeyTotalLimit(player)) {
             return true;

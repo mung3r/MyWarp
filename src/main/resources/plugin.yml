@@ -94,6 +94,9 @@ permissions:
   mywarp.warp.sign.create:
     description: Can make sign warps
     default: op
+  mywarp.warp.world.currentworld:
+    description: Can warp inside of worlds but not across them
+    default: op
   mywarp.limit.total.unlimited:
     description: Can disobey total limit for warp creation
     default: op
@@ -155,6 +158,7 @@ permissions:
   mywarp.warp.*:
     description: All user permissions
     children:
+      mywarp.warp.world.*: true
       mywarp.warp.soc.*: true
       mywarp.warp.sign.*: true
       mywarp.warp.basic.*: true

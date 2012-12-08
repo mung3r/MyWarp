@@ -24,32 +24,48 @@ public class WarpPermissions {
     }
 
     public boolean canAccessAll(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.admin.accessall");
+        return permissionsHandler.hasPermission(player,
+                "mywarp.admin.accessall");
     }
 
     public boolean canModifyAll(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.admin.modifyall");
+        return permissionsHandler.hasPermission(player,
+                "mywarp.admin.modifyall");
+    }
+
+    public boolean canWarpToWorld(Player player, String worldName) {
+        return permissionsHandler.hasPermission(player, "mywarp.warp.world."
+                + worldName);
+    }
+
+    public boolean canWarpInsideWorld(Player player) {
+        return permissionsHandler.hasPermission(player,
+                "mywarp.warp.world.currentworld");
     }
 
     public boolean createSignWarp(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.warp.sign.create");
+        return permissionsHandler.hasPermission(player,
+                "mywarp.warp.sign.create");
     }
 
     public boolean signWarp(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.warp.sign.warp");
+        return permissionsHandler
+                .hasPermission(player, "mywarp.warp.sign.warp");
     }
 
     public boolean disobeyTotalLimit(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.limit.total.unlimited");
+        return permissionsHandler.hasPermission(player,
+                "mywarp.limit.total.unlimited");
     }
 
     public boolean disobeyPrivateLimit(Player player) {
-        return permissionsHandler
-                .hasPermission(player, "mywarp.limit.private.unlimited");
+        return permissionsHandler.hasPermission(player,
+                "mywarp.limit.private.unlimited");
     }
 
     public boolean disobeyPublicLimit(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.limit.public.unlimited");
+        return permissionsHandler.hasPermission(player,
+                "mywarp.limit.public.unlimited");
     }
 
     public int maxTotalWarps(Player player) {
@@ -83,7 +99,8 @@ public class WarpPermissions {
     }
 
     public boolean disobeyCooldown(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.cooldown.disobey");
+        return permissionsHandler.hasPermission(player,
+                "mywarp.cooldown.disobey");
     }
 
     public Cooldown getCooldown(Player player) {
@@ -97,7 +114,8 @@ public class WarpPermissions {
     }
 
     public boolean disobeyWarmup(Player player) {
-        return permissionsHandler.hasPermission(player, "mywarp.warmup.disobey");
+        return permissionsHandler
+                .hasPermission(player, "mywarp.warmup.disobey");
     }
 
     public boolean disobeyWarmupMoveAbort(Player player) {
@@ -106,8 +124,8 @@ public class WarpPermissions {
     }
 
     public boolean disobeyWarmupDmgAbort(Player player) {
-        return permissionsHandler
-                .hasPermission(player, "mywarp.warmup.disobey.dmgabort");
+        return permissionsHandler.hasPermission(player,
+                "mywarp.warmup.disobey.dmgabort");
     }
 
     public Warmup getWarmup(Player player) {

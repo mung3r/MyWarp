@@ -51,6 +51,15 @@ public class WarpToCommand extends BasicCommand implements Command {
                 return true;
             }
 
+            if (WarpSettings.worldAccess
+                    && !plugin.getWarpList().playerCanAccessWorld(player,
+                            warp.world)) {
+                player.sendMessage(LanguageManager.getString(
+                        "error.noPermission.world").replaceAll("%world%",
+                        warp.world));
+                return true;
+            }
+
             if (WarpSettings.useTimers) {
                 Cooldown cooldown = MyWarp.getWarpPermissions().getCooldown(
                         player);

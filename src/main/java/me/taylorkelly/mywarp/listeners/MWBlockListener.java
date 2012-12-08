@@ -32,6 +32,7 @@ public class MWBlockListener implements Listener {
                 if (!warpList.warpExists(name)) {
                     player.sendMessage(LanguageManager.getString("error.noSuchWarp").replaceAll("%warp%", name));
                     event.setCancelled(true);
+                    //TODO: return;
                 }
                 Warp warp = warpList.getWarp(name);
 

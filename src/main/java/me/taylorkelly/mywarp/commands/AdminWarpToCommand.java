@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
 
 import org.apache.commons.lang.StringUtils;
@@ -52,6 +53,16 @@ public class AdminWarpToCommand extends BasicCommand implements Command {
         if (player != null && !warp.playerCanWarp(player)) {
             executor.sendMessage(LanguageManager.getString(
                     "error.noPermission.warpto").replaceAll("%warp%", name));
+            return true;
+        }
+
+        if (WarpSettings.worldAccess
+                && player != null
+                && !plugin.getWarpList().playerCanAccessWorld(player,
+                        warp.world)) {
+            player.sendMessage(LanguageManager.getString(
+                    "error.noPermission.world").replaceAll("%world%",
+                    warp.world));
             return true;
         }
 

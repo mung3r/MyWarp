@@ -1,13 +1,14 @@
 package me.taylorkelly.mywarp.data;
 
 import me.taylorkelly.mywarp.LanguageManager;
+import me.taylorkelly.mywarp.WarpSettings;
 
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 
 public class SignWarp {
-    
+
     /**
      * Precondition: Only call if isSignWarp() returned true
      */
@@ -16,12 +17,20 @@ public class SignWarp {
         Warp warp = list.getWarp(name);
 
         if (!warp.playerCanWarp(player)) {
-            player.sendMessage(LanguageManager.getString("error.noPermission.warpto").replaceAll("%warp%", name));
-        } else {
-            list.warpTo(name, player);
+            player.sendMessage(LanguageManager.getString(
+                    "error.noPermission.warpto").replaceAll("%warp%", name));
+            return;
         }
+        if (WarpSettings.worldAccess
+                && !list.playerCanAccessWorld(player, warp.world)) {
+            player.sendMessage(LanguageManager.getString(
+                    "error.noPermission.world").replaceAll("%world%",
+                    warp.world));
+            return;
+        }
+        list.warpTo(name, player);
     }
-    
+
     public static void createSignWarp(SignChangeEvent sign) {
         sign.setLine(1, "[MyWarp]");
     }

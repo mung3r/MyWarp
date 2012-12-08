@@ -24,6 +24,7 @@ error.noPermission.uninvite.players:§cDir fehlen die Rechte um Spieler von '%wa
 error.noPermission.update:§cDir fehlen die Rechte um %warp%s Position zu aktualisieren.
 error.noPermission.warpto:§cDir fehlen die Rechte um dich zu '%warp%' zu teleportieren.
 error.noPermission.welcome:§cDir fehlen die Rechte um %warp%s Willkommensnachricht zu ändern.
+error.noPermission.world:§cDir fehlen die Rechte um dich zu einem Warp in %world% zu teleportieren.
 error.noPermission:§cUnzureichende Rechte.
 error.noSuchWarp:§cDer Warp '%warp%' existiert nicht.
 error.playerOffline.give:§c%player% muss online sein, um Warps empfangen zu können.
