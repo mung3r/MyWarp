@@ -55,7 +55,7 @@ public class HelpCommand extends BasicCommand implements Command {
         if (page >= numPages || page < 0) {
             page = 0;
         }
-        executor.sendMessage("§c-----[ " + "§fMyWarp Help <" + (page + 1) + "/"
+        executor.sendMessage("§c-----[ " + "§fMyWarp " + LanguageManager.getColorlessString("help.help") + "<" + (page + 1) + "/"
                 + numPages + ">§c ]-----");
         int start = page * CMDS_PER_PAGE;
         int end = start + CMDS_PER_PAGE;
@@ -67,7 +67,7 @@ public class HelpCommand extends BasicCommand implements Command {
             executor.sendMessage("  §a" + cmd.getUsage());
         }
 
-        executor.sendMessage("§cFor more info on a particular command, type §f/<command> ?");
+        executor.sendMessage(LanguageManager.getString("help.more"));
         return true;
     }
 }

@@ -50,10 +50,12 @@ help.description.public:Make §9<name>§e a public warp
 help.description.reload:Reload settings
 help.description.search:Searches for warps related to §9<query>
 help.description.uninvite:Uninvite §8<player|group>§e from §9<name>
-help.description.update:Updates existing §9<name> with your current position
+help.description.update:Updates existing §9<name>§e with your current position
 help.description.warpTo:Warp to §9<name>
 help.description.welcome:Change the welcome message of §9<name>
 help.description:Description
+help.help:Help
+help.more:§cFor more info on a particular command, type §f/<command> ?
 help.usage.name:name
 help.usage.owner:owner
 help.usage.pageNumber:page#
@@ -70,7 +72,7 @@ list.by:by
 list.console:§cThe console does not own any warps.
 list.noWarps:§cThere are no warps to list.
 list.page.negative:§cPage number can't be below 1.
-list.page.toHigh:§cThere are only %pages% pages of warps.
+list.page.toHigh:§cThere are only %pages% page(s) of warps.
 list.page:Page
 list.you:you
 listAll.list:§bYou can warp to:
