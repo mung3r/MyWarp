@@ -19,7 +19,7 @@ public class WarpPermissions {
         return permissionsHandler.hasPermission(player, node);
     }
 
-    public boolean playerHasGroup(Player player, String group) {
+    public boolean playerHasGroup(Player player, final String group) {
         return permissionsHandler.playerHasGroup(player, group);
     }
 
@@ -104,10 +104,10 @@ public class WarpPermissions {
     }
 
     public Cooldown getCooldown(Player player) {
-        for (int i = 0; i < WarpSettings.warpCooldowns.size(); i++) {
+        for (Cooldown cooldown : WarpSettings.warpCooldowns) {
             if (permissionsHandler.hasPermission(player, "mywarp.cooldown."
-                    + WarpSettings.warpCooldowns.get(i).name)) {
-                return WarpSettings.warpCooldowns.get(i);
+                    + cooldown.name)) {
+                return cooldown;
             }
         }
         return WarpSettings.defaultCooldown;
@@ -129,10 +129,10 @@ public class WarpPermissions {
     }
 
     public Warmup getWarmup(Player player) {
-        for (int i = 0; i < WarpSettings.warpWarmups.size(); i++) {
+        for (Warmup warmup : WarpSettings.warpWarmups) {
             if (permissionsHandler.hasPermission(player, "mywarp.warmup."
-                    + WarpSettings.warpWarmups.get(i).name)) {
-                return WarpSettings.warpWarmups.get(i);
+                    + warmup.name)) {
+                return warmup;
             }
         }
         return WarpSettings.defaultWarmup;

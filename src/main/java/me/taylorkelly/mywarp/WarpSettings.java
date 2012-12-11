@@ -130,7 +130,10 @@ public class WarpSettings {
         // limits
         useWarpLimits = conflimits.getBoolean("enabled");
         for (String key : conflimits.getKeys(false)) {
-            if (key.equals("default")) {
+            if (key.equals("enabled")) {
+                //ignore the enabled option
+                continue;
+            } else if (key.equals("default")) {
                 defaultLimit = new WarpLimit(key, conflimits.getInt(key + ".maxTotal"),
                         conflimits.getInt(key + ".maxPublic"), conflimits.getInt(key
                                 + ".maxPrivate"));

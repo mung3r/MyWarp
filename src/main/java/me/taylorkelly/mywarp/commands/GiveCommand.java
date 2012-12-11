@@ -36,14 +36,20 @@ public class GiveCommand extends BasicCommand implements Command {
         }
 
         Player givee = plugin.getServer().getPlayer(args[0]);
+        String giveeName;
 
-        if (givee == null) {
-            executor.sendMessage(LanguageManager.getString(
-                    "error.playerOffline.give").replaceAll("%player%", args[0]));
-            return true;
+        if (WarpSettings.useWarpLimits) {
+            if (givee == null) {
+                executor.sendMessage(LanguageManager.getString(
+                        "error.playerOffline.give").replaceAll("%player%",
+                        args[0]));
+                return true;
+            }
+            giveeName = givee.getName();
+        } else {
+            giveeName = args[0];
         }
 
-        String giveeName = givee.getName();
         String name = plugin.getWarpList().getMatche(
                 StringUtils.join(Arrays.asList(args).subList(1, args.length),
                         ' '), player);

@@ -15,10 +15,10 @@ commands:
     description: All of the MyWarp commands
     usage: /<command> help - Displays the help for MyWarp
 permissions:
-  mywarp.admin.accessAll:
+  mywarp.admin.accessall:
     description: Can access all warps
     default: op
-  mywarp.admin.modifyAll:
+  mywarp.admin.modifyall:
     description: Can modify all warps
     default: op
   mywarp.admin.import:

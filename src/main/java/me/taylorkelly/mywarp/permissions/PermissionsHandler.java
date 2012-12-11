@@ -114,7 +114,8 @@ public class PermissionsHandler implements IPermissionsHandler {
             if (!(handler instanceof PermissionsExHandler)) {
                 permplugin = PermHandler.PERMISSIONSEX;
                 String version = permExPlugin.getDescription().getVersion();
-                WarpLogger.info("Using PermissionsEx v" + version);
+                WarpLogger.info("Using PermissionsEx v" + version
+                        + " for group support");
                 handler = new PermissionsExHandler();
             }
             return;
