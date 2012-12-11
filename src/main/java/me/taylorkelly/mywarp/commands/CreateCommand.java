@@ -55,7 +55,7 @@ public class CreateCommand extends BasicCommand implements Command {
                 return true;
             }
 
-            plugin.getWarpList().addWarp(name, player);
+            plugin.getWarpList().addWarpPublic(name, player);
             player.sendMessage(LanguageManager.getString("warp.create.public")
                     .replaceAll("%warp%", name));
             return true;

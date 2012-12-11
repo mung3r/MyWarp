@@ -41,14 +41,14 @@ public class ListCommand extends BasicCommand implements Command {
                 int page = Integer.parseInt(args[0]);
                 if (page < 1) {
                     executor.sendMessage(LanguageManager
-                            .getString("list.negativePage"));
+                            .getString("list.page.negative"));
                     return true;
                 } else if (page > lister.getMaxPages(player)) {
                     executor.sendMessage(LanguageManager
-                            .getString("list.page.toHigh"
+                            .getString("list.page.toHigh")
                                     .replaceAll("%pages%", Integer
                                             .toString(lister
-                                                    .getMaxPages(player)))));
+                                                    .getMaxPages(player))));
                     return true;
                 }
                 lister.setPage(page);
@@ -84,13 +84,13 @@ public class ListCommand extends BasicCommand implements Command {
             int page = Integer.parseInt(args[1]);
             if (page < 1) {
                 executor.sendMessage(LanguageManager
-                        .getString("list.negativePage"));
+                        .getString("list.page.negative"));
                 return true;
             } else if (page > lister.getMaxPagesPerCreator(player, creator)) {
                 executor.sendMessage(LanguageManager
-                        .getString("list.page.toHigh".replaceAll("%pages%",
+                        .getString("list.page.toHigh").replaceAll("%pages%",
                                 Integer.toString(lister.getMaxPagesPerCreator(
-                                        player, creator)))));
+                                        player, creator))));
                 return true;
             }
             lister.setPage(page);

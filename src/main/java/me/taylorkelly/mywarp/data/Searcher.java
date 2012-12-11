@@ -50,9 +50,9 @@ public class Searcher {
             int x = (int) Math.round(warp.x);
             int y = warp.y;
             int z = (int) Math.round(warp.z);
-            executor.sendMessage(color + "'" + warp.name + "'"
+            executor.sendMessage(color + "'" + warp.name + "' "
                     + ChatColor.WHITE
-                    + LanguageManager.getColorlessString("list.by") + creator
+                    + LanguageManager.getColorlessString("list.by") + " "+ creator
                     + " @(" + x + ", " + y + ", " + z + ")");
         }
     }
