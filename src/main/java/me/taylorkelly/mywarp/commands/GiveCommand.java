@@ -77,16 +77,17 @@ public class GiveCommand extends BasicCommand implements Command {
             return true;
         }
 
-        if (!plugin.getWarpList().playerCanBuildWarp(givee)) {
-            executor.sendMessage(LanguageManager.getString(
-                    "limit.total.reached.player").replaceAll(
-                    "%maxTotal%",
-                    Integer.toString(
-                            MyWarp.getWarpPermissions().maxTotalWarps(givee))
-                            .replaceAll("%player%", giveeName)));
-            return true;
-        }
         if (WarpSettings.useWarpLimits) {
+            if (!plugin.getWarpList().playerCanBuildWarp(givee)) {
+                executor.sendMessage(LanguageManager.getString(
+                        "limit.total.reached.player").replaceAll(
+                        "%maxTotal%",
+                        Integer.toString(
+                                MyWarp.getWarpPermissions()
+                                        .maxTotalWarps(givee)).replaceAll(
+                                "%player%", giveeName)));
+                return true;
+            }
             if (warp.publicAll
                     && !plugin.getWarpList().playerCanBuildPublicWarp(givee)) {
                 executor.sendMessage(LanguageManager.getString(
@@ -111,12 +112,14 @@ public class GiveCommand extends BasicCommand implements Command {
             }
         }
 
-        plugin.getWarpList().give(name, givee);
+        plugin.getWarpList().give(name, giveeName);
         executor.sendMessage(LanguageManager.getString("warp.give.given")
                 .replaceAll("%warp%", name).replaceAll("%player%", giveeName));
-        givee.sendMessage(LanguageManager.getString("warp.give.received")
-                .replaceAll("%warp%", name)
-                .replaceAll("%player%", executor.getName()));
+        if (WarpSettings.useWarpLimits || givee != null) {
+            givee.sendMessage(LanguageManager.getString("warp.give.received")
+                    .replaceAll("%warp%", name)
+                    .replaceAll("%player%", executor.getName()));
+        }
         return true;
     }
 }

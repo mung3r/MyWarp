@@ -187,9 +187,9 @@ public class WarpList {
         return warpList.get(name);
     }
 
-    public void give(String name, Player givee) {
+    public void give(String name, String giveeName) {
         Warp warp = warpList.get(name);
-        warp.setCreator(givee.getName());
+        warp.setCreator(giveeName);
         MyWarp.connectionManager.updateCreator(warp);
     }
 
