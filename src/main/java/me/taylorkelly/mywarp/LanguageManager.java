@@ -17,13 +17,22 @@ import org.bukkit.ChatColor;
 
 import me.taylorkelly.mywarp.utils.UnicodeBOMInputStream;
 import me.taylorkelly.mywarp.utils.WarpLogger;
-
+/**
+ * Manages languages
+ *
+ */
 public class LanguageManager {
 
     private static MyWarp plugin;
-
     private static HashMap<String, String> languageMap = new HashMap<String, String>();
 
+    /**
+     * Initializes the language manager, creates default files and loads the
+     * activated locale into the language map
+     * 
+     * @param plugin
+     *            the MyWarp instance
+     */
     public static void initialize(MyWarp plugin) {
         LanguageManager.plugin = plugin;
 
@@ -62,7 +71,8 @@ public class LanguageManager {
                     while ((length = input.read(buf)) > 0) {
                         output.write(buf, 0, length);
                     }
-                    WarpLogger.info("Default language file written: " + name + ".txt");
+                    WarpLogger.info("Default language file written: " + name
+                            + ".txt");
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -90,10 +100,12 @@ public class LanguageManager {
     private static void checkLanguageFile(String name, String original) {
         Scanner scan;
         try {
-            scan = new Scanner(new UnicodeBOMInputStream(plugin.getResource("lang/"
-                    + original + ".txt")).skipBOM(), "UTF-8");
+            scan = new Scanner(new UnicodeBOMInputStream(
+                    plugin.getResource("lang/" + original + ".txt")).skipBOM(),
+                    "UTF-8");
         } catch (IOException e1) {
-            scan = new Scanner(plugin.getResource("lang/" + original + ".txt"), "UTF-8");
+            scan = new Scanner(plugin.getResource("lang/" + original + ".txt"),
+                    "UTF-8");
         }
         HashMap<String, String> map = new HashMap<String, String>();
 
@@ -104,7 +116,8 @@ public class LanguageManager {
             map.put(line.split(":", 2)[0], line.split(":", 2)[1]);
         }
 
-        File f = new File(plugin.getDataFolder() + File.separator + name + ".txt");
+        File f = new File(plugin.getDataFolder() + File.separator + name
+                + ".txt");
         if (f.exists()) {
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -120,8 +133,8 @@ public class LanguageManager {
                 br.close();
             } catch (Exception e) {
                 WarpLogger.severe("Could not find file: "
-                        + plugin.getDataFolder().getName() + File.separator + name
-                        + ".txt");
+                        + plugin.getDataFolder().getName() + File.separator
+                        + name + ".txt");
             }
 
             if (!map.isEmpty()) {
@@ -148,28 +161,56 @@ public class LanguageManager {
     }
 
     private static void loadLanguage(String locale) throws IOException {
-        if (!(locale.equals("en_US") && locale.equals("de_DE"))) {
-            checkLanguageFile(locale, "en_US");
-        }
-        File f = new File(plugin.getDataFolder(), locale + ".txt");
+        UnicodeBOMInputStream uis = null;
+        BufferedReader br = null;
+        try {
+            if (!(locale.equals("en_US") && locale.equals("de_DE"))) {
+                checkLanguageFile(locale, "en_US");
+            }
+            File f = new File(plugin.getDataFolder(), locale + ".txt");
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                new UnicodeBOMInputStream(new FileInputStream(f)).skipBOM(), "UTF-8"));
-        String line = "";
-        while ((line = br.readLine()) != null) {
-            if (line.startsWith("#") || line.split(":", 2).length != 2)
-                continue;
-            languageMap.put(line.split(":", 2)[0], line.split(":", 2)[1]);
+            uis = new UnicodeBOMInputStream(new FileInputStream(f));
+            br = new BufferedReader(new InputStreamReader(uis.skipBOM(),
+                    "UTF-8"));
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("#") || line.split(":", 2).length != 2)
+                    continue;
+                languageMap.put(line.split(":", 2)[0], line.split(":", 2)[1]);
+            }
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+            if (uis != null) {
+                uis.close();
+            }
         }
-        br.close();
     }
 
-    public static String getString(String s) {
-        return languageMap.get(s) != null ? ChatColor.translateAlternateColorCodes('§',
-                languageMap.get(s)).replaceAll("%n", "\n") : s;
+    /**
+     * Returns the string find under the the given key in the language map with
+     * replaced new-line and color codes. Will return the key if no
+     * corresponding string could be found
+     * 
+     * @param key
+     *            the key of the string
+     * @return the corresponding string out of the language map
+     */
+    public static String getString(String key) {
+        return languageMap.get(key) != null ? ChatColor
+                .translateAlternateColorCodes('§', languageMap.get(key))
+                .replaceAll("%n", "\n") : key;
     }
 
-    public static String getColorlessString(String s) {
-        return ChatColor.stripColor(getString(s));
+    /**
+     * Returns {@link #getString(String)} without colors
+     * 
+     * @param key
+     *            the key of the string
+     * @return the corresponding string out of the language map without colors
+     */
+    public static String getColorlessString(String key) {
+        return ChatColor.stripColor(key);
     }
 }
