@@ -26,35 +26,35 @@ public class MWBlockListener implements Listener {
     public void onSignChange(SignChangeEvent event) {
         if (SignWarp.isSignWarp(event)) {
             Player player = event.getPlayer();
-            if (warpPermissions.createSignWarp(player)) {
-                String name = event.getLine(2);
-
-                if (!warpList.warpExists(name)) {
-                    player.sendMessage(LanguageManager.getString(
-                            "error.noSuchWarp").replaceAll("%warp%", name));
-                    event.setCancelled(true);
-                    event.getBlock().breakNaturally();
-                    return;
-                }
-                Warp warp = warpList.getWarp(name);
-
-                if (!warp.playerCanModify(player)) {
-                    player.sendMessage(LanguageManager.getString(
-                            "sign.noPermission.create").replaceAll("%warp%",
-                            name));
-                    event.setCancelled(true);
-                    event.getBlock().breakNaturally();
-                    return;
-                }
-                SignWarp.createSignWarp(event);
-                player.sendMessage(LanguageManager.getString("sign.created"));
-            } else {
+            if (!warpPermissions.createSignWarp(player)) {
                 player.sendMessage(LanguageManager
                         .getString("sign.noPermission.create"));
                 event.setCancelled(true);
                 event.getBlock().breakNaturally();
                 return;
             }
+            String name = event.getLine(2);
+
+            if (!warpList.warpExists(name)) {
+                player.sendMessage(LanguageManager
+                        .getString("error.noSuchWarp").replaceAll("%warp%",
+                                name));
+                event.setCancelled(true);
+                event.getBlock().breakNaturally();
+                return;
+            }
+            Warp warp = warpList.getWarp(name);
+
+            if (!MyWarp.getWarpPermissions().createSignWarpAll(player)
+                    && !warp.playerCanModify(player)) {
+                player.sendMessage(LanguageManager.getString(
+                        "sign.noPermission.create").replaceAll("%warp%", name));
+                event.setCancelled(true);
+                event.getBlock().breakNaturally();
+                return;
+            }
+            SignWarp.createSignWarp(event);
+            player.sendMessage(LanguageManager.getString("sign.created"));
         }
     }
 }

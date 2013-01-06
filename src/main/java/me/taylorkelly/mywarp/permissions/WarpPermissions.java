@@ -47,6 +47,11 @@ public class WarpPermissions {
         return permissionsHandler.hasPermission(player,
                 "mywarp.warp.sign.create");
     }
+    
+    public boolean createSignWarpAll(Player player) {
+        return permissionsHandler.hasPermission(player,
+                "mywarp.warp.sign.create.all");
+    }
 
     public boolean signWarp(Player player) {
         return permissionsHandler
