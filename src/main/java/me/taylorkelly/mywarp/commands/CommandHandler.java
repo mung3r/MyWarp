@@ -19,7 +19,6 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class CommandHandler {
 
@@ -117,16 +116,15 @@ public class CommandHandler {
         }
     }
 
-    public boolean hasPermission(CommandSender sender, String permString) {
-        if (!(sender instanceof Player) || permString == null
+    public boolean hasPermission(CommandSender executor, String permString) {
+        if (permString == null
                 || permString.isEmpty()) {
             return true;
         }
 
-        Player player = (Player) sender;
         if (warpPermissions != null) {
-            return warpPermissions.hasPermission(player, permString);
+            return warpPermissions.hasPermission(executor, permString);
         }
-        return player.hasPermission(permString);
+        return executor.hasPermission(permString);
     }
 }

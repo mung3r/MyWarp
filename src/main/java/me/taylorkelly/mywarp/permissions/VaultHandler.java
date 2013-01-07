@@ -4,14 +4,17 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.entity.Player;
 
-
-public class VaultHandler implements IPermissionsHandler {
+/**
+ * Handler for Vault
+ * 
+ */
+public class VaultHandler implements PermissionsHandler {
 
     private Permission permission;
 
-	public VaultHandler(Permission permission) {
-	    this.permission = permission;
-	}
+    public VaultHandler(Permission permission) {
+        this.permission = permission;
+    }
 
     @Override
     public boolean playerHasGroup(Player player, String group) {

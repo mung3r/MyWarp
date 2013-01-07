@@ -33,29 +33,32 @@ permissions:
   mywarp.warp.basic.warp:
     description: Usage of /warp
     default: op
-  mywarp.warp.basic.delete:
-    description: Can delete warps
-    default: op
-  mywarp.warp.basic.list:
-    description: Can list warps
-    default: op
-  mywarp.warp.basic.welcome:
-    description: Can change the welcome message
-    default: op
-  mywarp.warp.basic.search:
-    description: Can search for a warp
-    default: op
+  mywarp.warp.basic.compass:
+    description: Compass can be used
+    default: op 
   mywarp.warp.basic.createprivate:
     description: Allowed to create private warps
     default: op
   mywarp.warp.basic.createpublic:
     description: Allowed to create public warps
     default: op
+  mywarp.warp.basic.delete:
+    description: Can delete warps
+    default: op 
+  mywarp.warp.basic.help:
+    description: Help can be used
+    default: op
+  mywarp.warp.basic.list:
+    description: Can list warps
+    default: op
+  mywarp.warp.basic.search:
+    description: Can search for a warp
+    default: op
   mywarp.warp.basic.update:
     description: Allowed to update warps
-    default: op
-  mywarp.warp.basic.compass:
-    description: Compass can be used
+    default: op 
+  mywarp.warp.basic.welcome:
+    description: Can change the welcome message
     default: op
   mywarp.warp.soc.give:
     description: Can give to your /warp
@@ -82,13 +85,13 @@ permissions:
     children:
       mywarp.warp.soc.uninvite.player: true
       mywarp.warp.soc.uninvite.group: true
+  mywarp.warp.soc.private:
+    description: Disallow anyone to use your /warp
+    default: op  
   mywarp.warp.soc.public:
     description: Allow anyone to use your /warp
     default: op
-  mywarp.warp.soc.private:
-    description: Disallow anyone to use your /warp
-    default: op
-  mywarp.warp.sign.warp:
+  mywarp.warp.sign.use:
     description: Can use sign warps
     default: op
   mywarp.warp.sign.create:
@@ -145,6 +148,7 @@ permissions:
       mywarp.warp.basic.createpublic: true
       mywarp.warp.basic.update: true
       mywarp.warp.basic.compass: true
+      mywarp.warp.basic.help: true
   mywarp.warp.soc.*:
     description: Social /warp commands
     children:

@@ -38,7 +38,7 @@ public class MWPlayerListener implements Listener {
             if (block.getState() instanceof Sign
                     && SignWarp.isSignWarp((Sign) block.getState())) {
 
-                if (!warpPermissions.signWarp(event.getPlayer())) {
+                if (!warpPermissions.useSignWarp(event.getPlayer())) {
                     event.getPlayer().sendMessage(
                             LanguageManager.getString("sign.noPermission.use"));
                     return;
@@ -66,7 +66,7 @@ public class MWPlayerListener implements Listener {
                     return;
                 }
 
-                if (!warpPermissions.signWarp(event.getPlayer())) {
+                if (!warpPermissions.useSignWarp(event.getPlayer())) {
                     event.getPlayer().sendMessage(
                             LanguageManager.getString("sign.noPermission.use"));
                     return;
@@ -87,7 +87,7 @@ public class MWPlayerListener implements Listener {
                     return;
                 }
 
-                if (!warpPermissions.signWarp(event.getPlayer())) {
+                if (!warpPermissions.useSignWarp(event.getPlayer())) {
                     event.getPlayer().sendMessage(
                             LanguageManager.getString("sign.noPermission.use"));
                     return;

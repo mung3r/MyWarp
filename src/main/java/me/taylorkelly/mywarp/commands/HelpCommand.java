@@ -21,6 +21,7 @@ public class HelpCommand extends BasicCommand implements Command {
                 + "]");
         setArgumentRange(0, 1);
         setIdentifiers("help");
+        setPermission("mywarp.warp.basic.help");
     }
 
     @Override

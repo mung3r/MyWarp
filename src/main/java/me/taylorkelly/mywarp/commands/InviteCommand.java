@@ -24,7 +24,7 @@ public class InviteCommand extends BasicCommand implements Command {
                 + LanguageManager.getColorlessString("help.usage.name") + ">");
         setArgumentRange(2, 255);
         setIdentifiers("invite");
-        setPermission("mywarp.warp.soc.invite.player");
+        setPermission("mywarp.warp.soc.invite");
     }
 
     @Override
@@ -48,21 +48,20 @@ public class InviteCommand extends BasicCommand implements Command {
 
         Warp warp = plugin.getWarpList().getWarp(name);
 
+        // invite group
         if (args[0].startsWith("g:")) {
+            if (!MyWarp.getWarpPermissions().canInviteGroup(executor)) {
+                executor.sendMessage(LanguageManager
+                        .getString("error.noPermission"));
+                return true;
+            }
+            
             if (player != null && !warp.playerCanModify(player)) {
                 executor.sendMessage(LanguageManager.getString(
                         "error.noPermission.invite.groups").replaceAll(
                         "%warp%", name));
                 return true;
             }
-
-            if (!MyWarp.getWarpPermissions().hasPermission((Player) executor,
-                    "mywarp.warp.soc.invite.group")) {
-                executor.sendMessage(LanguageManager
-                        .getString("error.noPermission"));
-                return true;
-            }
-
             String inviteeName = args[0].substring(2);
 
             if (warp.groupIsInvited(inviteeName)) {
@@ -86,50 +85,49 @@ public class InviteCommand extends BasicCommand implements Command {
                         .replaceAll("%group%", inviteeName));
             }
             return true;
-        } else {
-            if (player != null && !warp.playerCanModify(player)) {
-                executor.sendMessage(LanguageManager.getString(
-                        "error.noPermission.invite.players").replaceAll(
-                        "%warp%", name));
-                return true;
-            }
-
-            Player invitee = plugin.getServer().getPlayer(args[0]);
-            String inviteeName = (invitee == null) ? args[0] : invitee
-                    .getName();
-
-            if (warp.playerIsInvited(inviteeName)) {
-                executor.sendMessage(LanguageManager.getString(
-                        "error.invite.invited.player").replaceAll("%player%",
-                        inviteeName));
-                return true;
-            }
-
-            if (warp.playerIsCreator(inviteeName)) {
-                executor.sendMessage(LanguageManager.getString(
-                        "error.invite.creator").replaceAll("%player%",
-                        inviteeName));
-                return true;
-            }
-
-            plugin.getWarpList().invitePlayer(name, inviteeName);
-            if (warp.publicAll) {
-                executor.sendMessage(LanguageManager
-                        .getString("warp.invite.player.public")
-                        .replaceAll("%warp%", name)
-                        .replaceAll("%player%", inviteeName));
-            } else {
-                executor.sendMessage(LanguageManager
-                        .getString("warp.invite.player.private")
-                        .replaceAll("%warp%", name)
-                        .replaceAll("%player%", inviteeName));
-            }
-
-            if (invitee != null) {
-                invitee.sendMessage(LanguageManager.getString(
-                        "warp.invite.invited").replaceAll("%warp%", name));
-            }
+        }
+        //invite player
+        if (player != null && !warp.playerCanModify(player)) {
+            executor.sendMessage(LanguageManager.getString(
+                    "error.noPermission.invite.players").replaceAll("%warp%",
+                    name));
             return true;
         }
+
+        Player invitee = plugin.getServer().getPlayer(args[0]);
+        String inviteeName = (invitee == null) ? args[0] : invitee.getName();
+
+        if (warp.playerIsInvited(inviteeName)) {
+            executor.sendMessage(LanguageManager.getString(
+                    "error.invite.invited.player").replaceAll("%player%",
+                    inviteeName));
+            return true;
+        }
+
+        if (warp.playerIsCreator(inviteeName)) {
+            executor.sendMessage(LanguageManager.getString(
+                    "error.invite.creator").replaceAll("%player%", inviteeName));
+            return true;
+        }
+
+        plugin.getWarpList().invitePlayer(name, inviteeName);
+        if (warp.publicAll) {
+            executor.sendMessage(LanguageManager
+                    .getString("warp.invite.player.public")
+                    .replaceAll("%warp%", name)
+                    .replaceAll("%player%", inviteeName));
+        } else {
+            executor.sendMessage(LanguageManager
+                    .getString("warp.invite.player.private")
+                    .replaceAll("%warp%", name)
+                    .replaceAll("%player%", inviteeName));
+        }
+
+        if (invitee != null) {
+            invitee.sendMessage(LanguageManager
+                    .getString("warp.invite.invited")
+                    .replaceAll("%warp%", name));
+        }
+        return true;
     }
 }

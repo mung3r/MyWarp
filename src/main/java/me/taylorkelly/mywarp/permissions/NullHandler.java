@@ -2,7 +2,11 @@ package me.taylorkelly.mywarp.permissions;
 
 import org.bukkit.entity.Player;
 
-public class NullHandler implements IPermissionsHandler {
+/**
+ * Dummy handler, will return false no matter what
+ * 
+ */
+public class NullHandler implements PermissionsHandler {
 
     @Override
     public boolean playerHasGroup(Player player, String group) {

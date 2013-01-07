@@ -5,16 +5,21 @@ import org.bukkit.plugin.Plugin;
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
 
-public class GroupManagerHandler implements IPermissionsHandler {
-	private final transient GroupManager manager;
+/**
+ * Handler for GroupManager
+ * 
+ */
+public class GroupManagerHandler implements PermissionsHandler {
+    private final transient GroupManager manager;
 
-	public GroupManagerHandler(final Plugin permissionsPlugin) {
-		manager = ((GroupManager)permissionsPlugin);
-	}
+    public GroupManagerHandler(final Plugin permissionsPlugin) {
+        manager = ((GroupManager) permissionsPlugin);
+    }
 
     @Override
     public boolean playerHasGroup(Player player, String group) {
-        AnjoPermissionsHandler handler = manager.getWorldsHolder().getWorldPermissions(player);
+        AnjoPermissionsHandler handler = manager.getWorldsHolder()
+                .getWorldPermissions(player);
         return handler.inGroup(player.getName(), group);
     }
 }
