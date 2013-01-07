@@ -63,28 +63,18 @@ permissions:
   mywarp.warp.soc.give:
     description: Can give to your /warp
     default: op
-  mywarp.warp.soc.invite.player:
+  mywarp.warp.soc.invite:
     description: Can invite players to your /warp
     default: op
   mywarp.warp.soc.invite.group:
     description: Can invite groups to your /warp
     default: op
-  mywarp.warp.soc.invite:
-    description: Can invite players and groups to your /warp
-    children:
-      mywarp.warp.soc.invite.player: true
-      mywarp.warp.soc.invite.group: true
-  mywarp.warp.soc.uninvite.player:
+  mywarp.warp.soc.uninvite:
     description: Can uninvite players from your /warp
     default: op
   mywarp.warp.soc.uninvite.group:
     description: Can uninvite groups from your /warp
     default: op
-  mywarp.warp.soc.uninvite:
-    description: Can uninvite players and groups from your /warp
-    children:
-      mywarp.warp.soc.uninvite.player: true
-      mywarp.warp.soc.uninvite.group: true
   mywarp.warp.soc.private:
     description: Disallow anyone to use your /warp
     default: op  
@@ -154,7 +144,9 @@ permissions:
     children:
       mywarp.warp.soc.give: true
       mywarp.warp.soc.invite: true
+      mywarp.warp.soc.invite.group: true
       mywarp.warp.soc.uninvite: true
+      mywarp.warp.soc.uninvite.group: true
       mywarp.warp.soc.public: true
       mywarp.warp.soc.private: true
   mywarp.warp.sign.*:
