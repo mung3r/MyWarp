@@ -27,77 +27,95 @@ public class ListCommand extends BasicCommand implements Command {
     @Override
     public boolean execute(CommandSender executor, String identifier,
             String[] args) {
-        Player player = null;
-        if (executor instanceof Player) {
-            player = (Player) executor;
-        }
-        Lister lister = new Lister(plugin.getWarpList());
-        lister.addExecutor(executor, player);
+        String creator = null;
+        int page = 0;
 
+        // This command handles listing depending on how many parameters are
+        // given, so the following code splits the incoming input
+        // into different possibilities
+
+        // No arguments: /warp list
         if (args.length == 0) {
-            lister.setPage(1);
+            page = 1;
+            // One argument: Either /warp list # or /warp list player
         } else if (args.length == 1) {
-            if (args[0].matches("-?\\d+(\\.\\d+)?")) {
-                int page = Integer.parseInt(args[0]);
-                if (page < 1) {
-                    executor.sendMessage(LanguageManager
-                            .getString("list.page.negative"));
-                    return true;
-                } else if (page > lister.getMaxPages(player)) {
-                    executor.sendMessage(LanguageManager
-                            .getString("list.page.toHigh")
-                                    .replaceAll("%pages%", Integer
-                                            .toString(lister
-                                                    .getMaxPages(player))));
-                    return true;
+            if (isInteger(args[0])) {
+                try {
+                    page = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    // catch possible integer overflow
+                    return false;
                 }
-                lister.setPage(page);
             } else {
                 if (args[0].equals("own")) {
-                    if (executor instanceof Player) {
-                        lister.setWarpCreator(player.getName());
-                    } else {
+                    if (!(executor instanceof Player)) {
                         executor.sendMessage(LanguageManager
                                 .getString("list.console"));
                         return true;
                     }
-
+                    creator = executor.getName();
                 } else {
-                    lister.setWarpCreator(args[0]);
+                    creator = args[0];
                 }
-                lister.setPage(1);
+                page = 1;
             }
+            // Two arguments: /warp list player #
         } else if (args.length == 2) {
-            String creator = null;
             if (args[0].equals("own")) {
-                if (executor instanceof Player) {
-                    creator = player.getName();
-                } else {
+                if (!(executor instanceof Player)) {
                     executor.sendMessage(LanguageManager
                             .getString("list.console"));
                     return true;
                 }
+                creator = executor.getName();
             } else {
                 creator = args[0];
             }
-            lister.setWarpCreator(creator);
-            int page = Integer.parseInt(args[1]);
-            if (page < 1) {
-                executor.sendMessage(LanguageManager
-                        .getString("list.page.negative"));
-                return true;
-            } else if (page > lister.getMaxPagesPerCreator(player, creator)) {
-                executor.sendMessage(LanguageManager
-                        .getString("list.page.toHigh").replaceAll("%pages%",
-                                Integer.toString(lister.getMaxPagesPerCreator(
-                                        player, creator))));
-                return true;
+            try {
+                page = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                // catch possible integer overflow
+                return false;
             }
-            lister.setPage(page);
         } else {
             return false;
         }
-        lister.list();
+
+        Lister lister = new Lister(executor, creator, page,
+                plugin.getWarpList());
+        lister.listWarps();
+        return true;
+    }
+
+    /**
+     * Extremely fast helper method to determine whether a string is an Integer
+     * or not
+     * 
+     * @param str
+     *            the string to check
+     * @return true if the String is an Integer, false if not
+     */
+    private boolean isInteger(String str) {
+        if (str == null) {
+            return false;
+        }
+        int length = str.length();
+        if (length == 0) {
+            return false;
+        }
+        int i = 0;
+        if (str.charAt(0) == '-') {
+            if (length == 1) {
+                return false;
+            }
+            i = 1;
+        }
+        for (; i < length; i++) {
+            char c = str.charAt(i);
+            if (c <= '/' || c >= ':') {
+                return false;
+            }
+        }
         return true;
     }
 }

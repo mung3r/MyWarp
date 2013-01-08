@@ -8,6 +8,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * Searches for warps
+ */
 public class Searcher {
     private WarpList warpList;
     private CommandSender executor;
@@ -18,23 +21,43 @@ public class Searcher {
 
     private String query;
 
-    public Searcher(WarpList warpList) {
+    public Searcher (CommandSender executor, String query,
+            WarpList warpList) {
         this.warpList = warpList;
-    }
-
-    public void addExecutor(CommandSender executor, Player player) {
         this.executor = executor;
-        this.player = player;
+        this.query = query;
     }
 
-    public void setQuery(String name) {
-        this.query = name;
-        MatchList matches = warpList.getMatches(name, player);
-        this.exactMatches = matches.exactMatches;
-        this.matches = matches.matches;
+    /**
+     * Searches for warps and sends results back to the executor
+     */
+    public void search() {
+        if (executor instanceof Player) {
+            player = (Player) executor;
+        }
+        
+        MatchList matchingWarps = warpList.getMatches(query, player);
+        this.exactMatches = matchingWarps.exactMatches;
+        this.matches = matchingWarps.matches;
+        
+        if (exactMatches.size() == 0 && matches.size() == 0) {
+            executor.sendMessage(LanguageManager.getString("search.noMatches")
+                    .replaceAll("%query%", query));
+        } else {
+            if (exactMatches.size() > 0) {
+                executor.sendMessage(LanguageManager.getString(
+                        "search.exactMatches").replaceAll("%query%", query));
+                sendWarpMatches(exactMatches);
+            }
+            if (matches.size() > 0) {
+                executor.sendMessage(LanguageManager.getString(
+                        "search.partitalMatches").replaceAll("%query%", query));
+                sendWarpMatches(matches);
+            }
+        }
     }
 
-    public void sendWarpMatches(ArrayList<Warp> warps) {
+    private void sendWarpMatches(ArrayList<Warp> warps) {
         for (Warp warp : warps) {
             String color;
             if (player == null || warp.playerIsCreator(player.getName())) {
@@ -56,26 +79,11 @@ public class Searcher {
                     + " @(" + x + ", " + y + ", " + z + ")");
         }
     }
-
-    public void search() {
-        if (exactMatches.size() == 0 && matches.size() == 0) {
-            executor.sendMessage(LanguageManager.getString("search.noMatches")
-                    .replaceAll("%query%", query));
-        } else {
-            if (exactMatches.size() > 0) {
-                executor.sendMessage(LanguageManager.getString(
-                        "search.exactMatches").replaceAll("%query%", query));
-                sendWarpMatches(exactMatches);
-            }
-            if (matches.size() > 0) {
-                executor.sendMessage(LanguageManager.getString(
-                        "search.partitalMatches").replaceAll("%query%", query));
-                sendWarpMatches(matches);
-            }
-        }
-    }
 }
 
+/**
+ * Stores matches of a search
+ */
 class MatchList {
     public MatchList(ArrayList<Warp> exactMatches, ArrayList<Warp> matches) {
         this.exactMatches = exactMatches;
@@ -85,6 +93,12 @@ class MatchList {
     public ArrayList<Warp> exactMatches;
     public ArrayList<Warp> matches;
 
+    /**
+     * Gets the closest match. Will return the name if no exact match could be found
+     * 
+     * @param name the name
+     * @return the closest match
+     */
     public String getMatch(String name) {
         if (exactMatches.size() == 1) {
             return exactMatches.get(0).name;

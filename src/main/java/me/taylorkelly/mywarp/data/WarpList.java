@@ -124,11 +124,7 @@ public class WarpList {
         return "";
     }
 
-    public double getMaxWarps(Player player) {
-        return getMaxWarpsPerCreator(player, null);
-    }
-
-    public double getMaxWarpsPerCreator(Player player, String creator) {
+    public double getMaxWarps(Player player, String creator) {
         int count = 0;
         for (Warp warp : warpList.values()) {
             if ((player != null && !warp.playerCanWarp(player))
@@ -148,11 +144,7 @@ public class WarpList {
         return warpList.size();
     }
 
-    public ArrayList<Warp> getSortedWarps(Player player, int start, int size) {
-        return getSortedWarpsPerCreator(player, null, start, size);
-    }
-
-    public ArrayList<Warp> getSortedWarpsPerCreator(Player player,
+    public ArrayList<Warp> getSortedWarps(Player player,
             String creator, int start, int size) {
         ArrayList<Warp> ret = new ArrayList<Warp>();
         List<String> names = new ArrayList<String>(warpList.keySet());
