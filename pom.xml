@@ -4,8 +4,15 @@
 	<groupId>me.taylorkelly.mywarp</groupId>
 	<artifactId>MyWarp</artifactId>
 	<name>MyWarp</name>
-	<version>2.5.1-SNAPSHOT</version>
+	<description>Dynamic, social warping plugin for bukkit.</description>
 	<url>http://dev.bukkit.org/server-mods/mywarp/</url>
+	<version>2.5.1-SNAPSHOT</version>
+	<scm>
+		<url>https://github.com/TheE/MyWarp</url>
+		<connection>scm:git:git://github.com/TheE/MyWarp.git</connection>
+		<developerConnection>scm:git:git@github.com:TheE/MyWarp.git</developerConnection>
+		<tag>master</tag>
+	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -27,7 +34,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.4.5-R1.0</version>
+			<version>1.4.6-R0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
@@ -91,11 +98,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<description>Dynamic, social warping plugin for bukkit.</description>
-	<scm>
-		<url>https://github.com/TheE/MyWarp</url>
-		<connection>scm:git:git://github.com/TheE/MyWarp.git</connection>
-		<developerConnection>scm:git:git@github.com:TheE/MyWarp.git</developerConnection>
-		<tag>master</tag>
-	</scm>
 </project>
