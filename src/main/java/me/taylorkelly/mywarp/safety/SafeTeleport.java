@@ -5,13 +5,28 @@ import me.taylorkelly.mywarp.WarpSettings;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+/**
+ * Handles teleports
+ *
+ */
 public class SafeTeleport {
 
+    /**
+     * Teleports the player to the given location if it is safe. If not, it
+     * searches the closest safe location and teleports the player there
+     * 
+     * @param player
+     *            the player
+     * @param l
+     *            the location
+     * @param name
+     *            the name of the warp
+     * @return True if the player could be teleported to the given location
+     */
     public static boolean safeTeleport(Player player, Location l, String name) {
-        if (isHalfBlock(l.getBlock().getType())) {
+        if (!l.getBlock().getType().isOccluding()) {
             l.add(0, 1, 0);
         }
         if (WarpSettings.useWarpSafety) {
@@ -22,64 +37,30 @@ public class SafeTeleport {
                 return false;
             }
             if (safe != l) {
-                warpEffect(player.getLocation());
-                player.teleport(safe);
+                teleport(player, safe);
                 player.sendMessage(LanguageManager.getString("safety.found")
                         .replaceAll("%warp%", name));
                 return false;
             }
         }
-        warpEffect(player.getLocation());
-
-        if (WarpSettings.loadChunks
-                && !l.getWorld().isChunkLoaded(l.getBlockX(), l.getBlockZ())) {
-            l.getWorld().refreshChunk(l.getBlockX(), l.getBlockZ());
-        }
-
+        teleport(player, l);
         player.teleport(l);
         return true;
     }
 
-    private static void warpEffect(Location loc) {
+    private static void teleport(Player player, Location to) {
+        Location from = player.getLocation();
+        
         if (WarpSettings.warpEffect) {
-            loc.getWorld().playEffect(loc, Effect.SMOKE, 4);
-            loc.getWorld().playEffect(loc, Effect.SMOKE, 4);
-            loc.getWorld().playEffect(loc, Effect.SMOKE, 4);
+            from.getWorld().playEffect(from, Effect.SMOKE, 4);
+            from.getWorld().playEffect(from, Effect.SMOKE, 4);
+            from.getWorld().playEffect(from, Effect.SMOKE, 4);
         }
+        if (WarpSettings.loadChunks
+                && !to.getWorld().isChunkLoaded(to.getBlockX(), to.getBlockZ())) {
+            to.getWorld().refreshChunk(to.getBlockX(), to.getBlockZ());
+        }
+        player.teleport(to);
     }
 
-    private static boolean isHalfBlock(Material type) {
-        switch (type) {
-        case STEP:
-            return true;
-        case WOOD_STEP:
-            return true;
-        case WOOD_STAIRS:
-            return true;
-        case COBBLESTONE_STAIRS:
-            return true;
-        case CAKE_BLOCK:
-            return true;
-        case BRICK_STAIRS:
-            return true;
-        case SMOOTH_STAIRS:
-            return true;
-        case NETHER_BRICK_STAIRS:
-            return true;
-        case SANDSTONE_STAIRS:
-            return true;
-        case SPRUCE_WOOD_STAIRS:
-            return true;
-        case BIRCH_WOOD_STAIRS:
-            return true;
-        case JUNGLE_WOOD_STAIRS:
-            return true;
-        case SKULL:
-            return true;
-        case FLOWER_POT:
-            return true;
-        default:
-            return false;
-        }
-    }
 }

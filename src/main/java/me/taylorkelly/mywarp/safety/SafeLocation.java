@@ -4,17 +4,27 @@ import me.taylorkelly.mywarp.WarpSettings;
 
 import org.bukkit.Location;
 
+/**
+ * Handles searches for a safe location
+ * 
+ */
 public class SafeLocation {
 
+    /**
+     * Searches for a safe location close to the given one. Will return null
+     * there is none
+     * 
+     * @param l
+     *            the location
+     * @return the safe location
+     */
     public static Location getSafeLocation(Location l) {
-        return getSafeLocation(l, WarpSettings.verticalTolerance, WarpSettings.searchRadius);
+        return getSafeLocation(l, WarpSettings.verticalTolerance,
+                WarpSettings.searchRadius);
     }
 
-    public static String getKoords(Location l) {
-        return (l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ".");
-    }
-
-    private static Location getSafeLocation(Location l, int tolerance, int radius) {
+    private static Location getSafeLocation(Location l, int tolerance,
+            int radius) {
         if (BlockSafety.isLocationSafe(l)) {
             return l;
         }
@@ -55,7 +65,8 @@ public class SafeLocation {
     private static Location checkHorizontalAroundLocation(Location l, int radius) {
         int maxDiameter = radius * 2;
         for (int specDiameter = 3; specDiameter < maxDiameter; specDiameter += 2) {
-            Location safeLocation = checkHorizontalAroundDiameter(l, specDiameter);
+            Location safeLocation = checkHorizontalAroundDiameter(l,
+                    specDiameter);
             if (safeLocation != null) {
                 return safeLocation;
             }
@@ -63,7 +74,8 @@ public class SafeLocation {
         return null;
     }
 
-    private static Location checkHorizontalAroundDiameter(Location l, int diameter) {
+    private static Location checkHorizontalAroundDiameter(Location l,
+            int diameter) {
         Location checkLoc = l.clone();
 
         int blockStep = (diameter - 1) / 2;
