@@ -107,10 +107,10 @@ warp.invite.player.public:§bYou have invited %player% to '%warp%'.%n§cBut '%wa
 warp.point:§bYour compass now guides you to '%warp%'.
 warp.private:§bYou have privatized '%warp%'%n§fIf you'd like to invite others to it,%n§fUse: §c/warp invite <player> %warp%
 warp.public:§bYou have publicized '%warp%'.
-warp.uninvite.group.private:§bYou have uninvited group %group% from '%warp%'.%n§cBut '%warp%' is still public.
-warp.uninvite.group.public:§bYou have uninvited group %group% from '%warp%'.
-warp.uninvite.player.private:§bYou have uninvited %player% from '%warp%'.%n§cBut '%warp%' is still public.
-warp.uninvite.player.public:§bYou have uninvited %player% from '%warp%'.
+warp.uninvite.group.private:§bYou have uninvited group %group% from '%warp%'.
+warp.uninvite.group.public:§bYou have uninvited group %group% from '%warp%'.%n§cBut '%warp%' is still public.
+warp.uninvite.player.private:§bYou have uninvited %player% from '%warp%'.
+warp.uninvite.player.public:§bYou have uninvited %player% from '%warp%'.%n§cBut '%warp%' is still public.
 warp.uninvite.uninvited:§bYou have been uninvited from '%warp%'. Sorry.
 warp.update:§bYou have updated %warp%'s position.
 warp.warpto.player:§bSuccessfully warped %player%.

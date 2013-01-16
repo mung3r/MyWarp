@@ -107,10 +107,10 @@ warp.invite.player.public:§bDu hast %player% zu '%warp%' eingeladen.%n§cAber '
 warp.point:§bDein Kompass zeigt jetzt auf '%warp%'.
 warp.private:§bDu hast '%warp%' privatisiert.%n§fWenn du andere Spieler einladen möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%
 warp.public:§bDu hast '%warp%' veröffentlicht.
-warp.uninvite.group.private:§bDu hast die Gruppe %group% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
-warp.uninvite.group.public:§bDu hast die Gruppe %group% von '%warp%' ausgeladen.
-warp.uninvite.player.private:§bDu hast %player% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
-warp.uninvite.player.public:§bDu hast %player% von '%warp%' ausgeladen.
+warp.uninvite.group.private:§bDu hast die Gruppe %group% von '%warp%' ausgeladen.
+warp.uninvite.group.public:§bDu hast die Gruppe %group% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+warp.uninvite.player.private:§bDu hast %player% von '%warp%' ausgeladen.
+warp.uninvite.player.public:§bDu hast %player% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
 warp.uninvite.uninvited:§bDu wurdest von '%warp%' ausgeladen. Entschuldige.
 warp.update:§bDu hast %warp%s Position aktualisiert.
 warp.warpto.player:§b%player% wurde erfolgreich teleportiert.
