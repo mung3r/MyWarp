@@ -211,6 +211,6 @@ public class LanguageManager {
      * @return the corresponding string out of the language map without colors
      */
     public static String getColorlessString(String key) {
-        return ChatColor.stripColor(key);
+        return ChatColor.stripColor(getString(key));
     }
 }

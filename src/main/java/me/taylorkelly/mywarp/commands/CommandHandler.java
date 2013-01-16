@@ -117,8 +117,7 @@ public class CommandHandler {
     }
 
     public boolean hasPermission(CommandSender executor, String permString) {
-        if (permString == null
-                || permString.isEmpty()) {
+        if (permString == null || permString.isEmpty()) {
             return true;
         }
 
