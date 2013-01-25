@@ -3,8 +3,8 @@ package me.taylorkelly.mywarp.data;
 import java.util.ArrayList;
 
 import me.taylorkelly.mywarp.LanguageManager;
+import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
 
-import org.angelsl.minecraft.randomshit.fontwidth.MinecraftFontWidthCalculator;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

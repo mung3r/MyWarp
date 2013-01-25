@@ -6,8 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.scheduler.ScheduledTask;
-import me.taylorkelly.mywarp.scheduler.Scheduler;
+import me.taylorkelly.mywarp.timer.scheduler.ScheduledTask;
+import me.taylorkelly.mywarp.timer.scheduler.Scheduler;
 
 // TODO: Auto-generated Javadoc
 /*  Copyright (c) 2012, Nick Porillo milkywayz@mail.com

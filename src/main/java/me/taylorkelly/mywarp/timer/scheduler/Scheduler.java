@@ -1,4 +1,4 @@
-package me.taylorkelly.mywarp.scheduler;
+package me.taylorkelly.mywarp.timer.scheduler;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.timer.Cooldown;

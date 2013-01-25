@@ -3,7 +3,7 @@ package me.taylorkelly.mywarp.timer;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.taylorkelly.mywarp.scheduler.ScheduledTask;
+import me.taylorkelly.mywarp.timer.scheduler.ScheduledTask;
 
 /*	Copyright (c) 2012, Nick Porillo milkywayz@mail.com
  *

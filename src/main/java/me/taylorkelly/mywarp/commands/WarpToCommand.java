@@ -4,11 +4,11 @@ import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.scheduler.Scheduler;
 import me.taylorkelly.mywarp.timer.Cooldown;
 import me.taylorkelly.mywarp.timer.PlayerCooldown;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import me.taylorkelly.mywarp.timer.Warmup;
+import me.taylorkelly.mywarp.timer.scheduler.Scheduler;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;

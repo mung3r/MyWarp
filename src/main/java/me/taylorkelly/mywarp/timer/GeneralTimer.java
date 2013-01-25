@@ -2,7 +2,7 @@ package me.taylorkelly.mywarp.timer;
 
 import java.util.Iterator;
 
-import me.taylorkelly.mywarp.scheduler.ScheduledTask;
+import me.taylorkelly.mywarp.timer.scheduler.ScheduledTask;
 
 // TODO: Auto-generated Javadoc
 /*	Copyright (c) 2012, Nick Porillo milkywayz@mail.com

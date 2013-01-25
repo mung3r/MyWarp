@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.WarpSettings;
-import me.taylorkelly.mywarp.scheduler.ScheduledTask;
+import me.taylorkelly.mywarp.timer.scheduler.ScheduledTask;
 
 // TODO: Auto-generated Javadoc
 /*  Copyright (c) 2012, Nick Porillo milkywayz@mail.com
