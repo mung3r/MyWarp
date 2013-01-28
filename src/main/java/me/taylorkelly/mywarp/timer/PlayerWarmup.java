@@ -27,10 +27,10 @@ public class PlayerWarmup implements Runnable, Timer {
 
     private MyWarp plugin;
     private Player player;
-    private Cooldown cooldown;
+    private Time cooldown;
     private String warp;
 
-    public PlayerWarmup(MyWarp plugin, Player player, Cooldown cooldown, String warp) {
+    public PlayerWarmup(MyWarp plugin, Player player, Time cooldown, String warp) {
         this.plugin = plugin;
         this.player = player;
         this.cooldown = cooldown;

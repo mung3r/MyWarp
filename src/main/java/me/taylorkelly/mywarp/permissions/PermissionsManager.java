@@ -5,8 +5,7 @@ import java.util.Map;
 
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.WarpLimit;
-import me.taylorkelly.mywarp.timer.Cooldown;
-import me.taylorkelly.mywarp.timer.Warmup;
+import me.taylorkelly.mywarp.timer.Time;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 import net.milkbowl.vault.permission.Permission;
 
@@ -70,7 +69,7 @@ public class PermissionsManager implements PermissionsHandler {
         }
 
         // mywarp.cooldown permissions
-        for (Cooldown warpCooldown : WarpSettings.warpCooldowns) {
+        for (Time warpCooldown : WarpSettings.warpCooldowns) {
             pm.addPermission(new org.bukkit.permissions.Permission(
                     "mywarp.cooldown." + warpCooldown.name,
                     "User is affected by the cooldowns defined for '"
@@ -79,7 +78,7 @@ public class PermissionsManager implements PermissionsHandler {
         }
 
         // mywarp.warmup permissions
-        for (Warmup warpWarmup : WarpSettings.warpWarmups) {
+        for (Time warpWarmup : WarpSettings.warpWarmups) {
             pm.addPermission(new org.bukkit.permissions.Permission(
                     "mywarp.warmup." + warpWarmup.name,
                     "User is affected by the warmups defined for '"

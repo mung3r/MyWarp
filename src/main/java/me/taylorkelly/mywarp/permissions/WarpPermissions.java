@@ -2,8 +2,7 @@ package me.taylorkelly.mywarp.permissions;
 
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.WarpLimit;
-import me.taylorkelly.mywarp.timer.Cooldown;
-import me.taylorkelly.mywarp.timer.Warmup;
+import me.taylorkelly.mywarp.timer.Time;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -102,8 +101,8 @@ public class WarpPermissions {
                 "mywarp.warmup.disobey.moveabort");
     }
 
-    public Cooldown getCooldown(Player player) {
-        for (Cooldown cooldown : WarpSettings.warpCooldowns) {
+    public Time getCooldown(Player player) {
+        for (Time cooldown : WarpSettings.warpCooldowns) {
             if (hasPermission(player, "mywarp.cooldown."
                     + cooldown.name)) {
                 return cooldown;
@@ -112,8 +111,8 @@ public class WarpPermissions {
         return WarpSettings.defaultCooldown;
     }
 
-    public Warmup getWarmup(Player player) {
-        for (Warmup warmup : WarpSettings.warpWarmups) {
+    public Time getWarmup(Player player) {
+        for (Time warmup : WarpSettings.warpWarmups) {
             if (hasPermission(player, "mywarp.warmup."
                     + warmup.name)) {
                 return warmup;

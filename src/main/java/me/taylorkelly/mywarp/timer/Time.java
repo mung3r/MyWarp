@@ -13,7 +13,7 @@ package me.taylorkelly.mywarp.timer;
  *	OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, 
  *  ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-public abstract class Time implements Comparable<Time> {
+public class Time implements Comparable<Time> {
 
     /*
      * YOUR COOLDOWN TIMES ARE DEFINED HERE MAKE AS MANY AS YOU PLEASE Caps are

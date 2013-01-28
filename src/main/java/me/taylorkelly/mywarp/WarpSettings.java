@@ -10,8 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.taylorkelly.mywarp.data.WarpLimit;
-import me.taylorkelly.mywarp.timer.Cooldown;
-import me.taylorkelly.mywarp.timer.Warmup;
+import me.taylorkelly.mywarp.timer.Time;
 import me.taylorkelly.mywarp.utils.PropertiesFile;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
@@ -40,10 +39,10 @@ public class WarpSettings {
     public static boolean warmUpNotify;
     public static boolean abortOnMove;
     public static boolean abortOnDamage;
-    public static ArrayList<Cooldown> warpCooldowns;
-    public static Cooldown defaultCooldown;
-    public static ArrayList<Warmup> warpWarmups;
-    public static Warmup defaultWarmup;
+    public static ArrayList<Time> warpCooldowns;
+    public static Time defaultCooldown;
+    public static ArrayList<Time> warpWarmups;
+    public static Time defaultWarmup;
     
     public static boolean usemySQL;
     public static String mySQLhost;
@@ -64,8 +63,8 @@ public class WarpSettings {
         config = getConfig(configFile);
         
         warpLimits = new ArrayList<WarpLimit>();
-        warpCooldowns = new ArrayList<Cooldown>();
-        warpWarmups = new ArrayList<Warmup>();
+        warpCooldowns = new ArrayList<Time>();
+        warpWarmups = new ArrayList<Time>();
         
         ConfigurationSection confsettings = config.getConfigurationSection("settings");
         ConfigurationSection conflocale = config.getConfigurationSection("locale");
@@ -153,17 +152,17 @@ public class WarpSettings {
         abortOnDamage = conftimers.getBoolean("abortOnDamage");
         for (String key : conftimerscool.getKeys(false)) {
             if (key.equals("default")) {
-                defaultCooldown = new Cooldown (key, conftimerscool.getDouble(key));
+                defaultCooldown = new Time (key, conftimerscool.getDouble(key));
             } else {
-                warpCooldowns.add(new Cooldown (key, conftimerscool.getDouble(key)));
+                warpCooldowns.add(new Time (key, conftimerscool.getDouble(key)));
             }
         }
         Collections.sort(warpCooldowns);
         for (String key : conftimerswarm.getKeys(false)) {
             if (key.equals("default")) {
-                defaultWarmup = new Warmup (key, conftimerswarm.getDouble(key));
+                defaultWarmup = new Time (key, conftimerswarm.getDouble(key));
             } else {
-                warpWarmups.add(new Warmup (key, conftimerswarm.getDouble(key)));
+                warpWarmups.add(new Time (key, conftimerswarm.getDouble(key)));
             }
         }
         Collections.sort(warpWarmups);

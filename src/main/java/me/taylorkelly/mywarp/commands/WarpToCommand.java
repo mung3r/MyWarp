@@ -4,10 +4,9 @@ import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.timer.Cooldown;
 import me.taylorkelly.mywarp.timer.PlayerCooldown;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
-import me.taylorkelly.mywarp.timer.Warmup;
+import me.taylorkelly.mywarp.timer.Time;
 import me.taylorkelly.mywarp.timer.scheduler.Scheduler;
 
 import org.apache.commons.lang.StringUtils;
@@ -61,9 +60,9 @@ public class WarpToCommand extends BasicCommand implements Command {
             }
 
             if (WarpSettings.useTimers) {
-                Cooldown cooldown = MyWarp.getWarpPermissions().getCooldown(
+                Time cooldown = MyWarp.getWarpPermissions().getCooldown(
                         player);
-                Warmup warmup = MyWarp.getWarpPermissions().getWarmup(player);
+                Time warmup = MyWarp.getWarpPermissions().getWarmup(player);
 
                 if (PlayerCooldown.isActive(player.getName())) {
                     player.sendMessage(LanguageManager.getString(

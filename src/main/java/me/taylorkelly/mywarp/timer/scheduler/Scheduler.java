@@ -1,13 +1,10 @@
 package me.taylorkelly.mywarp.timer.scheduler;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.timer.Cooldown;
 import me.taylorkelly.mywarp.timer.GeneralTimer;
 import me.taylorkelly.mywarp.timer.PlayerCooldown;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import me.taylorkelly.mywarp.timer.Time;
-import me.taylorkelly.mywarp.timer.Warmup;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -40,7 +37,7 @@ public class Scheduler {
      *            the cooldown
      * @return an instanceof Schedule
      */
-    public static Schedule playerCooldown(MyWarp plugin, Player player, Cooldown cooldown) {
+    public static Schedule playerCooldown(MyWarp plugin, Player player, Time cooldown) {
         return new Schedule(player.getName(), cooldown, System.currentTimeMillis(),
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
                         new PlayerCooldown(player),
@@ -72,8 +69,8 @@ public class Scheduler {
      *            runnable to be executed when scheduler ends
      * @return an instanceof Schedule
      */
-    public static Schedule playerWarmup(MyWarp plugin, Player player, Warmup warmup,
-            Cooldown cooldown, String name) {
+    public static Schedule playerWarmup(MyWarp plugin, Player player, Time warmup,
+            Time cooldown, String name) {
         return new Schedule(player.getName(), warmup, System.currentTimeMillis(), Bukkit
                 .getScheduler().scheduleSyncDelayedTask(plugin,
                         new PlayerWarmup(plugin, player, cooldown, name),
