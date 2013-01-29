@@ -71,7 +71,7 @@ public class MyWarp extends JavaPlugin {
         LanguageManager.initialize(this);
 
         try {
-            connectionManager = new ConnectionManager(WarpSettings.usemySQL, true, true);
+            connectionManager = new ConnectionManager(WarpSettings.usemySQL, true, true, this);
         } catch (DataConnectionException e) {
             WarpLogger
                     .severe("Could not establish database connection. Disabling MyWarp.");

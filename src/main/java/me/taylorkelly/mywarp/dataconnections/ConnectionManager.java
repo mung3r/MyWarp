@@ -3,6 +3,9 @@ package me.taylorkelly.mywarp.dataconnections;
 import java.io.File;
 import java.util.HashMap;
 
+import org.bukkit.scheduler.BukkitScheduler;
+
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.utils.WarpLogger;
@@ -10,14 +13,21 @@ import me.taylorkelly.mywarp.utils.WarpLogger;
 public class ConnectionManager implements DataConnection {
 
     private DataConnection handler;
+    private MyWarp plugin;
+    private BukkitScheduler scheduler;
 
-    public ConnectionManager(boolean useMySQL, boolean createIfNotExist, boolean updateIfNecessary) throws DataConnectionException {
+    public ConnectionManager(boolean useMySQL, boolean createIfNotExist,
+            boolean updateIfNecessary, MyWarp plugin)
+            throws DataConnectionException {
+        this.plugin = plugin;
+        this.scheduler = plugin.getServer().getScheduler();
+
         if (useMySQL) {
             // Use MySQL
-            handler = new MySQLConnection("jdbc:mysql://" + WarpSettings.mySQLhost + ":"
-                    + WarpSettings.mySQLport + "/" + WarpSettings.mySQLdb,
-                    WarpSettings.mySQLuname, WarpSettings.mySQLpass,
-                    WarpSettings.mySQLtable);
+            handler = new MySQLConnection("jdbc:mysql://"
+                    + WarpSettings.mySQLhost + ":" + WarpSettings.mySQLport
+                    + "/" + WarpSettings.mySQLdb, WarpSettings.mySQLuname,
+                    WarpSettings.mySQLpass, WarpSettings.mySQLtable);
         } else {
             // Use SQLite
             try {
@@ -43,12 +53,14 @@ public class ConnectionManager implements DataConnection {
     }
 
     @Override
-    public void checkDB(boolean createIfNotExist) throws DataConnectionException {
+    public void checkDB(boolean createIfNotExist)
+            throws DataConnectionException {
         handler.checkDB(createIfNotExist);
     }
 
     @Override
-    public void updateDB(boolean updateIfNecessary) throws DataConnectionException {
+    public void updateDB(boolean updateIfNecessary)
+            throws DataConnectionException {
         handler.updateDB(updateIfNecessary);
     }
 
@@ -58,47 +70,92 @@ public class ConnectionManager implements DataConnection {
     }
 
     @Override
-    public void addWarp(Warp warp) {
-        handler.addWarp(warp);
+    public void addWarp(final Warp warp) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.addWarp(warp);
+            }
+        });
     }
 
     @Override
-    public void deleteWarp(Warp warp) {
-        handler.deleteWarp(warp);
+    public void deleteWarp(final Warp warp) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.deleteWarp(warp);
+            }
+        });
     }
 
     @Override
-    public void publicizeWarp(Warp warp, boolean publicAll) {
-        handler.publicizeWarp(warp, publicAll);
+    public void publicizeWarp(final Warp warp, final boolean publicAll) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.publicizeWarp(warp, publicAll);
+            }
+        });
     }
 
     @Override
-    public void updateCreator(Warp warp) {
-        handler.updateCreator(warp);
+    public void updateCreator(final Warp warp) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.updateCreator(warp);
+            }
+        });
     }
 
     @Override
-    public void updateLocation(Warp warp) {
-        handler.updateLocation(warp);
+    public void updateLocation(final Warp warp) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.updateLocation(warp);
+            }
+        });
     }
 
     @Override
-    public void updatePermissions(Warp warp) {
-        handler.updatePermissions(warp);
+    public void updatePermissions(final Warp warp) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.updatePermissions(warp);
+            }
+        });
     }
 
     @Override
-    public void updateGroupPermissions(Warp warp) {
-        handler.updateGroupPermissions(warp);
+    public void updateGroupPermissions(final Warp warp) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.updateGroupPermissions(warp);
+            }
+        });
     }
 
     @Override
-    public void updateVisits(Warp warp) {
-        handler.updateVisits(warp);
+    public void updateVisits(final Warp warp) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.updateVisits(warp);
+            }
+        });
     }
 
     @Override
-    public void updateWelcomeMessage(Warp warp) {
-        handler.updateWelcomeMessage(warp);
+    public void updateWelcomeMessage(final Warp warp) {
+        scheduler.runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                handler.updateWelcomeMessage(warp);
+            }
+        });
     }
 }

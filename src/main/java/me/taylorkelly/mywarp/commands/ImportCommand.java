@@ -40,7 +40,7 @@ public class ImportCommand extends BasicCommand implements Command {
         try {
             int counter = 0;
             ConnectionManager importConnection = new ConnectionManager(
-                    importMySQL, false, true);
+                    importMySQL, false, true, plugin);
             HashMap<String, Warp> importedWarps = importConnection.getMap();
 
             for (Entry<String, Warp> importedWarpEntry : importedWarps
