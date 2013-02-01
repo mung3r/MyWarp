@@ -152,7 +152,7 @@ permissions:
   mywarp.warp.sign.*:
     description: All sign based warp permissions
     children:
-      mywarp.warp.sign.warp: true
+      mywarp.warp.sign.use: true
       mywarp.warp.sign.create: true
       mywarp.warp.sign.create.all: true
   mywarp.warp.*:
