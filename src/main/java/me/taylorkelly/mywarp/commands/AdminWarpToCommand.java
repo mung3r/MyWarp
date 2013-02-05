@@ -73,7 +73,7 @@ public class AdminWarpToCommand extends BasicCommand implements Command {
         }
 
         plugin.getWarpList().warpTo(name, invitee);
-        executor.sendMessage(LanguageManager.getString("warp.warpto.player"));
+        executor.sendMessage(LanguageManager.getString("warp.warpto.player").replaceAll("%player%", invitee.getName()));
         return true;
     }
 }
