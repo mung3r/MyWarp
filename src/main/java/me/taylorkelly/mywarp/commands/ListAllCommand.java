@@ -1,6 +1,6 @@
 package me.taylorkelly.mywarp.commands;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
@@ -30,13 +30,13 @@ public class ListAllCommand extends BasicCommand implements Command {
         if (executor instanceof Player) {
             player = (Player) executor;
         }
-        ArrayList<Warp> results = plugin.getWarpList().warpsInvitedTo(player);
+        TreeSet<Warp> results = plugin.getWarpList().warpsInvitedTo(player);
 
         if (results.size() == 0) {
-            executor.sendMessage(LanguageManager.getString("alist.noWarps"));
+            executor.sendMessage(LanguageManager.getString("listAll.noWarps"));
             return true;
         }
-        executor.sendMessage(LanguageManager.getString("alist.list"));
+        executor.sendMessage(LanguageManager.getString("listAll.list"));
         executor.sendMessage(results.toString().replace("[", "")
                 .replace("]", ""));
         return true;

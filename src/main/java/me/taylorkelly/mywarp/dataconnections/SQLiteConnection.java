@@ -27,7 +27,7 @@ public class SQLiteConnection implements DataConnection {
     /**
      * Database creation SQL
      */
-    private String WARP_TABLE;
+    private final String WARP_TABLE;
     /**
      * Database connection.
      */

@@ -1,8 +1,9 @@
 package me.taylorkelly.mywarp.data;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
+import me.taylorkelly.mywarp.utils.MatchList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -16,8 +17,8 @@ public class Searcher {
     private CommandSender executor;
     private Player player;
 
-    private ArrayList<Warp> exactMatches;
-    private ArrayList<Warp> matches;
+    private TreeSet<Warp> exactMatches;
+    private TreeSet<Warp> matches;
 
     private String query;
 
@@ -57,7 +58,7 @@ public class Searcher {
         }
     }
 
-    private void sendWarpMatches(ArrayList<Warp> warps) {
+    private void sendWarpMatches(TreeSet<Warp> warps) {
         for (Warp warp : warps) {
             String color;
             if (player == null || warp.playerIsCreator(player.getName())) {
@@ -78,34 +79,5 @@ public class Searcher {
                     + LanguageManager.getColorlessString("list.by") + " "+ creator
                     + " @(" + x + ", " + y + ", " + z + ")");
         }
-    }
-}
-
-/**
- * Stores matches of a search
- */
-class MatchList {
-    public MatchList(ArrayList<Warp> exactMatches, ArrayList<Warp> matches) {
-        this.exactMatches = exactMatches;
-        this.matches = matches;
-    }
-
-    public ArrayList<Warp> exactMatches;
-    public ArrayList<Warp> matches;
-
-    /**
-     * Gets the closest match. Will return the name if no exact match could be found
-     * 
-     * @param name the name
-     * @return the closest match
-     */
-    public String getMatch(String name) {
-        if (exactMatches.size() == 1) {
-            return exactMatches.get(0).name;
-        }
-        if (exactMatches.size() == 0 && matches.size() == 1) {
-            return matches.get(0).name;
-        }
-        return name;
     }
 }

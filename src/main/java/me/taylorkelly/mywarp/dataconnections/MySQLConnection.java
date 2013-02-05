@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
@@ -29,7 +28,7 @@ public class MySQLConnection implements DataConnection {
     /**
      * Table.
      */
-    private String table;
+    private final String table;
     /**
      * Database creation SQL
      */

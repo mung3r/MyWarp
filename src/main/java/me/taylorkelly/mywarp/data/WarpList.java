@@ -1,14 +1,13 @@
 package me.taylorkelly.mywarp.data;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.ChatColor;
@@ -17,18 +16,18 @@ import org.bukkit.entity.Player;
 
 public class WarpList {
     private Server server;
-    private HashMap<String, Warp> warpList;
+    private HashMap<String, Warp> warpMap;
     private HashMap<String, Warp> welcomeMessage;
 
     public WarpList(Server server) {
         welcomeMessage = new HashMap<String, Warp>();
         this.server = server;
-        warpList = MyWarp.connectionManager.getMap();
+        warpMap = MyWarp.connectionManager.getMap();
         WarpLogger.info(getSize() + " warps loaded");
     }
 
     public void addWarp(String name, Warp warp) {
-        warpList.put(name, warp);
+        warpMap.put(name, warp);
         MyWarp.connectionManager.addWarp(warp);
     }
 
@@ -43,12 +42,12 @@ public class WarpList {
     }
 
     public void blindAdd(Warp warp) {
-        warpList.put(warp.name, warp);
+        warpMap.put(warp.name, warp);
     }
 
     public void deleteWarp(String name) {
-        Warp warp = warpList.get(name);
-        warpList.remove(name);
+        Warp warp = warpMap.get(name);
+        warpMap.remove(name);
         MyWarp.connectionManager.deleteWarp(warp);
     }
 
@@ -58,16 +57,10 @@ public class WarpList {
     }
 
     public MatchList getMatches(String name, Player player) {
-        ArrayList<Warp> exactMatches = new ArrayList<Warp>();
-        ArrayList<Warp> matches = new ArrayList<Warp>();
+        TreeSet<Warp> exactMatches = new TreeSet<Warp>();
+        TreeSet<Warp> matches = new TreeSet<Warp>();
 
-        List<String> names = new ArrayList<String>(warpList.keySet());
-        Collator collator = Collator.getInstance();
-        collator.setStrength(Collator.SECONDARY);
-        Collections.sort(names, collator);
-
-        for (String currName : names) {
-            Warp warp = warpList.get(currName);
+        for (Warp warp : warpMap.values()) {
             if (player != null && !warp.playerCanWarp(player)) {
                 continue;
             }
@@ -82,12 +75,10 @@ public class WarpList {
             }
         }
         if (exactMatches.size() > 1) {
-            for (int i = 0; i < exactMatches.size(); i++) {
-                Warp warp = exactMatches.get(i);
+            for (Warp warp : exactMatches) {
                 if (!warp.name.equals(name)) {
                     exactMatches.remove(warp);
-                    matches.add(0, warp);
-                    i--;
+                    matches.add(warp);
                 }
             }
         }
@@ -96,13 +87,8 @@ public class WarpList {
 
     public String getMatchingCreator(Player player, String creator) {
         ArrayList<String> matches = new ArrayList<String>();
-        List<String> names = new ArrayList<String>(warpList.keySet());
-        Collator collator = Collator.getInstance();
-        collator.setStrength(Collator.SECONDARY);
-        Collections.sort(names, collator);
 
-        for (String currName : names) {
-            Warp warp = warpList.get(currName);
+        for (Warp warp : warpMap.values()) {
             if (player != null && !warp.playerCanWarp(player)) {
                 continue;
             }
@@ -126,7 +112,7 @@ public class WarpList {
 
     public double getMaxWarps(Player player, String creator) {
         int count = 0;
-        for (Warp warp : warpList.values()) {
+        for (Warp warp : warpMap.values()) {
             if ((player != null && !warp.playerCanWarp(player))
                     || (creator != null && !warp.playerIsCreator(creator))) {
                 continue;
@@ -141,23 +127,18 @@ public class WarpList {
     }
 
     public int getSize() {
-        return warpList.size();
+        return warpMap.size();
     }
 
-    public ArrayList<Warp> getSortedWarps(Player player,
+    public TreeSet<Warp> getSortedWarps(Player player,
             String creator, int start, int size) {
-        ArrayList<Warp> ret = new ArrayList<Warp>();
-        List<String> names = new ArrayList<String>(warpList.keySet());
-        Collator collator = Collator.getInstance();
-        collator.setStrength(Collator.SECONDARY);
-        Collections.sort(names, collator);
+        TreeSet<Warp> ret = new TreeSet<Warp>();
 
         int currentCount = 0;
-        for (String name : names) {
+        for (Warp warp : warpMap.values()) {
             if (ret.size() == size) {
                 return ret;
             }
-            Warp warp = warpList.get(name);
             if ((player != null && !warp.playerCanWarp(player))
                     || (creator != null && !warp.playerIsCreator(creator))) {
                 continue;
@@ -176,23 +157,23 @@ public class WarpList {
     }
 
     public Warp getWarp(String name) {
-        return warpList.get(name);
+        return warpMap.get(name);
     }
 
     public void give(String name, String giveeName) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         warp.setCreator(giveeName);
         MyWarp.connectionManager.updateCreator(warp);
     }
 
     public void inviteGroup(String name, String inviteeName) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         warp.inviteGroup(inviteeName);
         MyWarp.connectionManager.updateGroupPermissions(warp);
     }
 
     public void invitePlayer(String name, String inviteeName) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         warp.invite(inviteeName);
         MyWarp.connectionManager.updatePermissions(warp);
     }
@@ -203,7 +184,7 @@ public class WarpList {
 
     private int numPrivateWarpsPlayer(Player player) {
         int size = 0;
-        for (Warp warp : warpList.values()) {
+        for (Warp warp : warpMap.values()) {
             boolean privateAll = !warp.publicAll;
             String creator = warp.creator;
             if (creator.equals(player.getName()) && privateAll)
@@ -214,7 +195,7 @@ public class WarpList {
 
     private int numPublicWarpsPlayer(Player player) {
         int size = 0;
-        for (Warp warp : warpList.values()) {
+        for (Warp warp : warpMap.values()) {
             boolean publicAll = warp.publicAll;
             String creator = warp.creator;
             if (creator.equals(player.getName()) && publicAll)
@@ -225,7 +206,7 @@ public class WarpList {
 
     private int numWarpsPlayer(Player player) {
         int size = 0;
-        for (Warp warp : warpList.values()) {
+        for (Warp warp : warpMap.values()) {
             String creator = warp.creator;
             if (creator.equals(player.getName()))
                 size++;
@@ -269,18 +250,18 @@ public class WarpList {
     }
 
     public void point(String name, Player player) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         player.setCompassTarget(warp.getLocation(server));
     }
 
     public void privatize(String name) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         warp.publicAll = false;
         MyWarp.connectionManager.publicizeWarp(warp, false);
     }
 
     public void publicize(String name) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         warp.publicAll = true;
         MyWarp.connectionManager.publicizeWarp(warp, true);
     }
@@ -297,19 +278,19 @@ public class WarpList {
     }
 
     public void uninviteGroup(String name, String inviteeName) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         warp.uninviteGroup(inviteeName);
         MyWarp.connectionManager.updateGroupPermissions(warp);
     }
 
     public void uninvitePlayer(String name, String inviteeName) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         warp.uninvite(inviteeName);
         MyWarp.connectionManager.updatePermissions(warp);
     }
 
     public void updateLocation(String name, Player player) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         warp.setLocation(player.getLocation());
         MyWarp.connectionManager.updateLocation(warp);
     }
@@ -319,19 +300,13 @@ public class WarpList {
     }
 
     public boolean warpExists(String name) {
-        return warpList.containsKey(name);
+        return warpMap.containsKey(name);
     }
 
-    public ArrayList<Warp> warpsInvitedTo(Player player) {
-        ArrayList<Warp> results = new ArrayList<Warp>();
+    public TreeSet<Warp> warpsInvitedTo(Player player) {
+        TreeSet<Warp> results = new TreeSet<Warp>();
 
-        List<String> names = new ArrayList<String>(warpList.keySet());
-        Collator collator = Collator.getInstance();
-        collator.setStrength(Collator.SECONDARY);
-        Collections.sort(names, collator);
-
-        for (String name : names) {
-            Warp warp = warpList.get(name);
+        for (Warp warp : warpMap.values()) {
             if (player != null && !warp.playerCanWarp(player)) {
                 continue;
             }
@@ -345,7 +320,7 @@ public class WarpList {
     }
 
     public void warpTo(String name, Player player) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         if (warp.warp(player, server)) {
             warp.visits++;
             MyWarp.connectionManager.updateVisits(warp);
@@ -355,7 +330,7 @@ public class WarpList {
     }
 
     public void welcomeMessage(String name, Player player) {
-        Warp warp = warpList.get(name);
+        Warp warp = warpMap.get(name);
         welcomeMessage.put(player.getName(), warp);
     }
 }

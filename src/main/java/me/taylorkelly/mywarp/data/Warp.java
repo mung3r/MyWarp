@@ -11,7 +11,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public class Warp {
+public class Warp implements Comparable<Warp>{
 
     public int index;
     public String name;
@@ -235,5 +235,10 @@ public class Warp {
         return welcomeMessage.replaceAll("%player%", player.getName())
                 .replaceAll("%warp%", name).replaceAll("%creator%", creator)
                 .replaceAll("%visits%", Integer.toString(visits));
+    }
+
+    @Override
+    public int compareTo(Warp warp) {
+        return this.name.compareTo(warp.name);
     }
 }

@@ -1,6 +1,6 @@
 package me.taylorkelly.mywarp.data;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
@@ -20,7 +20,7 @@ public class Lister {
     private int maxPages;
     private int page;
     private String creator;
-    private ArrayList<Warp> sortedWarps;
+    private TreeSet<Warp> sortedWarps;
 
     private static final int WARPS_PER_PAGE = 8;
 
