@@ -122,7 +122,7 @@ public class MWPlayerListener implements Listener {
         Player player = event.getPlayer();
         if (PlayerWarmup.isActive(player.getName())
                 && !warpPermissions.disobeyWarmupMoveAbort(player)) {
-            PlayerWarmup.endTimer(player.getName());
+            PlayerWarmup.endWarmup(player.getName());
             player.sendMessage(LanguageManager.getString("timer.warmup.canceled.move"));
         }
     }

@@ -1,208 +1,61 @@
 package me.taylorkelly.mywarp.timer;
 
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.timer.scheduler.ScheduledTask;
-import me.taylorkelly.mywarp.timer.scheduler.Scheduler;
 
-// TODO: Auto-generated Javadoc
-/*  Copyright (c) 2012, Nick Porillo milkywayz@mail.com
- *
- *  Permission to use, copy, modify, and/or distribute this software for any purpose 
- *  with or without fee is hereby granted, provided that the above copyright notice 
- *  and this permission notice appear in all copies.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE 
- *  INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE 
- *  FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
- *  OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, 
- *  ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
+public class PlayerWarmup extends PlayerTimer {
 
-public class PlayerWarmup implements Runnable, Timer {
+    final private MyWarp plugin;
+    final private Time cooldown;
+    final private String warp;
 
-    private MyWarp plugin;
-    private Player player;
-    private Time cooldown;
-    private String warp;
+    public static Map<String, PlayerTimer> warmups = new HashMap<String, PlayerTimer>();
 
-    public PlayerWarmup(MyWarp plugin, Player player, Time cooldown, String warp) {
+    public PlayerWarmup(MyWarp plugin, Player player, Time durration,
+            String warp, Time cooldown) {
+        super(plugin, player, durration);
         this.plugin = plugin;
-        this.player = player;
         this.cooldown = cooldown;
         this.warp = warp;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Runnable#run()
-     */
     @Override
     public void run() {
+        super.run();
+        if (!player.isOnline()) {
+            return;
+        }
         plugin.getWarpList().warpTo(warp, player);
         if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
-            Scheduler.schedulePlayerCooldown(Scheduler.playerCooldown(plugin, player,
-                    cooldown));
-        }
-
-        //Removes corresponding ScheduledTask from pwtask
-        Iterator<ScheduledTask> itr = pwtask.iterator();
-        while (itr.hasNext()) {
-            ScheduledTask s = itr.next();
-            if (s.getPlayerName() == player.getName()) {
-                itr.remove();
-                return;
-            }
+            new PlayerCooldown(plugin, player, cooldown);
         }
     }
 
-    /**
-     * Fix.
-     */
-    public static void fix() {
-        Iterator<ScheduledTask> itr = pwtask.iterator();
-        while (itr.hasNext()) {
-            ScheduledTask s = itr.next();
-            long curTime = System.currentTimeMillis();
-            if (s.getEndTime() <= curTime) {
-                itr.remove();
-            }
-        }
+    @Override
+    public Map<String, PlayerTimer> getTimerMap() {
+        return warmups;
     }
 
-    /**
-     * Checks if cooldown / delay is over.
-     * 
-     * @param player
-     *            the player
-     * @param time
-     *            the time
-     * @return the boolean
-     */
+    public static Integer getRemainingWarmup(String player) {
+        PlayerTimer pw = warmups.get(player);
+        if (pw != null) {
+            return pw.getRemainingTime();
+        }
+        return 0;
+    }
+
     public static Boolean isActive(String player) {
-        Iterator<ScheduledTask> itr = pwtask.iterator();
-        while (itr.hasNext()) {
-            ScheduledTask s = itr.next();
-            if (s.getPlayerName() == player) {
-                return true;
-            }
-        }
-        return false;
+        return warmups.containsKey(player);
     }
 
-    /**
-     * Returns the remaining time on the cooldown / delay Always returns an
-     * integer - About 95% accurate. Negatives no longer possible as they will
-     * return 0 and possible cause of the negative will be fixed
-     * 
-     * @param name
-     *            the name
-     * @param timer
-     *            the timer
-     * @return Seconds
-     */
-    public static Integer getRemainingTime(String name) {
-        int time;
-        int secs = 0;
-        Iterator<ScheduledTask> itr = pwtask.iterator();
-        while (itr.hasNext()) {
-            ScheduledTask s = itr.next();
-            if (s.getPlayerName() == name) {
-                time = (int) (s.getDuration().getMinecraftLong() - (s.getTime() - System
-                        .currentTimeMillis()));
-                secs = s.getDuration().getInt() - (time / 1000);
-            }
-        }
-        if (secs < 0) {
-            fix();
-            return 0;
-        }
-        return secs;
-    }
-
-    /**
-     * Gets the long left.
-     * 
-     * @param name
-     *            the name
-     * @param timer
-     *            the timer
-     * @return the long left
-     */
-    public static Long getLongLeft(String name) {
-        long time;
-        long secs = 0L;
-        Iterator<ScheduledTask> itr = pwtask.iterator();
-        while (itr.hasNext()) {
-            ScheduledTask s = itr.next();
-            if (s.getPlayerName() == name) {
-                time = s.getDuration().getMinecraftLong()
-                        - (s.getTime() - System.currentTimeMillis());
-                secs = s.getDuration().getInt() - (time / 1000);
-            }
-        }
-        return secs;
-    }
-
-    /**
-     * Adds ticks to cooldown / delay, 20 ticks = 1 second - Not a tested
-     * method.
-     * 
-     * @param id
-     *            the id
-     * @param ticks
-     *            the ticks
-     */
-    public static void addToTimer(Integer id, Long ticks) {
-        Iterator<ScheduledTask> itr = pwtask.iterator();
-        while (itr.hasNext()) {
-            ScheduledTask s = itr.next();
-            if (s.getTaskId() == id) {
-                s.setEndTime(s.getEndTime() + ticks);
-            }
-        }
-    }
-
-    /**
-     * Subtract ticks from cooldown / delay, 20 ticks = 1 second - Not a tested
-     * method.
-     * 
-     * @param id
-     *            the id
-     * @param ticks
-     *            the ticks
-     */
-    public static void substractFromTimer(Integer id, Long ticks) {
-        Iterator<ScheduledTask> itr = pwtask.iterator();
-        while (itr.hasNext()) {
-            ScheduledTask s = itr.next();
-            if (s.getTaskId() == id) {
-                s.setEndTime(s.getEndTime() - ticks);
-            }
-        }
-    }
-
-    /**
-     * Ends the cooldown / delay.
-     * 
-     * @param name
-     *            the name
-     * @param timer
-     *            the timer
-     */
-    public static void endTimer(String name) {
-        Iterator<ScheduledTask> itr = pwtask.iterator();
-        while (itr.hasNext()) {
-            ScheduledTask s = itr.next();
-            if (s.getPlayerName() == name) {
-                Bukkit.getScheduler().cancelTask(s.getTaskId());
-                itr.remove();
-            }
+    public static void endWarmup(String player) {
+        PlayerTimer pw = warmups.get(player);
+        if (pw != null) {
+            pw.cancel();
         }
     }
 }

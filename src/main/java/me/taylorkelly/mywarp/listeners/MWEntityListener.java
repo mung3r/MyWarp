@@ -30,7 +30,7 @@ public class MWEntityListener implements Listener {
 
         if (PlayerWarmup.isActive(victim.getName())
                 && !warpPermissions.disobeyWarmupDmgAbort(victim)) {
-            PlayerWarmup.endTimer(victim.getName());
+            PlayerWarmup.endWarmup(victim.getName());
             victim.sendMessage(LanguageManager.getString("timer.warmup.canceled.damage"));
         }
     }

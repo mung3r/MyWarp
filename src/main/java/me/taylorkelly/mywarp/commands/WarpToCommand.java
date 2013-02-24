@@ -7,7 +7,6 @@ import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.timer.PlayerCooldown;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import me.taylorkelly.mywarp.timer.Time;
-import me.taylorkelly.mywarp.timer.scheduler.Scheduler;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -69,7 +68,7 @@ public class WarpToCommand extends BasicCommand implements Command {
                             "timer.cooldown.cooling").replaceAll(
                             "%seconds%",
                             Integer.toString(PlayerCooldown
-                                    .getRemainingTime(player.getName()))));
+                                    .getRemainingCooldown(player.getName()))));
                     return true;
                 }
 
@@ -78,7 +77,7 @@ public class WarpToCommand extends BasicCommand implements Command {
                             "timer.warmup.warming").replaceAll(
                             "%seconds%",
                             Integer.toString(PlayerWarmup
-                                    .getRemainingTime(player.getName()))));
+                                    .getRemainingWarmup(player.getName()))));
                     return true;
                 }
 
@@ -86,14 +85,12 @@ public class WarpToCommand extends BasicCommand implements Command {
                     plugin.getWarpList().warpTo(name, player);
 
                     if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
-                        Scheduler.schedulePlayerCooldown(Scheduler
-                                .playerCooldown(plugin, player, cooldown));
+                        new PlayerCooldown(plugin, player, cooldown);
                     }
                     return true;
                 }
 
-                Scheduler.schedulePlayerWarmup(Scheduler.playerWarmup(plugin,
-                        player, warmup, cooldown, name));
+                new PlayerWarmup(plugin, player, warmup, name, cooldown);
 
                 if (WarpSettings.warmUpNotify) {
                     player.sendMessage(LanguageManager

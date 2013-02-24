@@ -1,27 +1,9 @@
 package me.taylorkelly.mywarp.timer;
 
-// TODO: Auto-generated Javadoc
-/*	Copyright (c) 2012, Nick Porillo milkywayz@mail.com
- *
- *	Permission to use, copy, modify, and/or distribute this software for any purpose 
- *  with or without fee is hereby granted, provided that the above copyright notice 
- *  and this permission notice appear in all copies.
- *
- *	THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE 
- *	INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE 
- *  FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
- *	OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, 
- *  ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
 public class Time implements Comparable<Time> {
 
-    /*
-     * YOUR COOLDOWN TIMES ARE DEFINED HERE MAKE AS MANY AS YOU PLEASE Caps are
-     * not required, also times dont need to end in 0 This is just a nice
-     * interface for minecraft long
-     */
-    private double time;
-    public String name;
+    final private double time;
+    final public String name;
 
     /**
      * Instantiates a new time.
@@ -49,7 +31,7 @@ public class Time implements Comparable<Time> {
      * @return the minecraft long
      */
 
-    public Long getMinecraftLong() {
+    public Long getTicks() {
         return (long) (time * 20);
     }
 
