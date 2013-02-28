@@ -17,18 +17,28 @@ public class MatchList {
     public TreeSet<Warp> matches;
 
     /**
-     * Gets the closest match. Will return the name if no exact match could be found
+     * Gets the closest match. Will return null if no exact match could be found
      * 
      * @param name the name
-     * @return the closest match
+     * @return the closest match, must be exact
      */
-    public String getMatch(String name) {
+    public Warp getMatch() {
         if (exactMatches.size() == 1) {
-            return exactMatches.iterator().next().name;
+            return exactMatches.iterator().next();
         }
         if (exactMatches.size() == 0 && matches.size() == 1) {
-            return matches.iterator().next().name;
+            return matches.iterator().next();
         }
-        return name;
+        return null;
+    }
+    
+    public Warp getLikliestMatch() {
+        if (!exactMatches.isEmpty()) {
+            return exactMatches.iterator().next();
+        }
+        if (!matches.isEmpty()) {
+            return matches.iterator().next();
+        }
+        return null;
     }
 }

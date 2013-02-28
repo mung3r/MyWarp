@@ -41,19 +41,9 @@ public class WarpList {
         addWarp(name, warp);
     }
 
-    public void blindAdd(Warp warp) {
-        warpMap.put(warp.name, warp);
-    }
-
-    public void deleteWarp(String name) {
-        Warp warp = warpMap.get(name);
-        warpMap.remove(name);
+    public void deleteWarp(Warp warp) {
+        warpMap.remove(warp);
         MyWarp.connectionManager.deleteWarp(warp);
-    }
-
-    public String getMatche(String name, Player player) {
-        MatchList matches = this.getMatches(name, player);
-        return matches.getMatch(name);
     }
 
     public MatchList getMatches(String name, Player player) {
@@ -160,20 +150,17 @@ public class WarpList {
         return warpMap.get(name);
     }
 
-    public void give(String name, String giveeName) {
-        Warp warp = warpMap.get(name);
+    public void give(Warp warp, String giveeName) {
         warp.setCreator(giveeName);
         MyWarp.connectionManager.updateCreator(warp);
     }
 
-    public void inviteGroup(String name, String inviteeName) {
-        Warp warp = warpMap.get(name);
+    public void inviteGroup(Warp warp, String inviteeName) {
         warp.inviteGroup(inviteeName);
         MyWarp.connectionManager.updateGroupPermissions(warp);
     }
 
-    public void invitePlayer(String name, String inviteeName) {
-        Warp warp = warpMap.get(name);
+    public void invitePlayer(Warp warp, String inviteeName) {
         warp.invite(inviteeName);
         MyWarp.connectionManager.updatePermissions(warp);
     }
@@ -249,19 +236,16 @@ public class WarpList {
                 .maxTotalWarps(player);
     }
 
-    public void point(String name, Player player) {
-        Warp warp = warpMap.get(name);
+    public void point(Warp warp, Player player) {
         player.setCompassTarget(warp.getLocation(server));
     }
 
-    public void privatize(String name) {
-        Warp warp = warpMap.get(name);
+    public void privatize(Warp warp) {
         warp.publicAll = false;
         MyWarp.connectionManager.publicizeWarp(warp, false);
     }
 
-    public void publicize(String name) {
-        Warp warp = warpMap.get(name);
+    public void publicize(Warp warp) {
         warp.publicAll = true;
         MyWarp.connectionManager.publicizeWarp(warp, true);
     }
@@ -277,20 +261,17 @@ public class WarpList {
         }
     }
 
-    public void uninviteGroup(String name, String inviteeName) {
-        Warp warp = warpMap.get(name);
+    public void uninviteGroup(Warp warp, String inviteeName) {
         warp.uninviteGroup(inviteeName);
         MyWarp.connectionManager.updateGroupPermissions(warp);
     }
 
-    public void uninvitePlayer(String name, String inviteeName) {
-        Warp warp = warpMap.get(name);
+    public void uninvitePlayer(Warp warp, String inviteeName) {
         warp.uninvite(inviteeName);
         MyWarp.connectionManager.updatePermissions(warp);
     }
 
-    public void updateLocation(String name, Player player) {
-        Warp warp = warpMap.get(name);
+    public void updateLocation(Warp warp, Player player) {
         warp.setLocation(player.getLocation());
         MyWarp.connectionManager.updateLocation(warp);
     }
@@ -299,8 +280,8 @@ public class WarpList {
         return welcomeMessage.containsKey(player.getName());
     }
 
-    public boolean warpExists(String name) {
-        return warpMap.containsKey(name);
+    public boolean warpExists(String warp) {
+        return warpMap.containsKey(warp);
     }
 
     public TreeSet<Warp> warpsInvitedTo(Player player) {
@@ -319,8 +300,7 @@ public class WarpList {
         return results;
     }
 
-    public void warpTo(String name, Player player) {
-        Warp warp = warpMap.get(name);
+    public void warpTo(Warp warp, Player player) {
         if (warp.warp(player, server)) {
             warp.visits++;
             MyWarp.connectionManager.updateVisits(warp);
@@ -329,8 +309,7 @@ public class WarpList {
         }
     }
 
-    public void welcomeMessage(String name, Player player) {
-        Warp warp = warpMap.get(name);
+    public void welcomeMessage(Warp warp, Player player) {
         welcomeMessage.put(player.getName(), warp);
     }
 }

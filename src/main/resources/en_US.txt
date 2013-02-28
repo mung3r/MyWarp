@@ -1,34 +1,18 @@
 ﻿#English localization for MyWarp
 #This file is UTF-8 encoded, respect this when editing.
-error.consoleSender.create:§cConsole cannot create warps for themselves!
-error.consoleSender.point:§cConsole cannot point its compass to warps!
-error.consoleSender.update:§cConsole cannot update warps for themselves!
-error.consoleSender.warpto:§cConsole cannot warp to locations!
-error.consoleSender.weclome:§cConsole cannot change welcome messages for themselves!
 error.create.warpExists:§cWarp called '%warp%' already exists.
 error.give.isOwner:§c%player% is already the owner.
 error.import.exists:§cWarp '%warp%' already exists. Skipping...
+error.import.invalid:§c%query% is not a valid import option.
 error.import.noConnection:§cCould not establish database connection to import warps:
 error.invite.creator:§c%player% is the creator, of course he is invited.
 error.invite.invited.group:§cGroup '%group%' is already invited to this warp.
 error.invite.invited.player:§c%player% is already invited to this warp.
-error.noPermission.delete:§cYou do not have permission to delete '%warp%'.
-error.noPermission.give:§cYou do not have permission to give %warp% to %player%.
-error.noPermission.invite.groups:§cYou do not have permission to invite groups to '%warp%'.
-error.noPermission.invite.players:§cYou do not have permission to invite players to '%warp%'.
-error.noPermission.point:§cYou do not have permission to point to '%warp%'.
-error.noPermission.private:§cYou do not have permission to privatize '%warp%'.
-error.noPermission.public:§cYou do not have permission to publicize '%warp%'.
-error.noPermission.uninvite.groups:§cYou do not have permission to uninvite groups to '%warp%'.
-error.noPermission.uninvite.players:§cYou do not have permission to uninvite players to '%warp%'.
-error.noPermission.update:§cYou do not have permission to update %warp%'s position.
-error.noPermission.warpto:§cYou do not have permission to warp to '%warp%'.
-error.noPermission.welcome:§cYou do not have permission to change %warp%'s welcome message.
 error.noPermission.world:§cYou do not have permission to access a warp in %world%.
 error.noPermission:§cInsufficient permission.
 error.noSuchWarp:§cNo such warp '%warp%'.
-error.playerOffline.give:§c%player% needs to be online to receive warps.
-error.playerOffline.warpto:§cYou cannot warp a player who is offline.
+error.player.offline:Could not find player '%player%'. Maybe he is offline?
+error.playerOnly:This command can only be used by players.
 error.uninvite.creator:§cYou cannot uninvite yourself. You're the creator!
 error.uninvite.notInvited.group:§cGroup '%group%' is not invited to this warp.
 error.uninvite.notInvited.player:§c%player% is not invited to this warp.
@@ -71,8 +55,9 @@ limit.total.reached:§cYou have reached your max # of warps §e(%maxTotal%)%n§f
 list.by:by
 list.console:§cThe console does not own any warps.
 list.noWarps:§cThere are no warps to list.
+list.page.invalid:You must enter a valid number.
 list.page.negative:§cPage number can't be below 1.
-list.page.toHigh:§cThere are only %pages% page(s) of warps.
+list.page.toHigh:§cThere are only %pages% pages of warps.
 list.page:Page
 list.you:you
 listAll.list:§bYou can warp to:

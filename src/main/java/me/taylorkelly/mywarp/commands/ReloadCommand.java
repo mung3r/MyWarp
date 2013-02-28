@@ -20,13 +20,12 @@ public class ReloadCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
+    public void execute(CommandSender sender, String identifier,
             String[] args) {
         plugin.reloadConfig();
         WarpSettings.initialize(plugin);
         LanguageManager.initialize(plugin);
-        executor.sendMessage(LanguageManager.getString("reload.config"));
-        return true;
+        sender.sendMessage(LanguageManager.getString("reload.config"));
     }
 
 }

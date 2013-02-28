@@ -3,10 +3,9 @@ package me.taylorkelly.mywarp.commands;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.utils.CommandUtils;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class DeleteCommand extends BasicCommand implements Command {
     private MyWarp plugin;
@@ -23,34 +22,14 @@ public class DeleteCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
-            String[] args) {
-        Player player = null;
+    public void execute(CommandSender sender, String identifier,
+            String[] args) throws CommandException {
 
-        if (executor instanceof Player) {
-            player = (Player) executor;
-        }
+        Warp warp = CommandUtils.getWarpForModification(sender,
+                CommandUtils.toWarpName(args));
 
-        String name = plugin.getWarpList().getMatche(
-                StringUtils.join(args, ' '), player);
-
-        if (!plugin.getWarpList().warpExists(name)) {
-            executor.sendMessage(LanguageManager.getString("error.noSuchWarp")
-                    .replaceAll("%warp%", name));
-            return true;
-        }
-
-        Warp warp = plugin.getWarpList().getWarp(name);
-
-        if (player != null && !warp.playerCanModify(player)) {
-            executor.sendMessage(LanguageManager.getString(
-                    "error.noPermission.delete").replaceAll("%warp%", name));
-            return true;
-        }
-
-        plugin.getWarpList().deleteWarp(name);
-        executor.sendMessage(LanguageManager.getString("warp.delete")
-                .replaceAll("%warp%", name));
-        return true;
+        plugin.getWarpList().deleteWarp(warp);
+        sender.sendMessage(LanguageManager.getString("warp.delete").replaceAll(
+                "%warp%", warp.name));
     }
 }

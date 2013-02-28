@@ -1,34 +1,18 @@
 ﻿#German localization for MyWarp (by thee)
 #This file is UTF-8 encoded, respect this when editing.
-error.consoleSender.create:§cDie Konsole kann selbst keine Warps erstellen!
-error.consoleSender.point:§cDie Konsole kann ihren Kompass nicht auf Warps ausrichten!
-error.consoleSender.update:§cDie Konsole kann Warps nichts selbst aktualisieren!
-error.consoleSender.warpto:§cDie Konsole kann sich nicht selbst zu Warps teleportieren!
-error.consoleSender.weclome:§cDie Konsole kann nicht selbst die Willkommensnachricht von Warps ändern!
 error.create.warpExists:§cEin Warp namens '%warp%' existiert bereits.
 error.give.isOwner:§cDieser Warp gehört bereits %player%.
 error.import.exists:§cWarp '%warp%' existiert bereits. Überspringe ihn...
+error.import.invalid:§c%query% ist keine gültige Import-Option.
 error.import.noConnection:§cEs konnte keine Verbindung zum Import aufgebaut werden:
 error.invite.creator:§c%player% hat diesen Warp erstellt, natürlich ist er eingeladen.
 error.invite.invited.group:§Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
 error.invite.invited.player:§c%player% ist bereits zu diesem Warp eingeladen.
-error.noPermission.delete:§cDir fehlen die Rechte um '%warp%' zu löschen.
-error.noPermission.give:§cDir fehlen die Rechte um %warp% an %player% abzugeben.
-error.noPermission.invite.groups:§cDir fehlen die Rechte um Gruppen nach '%warp%' einzuladen.
-error.noPermission.invite.players:§cDir fehlen die Rechte um Spieler nach '%warp%' einzuladen.
-error.noPermission.point:§cDir fehlen die Rechte um deinen Kompass auf '%warp%' auszurichten.
-error.noPermission.private:§cDir fehlen die Rechte um '%warp%' zu privatisieren.
-error.noPermission.public:§cDir fehlen die Rechte um '%warp%' zu veröffentlichen.
-error.noPermission.uninvite.groups:§cDir fehlen die Rechte um Gruppen von '%warp%' auszuladen.
-error.noPermission.uninvite.players:§cDir fehlen die Rechte um Spieler von '%warp%' auszuladen.
-error.noPermission.update:§cDir fehlen die Rechte um %warp%s Position zu aktualisieren.
-error.noPermission.warpto:§cDir fehlen die Rechte um dich zu '%warp%' zu teleportieren.
-error.noPermission.welcome:§cDir fehlen die Rechte um %warp%s Willkommensnachricht zu ändern.
 error.noPermission.world:§cDir fehlen die Rechte um dich zu einem Warp in %world% zu teleportieren.
 error.noPermission:§cUnzureichende Rechte.
 error.noSuchWarp:§cDer Warp '%warp%' existiert nicht.
-error.playerOffline.give:§c%player% muss online sein, um Warps empfangen zu können.
-error.playerOffline.warpto:§cDu kannst keinen Spieler teleportieren, der offline ist..
+error.player.offline:Konnte den Spieler '%player%' nicht finden. Ist er vielleicht offline?
+error.playerOnly:Dieses Kommando kann nur von SPielern genutzt werden.
 error.uninvite.creator:§cDu kannst dich nicht selbst ausladen. Du bist der Ersteller!
 error.uninvite.notInvited.group:§cDie Gruppe '%group%' ist nicht zu diesem Warp eingeladen.
 error.uninvite.notInvited.player:§c%player% ist nicht zu diesem Warp eingeladen.
@@ -71,6 +55,7 @@ limit.total.reached:§cDu hast dein Maximum an Warps erreicht §e(%maxTotal%)%n�
 list.by:von
 list.console:§cDie Konsole besitzt keine Warps.
 list.noWarps:§cEs gibt keine Warps, die aufgelistet werden könnten.
+list.page.invalid:Du musst eine gültige Nummer eingeben.
 list.page.negative:§cDie Seitenummer kann nicht kleiner als eins sein.
 list.page.toHigh:§cEs gibt nur %pages% Seite(n).
 list.page:Seite

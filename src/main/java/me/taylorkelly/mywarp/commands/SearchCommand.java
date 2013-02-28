@@ -3,8 +3,8 @@ package me.taylorkelly.mywarp.commands;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Searcher;
+import me.taylorkelly.mywarp.utils.CommandUtils;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
 public class SearchCommand extends BasicCommand implements Command {
@@ -22,11 +22,10 @@ public class SearchCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
+    public void execute(CommandSender sender, String identifier,
             String[] args) {
-        Searcher searcher = new Searcher(executor, StringUtils.join(args, ' '),
+        Searcher searcher = new Searcher(sender, CommandUtils.toWarpName(args),
                 plugin.getWarpList());
         searcher.search();
-        return true;
     }
 }

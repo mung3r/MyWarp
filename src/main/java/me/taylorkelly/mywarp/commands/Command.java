@@ -1,13 +1,14 @@
 package me.taylorkelly.mywarp.commands;
 
+
 import org.bukkit.command.CommandSender;
 
 public interface Command {
 
     public void cancelInteraction(CommandSender executor);
 
-    public boolean execute(CommandSender executor, String identifier,
-            String[] args);
+    public void execute(CommandSender executor, String identifier,
+            String[] args) throws CommandException;
 
     public String getDescription();
 
@@ -32,5 +33,7 @@ public interface Command {
     public boolean isInteractive();
 
     public boolean isShownOnHelpMenu();
+    
+    public boolean isPlayerOnly();
 
 }

@@ -6,17 +6,18 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.data.Warp;
 
 public class PlayerWarmup extends PlayerTimer {
 
     final private MyWarp plugin;
     final private Time cooldown;
-    final private String warp;
+    final private Warp warp;
 
     public static Map<String, PlayerTimer> warmups = new HashMap<String, PlayerTimer>();
 
     public PlayerWarmup(MyWarp plugin, Player player, Time durration,
-            String warp, Time cooldown) {
+            Warp warp, Time cooldown) {
         super(plugin, player, durration);
         this.plugin = plugin;
         this.cooldown = cooldown;
@@ -29,6 +30,7 @@ public class PlayerWarmup extends PlayerTimer {
         if (!player.isOnline()) {
             return;
         }
+        //TODO catch possible removal of the warp
         plugin.getWarpList().warpTo(warp, player);
         if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
             new PlayerCooldown(plugin, player, cooldown);

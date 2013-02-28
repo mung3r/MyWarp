@@ -25,7 +25,7 @@ public class HelpCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
+    public void execute(CommandSender sender, String identifier,
             String[] args) {
         int page = 0;
         if (args.length != 0) {
@@ -41,7 +41,7 @@ public class HelpCommand extends BasicCommand implements Command {
         // Build list of permitted commands
         for (Command command : sortCommands) {
             if (command.isShownOnHelpMenu()) {
-                if (plugin.getCommandHandler().hasPermission(executor,
+                if (plugin.getCommandHandler().hasPermission(sender,
                         command.getPermission())) {
                     commands.add(command);
                 }
@@ -56,8 +56,9 @@ public class HelpCommand extends BasicCommand implements Command {
         if (page >= numPages || page < 0) {
             page = 0;
         }
-        executor.sendMessage("§c-----[ " + "§fMyWarp " + LanguageManager.getColorlessString("help.help") + "<" + (page + 1) + "/"
-                + numPages + ">§c ]-----");
+        sender.sendMessage("§c-----[ " + "§fMyWarp "
+                + LanguageManager.getColorlessString("help.help") + "<"
+                + (page + 1) + "/" + numPages + ">§c ]-----");
         int start = page * CMDS_PER_PAGE;
         int end = start + CMDS_PER_PAGE;
         if (end > commands.size()) {
@@ -65,10 +66,9 @@ public class HelpCommand extends BasicCommand implements Command {
         }
         for (int c = start; c < end; c++) {
             Command cmd = commands.get(c);
-            executor.sendMessage("  §a" + cmd.getUsage());
+            sender.sendMessage("  §a" + cmd.getUsage());
         }
 
-        executor.sendMessage(LanguageManager.getString("help.more"));
-        return true;
+        sender.sendMessage(LanguageManager.getString("help.more"));
     }
 }

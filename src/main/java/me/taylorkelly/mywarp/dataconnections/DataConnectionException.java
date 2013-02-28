@@ -2,7 +2,7 @@ package me.taylorkelly.mywarp.dataconnections;
 
 public class DataConnectionException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2033822282111044971L;
 
     public DataConnectionException() {
         super();

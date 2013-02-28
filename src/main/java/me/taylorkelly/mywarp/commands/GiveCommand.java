@@ -1,12 +1,11 @@
 package me.taylorkelly.mywarp.commands;
 
-import java.util.Arrays;
-
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
-import org.apache.commons.lang.StringUtils;
+import me.taylorkelly.mywarp.utils.CommandUtils;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,99 +26,41 @@ public class GiveCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
-            String[] args) {
-        Player player = null;
-
-        if (executor instanceof Player) {
-            player = (Player) executor;
-        }
+    public void execute(CommandSender sender, String identifier,
+            String[] args) throws CommandException {
 
         Player givee = plugin.getServer().getPlayer(args[0]);
         String giveeName;
-
+        
+        //TODO simplify
         if (WarpSettings.useWarpLimits) {
             if (givee == null) {
-                executor.sendMessage(LanguageManager.getString(
-                        "error.playerOffline.give").replaceAll("%player%",
+                
+                throw new CommandException(LanguageManager.getString(
+                        "error.player.offline").replaceAll("%player%",
                         args[0]));
-                return true;
             }
             giveeName = givee.getName();
         } else {
             giveeName = args[0];
         }
-
-        String name = plugin.getWarpList().getMatche(
-                StringUtils.join(Arrays.asList(args).subList(1, args.length),
-                        ' '), player);
-
-        if (!plugin.getWarpList().warpExists(name)) {
-            executor.sendMessage(LanguageManager.getString("error.noSuchWarp")
-                    .replaceAll("%warp%", name));
-            return true;
-        }
-
-        Warp warp = plugin.getWarpList().getWarp(name);
-
-        if (player != null && !warp.playerCanModify(player)) {
-            executor.sendMessage(LanguageManager
-                    .getString("error.noPermission.give")
-                    .replaceAll("%warp%", name)
-                    .replaceAll("%player%", giveeName));
-            return true;
-        }
+        Warp warp = CommandUtils.getWarpForModification(sender, CommandUtils.toWarpName(args, 1));
 
         if (warp.playerIsCreator(giveeName)) {
-            executor.sendMessage(LanguageManager
+            throw new CommandException(LanguageManager
                     .getString("error.give.isOwner").replaceAll("%player%",
                             giveeName));
-            return true;
         }
+        CommandUtils.checkPlayerLimits(givee, warp.publicAll);
 
-        if (WarpSettings.useWarpLimits) {
-            if (!plugin.getWarpList().playerCanBuildWarp(givee)) {
-                executor.sendMessage(LanguageManager.getString(
-                        "limit.total.reached.player").replaceAll(
-                        "%maxTotal%",
-                        Integer.toString(
-                                MyWarp.getWarpPermissions()
-                                        .maxTotalWarps(givee)).replaceAll(
-                                "%player%", giveeName)));
-                return true;
-            }
-            if (warp.publicAll
-                    && !plugin.getWarpList().playerCanBuildPublicWarp(givee)) {
-                executor.sendMessage(LanguageManager.getString(
-                        "limit.public.reached.player").replaceAll(
-                        "%maxPublic%",
-                        Integer.toString(
-                                MyWarp.getWarpPermissions().maxPublicWarps(
-                                        givee)).replaceAll("%player%",
-                                giveeName)));
-                return true;
-            }
-            if (!warp.publicAll
-                    && !plugin.getWarpList().playerCanBuildPrivateWarp(givee)) {
-                executor.sendMessage(LanguageManager.getString(
-                        "limit.private.reached.player").replaceAll(
-                        "%maxPrivate%",
-                        Integer.toString(
-                                MyWarp.getWarpPermissions().maxPrivateWarps(
-                                        givee)).replaceAll("%player%",
-                                giveeName)));
-                return true;
-            }
-        }
-
-        plugin.getWarpList().give(name, giveeName);
-        executor.sendMessage(LanguageManager.getString("warp.give.given")
-                .replaceAll("%warp%", name).replaceAll("%player%", giveeName));
-        if (WarpSettings.useWarpLimits || givee != null) {
+        plugin.getWarpList().give(warp, giveeName);
+        sender.sendMessage(LanguageManager.getString("warp.give.given")
+                .replaceAll("%warp%", warp.name)
+                .replaceAll("%player%", giveeName));
+        if (givee != null) {
             givee.sendMessage(LanguageManager.getString("warp.give.received")
-                    .replaceAll("%warp%", name)
-                    .replaceAll("%player%", executor.getName()));
+                    .replaceAll("%warp%", warp.name)
+                    .replaceAll("%player%", sender.getName()));
         }
-        return true;
     }
 }

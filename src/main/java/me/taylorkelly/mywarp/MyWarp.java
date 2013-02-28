@@ -31,6 +31,7 @@ import me.taylorkelly.mywarp.listeners.MWBlockListener;
 import me.taylorkelly.mywarp.listeners.MWEntityListener;
 import me.taylorkelly.mywarp.listeners.MWPlayerListener;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
+import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.Bukkit;
@@ -96,6 +97,7 @@ public class MyWarp extends JavaPlugin {
         pm.registerEvents(playerListener, this);
 
         commandHandler = new CommandHandler(this);
+        new CommandUtils(this);
 
         // basic commands
         commandHandler.addCommand(new CreateCommand(this));

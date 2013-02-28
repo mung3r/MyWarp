@@ -12,6 +12,7 @@ public abstract class BasicCommand implements Command {
     private String[] identifiers = new String[0];
     private int minArguments = 0;
     private int maxArguments = 0;
+    private boolean playerOnly = false;
 
     public BasicCommand(String name) {
         this.name = name;
@@ -84,6 +85,11 @@ public abstract class BasicCommand implements Command {
     public boolean isShownOnHelpMenu() {
         return true;
     }
+    
+    @Override
+    public boolean isPlayerOnly(){
+        return playerOnly;
+    }
 
     public void setArgumentRange(int min, int max) {
         this.minArguments = min;
@@ -108,6 +114,10 @@ public abstract class BasicCommand implements Command {
 
     public void setUsage(String usage) {
         this.usage = usage;
+    }
+    
+    public void setPlayerOnly(boolean playerOnly) {
+        this.playerOnly = playerOnly;
     }
 
 }

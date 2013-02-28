@@ -25,8 +25,8 @@ public class ImportCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
-            String[] args) {
+    public void execute(CommandSender sender, String identifier,
+            String[] args) throws CommandException {
         boolean importMySQL;
 
         if (args[0].equalsIgnoreCase("mysql")) {
@@ -34,7 +34,7 @@ public class ImportCommand extends BasicCommand implements Command {
         } else if (args[0].equalsIgnoreCase("sqlite")) {
             importMySQL = false;
         } else {
-            return false;
+            throw new CommandException(LanguageManager.getString("error.import.invalid").replaceAll("%query%", args[0]));
         }
 
         try {
@@ -49,19 +49,17 @@ public class ImportCommand extends BasicCommand implements Command {
                 Warp importedWarp = importedWarpEntry.getValue();
 
                 if (plugin.getWarpList().warpExists(name)) {
-                    executor.sendMessage(LanguageManager.getString(
+                    sender.sendMessage(LanguageManager.getString(
                             "error.import.exists").replaceAll("%warp%", name));
                 } else {
                     plugin.getWarpList().addWarp(name, importedWarp);
                     counter++;
                 }
             }
-            executor.sendMessage(counter + " warps were imported sucessfully.");
-            return true;
+            sender.sendMessage(counter + " warps were imported sucessfully.");
         } catch (DataConnectionException ex) {
-            executor.sendMessage(LanguageManager
+            sender.sendMessage(LanguageManager
                     .getString("error.import.noConnection") + ex.getMessage());
-            return true;
         }
     }
 }

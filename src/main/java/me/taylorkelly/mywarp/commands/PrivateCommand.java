@@ -2,12 +2,10 @@ package me.taylorkelly.mywarp.commands;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.utils.CommandUtils;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class PrivateCommand extends BasicCommand implements Command {
     private MyWarp plugin;
@@ -24,44 +22,15 @@ public class PrivateCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
-            String[] args) {
-        Player player = null;
+    public void execute(CommandSender sender, String identifier,
+            String[] args) throws CommandException {
 
-        if (executor instanceof Player) {
-            player = (Player) executor;
-        }
-        String name = plugin.getWarpList().getMatche(
-                StringUtils.join(args, ' '), player);
+        Warp warp = CommandUtils.getWarpForModification(sender,
+                CommandUtils.toWarpName(args));
+        CommandUtils.checkLimits(sender, false);
 
-        if (!plugin.getWarpList().warpExists(name)) {
-            executor.sendMessage(LanguageManager.getString("error.noSuchWarp")
-                    .replaceAll("%warp%", name));
-            return true;
-        }
-
-        Warp warp = plugin.getWarpList().getWarp(name);
-
-        if (player != null && !warp.playerCanModify(player)) {
-            executor.sendMessage(LanguageManager
-                    .getString("error.noPermission.private"));
-            return true;
-        }
-
-        if (player != null
-                && (WarpSettings.useWarpLimits && !plugin.getWarpList()
-                        .playerCanBuildPrivateWarp(player))) {
-            executor.sendMessage(LanguageManager.getString(
-                    "limit.private.reached").replaceAll(
-                    "%maxPrivate%",
-                    Integer.toString(MyWarp.getWarpPermissions()
-                            .maxPrivateWarps(player))));
-            return true;
-        }
-
-        plugin.getWarpList().privatize(name);
-        executor.sendMessage(LanguageManager.getString("warp.private")
-                .replaceAll("%warp%", name));
-        return true;
+        plugin.getWarpList().privatize(warp);
+        sender.sendMessage(LanguageManager.getString("warp.private")
+                .replaceAll("%warp%", warp.name));
     }
 }

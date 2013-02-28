@@ -7,8 +7,8 @@ import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.timer.PlayerCooldown;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import me.taylorkelly.mywarp.timer.Time;
+import me.taylorkelly.mywarp.utils.CommandUtils;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,91 +24,57 @@ public class WarpToCommand extends BasicCommand implements Command {
         setArgumentRange(1, 255);
         setIdentifiers("warp", "mywarp", "mw");
         setPermission("mywarp.warp.basic.warp");
+        setPlayerOnly(true);
     }
 
     @Override
-    public boolean execute(final CommandSender executor, String identifier,
-            final String[] args) {
-        if (executor instanceof Player) {
-            Player player = (Player) executor;
-            String name = plugin.getWarpList().getMatche(
-                    StringUtils.join(args, ' '), player);
+    public void execute(final CommandSender sender, String identifier,
+            final String[] args) throws CommandException {
+        Player player = (Player) sender;
 
-            if (!plugin.getWarpList().warpExists(name)) {
+        Warp warp = CommandUtils.getWarpForUsage(sender,
+                CommandUtils.toWarpName(args));
+        if (WarpSettings.useTimers) {
+            Time cooldown = MyWarp.getWarpPermissions().getCooldown(player);
+            Time warmup = MyWarp.getWarpPermissions().getWarmup(player);
+
+            if (PlayerCooldown.isActive(player.getName())) {
+                throw new CommandException(LanguageManager.getString(
+                        "timer.cooldown.cooling").replaceAll(
+                        "%seconds%",
+                        Integer.toString(PlayerCooldown
+                                .getRemainingCooldown(player.getName()))));
+            }
+
+            if (PlayerWarmup.isActive(player.getName())) {
+                throw new CommandException(LanguageManager.getString(
+                        "timer.warmup.warming").replaceAll(
+                        "%seconds%",
+                        Integer.toString(PlayerWarmup.getRemainingWarmup(player
+                                .getName()))));
+            }
+
+            if (MyWarp.getWarpPermissions().disobeyWarmup(player)) {
+                plugin.getWarpList().warpTo(warp, player);
+
+                if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
+                    new PlayerCooldown(plugin, player, cooldown);
+                }
+                return;
+            }
+
+            new PlayerWarmup(plugin, player, warmup, warp, cooldown);
+
+            if (WarpSettings.warmUpNotify) {
                 player.sendMessage(LanguageManager
-                        .getString("error.noSuchWarp").replaceAll("%warp%",
-                                name));
-                return true;
+                        .getString("timer.warmup.warming")
+                        .replaceAll("%warp%", warp.name)
+                        .replaceAll("%seconds%",
+                                Integer.toString(warmup.getInt())));
             }
 
-            Warp warp = plugin.getWarpList().getWarp(name);
-
-            if (!warp.playerCanWarp(player)) {
-                player.sendMessage(LanguageManager.getString(
-                        "error.noPermission.warpto").replaceAll("%warp%", name));
-                return true;
-            }
-
-            if (WarpSettings.worldAccess
-                    && !plugin.getWarpList().playerCanAccessWorld(player,
-                            warp.world)) {
-                player.sendMessage(LanguageManager.getString(
-                        "error.noPermission.world").replaceAll("%world%",
-                        warp.world));
-                return true;
-            }
-
-            if (WarpSettings.useTimers) {
-                Time cooldown = MyWarp.getWarpPermissions().getCooldown(
-                        player);
-                Time warmup = MyWarp.getWarpPermissions().getWarmup(player);
-
-                if (PlayerCooldown.isActive(player.getName())) {
-                    player.sendMessage(LanguageManager.getString(
-                            "timer.cooldown.cooling").replaceAll(
-                            "%seconds%",
-                            Integer.toString(PlayerCooldown
-                                    .getRemainingCooldown(player.getName()))));
-                    return true;
-                }
-
-                if (PlayerWarmup.isActive(player.getName())) {
-                    player.sendMessage(LanguageManager.getString(
-                            "timer.warmup.warming").replaceAll(
-                            "%seconds%",
-                            Integer.toString(PlayerWarmup
-                                    .getRemainingWarmup(player.getName()))));
-                    return true;
-                }
-
-                if (MyWarp.getWarpPermissions().disobeyWarmup(player)) {
-                    plugin.getWarpList().warpTo(name, player);
-
-                    if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
-                        new PlayerCooldown(plugin, player, cooldown);
-                    }
-                    return true;
-                }
-
-                new PlayerWarmup(plugin, player, warmup, name, cooldown);
-
-                if (WarpSettings.warmUpNotify) {
-                    player.sendMessage(LanguageManager
-                            .getString("timer.warmup.warming")
-                            .replaceAll("%warp%", name)
-                            .replaceAll("%seconds%",
-                                    Integer.toString(warmup.getInt())));
-                }
-                return true;
-
-            } else {
-                plugin.getWarpList().warpTo(name, player);
-                return true;
-            }
         } else {
-            executor.sendMessage(LanguageManager
-                    .getString("error.consoleSender.warpto"));
-            return true;
+            plugin.getWarpList().warpTo(warp, player);
         }
     }
 }

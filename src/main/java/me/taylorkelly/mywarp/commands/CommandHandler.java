@@ -19,6 +19,7 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class CommandHandler {
 
@@ -83,6 +84,11 @@ public class CommandHandler {
                             return true;
                         }
                     }
+                    
+                    if (cmd.isPlayerOnly() && !(sender instanceof Player)){
+                        sender.sendMessage(LanguageManager.getString("error.playerOnly"));
+                        return true;
+                    }
 
                     if (!hasPermission(sender, cmd.getPermission())) {
                         sender.sendMessage(LanguageManager
@@ -90,7 +96,11 @@ public class CommandHandler {
                         return true;
                     }
 
-                    cmd.execute(sender, identifier, realArgs);
+                    try {
+                        cmd.execute(sender, identifier, realArgs);
+                    } catch (CommandException e) {
+                        sender.sendMessage(ChatColor.DARK_RED + e.getMessage());
+                    }
                     return true;
                 }
             }
@@ -116,14 +126,14 @@ public class CommandHandler {
         }
     }
 
-    public boolean hasPermission(CommandSender executor, String permString) {
+    public boolean hasPermission(CommandSender sender, String permString) {
         if (permString == null || permString.isEmpty()) {
             return true;
         }
 
         if (warpPermissions != null) {
-            return warpPermissions.hasPermission(executor, permString);
+            return warpPermissions.hasPermission(sender, permString);
         }
-        return executor.hasPermission(permString);
+        return sender.hasPermission(permString);
     }
 }

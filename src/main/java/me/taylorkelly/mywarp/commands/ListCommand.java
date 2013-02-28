@@ -25,8 +25,8 @@ public class ListCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
-            String[] args) {
+    public void execute(CommandSender sender, String identifier,
+            String[] args) throws CommandException {
         String creator = null;
         int page = 0;
 
@@ -44,16 +44,15 @@ public class ListCommand extends BasicCommand implements Command {
                     page = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
                     // catch possible integer overflow
-                    return false;
+                    throw new CommandException(LanguageManager.getString("list.page.invalid"));
                 }
             } else {
                 if (args[0].equals("own")) {
-                    if (!(executor instanceof Player)) {
-                        executor.sendMessage(LanguageManager
+                    if (!(sender instanceof Player)) {
+                        throw new CommandException(LanguageManager
                                 .getString("list.console"));
-                        return true;
                     }
-                    creator = executor.getName();
+                    creator = sender.getName();
                 } else {
                     creator = args[0];
                 }
@@ -62,12 +61,11 @@ public class ListCommand extends BasicCommand implements Command {
             // Two arguments: /warp list player #
         } else if (args.length == 2) {
             if (args[0].equals("own")) {
-                if (!(executor instanceof Player)) {
-                    executor.sendMessage(LanguageManager
+                if (!(sender instanceof Player)) {
+                    throw new CommandException(LanguageManager
                             .getString("list.console"));
-                    return true;
                 }
-                creator = executor.getName();
+                creator = sender.getName();
             } else {
                 creator = args[0];
             }
@@ -75,16 +73,13 @@ public class ListCommand extends BasicCommand implements Command {
                 page = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
                 // catch possible integer overflow
-                return false;
+                throw new CommandException(LanguageManager.getString("list.page.invalid"));
             }
-        } else {
-            return false;
         }
-
-        Lister lister = new Lister(executor, creator, page,
+        
+        Lister lister = new Lister(sender, creator, page,
                 plugin.getWarpList());
         lister.listWarps();
-        return true;
     }
 
     /**

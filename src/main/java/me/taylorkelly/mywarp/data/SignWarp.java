@@ -9,9 +9,6 @@ import org.bukkit.event.block.SignChangeEvent;
 
 public class SignWarp {
 
-    /**
-     * Precondition: Only call if isSignWarp() returned true
-     */
     public static void warpSign(Sign sign, WarpList list, Player player) {
         String name = sign.getLine(2);
         
@@ -34,7 +31,7 @@ public class SignWarp {
                     warp.world));
             return;
         }
-        list.warpTo(name, player);
+        list.warpTo(warp, player);
     }
 
     public static void createSignWarp(SignChangeEvent sign) {

@@ -6,6 +6,7 @@ import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -23,22 +24,15 @@ public class ListAllCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public boolean execute(CommandSender executor, String identifier,
+    public void execute(CommandSender sender, String identifier,
             String[] args) {
-        Player player = null;
-
-        if (executor instanceof Player) {
-            player = (Player) executor;
-        }
+        Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = plugin.getWarpList().warpsInvitedTo(player);
 
-        if (results.size() == 0) {
-            executor.sendMessage(LanguageManager.getString("listAll.noWarps"));
-            return true;
+        if (results.isEmpty()) {
+            sender.sendMessage(LanguageManager.getString("listAll.noWarps"));
         }
-        executor.sendMessage(LanguageManager.getString("listAll.list"));
-        executor.sendMessage(results.toString().replace("[", "")
-                .replace("]", ""));
-        return true;
+        sender.sendMessage(LanguageManager.getString("listAll.list"));
+        sender.sendMessage(StringUtils.join(results, ", "));
     }
 }
