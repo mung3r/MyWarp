@@ -1,22 +1,23 @@
 ﻿#German localization for MyWarp (by thee)
 #This file is UTF-8 encoded, respect this when editing.
-error.create.warpExists:§cEin Warp namens '%warp%' existiert bereits.
-error.give.isOwner:§cDieser Warp gehört bereits %player%.
-error.import.exists:§cWarp '%warp%' existiert bereits. Überspringe ihn...
-error.import.invalid:§c%query% ist keine gültige Import-Option.
-error.import.noConnection:§cEs konnte keine Verbindung zum Import aufgebaut werden:
-error.invite.creator:§c%player% hat diesen Warp erstellt, natürlich ist er eingeladen.
-error.invite.invited.group:§Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
-error.invite.invited.player:§c%player% ist bereits zu diesem Warp eingeladen.
-error.noPermission.world:§cDir fehlen die Rechte um dich zu einem Warp in %world% zu teleportieren.
-error.noPermission:§cUnzureichende Rechte.
-error.noSuchWarp:§cDer Warp '%warp%' existiert nicht.
+error.create.warpExists:Ein Warp namens '%warp%' existiert bereits.
+error.give.isOwner:Dieser Warp gehört bereits %player%.
+error.import.exists:Warp '%warp%' existiert bereits. Überspringe ihn...
+error.import.invalid:%query% ist keine gültige Import-Option.
+error.import.noConnection:Es konnte keine Verbindung zum Import aufgebaut werden:
+error.invite.creator:%player% hat diesen Warp erstellt, natürlich ist er eingeladen.
+error.invite.invited.group:Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
+error.invite.invited.player:%player% ist bereits zu diesem Warp eingeladen.
+error.noPermission.world:Dir fehlen die Rechte um dich zu einem Warp in %world% zu teleportieren.
+error.noPermission:Unzureichende Rechte.
+error.noSuchWarp:Der Warp '%warp%' existiert nicht.
+error.noSuchWarp.suggestion:Der Warp '%warp%' existiert nicht. Meintest du vielleicht '%suggestion%'?
 error.player.offline:Konnte den Spieler '%player%' nicht finden. Ist er vielleicht offline?
 error.playerOnly:Dieses Kommando kann nur von SPielern genutzt werden.
-error.uninvite.creator:§cDu kannst dich nicht selbst ausladen. Du bist der Ersteller!
-error.uninvite.notInvited.group:§cDie Gruppe '%group%' ist nicht zu diesem Warp eingeladen.
-error.uninvite.notInvited.player:§c%player% ist nicht zu diesem Warp eingeladen.
-error.warpto.noSuchWorld:§cDie Welt '%world%' exisitiert nicht.
+error.uninvite.creator:Du kannst dich nicht selbst ausladen. Du bist der Ersteller!
+error.uninvite.notInvited.group:Die Gruppe '%group%' ist nicht zu diesem Warp eingeladen.
+error.uninvite.notInvited.player:%player% ist nicht zu diesem Warp eingeladen.
+error.warpto.noSuchWorld:Die Welt '%world%' exisitiert nicht.
 help.command:Befehl
 help.description.adminWarpTo:Teleportiere §8<Spieler>§e zu §9<Name>
 help.description.create:Erstellt einen neuen Warp namens §9<Name>
@@ -100,4 +101,4 @@ warp.uninvite.uninvited:§bDu wurdest von '%warp%' ausgeladen. Entschuldige.
 warp.update:§bDu hast %warp%s Position aktualisiert.
 warp.warpto.player:§b%player% wurde erfolgreich teleportiert.
 warp.welcome.enter:§bGibt die neue Willkommensnachricht für '%warp% ein.
-warp.welcome.received:§bDei neue Willkommensnachricht für '%warp% lautet:
+warp.welcome.received:§bDei neue Willkommensnachricht für '%warp%' lautet:

@@ -1,22 +1,23 @@
 ﻿#English localization for MyWarp
 #This file is UTF-8 encoded, respect this when editing.
-error.create.warpExists:§cWarp called '%warp%' already exists.
-error.give.isOwner:§c%player% is already the owner.
-error.import.exists:§cWarp '%warp%' already exists. Skipping...
-error.import.invalid:§c%query% is not a valid import option.
-error.import.noConnection:§cCould not establish database connection to import warps:
-error.invite.creator:§c%player% is the creator, of course he is invited.
-error.invite.invited.group:§cGroup '%group%' is already invited to this warp.
-error.invite.invited.player:§c%player% is already invited to this warp.
-error.noPermission.world:§cYou do not have permission to access a warp in %world%.
-error.noPermission:§cInsufficient permission.
-error.noSuchWarp:§cNo such warp '%warp%'.
+error.create.warpExists:Warp called '%warp%' already exists.
+error.give.isOwner:%player% is already the owner.
+error.import.exists:Warp '%warp%' already exists. Skipping...
+error.import.invalid:%query% is not a valid import option.
+error.import.noConnection:Could not establish database connection to import warps:
+error.invite.creator:%player% is the creator, of course he is invited.
+error.invite.invited.group:Group '%group%' is already invited to this warp.
+error.invite.invited.player:%player% is already invited to this warp.
+error.noPermission.world:You do not have permission to access a warp in %world%.
+error.noPermission:Insufficient permission.
+error.noSuchWarp:No such warp '%warp%'.
+error.noSuchWarp.suggestion:No such warp '%warp%'. Did you mean '%suggestion%'?
 error.player.offline:Could not find player '%player%'. Maybe he is offline?
 error.playerOnly:This command can only be used by players.
-error.uninvite.creator:§cYou cannot uninvite yourself. You're the creator!
-error.uninvite.notInvited.group:§cGroup '%group%' is not invited to this warp.
-error.uninvite.notInvited.player:§c%player% is not invited to this warp.
-error.warpto.noSuchWorld:§cWorld '%world%' does not exist.
+error.uninvite.creator:You cannot uninvite yourself. You're the creator!
+error.uninvite.notInvited.group:Group '%group%' is not invited to this warp.
+error.uninvite.notInvited.player:%player% is not invited to this warp.
+error.warpto.noSuchWorld:World '%world%' does not exist.
 help.command:Command
 help.description.adminWarpTo:Warp §8<player>§e to §9<name>
 help.description.create:Create a new warp called §9<name>
@@ -63,7 +64,7 @@ list.you:you
 listAll.list:§bYou can warp to:
 listAll.noWarps:§cYou cannot access any warps.
 reload.config:Config has been reloaded successfully!
-safety.found:§cWarp '%warp% is not safe. You were teleported to the closest safe location.
+safety.found:§cWarp '%warp%' is not safe. You were teleported to the closest safe location.
 safety.notFound:§cWarp '%warp%' is not safe. Also no safe loaction could be found close to it.
 search.exactMatches:§eExact matches for search: §7%query%.
 search.noMatches:§cNo matches for search: §7%query%.
@@ -100,4 +101,4 @@ warp.uninvite.uninvited:§bYou have been uninvited from '%warp%'. Sorry.
 warp.update:§bYou have updated %warp%'s position.
 warp.warpto.player:§bSuccessfully warped %player%.
 warp.welcome.enter:§bEnter the welcome message for '%warp%.
-warp.welcome.received:§bChanged welcome message for '%warp% to:
+warp.welcome.received:§bChanged welcome message for '%warp%' to:

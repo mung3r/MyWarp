@@ -2,6 +2,8 @@ settings:
   controlWorldAccess: false
   loadChunks: false
   warpEffect: true
+dynamics:
+  suggestWarps: true
 locale:
   locale: en_US
 warpSafety:

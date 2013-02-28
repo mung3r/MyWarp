@@ -1,7 +1,6 @@
 package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
-
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.safety.SafeTeleport;

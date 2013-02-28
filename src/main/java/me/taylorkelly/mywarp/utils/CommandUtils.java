@@ -29,13 +29,22 @@ public class CommandUtils {
     public static Warp getWarp(CommandSender sender, String query)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
-        MatchList matches = plugin.getWarpList().getMatches(query, player);
+        MatchList matches = plugin.getWarpList().getMatches(query, player, new popularityWarpComperator());
 
         Warp warp = matches.getMatch();
 
         if (warp == null) {
-            throw new CommandException(LanguageManager.getString(
-                    "error.noSuchWarp").replaceAll("%warp%", query));
+            Warp match = matches.getLikliestMatch();
+
+            if (WarpSettings.suggestWarps && match != null) {
+                throw new CommandException(LanguageManager.getString(
+                        "error.noSuchWarp").replaceAll("%warp%", query)
+                        + " Did you mean '%suggestion%'?".replaceAll(
+                                "%suggestion%", match.name));
+            } else {
+                throw new CommandException(LanguageManager.getString(
+                        "error.noSuchWarp").replaceAll("%warp%", query));
+            }
         }
         return warp;
     }

@@ -72,7 +72,8 @@ public class MyWarp extends JavaPlugin {
         LanguageManager.initialize(this);
 
         try {
-            connectionManager = new ConnectionManager(WarpSettings.usemySQL, true, true, this);
+            connectionManager = new ConnectionManager(WarpSettings.usemySQL,
+                    true, true, this);
         } catch (DataConnectionException e) {
             WarpLogger
                     .severe("Could not establish database connection. Disabling MyWarp.");
@@ -163,26 +164,25 @@ public class MyWarp extends JavaPlugin {
                 to.write(buffer, 0, bytesRead);
             }
         } catch (IOException ex) {
-            WarpLogger.severe("Failed to rename " + fromFile.getName() + "to " + toFile.getName() + ": ", ex);
+            WarpLogger.severe("Failed to rename " + fromFile.getName() + "to "
+                    + toFile.getName() + ": ", ex);
         } finally {
-            if (from != null) {
-                try {
+
+            try {
+                if (from != null) {
                     from.close();
-                } catch (IOException e) {
                 }
-            }
-            if (to != null) {
-                try {
+                if (to != null) {
                     to.close();
-                } catch (IOException e) {
                 }
+            } catch (IOException e) {
             }
         }
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel,
-            String[] args) {
+    public boolean onCommand(CommandSender sender, Command command,
+            String commandLabel, String[] args) {
         return commandHandler.dispatch(sender, command, commandLabel, args);
     }
 

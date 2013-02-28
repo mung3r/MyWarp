@@ -1,6 +1,7 @@
 package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -46,9 +47,9 @@ public class WarpList {
         MyWarp.connectionManager.deleteWarp(warp);
     }
 
-    public MatchList getMatches(String name, Player player) {
-        TreeSet<Warp> exactMatches = new TreeSet<Warp>();
-        TreeSet<Warp> matches = new TreeSet<Warp>();
+    public MatchList getMatches(String name, Player player, Comparator<Warp> comperator) {
+        TreeSet<Warp> exactMatches = new TreeSet<Warp>(comperator);
+        TreeSet<Warp> matches = new TreeSet<Warp>(comperator);
 
         for (Warp warp : warpMap.values()) {
             if (player != null && !warp.playerCanWarp(player)) {

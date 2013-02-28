@@ -4,6 +4,7 @@ import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.utils.MatchList;
+import me.taylorkelly.mywarp.utils.popularityWarpComperator;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -37,7 +38,7 @@ public class Searcher {
             player = (Player) executor;
         }
         
-        MatchList matchingWarps = warpList.getMatches(query, player);
+        MatchList matchingWarps = warpList.getMatches(query, player, new popularityWarpComperator());
         this.exactMatches = matchingWarps.exactMatches;
         this.matches = matchingWarps.matches;
         
