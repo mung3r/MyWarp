@@ -42,7 +42,7 @@ public class WarpList {
     }
 
     public void deleteWarp(Warp warp) {
-        warpMap.remove(warp);
+        warpMap.remove(warp.name);
         MyWarp.connectionManager.deleteWarp(warp);
     }
 

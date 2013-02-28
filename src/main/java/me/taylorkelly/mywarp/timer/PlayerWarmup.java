@@ -30,7 +30,8 @@ public class PlayerWarmup extends PlayerTimer {
         if (!player.isOnline()) {
             return;
         }
-        //TODO catch possible removal of the warp
+        // even if the warp is removed while the warmup is running, the
+        // garbage collector does not delete it until the warmup is over
         plugin.getWarpList().warpTo(warp, player);
         if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
             new PlayerCooldown(plugin, player, cooldown);

@@ -64,8 +64,7 @@ public class HelpCommand extends BasicCommand implements Command {
         if (end > commands.size()) {
             end = commands.size();
         }
-        for (int c = start; c < end; c++) {
-            Command cmd = commands.get(c);
+        for (Command cmd : commands) {
             sender.sendMessage("  §a" + cmd.getUsage());
         }
 
