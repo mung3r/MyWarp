@@ -85,9 +85,9 @@ public abstract class BasicCommand implements Command {
     public boolean isShownOnHelpMenu() {
         return true;
     }
-    
+
     @Override
-    public boolean isPlayerOnly(){
+    public boolean isPlayerOnly() {
         return playerOnly;
     }
 
@@ -115,7 +115,7 @@ public abstract class BasicCommand implements Command {
     public void setUsage(String usage) {
         this.usage = usage;
     }
-    
+
     public void setPlayerOnly(boolean playerOnly) {
         this.playerOnly = playerOnly;
     }

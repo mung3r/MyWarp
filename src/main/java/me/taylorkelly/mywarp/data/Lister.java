@@ -51,8 +51,8 @@ public class Lister {
             return;
         }
         if (page > maxPages) {
-            sender.sendMessage(LanguageManager.getString("list.page.toHigh")
-                    .replaceAll("%pages%", Integer.toString(maxPages)));
+            sender.sendMessage(LanguageManager.getEffectiveString(
+                    "list.page.toHigh", "%pages%", Integer.toString(maxPages)));
             return;
         }
 
@@ -64,7 +64,7 @@ public class Lister {
                 + LanguageManager.getColorlessString("list.page") + " " + page
                 + "/" + maxPages + " -------------------";
 
-        // send results to the executor
+        // send results to the sender
         sender.sendMessage(ChatColor.YELLOW + intro);
         for (Warp warp : sortedWarps) {
             String name = warp.name;

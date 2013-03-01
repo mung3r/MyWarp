@@ -22,13 +22,13 @@ public class PublicCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) throws CommandException {
+    public void execute(CommandSender sender, String identifier, String[] args)
+            throws CommandException {
         Warp warp = CommandUtils.getWarpForModification(sender,
                 CommandUtils.toWarpName(args));
 
         plugin.getWarpList().publicize(warp);
-        sender.sendMessage(LanguageManager.getString("warp.public")
-                .replaceAll("%warp%", warp.name));
+        sender.sendMessage(LanguageManager.getEffectiveString("warp.public",
+                "%warp%", warp.name));
     }
 }

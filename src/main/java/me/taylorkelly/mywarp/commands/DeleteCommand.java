@@ -22,14 +22,14 @@ public class DeleteCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) throws CommandException {
+    public void execute(CommandSender sender, String identifier, String[] args)
+            throws CommandException {
 
         Warp warp = CommandUtils.getWarpForModification(sender,
                 CommandUtils.toWarpName(args));
 
         plugin.getWarpList().deleteWarp(warp);
-        sender.sendMessage(LanguageManager.getString("warp.delete").replaceAll(
+        sender.sendMessage(LanguageManager.getEffectiveString("warp.delete",
                 "%warp%", warp.name));
     }
 }

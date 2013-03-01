@@ -25,8 +25,8 @@ public class ImportCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) throws CommandException {
+    public void execute(CommandSender sender, String identifier, String[] args)
+            throws CommandException {
         boolean importMySQL;
 
         if (args[0].equalsIgnoreCase("mysql")) {
@@ -34,7 +34,8 @@ public class ImportCommand extends BasicCommand implements Command {
         } else if (args[0].equalsIgnoreCase("sqlite")) {
             importMySQL = false;
         } else {
-            throw new CommandException(LanguageManager.getString("error.import.invalid").replaceAll("%query%", args[0]));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.import.invalid", "%query%", args[0]));
         }
 
         try {
@@ -49,8 +50,8 @@ public class ImportCommand extends BasicCommand implements Command {
                 Warp importedWarp = importedWarpEntry.getValue();
 
                 if (plugin.getWarpList().warpExists(name)) {
-                    sender.sendMessage(LanguageManager.getString(
-                            "error.import.exists").replaceAll("%warp%", name));
+                    sender.sendMessage(LanguageManager.getEffectiveString(
+                            "error.import.exists", "%warp%", name));
                 } else {
                     plugin.getWarpList().addWarp(name, importedWarp);
                     counter++;

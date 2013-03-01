@@ -30,7 +30,7 @@ public class PointCommand extends BasicCommand implements Command {
                 CommandUtils.toWarpName(args));
 
         plugin.getWarpList().point(warp, (Player) sender);
-        sender.sendMessage(LanguageManager.getString("warp.point").replaceAll(
+        sender.sendMessage(LanguageManager.getEffectiveString("warp.point",
                 "%warp%", warp.name));
     }
 }

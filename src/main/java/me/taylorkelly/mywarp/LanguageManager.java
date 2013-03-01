@@ -13,13 +13,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 
 import me.taylorkelly.mywarp.utils.UnicodeBOMInputStream;
 import me.taylorkelly.mywarp.utils.WarpLogger;
+
 /**
  * Manages languages
- *
+ * 
  */
 public class LanguageManager {
 
@@ -199,8 +201,9 @@ public class LanguageManager {
      */
     public static String getString(String key) {
         return languageMap.get(key) != null ? ChatColor
-                .translateAlternateColorCodes('§', languageMap.get(key))
-                .replaceAll("%n", "\n") : key;
+                .translateAlternateColorCodes('§',
+                        StringUtils.replace(languageMap.get(key), "%n", "\n"))
+                : key;
     }
 
     /**
@@ -212,5 +215,32 @@ public class LanguageManager {
      */
     public static String getColorlessString(String key) {
         return ChatColor.stripColor(getString(key));
+    }
+
+    /**
+     * Returns {@link #getString(String)} and replaces all searchStrings with
+     * the given replacements. Form is searchString, replacement, searchString2,
+     * replacement2, etc. Will throw an exception if replacement's length is not
+     * even.
+     * 
+     * @param key
+     *            the key of the string
+     * @param replacements
+     *            the replacements - must be even
+     * @return the corresponding string out of the language map with replaced
+     *         values
+     */
+    public static String getEffectiveString(String key, String... replacements) {
+        if (replacements.length % 2 != 0) {
+            throw new IllegalArgumentException(
+                    "The given arguments length must be equal");
+        }
+        String trans = LanguageManager.getString(key);
+
+        for (int i = 0; i < replacements.length; i = i + 2) {
+            trans = StringUtils.replace(trans, replacements[i],
+                    replacements[i + 1]);
+        }
+        return trans;
     }
 }

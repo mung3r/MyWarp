@@ -36,9 +36,8 @@ public class MWBlockListener implements Listener {
             String name = event.getLine(2);
 
             if (!warpList.warpExists(name)) {
-                player.sendMessage(LanguageManager
-                        .getString("error.noSuchWarp").replaceAll("%warp%",
-                                name));
+                player.sendMessage(LanguageManager.getEffectiveString(
+                        "error.noSuchWarp", "%warp%", name));
                 event.setCancelled(true);
                 event.getBlock().breakNaturally();
                 return;
@@ -47,8 +46,8 @@ public class MWBlockListener implements Listener {
 
             if (!warp.playerCanModify(player)
                     && !MyWarp.getWarpPermissions().createSignWarpAll(player)) {
-                player.sendMessage(LanguageManager.getString(
-                        "sign.noPermission.create").replaceAll("%warp%", name));
+                player.sendMessage(LanguageManager.getEffectiveString(
+                        "sign.noPermission.create", "%warp%", name));
                 event.setCancelled(true);
                 event.getBlock().breakNaturally();
                 return;

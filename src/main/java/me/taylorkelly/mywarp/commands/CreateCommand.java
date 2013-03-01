@@ -31,12 +31,12 @@ public class CreateCommand extends BasicCommand implements Command {
         CommandUtils.checkLimits(sender, true);
 
         if (plugin.getWarpList().warpExists(name)) {
-            throw new CommandException(LanguageManager.getString(
-                    "error.create.warpExists").replaceAll("%warp%", name));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.create.warpExists", "%warp%", name));
         }
 
         plugin.getWarpList().addWarpPublic(name, player);
-        player.sendMessage(LanguageManager.getString("warp.create.public")
-                .replaceAll("%warp%", name));
+        player.sendMessage(LanguageManager.getEffectiveString(
+                "warp.create.public", "%warp%", name));
     }
 }

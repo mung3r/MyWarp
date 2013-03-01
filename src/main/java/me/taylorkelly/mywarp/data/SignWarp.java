@@ -11,24 +11,23 @@ public class SignWarp {
 
     public static void warpSign(Sign sign, WarpList list, Player player) {
         String name = sign.getLine(2);
-        
+
         if (!list.warpExists(name)) {
-            player.sendMessage(LanguageManager.getString(
-                    "error.noSuchWarp").replaceAll("%warp%", name));
+            player.sendMessage(LanguageManager.getEffectiveString(
+                    "error.noSuchWarp", "%warp%", name));
             return;
         }
         Warp warp = list.getWarp(name);
 
         if (!warp.playerCanWarp(player)) {
-            player.sendMessage(LanguageManager.getString(
-                    "error.noPermission.warpto").replaceAll("%warp%", name));
+            player.sendMessage(LanguageManager.getEffectiveString(
+                    "error.noPermission.warpto", "%warp%", name));
             return;
         }
         if (WarpSettings.worldAccess
                 && !list.playerCanAccessWorld(player, warp.world)) {
-            player.sendMessage(LanguageManager.getString(
-                    "error.noPermission.world").replaceAll("%world%",
-                    warp.world));
+            player.sendMessage(LanguageManager.getEffectiveString(
+                    "error.noPermission.world", "%world%", warp.world));
             return;
         }
         list.warpTo(warp, player);

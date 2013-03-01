@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Handles teleports
- *
+ * 
  */
 public class SafeTeleport {
 
@@ -32,14 +32,14 @@ public class SafeTeleport {
         if (WarpSettings.useWarpSafety) {
             Location safe = SafeLocation.getSafeLocation(l);
             if (safe == null) {
-                player.sendMessage(LanguageManager.getString("safety.notFound")
-                        .replaceAll("%warp%", name));
+                player.sendMessage(LanguageManager.getEffectiveString(
+                        "safety.notFound", "%warp%", name));
                 return false;
             }
             if (safe != l) {
                 teleport(player, safe);
-                player.sendMessage(LanguageManager.getString("safety.found")
-                        .replaceAll("%warp%", name));
+                player.sendMessage(LanguageManager.getEffectiveString(
+                        "safety.found", "%warp%", name));
                 return false;
             }
         }
@@ -50,7 +50,7 @@ public class SafeTeleport {
 
     private static void teleport(Player player, Location to) {
         Location from = player.getLocation();
-        
+
         if (WarpSettings.warpEffect) {
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
             from.getWorld().playEffect(from, Effect.SMOKE, 4);

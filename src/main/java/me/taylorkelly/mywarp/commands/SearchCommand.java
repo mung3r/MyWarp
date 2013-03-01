@@ -22,8 +22,7 @@ public class SearchCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) {
+    public void execute(CommandSender sender, String identifier, String[] args) {
         Searcher searcher = new Searcher(sender, CommandUtils.toWarpName(args),
                 plugin.getWarpList());
         searcher.search();

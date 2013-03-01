@@ -24,20 +24,20 @@ public class CreatePrivateCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) throws CommandException {
-            Player player = (Player) sender;
-            String name = CommandUtils.toWarpName(args);
+    public void execute(CommandSender sender, String identifier, String[] args)
+            throws CommandException {
+        Player player = (Player) sender;
+        String name = CommandUtils.toWarpName(args);
 
-            CommandUtils.checkLimits(sender, false);
+        CommandUtils.checkLimits(sender, false);
 
-            if (plugin.getWarpList().warpExists(name)) {
-                throw new CommandException(LanguageManager.getString(
-                        "error.create.warpExists").replaceAll("%warp%", name));
-            }
+        if (plugin.getWarpList().warpExists(name)) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.create.warpExists", "%warp%", name));
+        }
 
-            plugin.getWarpList().addWarpPrivate(name, player);
-            sender.sendMessage(LanguageManager.getString("warp.create.private")
-                    .replaceAll("%warp%", name));
+        plugin.getWarpList().addWarpPrivate(name, player);
+        sender.sendMessage(LanguageManager.getEffectiveString(
+                "warp.create.private", "%warp%", name));
     }
 }

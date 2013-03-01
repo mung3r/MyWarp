@@ -32,7 +32,7 @@ public class WelcomeCommand extends BasicCommand implements Command {
                 CommandUtils.toWarpName(args));
 
         plugin.getWarpList().welcomeMessage(warp, player);
-        player.sendMessage(LanguageManager.getString("warp.welcome.enter")
-                .replaceAll("%warp%", warp.name));
+        player.sendMessage(LanguageManager.getEffectiveString(
+                "warp.welcome.enter", "%warp%", warp.name));
     }
 }

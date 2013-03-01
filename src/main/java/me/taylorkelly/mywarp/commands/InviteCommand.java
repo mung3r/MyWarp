@@ -26,38 +26,36 @@ public class InviteCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) throws CommandException {
+    public void execute(CommandSender sender, String identifier, String[] args)
+            throws CommandException {
 
-        Warp warp = CommandUtils.getWarpForModification(sender, CommandUtils.toWarpName(args, 1));
+        Warp warp = CommandUtils.getWarpForModification(sender,
+                CommandUtils.toWarpName(args, 1));
 
         // invite group
         if (args[0].startsWith("g:")) {
             if (!MyWarp.getWarpPermissions().canInviteGroup(sender)) {
-                throw new CommandException(LanguageManager
-                        .getString("error.noPermission"));
+                throw new CommandException(
+                        LanguageManager.getString("error.noPermission"));
             }
 
             String inviteeName = args[0].substring(2);
 
             if (warp.groupIsInvited(inviteeName)) {
-                throw new CommandException(LanguageManager.getString(
-                        "error.invite.invited.group").replaceAll("%group%",
-                        inviteeName));
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "error.invite.invited.group", "%group%", inviteeName));
             }
 
             plugin.getWarpList().inviteGroup(warp, inviteeName);
 
             if (warp.publicAll) {
-                sender.sendMessage(LanguageManager
-                        .getString("warp.invite.group.public")
-                        .replaceAll("%warp%", warp.name)
-                        .replaceAll("%group%", inviteeName));
+                sender.sendMessage(LanguageManager.getEffectiveString(
+                        "warp.invite.group.public", "%warp%", warp.name,
+                        "%group%", inviteeName));
             } else {
-                sender.sendMessage(LanguageManager
-                        .getString("warp.invite.group.private")
-                        .replaceAll("%warp%", warp.name)
-                        .replaceAll("%group%", inviteeName));
+                sender.sendMessage(LanguageManager.getEffectiveString(
+                        "warp.invite.group.private", "%warp%", warp.name,
+                        "%group%", inviteeName));
             }
             return;
         }
@@ -67,33 +65,29 @@ public class InviteCommand extends BasicCommand implements Command {
         String inviteeName = (invitee == null) ? args[0] : invitee.getName();
 
         if (warp.playerIsInvited(inviteeName)) {
-            throw new CommandException(LanguageManager.getString(
-                    "error.invite.invited.player").replaceAll("%player%",
-                    inviteeName));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.invite.invited.player", "%player%", inviteeName));
         }
 
         if (warp.playerIsCreator(inviteeName)) {
-            throw new CommandException(LanguageManager.getString(
-                    "error.invite.creator").replaceAll("%player%", inviteeName));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.invite.creator", "%player%", inviteeName));
         }
 
         plugin.getWarpList().invitePlayer(warp, inviteeName);
         if (warp.publicAll) {
-            sender.sendMessage(LanguageManager
-                    .getString("warp.invite.player.public")
-                    .replaceAll("%warp%", warp.name)
-                    .replaceAll("%player%", inviteeName));
+            sender.sendMessage(LanguageManager.getEffectiveString(
+                    "warp.invite.player.public", "%warp%", warp.name,
+                    "%player%", inviteeName));
         } else {
-            sender.sendMessage(LanguageManager
-                    .getString("warp.invite.player.private")
-                    .replaceAll("%warp%", warp.name)
-                    .replaceAll("%player%", inviteeName));
+            sender.sendMessage(LanguageManager.getEffectiveString(
+                    "warp.invite.player.private", "%warp%", warp.name,
+                    "%player%", inviteeName));
         }
 
         if (invitee != null) {
-            invitee.sendMessage(LanguageManager
-                    .getString("warp.invite.invited").replaceAll("%warp%",
-                            warp.name));
+            invitee.sendMessage(LanguageManager.getEffectiveString(
+                    "warp.invite.invited", "%warp%", warp.name));
         }
     }
 }

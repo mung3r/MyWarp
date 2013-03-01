@@ -32,7 +32,7 @@ public class UpdateCommand extends BasicCommand implements Command {
                 CommandUtils.toWarpName(args));
 
         plugin.getWarpList().updateLocation(warp, player);
-        sender.sendMessage(LanguageManager.getString("warp.update").replaceAll(
+        sender.sendMessage(LanguageManager.getEffectiveString("warp.update",
                 "%warp%", warp.name));
     }
 }

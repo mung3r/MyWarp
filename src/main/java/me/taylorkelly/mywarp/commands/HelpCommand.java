@@ -25,8 +25,7 @@ public class HelpCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) {
+    public void execute(CommandSender sender, String identifier, String[] args) {
         int page = 0;
         if (args.length != 0) {
             try {

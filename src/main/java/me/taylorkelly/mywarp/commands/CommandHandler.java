@@ -84,9 +84,10 @@ public class CommandHandler {
                             return true;
                         }
                     }
-                    
-                    if (cmd.isPlayerOnly() && !(sender instanceof Player)){
-                        sender.sendMessage(LanguageManager.getString("error.playerOnly"));
+
+                    if (cmd.isPlayerOnly() && !(sender instanceof Player)) {
+                        sender.sendMessage(LanguageManager
+                                .getString("error.playerOnly"));
                         return true;
                     }
 

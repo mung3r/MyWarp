@@ -24,8 +24,7 @@ public class ListAllCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) {
+    public void execute(CommandSender sender, String identifier, String[] args) {
         Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = plugin.getWarpList().warpsInvitedTo(player);
 

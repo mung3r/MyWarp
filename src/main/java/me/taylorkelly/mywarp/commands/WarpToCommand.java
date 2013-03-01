@@ -39,19 +39,17 @@ public class WarpToCommand extends BasicCommand implements Command {
             Time warmup = MyWarp.getWarpPermissions().getWarmup(player);
 
             if (PlayerCooldown.isActive(player.getName())) {
-                throw new CommandException(LanguageManager.getString(
-                        "timer.cooldown.cooling").replaceAll(
-                        "%seconds%",
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "timer.cooldown.cooling", "%seconds%",
                         Integer.toString(PlayerCooldown
                                 .getRemainingCooldown(player.getName()))));
             }
 
             if (PlayerWarmup.isActive(player.getName())) {
-                throw new CommandException(LanguageManager.getString(
-                        "timer.warmup.warming").replaceAll(
-                        "%seconds%",
-                        Integer.toString(PlayerWarmup.getRemainingWarmup(player
-                                .getName()))));
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "timer.warmup.warming", "%seconds%", Integer
+                                .toString(PlayerWarmup
+                                        .getRemainingWarmup(player.getName()))));
             }
 
             if (MyWarp.getWarpPermissions().disobeyWarmup(player)) {
@@ -66,11 +64,9 @@ public class WarpToCommand extends BasicCommand implements Command {
             new PlayerWarmup(plugin, player, warmup, warp, cooldown);
 
             if (WarpSettings.warmUpNotify) {
-                player.sendMessage(LanguageManager
-                        .getString("timer.warmup.warming")
-                        .replaceAll("%warp%", warp.name)
-                        .replaceAll("%seconds%",
-                                Integer.toString(warmup.getInt())));
+                player.sendMessage(LanguageManager.getEffectiveString(
+                        "timer.warmup.warming", "%warp%", warp.name,
+                        "%seconds%", Integer.toString(warmup.getInt())));
             }
 
         } else {

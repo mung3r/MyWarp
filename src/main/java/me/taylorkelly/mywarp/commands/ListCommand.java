@@ -25,8 +25,8 @@ public class ListCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) throws CommandException {
+    public void execute(CommandSender sender, String identifier, String[] args)
+            throws CommandException {
         String creator = null;
         int page = 0;
 
@@ -44,13 +44,14 @@ public class ListCommand extends BasicCommand implements Command {
                     page = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
                     // catch possible integer overflow
-                    throw new CommandException(LanguageManager.getString("list.page.invalid"));
+                    throw new CommandException(
+                            LanguageManager.getString("list.page.invalid"));
                 }
             } else {
                 if (args[0].equals("own")) {
                     if (!(sender instanceof Player)) {
-                        throw new CommandException(LanguageManager
-                                .getString("list.console"));
+                        throw new CommandException(
+                                LanguageManager.getString("list.console"));
                     }
                     creator = sender.getName();
                 } else {
@@ -62,8 +63,8 @@ public class ListCommand extends BasicCommand implements Command {
         } else if (args.length == 2) {
             if (args[0].equals("own")) {
                 if (!(sender instanceof Player)) {
-                    throw new CommandException(LanguageManager
-                            .getString("list.console"));
+                    throw new CommandException(
+                            LanguageManager.getString("list.console"));
                 }
                 creator = sender.getName();
             } else {
@@ -73,12 +74,12 @@ public class ListCommand extends BasicCommand implements Command {
                 page = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
                 // catch possible integer overflow
-                throw new CommandException(LanguageManager.getString("list.page.invalid"));
+                throw new CommandException(
+                        LanguageManager.getString("list.page.invalid"));
             }
         }
-        
-        Lister lister = new Lister(sender, creator, page,
-                plugin.getWarpList());
+
+        Lister lister = new Lister(sender, creator, page, plugin.getWarpList());
         lister.listWarps();
     }
 

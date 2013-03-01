@@ -5,12 +5,13 @@ import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.safety.SafeTeleport;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public class Warp implements Comparable<Warp>{
+public class Warp implements Comparable<Warp> {
 
     public int index;
     public String name;
@@ -28,9 +29,10 @@ public class Warp implements Comparable<Warp>{
     public ArrayList<String> groupPermissions;
     public static int nextIndex = 1;
 
-    public Warp(int index, String name, String creator, String world, double x, int y,
-            double z, int yaw, int pitch, boolean publicAll, String permissions,
-            String groupPermissions, String welcomeMessage, int visits) {
+    public Warp(int index, String name, String creator, String world, double x,
+            int y, double z, int yaw, int pitch, boolean publicAll,
+            String permissions, String groupPermissions, String welcomeMessage,
+            int visits) {
         this.index = index;
         this.name = name;
         this.creator = creator;
@@ -69,7 +71,8 @@ public class Warp implements Comparable<Warp>{
         this.publicAll = true;
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = LanguageManager.getString("warp.default.welcomeMessage");
+        this.welcomeMessage = LanguageManager
+                .getString("warp.default.welcomeMessage");
         this.visits = 0;
     }
 
@@ -87,7 +90,8 @@ public class Warp implements Comparable<Warp>{
         this.publicAll = b;
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = LanguageManager.getString("warp.default.welcomeMessage");
+        this.welcomeMessage = LanguageManager
+                .getString("warp.default.welcomeMessage");
         this.visits = 0;
     }
 
@@ -152,7 +156,8 @@ public class Warp implements Comparable<Warp>{
             Location location = new Location(currWorld, x, y, z, yaw, pitch);
             return SafeTeleport.safeTeleport(player, location, name);
         } else {
-            player.sendMessage(LanguageManager.getString("error.warpto.noSuchWorld").replaceAll("%world%", world));
+            player.sendMessage(LanguageManager.getEffectiveString(
+                    "error.warpto.noSuchWorld", "%world%", world));
             return false;
         }
     }
@@ -231,9 +236,15 @@ public class Warp implements Comparable<Warp>{
     }
 
     public String getSpecificWelcomeMessage(Player player) {
-        return welcomeMessage.replaceAll("%player%", player.getName())
-                .replaceAll("%warp%", name).replaceAll("%creator%", creator)
-                .replaceAll("%visits%", Integer.toString(visits));
+        welcomeMessage = StringUtils.replace(welcomeMessage, "%player%",
+                player.getName());
+        welcomeMessage = StringUtils.replace(welcomeMessage, "%warp%", name);
+        welcomeMessage = StringUtils.replace(welcomeMessage, "%creator%",
+                creator);
+        welcomeMessage = StringUtils.replace(welcomeMessage, "%visits%",
+                Integer.toString(visits));
+
+        return welcomeMessage;
     }
 
     @Override

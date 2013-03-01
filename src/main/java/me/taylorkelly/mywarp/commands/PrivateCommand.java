@@ -22,15 +22,15 @@ public class PrivateCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) throws CommandException {
+    public void execute(CommandSender sender, String identifier, String[] args)
+            throws CommandException {
 
         Warp warp = CommandUtils.getWarpForModification(sender,
                 CommandUtils.toWarpName(args));
         CommandUtils.checkLimits(sender, false);
 
         plugin.getWarpList().privatize(warp);
-        sender.sendMessage(LanguageManager.getString("warp.private")
-                .replaceAll("%warp%", warp.name));
+        sender.sendMessage(LanguageManager.getEffectiveString("warp.private",
+                "%warp%", warp.name));
     }
 }

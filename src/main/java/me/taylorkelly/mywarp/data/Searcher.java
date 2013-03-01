@@ -23,8 +23,7 @@ public class Searcher {
 
     private String query;
 
-    public Searcher (CommandSender executor, String query,
-            WarpList warpList) {
+    public Searcher(CommandSender executor, String query, WarpList warpList) {
         this.warpList = warpList;
         this.executor = executor;
         this.query = query;
@@ -37,23 +36,24 @@ public class Searcher {
         if (executor instanceof Player) {
             player = (Player) executor;
         }
-        
-        MatchList matchingWarps = warpList.getMatches(query, player, new popularityWarpComperator());
+
+        MatchList matchingWarps = warpList.getMatches(query, player,
+                new popularityWarpComperator());
         this.exactMatches = matchingWarps.exactMatches;
         this.matches = matchingWarps.matches;
-        
+
         if (exactMatches.size() == 0 && matches.size() == 0) {
-            executor.sendMessage(LanguageManager.getString("search.noMatches")
-                    .replaceAll("%query%", query));
+            executor.sendMessage(LanguageManager.getEffectiveString(
+                    "search.noMatches", "%query%", query));
         } else {
             if (exactMatches.size() > 0) {
-                executor.sendMessage(LanguageManager.getString(
-                        "search.exactMatches").replaceAll("%query%", query));
+                executor.sendMessage(LanguageManager.getEffectiveString(
+                        "search.exactMatches", "%query%", query));
                 sendWarpMatches(exactMatches);
             }
             if (matches.size() > 0) {
-                executor.sendMessage(LanguageManager.getString(
-                        "search.partitalMatches").replaceAll("%query%", query));
+                executor.sendMessage(LanguageManager.getEffectiveString(
+                        "search.partitalMatches", "%query%", query));
                 sendWarpMatches(matches);
             }
         }
@@ -77,8 +77,8 @@ public class Searcher {
             int z = (int) Math.round(warp.z);
             executor.sendMessage(color + "'" + warp.name + "' "
                     + ChatColor.WHITE
-                    + LanguageManager.getColorlessString("list.by") + " "+ creator
-                    + " @(" + x + ", " + y + ", " + z + ")");
+                    + LanguageManager.getColorlessString("list.by") + " "
+                    + creator + " @(" + x + ", " + y + ", " + z + ")");
         }
     }
 }

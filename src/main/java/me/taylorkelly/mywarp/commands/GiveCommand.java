@@ -26,41 +26,39 @@ public class GiveCommand extends BasicCommand implements Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String identifier,
-            String[] args) throws CommandException {
+    public void execute(CommandSender sender, String identifier, String[] args)
+            throws CommandException {
 
         Player givee = plugin.getServer().getPlayer(args[0]);
         String giveeName;
-        
-        //TODO simplify
+
+        // TODO simplify
         if (WarpSettings.useWarpLimits) {
             if (givee == null) {
-                
-                throw new CommandException(LanguageManager.getString(
-                        "error.player.offline").replaceAll("%player%",
-                        args[0]));
+
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "error.player.offline", "%player%", args[0]));
             }
             giveeName = givee.getName();
         } else {
             giveeName = args[0];
         }
-        Warp warp = CommandUtils.getWarpForModification(sender, CommandUtils.toWarpName(args, 1));
+        Warp warp = CommandUtils.getWarpForModification(sender,
+                CommandUtils.toWarpName(args, 1));
 
         if (warp.playerIsCreator(giveeName)) {
-            throw new CommandException(LanguageManager
-                    .getString("error.give.isOwner").replaceAll("%player%",
-                            giveeName));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.give.isOwner", "%player%", giveeName));
         }
         CommandUtils.checkPlayerLimits(givee, warp.publicAll);
 
         plugin.getWarpList().give(warp, giveeName);
-        sender.sendMessage(LanguageManager.getString("warp.give.given")
-                .replaceAll("%warp%", warp.name)
-                .replaceAll("%player%", giveeName));
+        sender.sendMessage(LanguageManager.getEffectiveString(
+                "warp.give.given", "%warp%", warp.name, "%player%", giveeName));
         if (givee != null) {
-            givee.sendMessage(LanguageManager.getString("warp.give.received")
-                    .replaceAll("%warp%", warp.name)
-                    .replaceAll("%player%", sender.getName()));
+            givee.sendMessage(LanguageManager.getEffectiveString(
+                    "warp.give.received", "%warp%", warp.name, "%player%",
+                    sender.getName()));
         }
     }
 }

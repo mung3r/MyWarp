@@ -38,13 +38,12 @@ public class CommandUtils {
             Warp match = matches.getLikliestMatch();
 
             if (WarpSettings.suggestWarps && match != null) {
-                throw new CommandException(LanguageManager
-                        .getString("error.noSuchWarp.suggestion")
-                        .replaceAll("%warp%", query)
-                        .replaceAll("%suggestion%", match.name));
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "error.noSuchWarp.suggestion", "%warp%", query,
+                        "%suggestion%", match.name));
             } else {
-                throw new CommandException(LanguageManager.getString(
-                        "error.noSuchWarp").replaceAll("%warp%", query));
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "error.noSuchWarp", "%warp%", query));
             }
         }
         return warp;
@@ -73,9 +72,8 @@ public class CommandUtils {
                 && sender instanceof Player
                 && !plugin.getWarpList().playerCanAccessWorld((Player) sender,
                         warp.world)) {
-            throw new CommandException(LanguageManager.getString(
-                    "error.noPermission.world").replaceAll("%world%",
-                    warp.world));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.noPermission.world", "%world%", warp.world));
         }
         return warp;
     }
@@ -89,24 +87,22 @@ public class CommandUtils {
         Player player = (Player) sender;
 
         if (!plugin.getWarpList().playerCanBuildWarp(player)) {
-            throw new CommandException(LanguageManager.getString(
-                    "limit.total.reached").replaceAll(
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "limit.total.reached",
                     "%maxTotal%",
                     Integer.toString(MyWarp.getWarpPermissions().maxTotalWarps(
                             player))));
         }
         if (publicAll) {
             if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
-                throw new CommandException(LanguageManager.getString(
-                        "limit.public.reached").replaceAll(
-                        "%maxPublic%",
-                        Integer.toString(MyWarp.getWarpPermissions()
-                                .maxPublicWarps(player))));
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "limit.public.reached", "%maxPublic%", Integer
+                                .toString(MyWarp.getWarpPermissions()
+                                        .maxPublicWarps(player))));
             }
         } else if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
-            throw new CommandException(LanguageManager.getString(
-                    "limit.private.reached.player").replaceAll(
-                    "%maxPrivate%",
+            throw new CommandException(LanguageManager
+                    .getEffectiveString("limit.private.reached.player", "%maxPrivate%",
                     Integer.toString(MyWarp.getWarpPermissions()
                             .maxPrivateWarps(player))));
         }
@@ -121,40 +117,34 @@ public class CommandUtils {
         Player player = (Player) sender;
 
         if (!plugin.getWarpList().playerCanBuildWarp(player)) {
-            throw new CommandException(LanguageManager.getString(
-                    "limit.total.reached.player").replaceAll(
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "limit.total.reached.player",
                     "%maxTotal%",
-                    Integer.toString(
-                            MyWarp.getWarpPermissions().maxTotalWarps(player))
-                            .replaceAll("%player%", player.getName())));
+                    Integer.toString(MyWarp.getWarpPermissions().maxTotalWarps(
+                            player)), "%player%", player.getName()));
         }
         if (publicAll) {
             if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
-                throw new CommandException(LanguageManager.getString(
-                        "limit.public.reached.player").replaceAll(
-                        "%maxPublic%",
-                        Integer.toString(
-                                MyWarp.getWarpPermissions().maxPublicWarps(
-                                        player)).replaceAll("%player%",
-                                player.getName())));
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "limit.public.reached.player", "%maxPublic%", Integer
+                                .toString(MyWarp.getWarpPermissions()
+                                        .maxPublicWarps(player)), "%player%",
+                        player.getName()));
             }
         } else if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
-            throw new CommandException(LanguageManager.getString(
-                    "limit.private.reached.player")
-                    .replaceAll(
-                            "%maxPrivate%",
-                            Integer.toString(
-                                    MyWarp.getWarpPermissions()
-                                            .maxPrivateWarps(player))
-                                    .replaceAll("%player%", player.getName())));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "limit.private.reached.player", "%maxPrivate%", Integer
+                            .toString(MyWarp.getWarpPermissions()
+                                    .maxPrivateWarps(player)), "%player%",
+                    player.getName()));
         }
     }
 
     public static Player checkPlayer(String player) throws CommandException {
         Player actuallPlayer = plugin.getServer().getPlayer(player);
         if (actuallPlayer == null) {
-            throw new CommandException(LanguageManager.getString(
-                    "error.player.offline").replaceAll("%player%", player));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.player.offline", "%player%", player));
         }
         return actuallPlayer;
     }
