@@ -96,7 +96,7 @@ public class CommandUtils {
                             player))));
         }
         if (publicAll) {
-            if (plugin.getWarpList().playerCanBuildPublicWarp(player)) {
+            if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
                 throw new CommandException(LanguageManager.getString(
                         "limit.public.reached").replaceAll(
                         "%maxPublic%",
@@ -129,7 +129,7 @@ public class CommandUtils {
                             .replaceAll("%player%", player.getName())));
         }
         if (publicAll) {
-            if (plugin.getWarpList().playerCanBuildPublicWarp(player)) {
+            if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
                 throw new CommandException(LanguageManager.getString(
                         "limit.public.reached.player").replaceAll(
                         "%maxPublic%",
