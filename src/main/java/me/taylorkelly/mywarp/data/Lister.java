@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
  */
 public class Lister {
     private WarpList warpList;
-    private CommandSender executor;
+    private CommandSender sender;
     private Player player;
 
     private int maxPages;
@@ -24,9 +24,9 @@ public class Lister {
 
     private static final int WARPS_PER_PAGE = 8;
 
-    public Lister(CommandSender executor, String creator, int page,
+    public Lister(CommandSender sender, String creator, int page,
             WarpList warpList) {
-        this.executor = executor;
+        this.sender = sender;
         this.creator = creator;
         this.page = page;
         this.warpList = warpList;
@@ -37,30 +37,25 @@ public class Lister {
      */
     public void listWarps() {
         if (page < 1) {
-            executor.sendMessage(LanguageManager
-                    .getString("list.page.negative"));
+            sender.sendMessage(LanguageManager.getString("list.page.negative"));
             return;
         }
+        player = sender instanceof Player ? (Player) sender : null;
+        creator = creator != null ? warpList
+                .getMatchingCreator(player, creator) : null;
 
-        player = null;
-        if (executor instanceof Player) {
-            player = (Player) executor;
-        }
         maxPages = (int) Math.ceil(warpList.getMaxWarps(player, creator)
                 / (double) WARPS_PER_PAGE);
         if (maxPages == 0) {
-            executor.sendMessage(LanguageManager.getString("list.noWarps"));
+            sender.sendMessage(LanguageManager.getString("list.noWarps"));
             return;
         }
         if (page > maxPages) {
-            executor.sendMessage(LanguageManager.getString("list.page.toHigh")
+            sender.sendMessage(LanguageManager.getString("list.page.toHigh")
                     .replaceAll("%pages%", Integer.toString(maxPages)));
             return;
         }
 
-        if (creator != null) {
-            creator = warpList.getMatchingCreator(player, creator);
-        }
         int start = (page - 1) * WARPS_PER_PAGE;
         sortedWarps = warpList.getSortedWarps(player, creator, start,
                 WARPS_PER_PAGE);
@@ -70,7 +65,7 @@ public class Lister {
                 + "/" + maxPages + " -------------------";
 
         // send results to the executor
-        executor.sendMessage(ChatColor.YELLOW + intro);
+        sender.sendMessage(ChatColor.YELLOW + intro);
         for (Warp warp : sortedWarps) {
             String name = warp.name;
             String creator = player != null ? (warp.creator
@@ -107,7 +102,7 @@ public class Lister {
                 name = "'" + substring(name, left) + "'" + ChatColor.WHITE
                         + creatorString;
             }
-            executor.sendMessage(color + name + location);
+            sender.sendMessage(color + name + location);
         }
     }
 
