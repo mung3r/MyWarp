@@ -236,15 +236,11 @@ public class Warp implements Comparable<Warp> {
     }
 
     public String getSpecificWelcomeMessage(Player player) {
-        welcomeMessage = StringUtils.replace(welcomeMessage, "%player%",
-                player.getName());
-        welcomeMessage = StringUtils.replace(welcomeMessage, "%warp%", name);
-        welcomeMessage = StringUtils.replace(welcomeMessage, "%creator%",
-                creator);
-        welcomeMessage = StringUtils.replace(welcomeMessage, "%visits%",
-                Integer.toString(visits));
-
-        return welcomeMessage;
+        return StringUtils.replace(StringUtils.replace(
+                StringUtils.replace(
+                        StringUtils.replace(welcomeMessage, "%player%",
+                                player.getName()), "%warp%", name),
+                "%creator%", creator), "%visits%", Integer.toString(visits));
     }
 
     @Override
