@@ -50,6 +50,10 @@ public class SafeTeleport {
 
     private static void teleport(Player player, Location to) {
         Location from = player.getLocation();
+        
+        if (player.isInsideVehicle()) {
+            player.getVehicle().eject();
+        }
 
         if (WarpSettings.warpEffect) {
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
