@@ -15,8 +15,8 @@ public class UpdateCommand extends BasicCommand implements Command {
         super("Update");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.update"));
-        setUsage("/warp update §9<"
-                + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setUsage("<" + LanguageManager.getColorlessString("help.usage.name")
+                + ">");
         setArgumentRange(1, 255);
         setIdentifiers("update");
         setPermission("mywarp.warp.basic.update");

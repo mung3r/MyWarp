@@ -17,7 +17,7 @@ public class ListAllCommand extends BasicCommand implements Command {
         super("ListAll");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.listAll"));
-        setUsage("/warp slist");
+        setUsage("");
         setArgumentRange(0, 0);
         setIdentifiers("slist");
         setPermission("mywarp.warp.basic.list");

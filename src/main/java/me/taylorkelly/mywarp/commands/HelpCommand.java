@@ -6,6 +6,8 @@ import java.util.List;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class HelpCommand extends BasicCommand implements Command {
@@ -16,7 +18,7 @@ public class HelpCommand extends BasicCommand implements Command {
         super("Help");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.help"));
-        setUsage("/warp help §8["
+        setUsage("["
                 + LanguageManager.getColorlessString("help.usage.pageNumber")
                 + "]");
         setArgumentRange(0, 1);
@@ -55,18 +57,23 @@ public class HelpCommand extends BasicCommand implements Command {
         if (page >= numPages || page < 0) {
             page = 0;
         }
-        sender.sendMessage("§c-----[ " + "§fMyWarp "
-                + LanguageManager.getColorlessString("help.help") + "<"
-                + (page + 1) + "/" + numPages + ">§c ]-----");
+        sender.sendMessage(ChatColor.YELLOW + "----- " + ChatColor.WHITE
+                + "MyWarp " + LanguageManager.getColorlessString("help.help")
+                + " (" + (page + 1) + "/" + numPages + ")" + ChatColor.YELLOW
+                + " -----");
+        sender.sendMessage(ChatColor.GRAY
+                + LanguageManager.getString("help.more"));
+
         int start = page * CMDS_PER_PAGE;
         int end = start + CMDS_PER_PAGE;
         if (end > commands.size()) {
             end = commands.size();
         }
-        for (Command cmd : commands) {
-            sender.sendMessage("  §a" + cmd.getUsage());
+        for (int c = start; c < end; c++) {
+            Command cmd = commands.get(c);
+            sender.sendMessage(ChatColor.GOLD + "/warp "
+                    + StringUtils.join(cmd.getIdentifiers(), '|') + " "
+                    + ChatColor.GRAY + cmd.getUsage());
         }
-
-        sender.sendMessage(LanguageManager.getString("help.more"));
     }
 }

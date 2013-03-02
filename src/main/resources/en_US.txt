@@ -1,6 +1,6 @@
 ﻿#English localization for MyWarp
 #This file is UTF-8 encoded, respect this when editing.
-error.create.warpExists:Warp called '%warp%' already exists.
+error.create.warpExists:Warp called '§f%warp%§r' already exists.
 error.give.isOwner:%player% is already the owner.
 error.import.exists:Warp '%warp%' already exists. Skipping...
 error.import.invalid:%query% is not a valid import option.
@@ -10,8 +10,8 @@ error.invite.invited.group:Group '%group%' is already invited to this warp.
 error.invite.invited.player:%player% is already invited to this warp.
 error.noPermission.world:You do not have permission to access a warp in %world%.
 error.noPermission:Insufficient permission.
+error.noSuchWarp.suggestion:No such warp '%warp%'. Did you mean '§f%suggestion%§c'?
 error.noSuchWarp:No such warp '%warp%'.
-error.noSuchWarp.suggestion:No such warp '%warp%'. Did you mean '%suggestion%'?
 error.player.offline:Could not find player '%player%'. Maybe he is offline?
 error.playerOnly:This command can only be used by players.
 error.uninvite.creator:You cannot uninvite yourself. You're the creator!
@@ -19,28 +19,29 @@ error.uninvite.notInvited.group:Group '%group%' is not invited to this warp.
 error.uninvite.notInvited.player:%player% is not invited to this warp.
 error.warpto.noSuchWorld:World '%world%' does not exist.
 help.command:Command
-help.description.adminWarpTo:Warp §8<player>§e to §9<name>
-help.description.create:Create a new warp called §9<name>
-help.description.createPrivate:Create a new private warp called §9<name>
-help.description.delete:Deletes the warp §9<name>
-help.description.give:Give your warp §9<name>§e to §8<player>
+help.description.adminWarpTo:Warp §7<player>§f to §7<name>
+help.description.create:Create a new warp called §7<name>
+help.description.createPrivate:Create a new private warp called §7<name>
+help.description.delete:Deletes the warp §7<name>
+help.description.give:Give your warp §7<name>§f to §7<player>
 help.description.help:Displays the help menu
-help.description.import:Imports warps from §9<SQLite|MySQL>
-help.description.invite:Invite §8<player>§e to §9<name>
+help.description.import:Imports warps from §7<SQLite|MySQL>
+help.description.invite:Invite §7<player>§f to §7<name>
 help.description.list:List the warps you can visit
 help.description.listAll:List the warps you can visit
-help.description.point:Point your compass to §9<name>
-help.description.private:Make §9<name>§e a private warp
-help.description.public:Make §9<name>§e a public warp
+help.description.point:Point your compass to §7<name>
+help.description.private:Make §7<name>§f a private warp
+help.description.public:Make §7<name>§f a public warp
 help.description.reload:Reload settings
-help.description.search:Searches for warps related to §9<query>
-help.description.uninvite:Uninvite §8<player|group>§e from §9<name>
-help.description.update:Updates existing §9<name>§e with your current position
-help.description.warpTo:Warp to §9<name>
-help.description.welcome:Change the welcome message of §9<name>
+help.description.search:Searches for warps related to §7<query>
+help.description.uninvite:Uninvite §7<player|group>§f from §7<name>
+help.description.update:Updates §7<name>§f to your current position
+help.description.warpTo:Warp to §7<name>
+help.description.welcome:Change the welcome message of §7<name>
 help.description:Description
 help.help:Help
-help.more:§cFor more info on a particular command, type §f/<command> ?
+help.more:§7For more info on a particular command, type §f/<command> ?
+help.usage.group:group
 help.usage.name:name
 help.usage.owner:owner
 help.usage.pageNumber:page#
@@ -48,21 +49,21 @@ help.usage.player:player
 help.usage.query:query
 help.usage:Usage
 limit.private.reached.player:§c%player% has reached his max # of private warps §e(%maxPrivate%)%n§fTell him to delete some of his warps to receive this one.
-limit.private.reached:§cYou have reached your max # of private warps §e(%maxPrivate%)%n§fDelete some of your warps to make more.
+limit.private.reached:§cYou have reached your max # of private warps §e(%maxPrivate%)%n§fDelete some of your warps to create more.
 limit.public.reached.player:§c%player% has reached his max # of public warps §e(%maxPublic%)%n§fTell him to delete some of his warps to receive this one.
-limit.public.reached:§cYou have reached your max # of public warps §e(%maxPublic%)%n§fDelete some of your warps to make more.
+limit.public.reached:§cYou have reached your max # of public warps §e(%maxPublic%)%n§fDelete some of your warps to create more.
 limit.total.reached.player:§c%player% has reached his max # of warps §e(%maxTotal%)%n§fTell him to delete some of his warps to receive this one.
-limit.total.reached:§cYou have reached your max # of warps §e(%maxTotal%)%n§fDelete some of your warps to make more.
+limit.total.reached:§cYou have reached your max # of warps §e(%maxTotal%)%n§fDelete some of your warps to create more.
 list.by:by
 list.console:§cThe console does not own any warps.
 list.noWarps:§cThere are no warps to list.
 list.page.invalid:You must enter a valid number.
-list.page.negative:§cPage number can't be below 1.
+list.page.negative:§cPage number cannot be below 1.
 list.page.toHigh:§cThere are only %pages% pages of warps.
 list.page:Page
 list.you:you
 listAll.list:§bYou can warp to:
-listAll.noWarps:§cYou cannot access any warps.
+listAll.noWarps:§cYou cannot access any warps at the moment.
 reload.config:Config has been reloaded successfully!
 safety.found:§cWarp '%warp%' is not safe. You were teleported to the closest safe location.
 safety.notFound:§cWarp '%warp%' is not safe. Also no safe loaction could be found close to it.
@@ -100,5 +101,5 @@ warp.uninvite.player.public:§bYou have uninvited %player% from '%warp%'.%n§cBu
 warp.uninvite.uninvited:§bYou have been uninvited from '%warp%'. Sorry.
 warp.update:§bYou have updated %warp%'s position.
 warp.warpto.player:§bSuccessfully warped %player%.
-warp.welcome.enter:§bEnter the welcome message for '%warp%.
+warp.welcome.enter:§bEnter the welcome message for '%warp%':
 warp.welcome.received:§bChanged welcome message for '%warp%' to:

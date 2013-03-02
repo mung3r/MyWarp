@@ -16,10 +16,9 @@ public class AdminWarpToCommand extends BasicCommand implements Command {
         this.plugin = plugin;
         setDescription(LanguageManager
                 .getString("help.description.adminWarpTo"));
-        setUsage("/warp player §8<"
-                + LanguageManager.getColorlessString("help.usage.player")
-                + "> §9<"
-                + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setUsage("<" + LanguageManager.getColorlessString("help.usage.player")
+                + "> <" + LanguageManager.getColorlessString("help.usage.name")
+                + ">");
         setArgumentRange(2, 255);
         setIdentifiers("player");
         setPermission("mywarp.admin.warpto");

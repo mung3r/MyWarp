@@ -14,8 +14,8 @@ public class DeleteCommand extends BasicCommand implements Command {
         super("Delete");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.delete"));
-        setUsage("/warp delete §9<"
-                + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setUsage("<" + LanguageManager.getColorlessString("help.usage.name")
+                + ">");
         setArgumentRange(1, 255);
         setIdentifiers("delete", "remove");
         setPermission("mywarp.warp.basic.delete");

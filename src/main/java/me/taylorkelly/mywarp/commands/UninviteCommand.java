@@ -15,11 +15,10 @@ public class UninviteCommand extends BasicCommand implements Command {
         super("Uninvite");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.uninvite"));
-        setUsage("/warp uninvite §8<"
-                + LanguageManager.getColorlessString("help.usage.player") + "|"
-                + LanguageManager.getColorlessString("help.usage.group")
-                + "> §9<"
-                + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setUsage("<" + LanguageManager.getColorlessString("help.usage.player")
+                + "|" + LanguageManager.getColorlessString("help.usage.group")
+                + "> <" + LanguageManager.getColorlessString("help.usage.name")
+                + ">");
         setArgumentRange(2, 255);
         setIdentifiers("uninvite");
         setPermission("mywarp.warp.soc.uninvite");

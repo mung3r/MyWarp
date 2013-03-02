@@ -10,37 +10,38 @@ error.invite.invited.group:Die Gruppe '%group%' ist bereits zu diesem Warp einge
 error.invite.invited.player:%player% ist bereits zu diesem Warp eingeladen.
 error.noPermission.world:Dir fehlen die Rechte um dich zu einem Warp in %world% zu teleportieren.
 error.noPermission:Unzureichende Rechte.
+error.noSuchWarp.suggestion:Der Warp '%warp%' existiert nicht. Meintest du vielleicht '$f%suggestion%$c'?
 error.noSuchWarp:Der Warp '%warp%' existiert nicht.
-error.noSuchWarp.suggestion:Der Warp '%warp%' existiert nicht. Meintest du vielleicht '%suggestion%'?
 error.player.offline:Konnte den Spieler '%player%' nicht finden. Ist er vielleicht offline?
-error.playerOnly:Dieses Kommando kann nur von SPielern genutzt werden.
+error.playerOnly:Dieses Kommando kann nur von Spielern genutzt werden.
 error.uninvite.creator:Du kannst dich nicht selbst ausladen. Du bist der Ersteller!
 error.uninvite.notInvited.group:Die Gruppe '%group%' ist nicht zu diesem Warp eingeladen.
 error.uninvite.notInvited.player:%player% ist nicht zu diesem Warp eingeladen.
 error.warpto.noSuchWorld:Die Welt '%world%' exisitiert nicht.
 help.command:Befehl
-help.description.adminWarpTo:Teleportiere §8<Spieler>§e zu §9<Name>
-help.description.create:Erstellt einen neuen Warp namens §9<Name>
-help.description.createPrivate:Erstellt einen neuen privaten Warp namens §9<Name>
-help.description.delete:Entfernt den Warp namens §9<Name>
-help.description.give:Gibt deinen Warp namens §9<Name>§e an §8<Spieler>
+help.description.adminWarpTo:Teleportiere §7<Spieler>§f zu §7<Name>
+help.description.create:Erstellt einen neuen Warp namens §7<Name>
+help.description.createPrivate:Erstellt einen neuen privaten Warp namens §7<Name>
+help.description.delete:Entfernt den Warp namens §7<Name>
+help.description.give:Gibt deinen Warp namens §7<Name>§f an §7<Spieler>
 help.description.help:Zeigt das Hilfemenü an
-help.description.import:Importiert Warps aus §9<SQLite|MySQL>
-help.description.invite:Lädt §8<Spieler>§e zum Warp namens §9<Name>§e ein
-help.description.list:Listet alle Warp aus, die du besuchen kannst
-help.description.listAll:Listet alle Warp aus, die du besuchen kannst
-help.description.point:Richtet deinen Kompass auf den Warp namens §9<Name>§e aus
-help.description.private:Privatisiert den Warp namens §9<Name>
-help.description.public:Veröffentlicht den Warp namens §9<Name>
+help.description.import:Importiert Warps aus §7<SQLite|MySQL>
+help.description.invite:Lädt §7<Spieler>§f zum Warp namens §7<Name>§f ein
+help.description.list:Listet alle Warp auf, die du besuchen kannst
+help.description.listAll:Listet alle Warp auf, die du besuchen kannst
+help.description.point:Richtet deinen Kompass auf den Warp §7<Name>§f aus
+help.description.private:Privatisiert den Warp §7<Name>
+help.description.public:Veröffentlicht den Warp §7<Name>
 help.description.reload:Lädt die Konfiguration neu
-help.description.search:Sucht nach Warps, die dem §9<Suchwort>§e ähnlich sind
-help.description.uninvite:Lädt §8<Spieler|Gruppe>§e vom Warp namens §9<Name>§e aus
-help.description.update:Aktualisiert den Warp namens §9<Name>§e mit deiner aktuellen Position
-help.description.warpTo:Teleportiert dich zu §9<Name>
-help.description.welcome:Ändert die Willkommensnachricht von §9<Name>
+help.description.search:Sucht nach Warps, die dem §7<Suchwort>§f ähnlich sind
+help.description.uninvite:Lädt §7<Spieler|Gruppe>§f vom Warp namens §7<Name>§f aus
+help.description.update:Aktualisiert den Warp namens §7<Name>§f mit deiner aktuellen Position
+help.description.warpTo:Teleportiert dich zu §7<Name>
+help.description.welcome:Ändert die Willkommensnachricht von §7<Name>
 help.description:Beschreibung
 help.help:Hilfe
 help.more:§cFür mehr Infos über einen bestimmten Befehl nutze: §f/<Befehl> ?
+help.usage.group:Gruppe
 help.usage.name:Name
 help.usage.owner:Ersteller
 help.usage.pageNumber:Seite#
@@ -64,12 +65,12 @@ list.you:dir
 listAll.list:§bDu kannst folgende Warps benutzen:
 listAll.noWarps:§cDu kannst aktuell keine Warps benutzen.
 reload.config:Die Konfiguration wurde erfolgreich neu geladen!
-safety.found:§cDer Warp '%warp% ist nicht sicher. Du wurdest zum sichersten Ort in dessen Nähe teleportiert.
+safety.found:§cDer Warp '%warp% ist nicht sicher. Du wurdest zum sichersten Ort in seiner Nähe teleportiert.
 safety.notFound:§cDer Warp '%warp% ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden.
-search.exactMatches:§eGenau Treffer für die Suche nach: §7%query%.
+search.exactMatches:§Exakte Treffer für die Suche nach: §7%query%.
 search.noMatches:§cKein Treffer für die Suche nach: §7%query%.
 search.partitalMatches:§eTeilweise Treffer für die Suche nach: §7%query%.
-sign.created:§bDer Schild-Warp wurde erfolgreich erstellt.
+sign.created:§bDer SchildWarp wurde erfolgreich erstellt.
 sign.noPermission.create:§cDir fehlen die Rechte um einen SchildWarp zu erstellen.
 sign.noPermission.createToWarp:§cDir fehlen die Rechte um einen SchildWarp nach '%warp%' zu erstellen.
 sign.noPermission.use:§cDir fehlen die Rechte um SchildWarps zu nutzen.
@@ -100,5 +101,5 @@ warp.uninvite.player.public:§bDu hast %player% von '%warp%' ausgeladen.%n§cAbe
 warp.uninvite.uninvited:§bDu wurdest von '%warp%' ausgeladen. Entschuldige.
 warp.update:§bDu hast %warp%s Position aktualisiert.
 warp.warpto.player:§b%player% wurde erfolgreich teleportiert.
-warp.welcome.enter:§bGibt die neue Willkommensnachricht für '%warp% ein.
-warp.welcome.received:§bDei neue Willkommensnachricht für '%warp%' lautet:
+warp.welcome.enter:§bGib' die neue Willkommensnachricht für '%warp%' ein.
+warp.welcome.received:§bDie neue Willkommensnachricht für '%warp%' lautet:

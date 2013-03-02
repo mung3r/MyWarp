@@ -18,7 +18,7 @@ public class ImportCommand extends BasicCommand implements Command {
         super("import");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.import"));
-        setUsage("/warp import §9<SQLite|MySQL>");
+        setUsage("<SQLite|MySQL>");
         setArgumentRange(1, 1);
         setIdentifiers("import");
         setPermission("mywarp.admin.import");

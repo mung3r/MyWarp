@@ -15,8 +15,8 @@ public class WelcomeCommand extends BasicCommand implements Command {
         super("Welcome");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.welcome"));
-        setUsage("/warp welcome §9<"
-                + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setUsage("<" + LanguageManager.getColorlessString("help.usage.name")
+                + ">");
         setArgumentRange(1, 255);
         setIdentifiers("welcome");
         setPermission("mywarp.warp.basic.welcome");

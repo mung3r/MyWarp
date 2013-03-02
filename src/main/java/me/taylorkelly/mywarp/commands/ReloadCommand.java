@@ -13,7 +13,7 @@ public class ReloadCommand extends BasicCommand implements Command {
         super("Reload");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.reload"));
-        setUsage("/warp reload");
+        setUsage("");
         setArgumentRange(0, 0);
         setIdentifiers("reload");
         setPermission("mywarp.admin.reload");

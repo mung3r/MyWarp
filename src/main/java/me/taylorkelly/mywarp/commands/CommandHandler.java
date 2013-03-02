@@ -17,6 +17,8 @@ import java.util.Map;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -86,43 +88,45 @@ public class CommandHandler {
                     }
 
                     if (cmd.isPlayerOnly() && !(sender instanceof Player)) {
-                        sender.sendMessage(LanguageManager
-                                .getString("error.playerOnly"));
+                        sender.sendMessage(ChatColor.RED
+                                + LanguageManager.getString("error.playerOnly"));
                         return true;
                     }
 
                     if (!hasPermission(sender, cmd.getPermission())) {
-                        sender.sendMessage(LanguageManager
-                                .getString("error.noPermission"));
+                        sender.sendMessage(ChatColor.RED
+                                + LanguageManager
+                                        .getString("error.noPermission"));
                         return true;
                     }
 
                     try {
                         cmd.execute(sender, identifier, realArgs);
                     } catch (CommandException e) {
-                        sender.sendMessage(ChatColor.DARK_RED + e.getMessage());
+                        sender.sendMessage(ChatColor.RED + e.getMessage());
                     }
                     return true;
                 }
             }
         }
-
         return true;
     }
 
     private void displayCommandHelp(Command cmd, CommandSender sender) {
-        sender.sendMessage(ChatColor.RED
+        sender.sendMessage(ChatColor.GOLD
                 + LanguageManager.getColorlessString("help.command") + ": "
-                + ChatColor.YELLOW + cmd.getName());
-        sender.sendMessage(ChatColor.RED
+                + ChatColor.WHITE + cmd.getName());
+        sender.sendMessage(ChatColor.GOLD
                 + LanguageManager.getColorlessString("help.description") + ": "
-                + ChatColor.YELLOW + cmd.getDescription());
-        sender.sendMessage(ChatColor.RED
+                + ChatColor.WHITE + cmd.getDescription());
+        sender.sendMessage(ChatColor.GOLD
                 + LanguageManager.getColorlessString("help.usage") + ": "
-                + ChatColor.YELLOW + cmd.getUsage());
+                + ChatColor.WHITE + "/warp "
+                + StringUtils.join(cmd.getIdentifiers(), '|') + " " + ChatColor.GRAY
+                + cmd.getUsage());
         if (cmd.getNotes() != null) {
             for (String note : cmd.getNotes()) {
-                sender.sendMessage("§e" + note);
+                sender.sendMessage(ChatColor.ITALIC + note);
             }
         }
     }

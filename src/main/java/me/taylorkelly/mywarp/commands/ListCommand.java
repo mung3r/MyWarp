@@ -14,9 +14,8 @@ public class ListCommand extends BasicCommand implements Command {
         super("List");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.list"));
-        setUsage("/warp list §8["
-                + LanguageManager.getColorlessString("help.usage.owner")
-                + "] §9["
+        setUsage("[" + LanguageManager.getColorlessString("help.usage.owner")
+                + "] ["
                 + LanguageManager.getColorlessString("help.usage.pageNumber")
                 + "]");
         setArgumentRange(0, 2);

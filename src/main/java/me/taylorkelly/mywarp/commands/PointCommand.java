@@ -15,8 +15,8 @@ public class PointCommand extends BasicCommand implements Command {
         super("Point");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.point"));
-        setUsage("/warp point §9<"
-                + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setUsage("<" + LanguageManager.getColorlessString("help.usage.name")
+                + ">");
         setArgumentRange(1, 255);
         setIdentifiers("point");
         setPermission("mywarp.warp.basic.compass");

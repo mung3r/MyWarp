@@ -15,8 +15,8 @@ public class CreatePrivateCommand extends BasicCommand implements Command {
         this.plugin = plugin;
         setDescription(LanguageManager
                 .getString("help.description.createPrivate"));
-        setUsage("/warp pcreate §9<"
-                + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setUsage("<" + LanguageManager.getColorlessString("help.usage.name")
+                + ">");
         setArgumentRange(1, 255);
         setIdentifiers("pcreate");
         setPermission("mywarp.warp.basic.createprivate");

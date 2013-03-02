@@ -19,8 +19,8 @@ public class WarpToCommand extends BasicCommand implements Command {
         super("WarpTo");
         this.plugin = plugin;
         setDescription(LanguageManager.getString("help.description.warpTo"));
-        setUsage("/warp §9<"
-                + LanguageManager.getColorlessString("help.usage.name") + ">");
+        setUsage("<" + LanguageManager.getColorlessString("help.usage.name")
+                + ">");
         setArgumentRange(1, 255);
         setIdentifiers("warp", "mywarp", "mw");
         setPermission("mywarp.warp.basic.warp");
