@@ -37,7 +37,8 @@ public class SQLiteConnection implements DataConnection {
         this.dsn = dsn;
         this.table = table;
 
-        WARP_TABLE = "CREATE TABLE `" + table + "` (" + "`id` INTEGER PRIMARY KEY,"
+        WARP_TABLE = "CREATE TABLE `" + table + "` ("
+                + "`id` INTEGER PRIMARY KEY,"
                 + "`name` varchar(32) NOT NULL DEFAULT 'warp',"
                 + "`creator` varchar(32) NOT NULL DEFAULT 'Player',"
                 + "`world` varchar(32) NOT NULL DEFAULT '0',"
@@ -46,7 +47,8 @@ public class SQLiteConnection implements DataConnection {
                 + "`z` DOUBLE NOT NULL DEFAULT '0',"
                 + "`yaw` smallint NOT NULL DEFAULT '0',"
                 + "`pitch` smallint NOT NULL DEFAULT '0',"
-                + "`publicAll` boolean NOT NULL DEFAULT '1'," + "`permissions` text,"
+                + "`publicAll` boolean NOT NULL DEFAULT '1',"
+                + "`permissions` text NOT NULL,"
                 + "`groupPermissions` text NOT NULL,"
                 + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
                 + "`visits` int DEFAULT '0'" + ");";
@@ -71,12 +73,15 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void checkDB(boolean createIfNotExist) throws DataConnectionException {
+    public void checkDB(boolean createIfNotExist)
+            throws DataConnectionException {
         // Ugly way to prevent JDBC from creating an empty file upon connection.
         if (!createIfNotExist) {
-            File database = new File(WarpSettings.dataDir.getAbsolutePath(), "warps.db");
+            File database = new File(WarpSettings.dataDir.getAbsolutePath(),
+                    "warps.db");
             if (!database.exists()) {
-                throw new DataConnectionException("Database 'warps.db' does not exist.");
+                throw new DataConnectionException(
+                        "Database 'warps.db' does not exist.");
             }
         }
         Statement stmnt = null;
@@ -113,7 +118,8 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void updateDB(boolean updateIfNecessary) throws DataConnectionException {
+    public void updateDB(boolean updateIfNecessary)
+            throws DataConnectionException {
         Statement stmnt = null;
 
         try {
@@ -123,9 +129,11 @@ public class SQLiteConnection implements DataConnection {
 
             // changing 'y' to smallint is not necessary in SQLite
             // groupPermissions, added with 2.4
-            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "groupPermissions")) {
+            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table,
+                    "groupPermissions")) {
                 if (updateIfNecessary) {
-                    stmnt.execute("ALTER TABLE " + table
+                    stmnt.execute("ALTER TABLE "
+                            + table
                             + " ADD COLUMN `groupPermissions` text NOT NULL DEFAULT ''");
                 } else {
                     throw new DataConnectionException(
@@ -138,7 +146,8 @@ public class SQLiteConnection implements DataConnection {
                     stmnt.execute("ALTER TABLE " + table
                             + " ADD COLUMN `visits` int DEFAULT '0'");
                 } else {
-                    throw new DataConnectionException("Column 'visits' does not exist.");
+                    throw new DataConnectionException(
+                            "Column 'visits' does not exist.");
                 }
             }
 
@@ -185,8 +194,9 @@ public class SQLiteConnection implements DataConnection {
                 String groupPermissions = rsWarps.getString("groupPermissions");
                 String welcomeMessage = rsWarps.getString("welcomeMessage");
                 int visits = rsWarps.getInt("visits");
-                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch,
-                        publicAll, permissions, groupPermissions, welcomeMessage, visits);
+                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw,
+                        pitch, publicAll, permissions, groupPermissions,
+                        welcomeMessage, visits);
                 ret.put(name, warp);
             }
         } catch (SQLException ex) {
@@ -258,7 +268,8 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("DELETE FROM " + table + " WHERE id = ?");
+            stmnt = conn.prepareStatement("DELETE FROM " + table
+                    + " WHERE id = ?");
             stmnt.setInt(1, warp.index);
             stmnt.executeUpdate();
         } catch (SQLException ex) {
@@ -393,7 +404,8 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Permissions Exception (on close): ", ex);
+                WarpLogger
+                        .severe("Warp Permissions Exception (on close): ", ex);
             }
         }
 
@@ -422,7 +434,8 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp GroupPermissions Exception (on close): ", ex);
+                WarpLogger.severe(
+                        "Warp GroupPermissions Exception (on close): ", ex);
             }
         }
 
