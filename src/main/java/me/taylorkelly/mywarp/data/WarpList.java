@@ -3,6 +3,7 @@ package me.taylorkelly.mywarp.data;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
@@ -66,10 +67,12 @@ public class WarpList {
             }
         }
         if (exactMatches.size() > 1) {
-            for (Warp warp : exactMatches) {
+            Iterator<Warp> iterator = exactMatches.iterator();
+            while (iterator.hasNext()) {
+                Warp warp = iterator.next();
                 if (!warp.name.equals(name)) {
-                    exactMatches.remove(warp);
                     matches.add(warp);
+                    iterator.remove();
                 }
             }
         }

@@ -10,7 +10,7 @@ error.invite.invited.group:Die Gruppe '%group%' ist bereits zu diesem Warp einge
 error.invite.invited.player:%player% ist bereits zu diesem Warp eingeladen.
 error.noPermission.world:Dir fehlen die Rechte um dich zu einem Warp in %world% zu teleportieren.
 error.noPermission:Unzureichende Rechte.
-error.noSuchWarp.suggestion:Der Warp '%warp%' existiert nicht. Meintest du vielleicht '$f%suggestion%$c'?
+error.noSuchWarp.suggestion:Der Warp '%warp%' existiert nicht. Meintest du vielleicht '§f%suggestion%§c'?
 error.noSuchWarp:Der Warp '%warp%' existiert nicht.
 error.player.offline:Konnte den Spieler '%player%' nicht finden. Ist er vielleicht offline?
 error.playerOnly:Dieses Kommando kann nur von Spielern genutzt werden.
