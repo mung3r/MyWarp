@@ -6,7 +6,7 @@
 	<name>MyWarp</name>
 	<description>Dynamic, social warping plugin for bukkit.</description>
 	<url>http://dev.bukkit.org/server-mods/mywarp/</url>
-	<version>2.5.1-SNAPSHOT</version>
+	<version>2.5.1</version>
 	<scm>
 		<url>https://github.com/TheE/MyWarp</url>
 		<connection>scm:git:git://github.com/TheE/MyWarp.git</connection>
@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>Vault</artifactId>
-			<version>1.2.17-SNAPSHOT</version>
+			<version>1.2.25-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.anjocaido.groupmanager.GroupManager</groupId>
