@@ -115,6 +115,11 @@ public class LanguageManager {
             String line = scan.nextLine();
             if (line.startsWith("#"))
                 continue;
+            if (line.split(":", 2).length != 2)
+                WarpLogger.severe("Error reading default language file "
+                        + original + ".txt, line " + line
+                        + " - Please inform the developer.");
+
             map.put(line.split(":", 2)[0], line.split(":", 2)[1]);
         }
 
