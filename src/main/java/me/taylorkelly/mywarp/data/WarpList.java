@@ -1,9 +1,11 @@
 package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
@@ -48,7 +50,8 @@ public class WarpList {
         MyWarp.connectionManager.deleteWarp(warp);
     }
 
-    public MatchList getMatches(String name, Player player, Comparator<Warp> comperator) {
+    public MatchList getMatches(String name, Player player,
+            Comparator<Warp> comperator) {
         TreeSet<Warp> exactMatches = new TreeSet<Warp>(comperator);
         TreeSet<Warp> matches = new TreeSet<Warp>(comperator);
 
@@ -124,15 +127,19 @@ public class WarpList {
         return warpMap.size();
     }
 
-    public TreeSet<Warp> getSortedWarps(Player player,
-            String creator, int start, int size) {
+    public TreeSet<Warp> getSortedWarps(Player player, String creator,
+            int start, int size) {
         TreeSet<Warp> ret = new TreeSet<Warp>();
+        List<String> sortedNames = new ArrayList<String>(warpMap.keySet());
+        Collections.sort(sortedNames, String.CASE_INSENSITIVE_ORDER);
 
         int currentCount = 0;
-        for (Warp warp : warpMap.values()) {
+        for (String name : sortedNames) {
             if (ret.size() == size) {
                 return ret;
             }
+            Warp warp = warpMap.get(name);
+
             if ((player != null && !warp.playerCanWarp(player))
                     || (creator != null && !warp.playerIsCreator(creator))) {
                 continue;
