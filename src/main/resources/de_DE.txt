@@ -14,6 +14,8 @@ error.noSuchWarp.suggestion:Der Warp '%warp%' existiert nicht. Meintest du viell
 error.noSuchWarp:Der Warp '%warp%' existiert nicht.
 error.player.offline:Konnte den Spieler '%player%' nicht finden. Ist er vielleicht offline?
 error.playerOnly:Dieses Kommando kann nur von Spielern genutzt werden.
+error.private.isPrivate:Warp '%warp%' ist bereits privat.
+error.public.isPublic:Der Warp '%warp%' ist bereits öffentlich.
 error.uninvite.creator:Du kannst dich nicht selbst ausladen. Du bist der Ersteller!
 error.uninvite.notInvited.group:Die Gruppe '%group%' ist nicht zu diesem Warp eingeladen.
 error.uninvite.notInvited.player:%player% ist nicht zu diesem Warp eingeladen.

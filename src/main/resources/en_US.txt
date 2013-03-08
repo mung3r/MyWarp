@@ -14,6 +14,8 @@ error.noSuchWarp.suggestion:No such warp '%warp%'. Did you mean '§f%suggestion%
 error.noSuchWarp:No such warp '%warp%'.
 error.player.offline:Could not find player '%player%'. Maybe he is offline?
 error.playerOnly:This command can only be used by players.
+error.private.isPrivate:Warp '%warp%' is already private.
+error.public.isPublic:Warp '%warp%' is already public.
 error.uninvite.creator:You cannot uninvite yourself. You're the creator!
 error.uninvite.notInvited.group:Group '%group%' is not invited to this warp.
 error.uninvite.notInvited.player:%player% is not invited to this warp.

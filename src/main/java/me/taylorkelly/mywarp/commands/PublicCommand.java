@@ -24,9 +24,14 @@ public class PublicCommand extends BasicCommand implements Command {
     @Override
     public void execute(CommandSender sender, String identifier, String[] args)
             throws CommandException {
+
         Warp warp = CommandUtils.getWarpForModification(sender,
                 CommandUtils.toWarpName(args));
-        CommandUtils.checkLimits(sender, false);
+        if (warp.publicAll) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.public.isPublic", "%warp%", warp.name));
+        }
+        CommandUtils.checkLimits(sender, true);
 
         plugin.getWarpList().publicize(warp);
         sender.sendMessage(LanguageManager.getEffectiveString("warp.public",

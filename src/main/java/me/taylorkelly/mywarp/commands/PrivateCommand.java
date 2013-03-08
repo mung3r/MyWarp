@@ -27,6 +27,10 @@ public class PrivateCommand extends BasicCommand implements Command {
 
         Warp warp = CommandUtils.getWarpForModification(sender,
                 CommandUtils.toWarpName(args));
+        if (!warp.publicAll) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.private.isPrivate", "%warp%", warp.name));
+        }
         CommandUtils.checkLimits(sender, false);
 
         plugin.getWarpList().privatize(warp);
