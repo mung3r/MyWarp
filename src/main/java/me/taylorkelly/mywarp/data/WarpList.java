@@ -55,7 +55,7 @@ public class WarpList {
         MyWarp.connectionManager.deleteWarp(warp);
 
         if (MyWarp.markers != null) {
-            MyWarp.markers.removeWarp(warp);
+            MyWarp.markers.deleteWarp(warp);
         }
     }
 
@@ -280,7 +280,7 @@ public class WarpList {
         MyWarp.connectionManager.publicizeWarp(warp, false);
 
         if (MyWarp.markers != null) {
-            MyWarp.markers.removeWarp(warp);
+            MyWarp.markers.deleteWarp(warp);
         }
     }
 

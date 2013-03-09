@@ -74,7 +74,7 @@ public class DynmapMarkers implements Markers {
     }
 
     @Override
-    public void removeWarp(Warp warp) {
+    public void deleteWarp(Warp warp) {
         Marker marker = getMatchingMarker(MARKER_ID + warp.name);
 
         if (marker != null) {
