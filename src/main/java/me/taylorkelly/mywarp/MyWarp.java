@@ -30,6 +30,8 @@ import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.listeners.MWBlockListener;
 import me.taylorkelly.mywarp.listeners.MWEntityListener;
 import me.taylorkelly.mywarp.listeners.MWPlayerListener;
+import me.taylorkelly.mywarp.markers.DynmapMarkers;
+import me.taylorkelly.mywarp.markers.Markers;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.WarpLogger;
@@ -53,6 +55,7 @@ public class MyWarp extends JavaPlugin {
     private CommandHandler commandHandler;
     private static WarpPermissions warpPermissions;
     public static ConnectionManager connectionManager;
+    public static Markers markers;
 
     @Override
     public void onDisable() {
@@ -96,6 +99,15 @@ public class MyWarp extends JavaPlugin {
         pm.registerEvents(blockListener, this);
         pm.registerEvents(entityListener, this);
         pm.registerEvents(playerListener, this);
+
+        if (WarpSettings.useDynmap) {
+            if (!pm.isPluginEnabled("dynmap")) {
+                WarpLogger
+                        .severe("Failed to hook into Dynmap. Disabeling Dynmap support.");
+            } else {
+                markers = new DynmapMarkers(this);
+            }
+        }
 
         commandHandler = new CommandHandler(this);
         new CommandUtils(this);

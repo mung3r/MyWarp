@@ -24,8 +24,9 @@ public class WarpList {
     private HashMap<String, Warp> welcomeMessage;
 
     public WarpList(Server server) {
-        welcomeMessage = new HashMap<String, Warp>();
         this.server = server;
+
+        welcomeMessage = new HashMap<String, Warp>();
         warpMap = MyWarp.connectionManager.getMap();
         WarpLogger.info(getSize() + " warps loaded");
     }
@@ -33,6 +34,10 @@ public class WarpList {
     public void addWarp(String name, Warp warp) {
         warpMap.put(name, warp);
         MyWarp.connectionManager.addWarp(warp);
+
+        if (MyWarp.markers != null) {
+            MyWarp.markers.addWarp(warp);
+        }
     }
 
     public void addWarpPrivate(String name, Player player) {
@@ -48,6 +53,10 @@ public class WarpList {
     public void deleteWarp(Warp warp) {
         warpMap.remove(warp.name);
         MyWarp.connectionManager.deleteWarp(warp);
+
+        if (MyWarp.markers != null) {
+            MyWarp.markers.removeWarp(warp);
+        }
     }
 
     public MatchList getMatches(String name, Player player,
@@ -123,6 +132,17 @@ public class WarpList {
         return count;
     }
 
+    public TreeSet<Warp> getPublicWarps() {
+        TreeSet<Warp> ret = new TreeSet<Warp>();
+
+        for (Warp warp : warpMap.values()) {
+            if (warp.publicAll) {
+                ret.add(warp);
+            }
+        }
+        return ret;
+    }
+
     public int getSize() {
         return warpMap.size();
     }
@@ -164,6 +184,10 @@ public class WarpList {
     public void give(Warp warp, String giveeName) {
         warp.setCreator(giveeName);
         MyWarp.connectionManager.updateCreator(warp);
+
+        if (MyWarp.markers != null) {
+            MyWarp.markers.updateWarp(warp);
+        }
     }
 
     public void inviteGroup(Warp warp, String inviteeName) {
@@ -254,11 +278,19 @@ public class WarpList {
     public void privatize(Warp warp) {
         warp.publicAll = false;
         MyWarp.connectionManager.publicizeWarp(warp, false);
+
+        if (MyWarp.markers != null) {
+            MyWarp.markers.removeWarp(warp);
+        }
     }
 
     public void publicize(Warp warp) {
         warp.publicAll = true;
         MyWarp.connectionManager.publicizeWarp(warp, true);
+
+        if (MyWarp.markers != null) {
+            MyWarp.markers.addWarp(warp);
+        }
     }
 
     public void setWelcomeMessage(Player player, String message) {
@@ -285,6 +317,10 @@ public class WarpList {
     public void updateLocation(Warp warp, Player player) {
         warp.setLocation(player.getLocation());
         MyWarp.connectionManager.updateLocation(warp);
+
+        if (MyWarp.markers != null) {
+            MyWarp.markers.updateWarp(warp);
+        }
     }
 
     public boolean waitingForWelcome(Player player) {

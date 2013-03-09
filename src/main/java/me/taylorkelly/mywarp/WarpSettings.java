@@ -54,6 +54,14 @@ public class WarpSettings {
     public static String mySQLdb;
     public static String mySQLtable;
 
+    public static boolean useDynmap;
+    public static boolean hideLayerByDefault;
+    public static String layerDisplayName;
+    public static int layerPriority;
+    public static String markerIconID;
+    public static int markerMinZoom;
+    public static boolean showMarkerLable;
+
     private static FileConfiguration config;
     private static File configFile;
     private static MyWarp plugin;
@@ -68,48 +76,50 @@ public class WarpSettings {
         warpCooldowns = new ArrayList<Time>();
         warpWarmups = new ArrayList<Time>();
 
-        ConfigurationSection confsettings = config
+        ConfigurationSection confSettings = config
                 .getConfigurationSection("settings");
-        ConfigurationSection confdynamics = config
+        ConfigurationSection confDynamics = config
                 .getConfigurationSection("dynamics");
-        ConfigurationSection conflocale = config
+        ConfigurationSection confLocale = config
                 .getConfigurationSection("locale");
-        ConfigurationSection confsafety = config
+        ConfigurationSection confSafety = config
                 .getConfigurationSection("warpSafety");
-        ConfigurationSection conflimits = config
+        ConfigurationSection confLimits = config
                 .getConfigurationSection("limits");
-        ConfigurationSection conftimers = config
+        ConfigurationSection confTimers = config
                 .getConfigurationSection("timers");
-        ConfigurationSection conftimerscool = conftimers
+        ConfigurationSection confTimersCool = confTimers
                 .getConfigurationSection("cooldowns");
-        ConfigurationSection conftimerswarm = conftimers
+        ConfigurationSection confTimersWarm = confTimers
                 .getConfigurationSection("warmups");
-        ConfigurationSection confdatabase = config
+        ConfigurationSection confDatabase = config
                 .getConfigurationSection("mysql");
+        ConfigurationSection confDynmap = config
+                .getConfigurationSection("dynmap");
 
         File oldConfigFile = new File(dataDir, settingsFile);
         if (oldConfigFile.exists()) {
             PropertiesFile file = new PropertiesFile(oldConfigFile);
             // port settings
-            confsettings
+            confSettings
                     .set("adminPrivateWarps",
                             file.getBoolean("adminPrivateWarps", true,
                                     "Whether or not admins can see private warps in their list"));
-            confsettings
+            confSettings
                     .set("loadChunks",
                             file.getBoolean("loadChunks", false,
                                     "Force sending of the chunk which people teleport to - default: false"));
 
             // port limits
-            conflimits
+            confLimits
                     .set("default.maxTotal",
                             file.getInt("maxPublic", 5,
                                     "Maximum number of public warps any player can make")
                                     + file.getInt("maxPrivate", 10,
                                             "Maximum number of private warps any player can make"));
-            conflimits.set("default.maxPublic", file.getInt("maxPublic", 5,
+            confLimits.set("default.maxPublic", file.getInt("maxPublic", 5,
                     "Maximum number of public warps any player can make"));
-            conflimits.set("default.maxPrivate", file.getInt("maxPrivate", 10,
+            confLimits.set("default.maxPrivate", file.getInt("maxPrivate", 10,
                     "Maximum number of private warps any player can make"));
 
             // port database
@@ -118,16 +128,16 @@ public class WarpSettings {
                     "MySQL Connection (only if using MySQL)");
             mySQLconn = mySQLconn.substring(mySQLconn.indexOf("//") + 2);
             String[] mySQLconnParts = mySQLconn.split("[\\W]");
-            confdatabase
+            confDatabase
                     .set("enabled",
                             file.getBoolean("usemySQL", false,
                                     "MySQL usage --  true = use MySQL database / false = use SQLite"));
-            confdatabase.set("host", mySQLconnParts[0]);
-            confdatabase.set("port", mySQLconnParts[1]);
-            confdatabase.set("database", mySQLconnParts[2]);
-            confdatabase.set("username", file.getString("mySQLuname", "root",
+            confDatabase.set("host", mySQLconnParts[0]);
+            confDatabase.set("port", mySQLconnParts[1]);
+            confDatabase.set("database", mySQLconnParts[2]);
+            confDatabase.set("username", file.getString("mySQLuname", "root",
                     "MySQL Username (only if using MySQL)"));
-            confdatabase.set("password", file.getString("mySQLpass",
+            confDatabase.set("password", file.getString("mySQLpass",
                     "password", "MySQL Password (only if using MySQL)"));
 
             try {
@@ -145,71 +155,79 @@ public class WarpSettings {
         }
 
         // settings
-        worldAccess = confsettings.getBoolean("controlWorldAccess");
-        loadChunks = confsettings.getBoolean("loadChunks");
-        warpEffect = confsettings.getBoolean("warpEffect");
+        worldAccess = confSettings.getBoolean("controlWorldAccess");
+        loadChunks = confSettings.getBoolean("loadChunks");
+        warpEffect = confSettings.getBoolean("warpEffect");
 
         // dynamics
-        suggestWarps = confdynamics.getBoolean("suggestWarps");
+        suggestWarps = confDynamics.getBoolean("suggestWarps");
 
         // language
-        locale = conflocale.getString("locale");
+        locale = confLocale.getString("locale");
 
         // saftey
-        useWarpSafety = confsafety.getBoolean("enabled");
-        searchRadius = confsafety.getInt("searchRadius");
-        verticalTolerance = confsafety.getInt("verticalTolerance");
+        useWarpSafety = confSafety.getBoolean("enabled");
+        searchRadius = confSafety.getInt("searchRadius");
+        verticalTolerance = confSafety.getInt("verticalTolerance");
 
         // limits
-        useWarpLimits = conflimits.getBoolean("enabled");
-        for (String key : conflimits.getKeys(false)) {
+        useWarpLimits = confLimits.getBoolean("enabled");
+        for (String key : confLimits.getKeys(false)) {
             if (key.equals("enabled")) {
                 // ignore the enabled option
                 continue;
             } else if (key.equals("default")) {
-                defaultLimit = new WarpLimit(key, conflimits.getInt(key
-                        + ".maxTotal"), conflimits.getInt(key + ".maxPublic"),
-                        conflimits.getInt(key + ".maxPrivate"));
+                defaultLimit = new WarpLimit(key, confLimits.getInt(key
+                        + ".maxTotal"), confLimits.getInt(key + ".maxPublic"),
+                        confLimits.getInt(key + ".maxPrivate"));
             } else {
-                warpLimits.add(new WarpLimit(key, conflimits.getInt(key
-                        + ".maxTotal"), conflimits.getInt(key + ".maxPublic"),
-                        conflimits.getInt(key + ".maxPrivate")));
+                warpLimits.add(new WarpLimit(key, confLimits.getInt(key
+                        + ".maxTotal"), confLimits.getInt(key + ".maxPublic"),
+                        confLimits.getInt(key + ".maxPrivate")));
             }
         }
         Collections.sort(warpLimits);
 
         // timers
-        useTimers = conftimers.getBoolean("enabled");
-        coolDownNotify = conftimers.getBoolean("coolDownNotify");
-        warmUpNotify = conftimers.getBoolean("warmUpNotify");
-        abortOnMove = conftimers.getBoolean("abortOnMove");
-        abortOnDamage = conftimers.getBoolean("abortOnDamage");
-        for (String key : conftimerscool.getKeys(false)) {
+        useTimers = confTimers.getBoolean("enabled");
+        coolDownNotify = confTimers.getBoolean("coolDownNotify");
+        warmUpNotify = confTimers.getBoolean("warmUpNotify");
+        abortOnMove = confTimers.getBoolean("abortOnMove");
+        abortOnDamage = confTimers.getBoolean("abortOnDamage");
+        for (String key : confTimersCool.getKeys(false)) {
             if (key.equals("default")) {
-                defaultCooldown = new Time(key, conftimerscool.getDouble(key));
+                defaultCooldown = new Time(key, confTimersCool.getDouble(key));
             } else {
-                warpCooldowns.add(new Time(key, conftimerscool.getDouble(key)));
+                warpCooldowns.add(new Time(key, confTimersCool.getDouble(key)));
             }
         }
         Collections.sort(warpCooldowns);
-        for (String key : conftimerswarm.getKeys(false)) {
+        for (String key : confTimersWarm.getKeys(false)) {
             if (key.equals("default")) {
-                defaultWarmup = new Time(key, conftimerswarm.getDouble(key));
+                defaultWarmup = new Time(key, confTimersWarm.getDouble(key));
             } else {
-                warpWarmups.add(new Time(key, conftimerswarm.getDouble(key)));
+                warpWarmups.add(new Time(key, confTimersWarm.getDouble(key)));
             }
         }
         Collections.sort(warpWarmups);
 
         // database
-        usemySQL = confdatabase.getBoolean("enabled");
-        mySQLhost = confdatabase.getString("host");
-        mySQLport = confdatabase.getInt("port");
-        mySQLuname = confdatabase.getString("username");
-        mySQLpass = confdatabase.getString("password");
-        mySQLdb = confdatabase.getString("database");
-        mySQLtable = confdatabase.getString("table");
+        usemySQL = confDatabase.getBoolean("enabled");
+        mySQLhost = confDatabase.getString("host");
+        mySQLport = confDatabase.getInt("port");
+        mySQLuname = confDatabase.getString("username");
+        mySQLpass = confDatabase.getString("password");
+        mySQLdb = confDatabase.getString("database");
+        mySQLtable = confDatabase.getString("table");
 
+        // dynmap
+        useDynmap = confDynmap.getBoolean("enabled");
+        hideLayerByDefault = confDynmap.getBoolean("layer.hideByDefault");
+        layerDisplayName = confDynmap.getString("layer.displayName");
+        layerPriority = confDynmap.getInt("layer.priority");
+        markerIconID = confDynmap.getString("marker.iconID");
+        markerMinZoom = confDynmap.getInt("marker.minZoom");
+        showMarkerLable = confDynmap.getBoolean("marker.showLabel");
     }
 
     private static FileConfiguration getConfig(File file) {

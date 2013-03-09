@@ -40,3 +40,13 @@ mysql:
   table: 'warpTable'
   username: 'root'
   password: 'password'
+dynmap:
+  enabled: false
+  layer:
+    displayName: 'MyWarp'
+    hideByDefault: false
+    priority: 10
+  marker:
+    showLabel: false
+    iconID: 'mywarp_warp-32'
+    minZoom: 0

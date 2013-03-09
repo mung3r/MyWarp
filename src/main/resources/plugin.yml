@@ -8,6 +8,7 @@ authors:
   - mung3r
 softdepend:
   - Vault
+  - dynmap
 main: me.taylorkelly.mywarp.MyWarp
 commands:
   warp:

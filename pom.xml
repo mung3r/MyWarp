@@ -4,7 +4,7 @@
 	<groupId>me.taylorkelly.mywarp</groupId>
 	<artifactId>MyWarp</artifactId>
 	<name>MyWarp</name>
-	<description>Dynamic, social warping plugin for bukkit.</description>
+	<description>Social and dynamic warp plugin for bukkit.</description>
 	<url>http://dev.bukkit.org/server-mods/mywarp/</url>
 	<version>2.5.2-SNAPSHOT</version>
 	<scm>
@@ -22,6 +22,10 @@
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
 		<repository>
+			<id>dynmap-repo</id>
+			<url>http://repo.mikeprimm.com</url>
+		</repository>
+		<repository>
 			<id>vault-repo</id>
 			<url>http://ci.herocraftonline.com/plugin/repository/project/Vault/LastSuccessful/repository/</url>
 		</repository>
@@ -35,6 +39,11 @@
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>1.4.7-R1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dynmap</groupId>
+			<artifactId>DynmapCoreAPI</artifactId>
+			<version>1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
@@ -73,6 +82,7 @@
 				<includes>
 					<include>plugin.yml</include>
 					<include>config.yml</include>
+					<include>mywarp_warp-32.png</include>
 				</includes>
 			</resource>
 			<resource>

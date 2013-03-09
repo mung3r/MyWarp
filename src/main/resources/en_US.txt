@@ -1,5 +1,6 @@
 ﻿#English localization for MyWarp
 #This file is UTF-8 encoded, respect this when editing.
+dynmap.createdBy:Created by %creator%
 error.create.warpExists:Warp called '§f%warp%§r' already exists.
 error.give.isOwner:%player% is already the owner.
 error.import.exists:Warp '%warp%' already exists. Skipping...
