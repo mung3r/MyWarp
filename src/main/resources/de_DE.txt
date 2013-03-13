@@ -9,6 +9,7 @@ error.import.noConnection:Es konnte keine Verbindung zum Import aufgebaut werden
 error.invite.creator:%player% hat diesen Warp erstellt, natürlich ist er eingeladen.
 error.invite.invited.group:Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
 error.invite.invited.player:%player% ist bereits zu diesem Warp eingeladen.
+error.noPermission.modify:Dir fehlen die Rechte um '%warp%' zu modifizieren..
 error.noPermission.world:Dir fehlen die Rechte um dich zu einem Warp in %world% zu teleportieren.
 error.noPermission:Unzureichende Rechte.
 error.noSuchWarp.suggestion:Der Warp '%warp%' existiert nicht. Meintest du vielleicht '§f%suggestion%§c'?

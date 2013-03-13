@@ -9,6 +9,7 @@ error.import.noConnection:Could not establish database connection to import warp
 error.invite.creator:%player% is the creator, of course he is invited.
 error.invite.invited.group:Group '%group%' is already invited to this warp.
 error.invite.invited.player:%player% is already invited to this warp.
+error.noPermission.modify:You do not have permission to modify '%warp%'.
 error.noPermission.world:You do not have permission to access a warp in %world%.
 error.noPermission:Insufficient permission.
 error.noSuchWarp.suggestion:No such warp '%warp%'. Did you mean '§f%suggestion%§c'?

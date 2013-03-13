@@ -55,7 +55,7 @@ public class CommandUtils {
 
         if (sender instanceof Player && !warp.playerCanModify((Player) sender)) {
             throw new CommandException(
-                    LanguageManager.getString("error.noPermission.modify"));
+                    LanguageManager.getEffectiveString("error.noPermission.modify", "%warp%", warp.name));
         }
         return warp;
     }
@@ -64,10 +64,6 @@ public class CommandUtils {
             throws CommandException {
         Warp warp = getWarp(sender, query);
 
-        if (sender instanceof Player && !warp.playerCanWarp((Player) sender)) {
-            throw new CommandException(
-                    LanguageManager.getString("error.noPermission.use"));
-        }
         if (WarpSettings.worldAccess
                 && sender instanceof Player
                 && !plugin.getWarpList().playerCanAccessWorld((Player) sender,
