@@ -8,7 +8,8 @@ public class BlockSafety {
     /**
      * Test if the given location is safe
      * 
-     * @param l the location
+     * @param l
+     *            the location
      * @return True if the location is safe
      */
     public static boolean isLocationSafe(Location l) {
@@ -34,14 +35,22 @@ public class BlockSafety {
         return true;
     }
 
+    /**
+     * Checks if the given material is unsafe, meaning it causes damage upon
+     * contact.
+     * 
+     * Must be updated for new Minecraft versions if new matching blocks were
+     * introduced!
+     * 
+     * @param type
+     *            the Material to check
+     * @return true if this material is unsafe
+     */
     private static boolean isUnsafeBlock(Material type) {
         switch (type) {
         case LAVA:
-            return true;
         case STATIONARY_LAVA:
-            return true;
         case FIRE:
-            return true;
         case CACTUS:
             return true;
         default:
@@ -49,6 +58,13 @@ public class BlockSafety {
         }
     }
 
+    /**
+     * Returns how height the location is above a non-air block.
+     * 
+     * @param l
+     *            the location
+     * @return the height above the ground in blocks
+     */
     private static int heightAboveGround(Location l) {
         if (l.getBlockY() < 0) {
             return 0;
@@ -63,6 +79,19 @@ public class BlockSafety {
         return 0;
     }
 
+    /**
+     * Checks if players that teleport to the given location will receive
+     * fall-damage. To do so the method check how height the location is above
+     * the ground and, depending on the height, if enough water below is
+     * present.
+     * 
+     * This algorithm will need to be updated if Minecraft's
+     * falling-damage-rules will change!
+     * 
+     * @param l
+     *            the location to check
+     * @return true if the player will not receive fall-damage
+     */
     private static boolean hasEnoughBlockOfWater(Location l) {
         int height = heightAboveGround(l);
         Location ground = l.clone();
