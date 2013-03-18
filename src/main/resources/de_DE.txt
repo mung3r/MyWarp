@@ -92,7 +92,7 @@ warp.give.given:§bDu hast '%warp%' an %player% abgegeben.
 warp.give.received:§bDu hast '%warp%' von %player% erhalten.
 warp.invite.group.private:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.
 warp.invite.group.public:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
-warp.invite.invited:§bDu wurdest zum Warp '%warp%' eingeladen.%n§fNutze: §c/warp %warp% §fum dich zu ihm zu teleportieren.
+warp.invite.invited:§b%player% hat dich zum Warp '%warp%' eingeladen.%n§fNutze: §c/warp %warp% §fum dich zu ihm zu teleportieren.
 warp.invite.player.private:§bDu hast %player% zu '%warp%' eingeladen.
 warp.invite.player.public:§bDu hast %player% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
 warp.point:§bDein Kompass zeigt jetzt auf '%warp%'.

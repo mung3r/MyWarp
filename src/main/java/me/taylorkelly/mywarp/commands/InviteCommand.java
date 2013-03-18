@@ -86,7 +86,7 @@ public class InviteCommand extends BasicCommand implements Command {
 
         if (invitee != null) {
             invitee.sendMessage(LanguageManager.getEffectiveString(
-                    "warp.invite.invited", "%warp%", warp.name));
+                    "warp.invite.invited", "%warp%", warp.name, "%player%", sender.getName()));
         }
     }
 }
