@@ -99,6 +99,13 @@ public class UnicodeBOMInputStream extends InputStream {
         private final String description;
 
     }
+    
+    public UnicodeBOMInputStream(final InputStream inputStream) throws IOException
+
+    {
+        this(inputStream, BOM.NONE);
+    
+    }
 
     /**
      * Constructs a new {@link UnicodeBOMInputStream} that wraps the specified
@@ -111,7 +118,7 @@ public class UnicodeBOMInputStream extends InputStream {
      *             on reading from the specified {@link InputStream} when trying
      *             to detect the Unicode BOM.
      */
-    public UnicodeBOMInputStream(final InputStream inputStream) throws IOException
+    public UnicodeBOMInputStream(final InputStream inputStream, final BOM defaultBOM) throws IOException
 
     {
         in = new PushbackInputStream(inputStream, 4);
@@ -148,7 +155,7 @@ public class UnicodeBOMInputStream extends InputStream {
             }
 
         default:
-            this.bom = BOM.NONE;
+            this.bom = defaultBOM;
             break;
         }
 

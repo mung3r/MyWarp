@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,10 +18,12 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 
 import me.taylorkelly.mywarp.utils.UnicodeBOMInputStream;
+import me.taylorkelly.mywarp.utils.UnicodeBOMInputStream.BOM;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 /**
- * Manages languages
+ * This class provides several static that are needed to manage languages. It
+ * must be initialized via the {{@link #initialize(MyWarp)} first!
  * 
  */
 public class LanguageManager {
@@ -57,6 +60,18 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Creates the language file under the given name by copying it out of the
+     * jar. If the file already exists, it will call
+     * {@link #checkLanguageFile(String)} to make sure the language file is up
+     * to date.
+     * 
+     * This method will print errors if the language-file does not exist in the
+     * jar!
+     * 
+     * @param name
+     *            the name of the language file
+     */
     private static void createLanguageFile(String name) {
         File actual = new File(plugin.getDataFolder(), name + ".txt");
 
@@ -95,55 +110,107 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Calls {{@link checkLanguageFile(String, String)} while the given name is
+     * both, the file to check and the original.
+     * 
+     * @param name
+     *            the name of the file that should be checked (equals the
+     *            filename without ending)
+     */
     private static void checkLanguageFile(String name) {
         checkLanguageFile(name, name);
     }
 
+    /**
+     * Will determine if every keys that exist in the original file are also
+     * present in the given file that is bundled with the plugin. Missing keys
+     * will be added together with their corresponding message afterwards.
+     * 
+     * @param name
+     *            the name of the file that should be checked (equals the
+     *            filename without ending)
+     * @param original
+     *            the name of the original thats bundled with the plugin (equals
+     *            the filename without ending)
+     */
     private static void checkLanguageFile(String name, String original) {
-        Scanner scan;
+        HashMap<String, String> map = new HashMap<String, String>();
+
+        // Read the original file provided in the plugin's jar file
+        Scanner scan = null;
         try {
-            scan = new Scanner(new UnicodeBOMInputStream(
-                    plugin.getResource("lang/" + original + ".txt")).skipBOM(),
-                    "UTF-8");
-        } catch (IOException e1) {
+            // forcing UTF-8 BOM default since we provide the file 
+            scan = new Scanner(
+                    new UnicodeBOMInputStream(plugin.getResource("lang/"
+                            + original + ".txt"), BOM.UTF_8).skipBOM(), "UTF-8");
+        } catch (IOException e) {
             scan = new Scanner(plugin.getResource("lang/" + original + ".txt"),
                     "UTF-8");
         }
-        HashMap<String, String> map = new HashMap<String, String>();
 
         while (scan.hasNextLine()) {
             String line = scan.nextLine();
-            if (line.startsWith("#"))
+            if (line.startsWith("#")) {
                 continue;
-            if (line.split(":", 2).length != 2)
+            }
+            if (line.split(":", 2).length != 2) {
                 WarpLogger.severe("Error reading default language file "
                         + original + ".txt, line " + line
                         + " - Please inform the developer.");
+                continue;
+            }
 
             map.put(line.split(":", 2)[0], line.split(":", 2)[1]);
         }
+        if (scan != null) {
+            scan.close();
+        }
 
+        // Read the given file and determine if it contains all keys
         File f = new File(plugin.getDataFolder() + File.separator + name
                 + ".txt");
         if (f.exists()) {
+            UnicodeBOMInputStream uis = null;
+            BufferedReader br = null;
+
             try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(f), "UTF-8"));
+                uis = new UnicodeBOMInputStream(new FileInputStream(f));
+                br = new BufferedReader(new InputStreamReader(uis.skipBOM(),
+                        "UTF-8"));
+
                 String line = "";
                 while ((line = br.readLine()) != null) {
-                    if (line.startsWith("#") || line.split(":", 2).length != 2)
+                    if (line.startsWith("#") || line.split(":", 2).length != 2) {
                         continue;
+                    }
                     String key = line.split(":", 2)[0];
-                    if (map.containsKey(key))
+                    if (map.containsKey(key)) {
                         map.remove(key);
+                    }
                 }
-                br.close();
-            } catch (Exception e) {
-                WarpLogger.severe("Could not find file: "
-                        + plugin.getDataFolder().getName() + File.separator
-                        + name + ".txt");
+            } catch (FileNotFoundException e) {
+                WarpLogger.severe("Could not find file: " + f.getPath()
+                        + File.separator + f.getName());
+            } catch (IOException e) {
+                WarpLogger.severe("Failed to read file: " + f.getPath()
+                        + File.separator + f.getName() + ": " + e);
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                    }
+                }
+                if (uis != null) {
+                    try {
+                        uis.close();
+                    } catch (IOException e) {
+                    }
+                }
             }
 
+            // Write missing keys into the file
             if (!map.isEmpty()) {
                 BufferedWriter output = null;
                 try {
@@ -158,8 +225,9 @@ public class LanguageManager {
                     e.printStackTrace();
                 } finally {
                     try {
-                        if (output != null)
+                        if (output != null) {
                             output.close();
+                        }
                     } catch (IOException e) {
                     }
                 }
@@ -167,11 +235,22 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Loads the language-file of the given locale into the language map. If the
+     * language-file is not one of the default ones it is checked via
+     * {@link #checkLanguageFile(String, String)} first.
+     * 
+     * @param locale
+     *            the locale that should be loaded (equals the file name without
+     *            ending)
+     * @throws IOException
+     *             if any problems encounter during reading.
+     */
     private static void loadLanguage(String locale) throws IOException {
         UnicodeBOMInputStream uis = null;
         BufferedReader br = null;
         try {
-            if (!(locale.equals("en_US") && locale.equals("de_DE"))) {
+            if (!locale.equals("en_US") || !locale.equals("de_DE")) {
                 checkLanguageFile(locale, "en_US");
             }
             File f = new File(plugin.getDataFolder(), locale + ".txt");
@@ -181,8 +260,9 @@ public class LanguageManager {
                     "UTF-8"));
             String line = "";
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("#") || line.split(":", 2).length != 2)
+                if (line.startsWith("#") || line.split(":", 2).length != 2) {
                     continue;
+                }
                 languageMap.put(line.split(":", 2)[0], line.split(":", 2)[1]);
             }
         } finally {
