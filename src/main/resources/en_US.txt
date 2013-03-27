@@ -68,9 +68,9 @@ lister.warp.you:you
 reload.config:Config has been reloaded successfully!
 safety.found:§cWarp '%warp%' is not safe. You were teleported to the closest safe location.
 safety.notFound:§cWarp '%warp%' is not safe. Also no safe loaction could be found close to it.
-search.exactMatches:§eExact matches for search: §7%query%.
-search.noMatches:§cNo matches for search: §7%query%.
-search.partitalMatches:§ePartial matches for search: §7%query%.
+search.exactMatches:§eExact matches for search: §o§7%query%
+search.noMatches:§cNo matches for search: §o§7%query%
+search.partitalMatches:§ePartial matches for search: §o§7%query%
 sign.created:§bSuccessfully created a SignWarp.
 sign.noPermission.create:§cYou do not have permission to create SignWarps.
 sign.noPermission.createToWarp:§cYou do not have permission to create a SignWarp to '%warp%'.

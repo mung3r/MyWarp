@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.data.Searcher;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.utils.CommandUtils;
+import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
 import me.taylorkelly.mywarp.utils.PaginatedResult;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
@@ -84,7 +84,8 @@ public class BasicCommands {
                 null, null);
 
         if (results.isEmpty()) {
-            throw new CommandException(LanguageManager.getString("lister.noResults"));
+            throw new CommandException(
+                    LanguageManager.getString("lister.noResults"));
         }
         sender.sendMessage(LanguageManager.getString("listAll.list"));
         sender.sendMessage(StringUtils.join(results, ", "));
@@ -97,13 +98,14 @@ public class BasicCommands {
         TreeSet<Warp> results = plugin.getWarpList().warpsInvitedTo(player,
                 args.getFlag('c'), args.getFlag('w'));
 
-        PaginatedResult<Warp> cmdList = new PaginatedResult<Warp>(LanguageManager.getColorlessString("lister.warp.head" + ", ")) {
+        PaginatedResult<Warp> cmdList = new PaginatedResult<Warp>(
+                LanguageManager.getColorlessString("lister.warp.head" + ", ")) {
 
             @Override
             public String format(Warp warp, CommandSender sender) {
                 // 'name'(+) by player
                 StringBuilder first = new StringBuilder();
-                
+
                 if (sender instanceof Player
                         && warp.creator.equals(sender.getName())) {
                     first.append(ChatColor.AQUA);
@@ -119,13 +121,15 @@ public class BasicCommands {
                 first.append(" (");
                 first.append(warp.publicAll ? "+" : "-");
                 first.append(") ");
-                first.append(LanguageManager.getColorlessString("lister.warp.by"));
+                first.append(LanguageManager
+                        .getColorlessString("lister.warp.by"));
                 first.append(" ");
                 first.append(ChatColor.ITALIC);
 
                 if (sender instanceof Player
                         && warp.creator.equals(sender.getName())) {
-                    first.append(LanguageManager.getColorlessString("lister.warp.you"));
+                    first.append(LanguageManager
+                            .getColorlessString("lister.warp.you"));
                 } else {
                     first.append(warp.creator);
                 }
@@ -161,10 +165,27 @@ public class BasicCommands {
     @Command(aliases = { "search" }, usage = "<name>", desc = "cmd.description.search", min = 1, permissions = { "mywarp.warp.basic.search" })
     public void searchWarps(CommandContext args, CommandSender sender)
             throws CommandException {
-        Searcher searcher = new Searcher(sender, CommandUtils.toWarpName(args
-                .getSlice(0)), plugin.getWarpList());
-        searcher.search();
+        MatchList matches = plugin.getWarpList().getMatches(
+                args.getJoinedStrings(0),
+                sender instanceof Player ? (Player) sender : null, null);
 
+        if (matches.exactMatches.size() == 0 && matches.matches.size() == 0) {
+            sender.sendMessage(LanguageManager.getEffectiveString(
+                    "search.noMatches", "%query%", args.getJoinedStrings(0)));
+        } else {
+            if (matches.exactMatches.size() > 0) {
+                sender.sendMessage(LanguageManager.getEffectiveString(
+                        "search.exactMatches", "%query%",
+                        args.getJoinedStrings(0)));
+                sendWarpMatches(matches.exactMatches, sender);
+            }
+            if (matches.matches.size() > 0) {
+                sender.sendMessage(LanguageManager.getEffectiveString(
+                        "search.partitalMatches", "%query%",
+                        args.getJoinedStrings(0)));
+                sendWarpMatches(matches.matches, sender);
+            }
+        }
     }
 
     @Command(aliases = { "welcome" }, usage = "<name>", desc = "cmd.description.welcome", min = 1, permissions = { "mywarp.warp.basic.welcome" })
@@ -182,7 +203,8 @@ public class BasicCommands {
     @Command(aliases = { "help" }, usage = "#", desc = "cmd.description.help", min = 0, max = 1, permissions = { "mywarp.warp.basic.help" })
     public void showHelp(final CommandContext args, CommandSender sender)
             throws CommandException {
-        PaginatedResult<Command> cmdList = new PaginatedResult<Command>(LanguageManager.getColorlessString("lister.help.head") + ", ") {
+        PaginatedResult<Command> cmdList = new PaginatedResult<Command>(
+                LanguageManager.getColorlessString("lister.help.head") + ", ") {
 
             @Override
             public String format(Command cmd, CommandSender sender) {
@@ -202,5 +224,45 @@ public class BasicCommands {
         cmdList.display(sender,
                 plugin.commandManager.getUsableCommands(sender, "warp"),
                 args.getInteger(0, 1));
+    }
+    
+    private void sendWarpMatches(TreeSet<Warp> warps, CommandSender sender) {
+        for (Warp warp : warps) {
+            StringBuilder ret = new StringBuilder();
+            if (sender instanceof Player
+                    && warp.creator.equals(sender.getName())) {
+                ret.append(ChatColor.AQUA);
+            } else if (warp.publicAll) {
+                ret.append(ChatColor.GREEN);
+            } else {
+                ret.append(ChatColor.RED);
+            }
+            ret.append("'");
+            ret.append(warp.name);
+            ret.append("'");
+            ret.append(ChatColor.WHITE);
+            ret.append(" ");
+            ret.append(LanguageManager.getColorlessString("lister.warp.by"));
+            ret.append(" ");
+            ret.append(ChatColor.ITALIC);
+
+            if (sender instanceof Player
+                    && warp.creator.equals(sender.getName())) {
+                ret.append(LanguageManager
+                        .getColorlessString("lister.warp.you"));
+            } else {
+                ret.append(warp.creator);
+            }
+            ret.append(" ");
+            ret.append(ChatColor.RESET);
+            ret.append("@(");
+            ret.append((int) warp.x);
+            ret.append(", ");
+            ret.append((int) warp.y);
+            ret.append(", ");
+            ret.append((int) warp.z);
+            ret.append(")");
+            sender.sendMessage(ret.toString());
+        }
     }
 }

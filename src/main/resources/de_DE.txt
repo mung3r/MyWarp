@@ -68,9 +68,9 @@ listAll.list:§bDu kannst folgende Warps benutzen:
 reload.config:Die Konfiguration wurde erfolgreich neu geladen!
 safety.found:§cDer Warp '%warp% ist nicht sicher. Du wurdest zum sichersten Ort in seiner Nähe teleportiert.
 safety.notFound:§cDer Warp '%warp% ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden.
-search.exactMatches:§Exakte Treffer für die Suche nach: §7%query%.
-search.noMatches:§cKein Treffer für die Suche nach: §7%query%.
-search.partitalMatches:§eTeilweise Treffer für die Suche nach: §7%query%.
+search.exactMatches:§Exakte Treffer für die Suche nach: §o§7%query%
+search.noMatches:§cKein Treffer für die Suche nach: $o§7%query%
+search.partitalMatches:§eTeilweise Treffer für die Suche nach: §o§7%query%
 sign.created:§bDer SchildWarp wurde erfolgreich erstellt.
 sign.noPermission.create:§cDir fehlen die Rechte um einen SchildWarp zu erstellen.
 sign.noPermission.createToWarp:§cDir fehlen die Rechte um einen SchildWarp nach '%warp%' zu erstellen.
