@@ -30,18 +30,6 @@ public class AdminCommands {
         this.plugin = plugin;
     }
 
-    @Command(aliases = { "player" }, usage = "<player> <name>", desc = "cmd.description.adminWarpTo", min = 2, permissions = { "mywarp.admin.warpto" })
-    public void warpPlayer(CommandContext args, CommandSender sender)
-            throws CommandException {
-        Player invitee = CommandUtils.checkPlayer(args.getString(0));
-        Warp warp = CommandUtils.getWarpForUsage(sender,
-                args.getJoinedStrings(1));
-
-        plugin.getWarpList().warpTo(warp, invitee);
-        sender.sendMessage(LanguageManager.getEffectiveString(
-                "warp.warpto.player", "%player%", invitee.getName()));
-    }
-
     @Command(aliases = { "import" }, usage = "<sqlite/mysql>", desc = "cmd.description.import", min = 1, max = 1, permissions = { "mywarp.admin.import" })
     public void importWarps(CommandContext args, CommandSender sender)
             throws CommandException {
@@ -89,5 +77,17 @@ public class AdminCommands {
         WarpSettings.initialize(plugin);
         LanguageManager.initialize(plugin);
         sender.sendMessage(LanguageManager.getString("reload.config"));
+    }
+
+    @Command(aliases = { "player" }, usage = "<player> <name>", desc = "cmd.description.adminWarpTo", min = 2, permissions = { "mywarp.admin.warpto" })
+    public void warpPlayer(CommandContext args, CommandSender sender)
+            throws CommandException {
+        Player invitee = CommandUtils.checkPlayer(args.getString(0));
+        Warp warp = CommandUtils.getWarpForUsage(sender,
+                args.getJoinedStrings(1));
+
+        plugin.getWarpList().warpTo(warp, invitee);
+        sender.sendMessage(LanguageManager.getEffectiveString(
+                "warp.warpto.player", "%player%", invitee.getName()));
     }
 }

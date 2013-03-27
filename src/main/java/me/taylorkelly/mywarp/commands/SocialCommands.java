@@ -61,38 +61,6 @@ public class SocialCommands {
         }
     }
 
-    @Command(aliases = { "private" }, usage = "<name>", desc = "cmd.description.private", min = 1, permissions = { "mywarp.warp.soc.private" })
-    public void privatizeWarp(CommandContext args, CommandSender sender)
-            throws CommandException {
-        Warp warp = CommandUtils.getWarpForModification(sender,
-                args.getJoinedStrings(0));
-        if (!warp.publicAll) {
-            throw new CommandException(LanguageManager.getEffectiveString(
-                    "error.private.isPrivate", "%warp%", warp.name));
-        }
-        CommandUtils.checkLimits(sender, false);
-
-        plugin.getWarpList().privatize(warp);
-        sender.sendMessage(LanguageManager.getEffectiveString("warp.private",
-                "%warp%", warp.name));
-    }
-
-    @Command(aliases = { "public" }, usage = "<name>", desc = "cmd.description.public", min = 1, permissions = { "mywarp.warp.soc.public" })
-    public void publicizeWarp(CommandContext args, CommandSender sender)
-            throws CommandException {
-        Warp warp = CommandUtils.getWarpForModification(sender,
-                args.getJoinedStrings(0));
-        if (warp.publicAll) {
-            throw new CommandException(LanguageManager.getEffectiveString(
-                    "error.public.isPublic", "%warp%", warp.name));
-        }
-        CommandUtils.checkLimits(sender, true);
-
-        plugin.getWarpList().publicize(warp);
-        sender.sendMessage(LanguageManager.getEffectiveString("warp.public",
-                "%warp%", warp.name));
-    }
-
     @Command(aliases = { "invite" }, usage = "<player> <name>", desc = "cmd.description.invite", min = 2, permissions = { "mywarp.warp.soc.invite" })
     public void inviteToWarp(CommandContext args, CommandSender sender)
             throws CommandException {
@@ -157,6 +125,38 @@ public class SocialCommands {
                     sender.getName()));
         }
 
+    }
+
+    @Command(aliases = { "private" }, usage = "<name>", desc = "cmd.description.private", min = 1, permissions = { "mywarp.warp.soc.private" })
+    public void privatizeWarp(CommandContext args, CommandSender sender)
+            throws CommandException {
+        Warp warp = CommandUtils.getWarpForModification(sender,
+                args.getJoinedStrings(0));
+        if (!warp.publicAll) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.private.isPrivate", "%warp%", warp.name));
+        }
+        CommandUtils.checkLimits(sender, false);
+
+        plugin.getWarpList().privatize(warp);
+        sender.sendMessage(LanguageManager.getEffectiveString("warp.private",
+                "%warp%", warp.name));
+    }
+
+    @Command(aliases = { "public" }, usage = "<name>", desc = "cmd.description.public", min = 1, permissions = { "mywarp.warp.soc.public" })
+    public void publicizeWarp(CommandContext args, CommandSender sender)
+            throws CommandException {
+        Warp warp = CommandUtils.getWarpForModification(sender,
+                args.getJoinedStrings(0));
+        if (warp.publicAll) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.public.isPublic", "%warp%", warp.name));
+        }
+        CommandUtils.checkLimits(sender, true);
+
+        plugin.getWarpList().publicize(warp);
+        sender.sendMessage(LanguageManager.getEffectiveString("warp.public",
+                "%warp%", warp.name));
     }
 
     @Command(aliases = { "uninvite" }, usage = "<player> <name>", desc = "cmd.description.uninvite", min = 2, permissions = { "mywarp.warp.soc.uninvite" })

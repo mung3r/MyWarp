@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import me.taylorkelly.mywarp.data.Warp;
 
-public class popularityWarpComperator implements Comparator<Warp> {
+public class PopularityWarpComperator implements Comparator<Warp> {
     @Override
     public int compare(Warp w1, Warp w2) {
         return w1.visits != w2.visits ? (w1.visits > w2.visits ? -1 : 1)

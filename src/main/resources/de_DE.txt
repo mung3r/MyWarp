@@ -8,13 +8,13 @@ cmd.description.give:Gibt §7<Name>§f an §7<Spieler>§f ab
 cmd.description.help:Zeigt das Hilfemenü an.
 cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank.
 cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
-cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Ersteller] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet.
+cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Ersteller] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
 cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf (alter Stil)
 cmd.description.point:Richtet den Kompass auf §7<Name>§f aus
 cmd.description.private:Wandelt §7<name>§f in einen privaten Warp um
 cmd.description.public:Wandelt §7<name>§f in einen öffentlichen Warp um
 cmd.description.reload:Lädt die Konfiguration neu
-cmd.description.search:Sucht nach Warps unter dem angegebenen §7<Namen>
+cmd.description.search:Sucht nach Warps unter dem angegebenen §7<Namen>§f. Mit [-p] werden die Warps nach Beliebtheit sortiert.
 cmd.description.uninvite:Lädt §7<Spieler|Gruppe>§f vom Warp namens §7<name>§f aus
 cmd.description.update:Aktualisiert §7<Name>§f mit deiner aktuellen Position
 cmd.description.warpTo:Teleportiert dich zu §7<Name>§f, wenn du den Warp besuchen kannst.

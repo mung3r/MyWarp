@@ -14,6 +14,7 @@ import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
 import me.taylorkelly.mywarp.utils.PaginatedResult;
+import me.taylorkelly.mywarp.utils.PopularityWarpComperator;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 import me.taylorkelly.mywarp.utils.commands.Command;
@@ -81,7 +82,7 @@ public class BasicCommands {
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = plugin.getWarpList().warpsInvitedTo(player,
-                null, null);
+                null, null, null);
 
         if (results.isEmpty()) {
             throw new CommandException(
@@ -91,12 +92,13 @@ public class BasicCommands {
         sender.sendMessage(StringUtils.join(results, ", "));
     }
 
-    @Command(aliases = { "list" }, usage = "[-c creator] [-w world]", desc = "cmd.description.list", min = 0, max = 1, flags = "c:w:", permissions = { "mywarp.warp.basic.list" })
+    @Command(aliases = { "list" }, usage = "[-c creator] [-w world]", desc = "cmd.description.list", min = 0, max = 1, flags = "c:pw:", permissions = { "mywarp.warp.basic.list" })
     public void listWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = plugin.getWarpList().warpsInvitedTo(player,
-                args.getFlag('c'), args.getFlag('w'));
+                args.getFlag('c'), args.getFlag('w'),
+                args.hasFlag('p') ? new PopularityWarpComperator() : null);
 
         PaginatedResult<Warp> cmdList = new PaginatedResult<Warp>(
                 LanguageManager.getColorlessString("lister.warp.head" + ", ")) {
@@ -162,12 +164,13 @@ public class BasicCommands {
                 "%warp%", warp.name));
     }
 
-    @Command(aliases = { "search" }, usage = "<name>", desc = "cmd.description.search", min = 1, permissions = { "mywarp.warp.basic.search" })
+    @Command(aliases = { "search" }, usage = "<name>", desc = "cmd.description.search", min = 1, flags = "p", permissions = { "mywarp.warp.basic.search" })
     public void searchWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         MatchList matches = plugin.getWarpList().getMatches(
                 args.getJoinedStrings(0),
-                sender instanceof Player ? (Player) sender : null, null);
+                sender instanceof Player ? (Player) sender : null,
+                args.hasFlag('p') ? new PopularityWarpComperator() : null);
 
         if (matches.exactMatches.size() == 0 && matches.matches.size() == 0) {
             sender.sendMessage(LanguageManager.getEffectiveString(
@@ -225,7 +228,7 @@ public class BasicCommands {
                 plugin.commandManager.getUsableCommands(sender, "warp"),
                 args.getInteger(0, 1));
     }
-    
+
     private void sendWarpMatches(TreeSet<Warp> warps, CommandSender sender) {
         for (Warp warp : warps) {
             StringBuilder ret = new StringBuilder();

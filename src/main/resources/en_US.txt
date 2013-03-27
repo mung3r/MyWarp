@@ -8,13 +8,13 @@ cmd.description.give:Give your warp §7<name>§f to §7<player>
 cmd.description.help:Displays the help menu
 cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current database
 cmd.description.invite:Invite §7<player|group>§f to §7<name>
-cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. 
+cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
 cmd.description.listAll:List the warps you can visit on one page (old style)
 cmd.description.point:Point your compass to §7<name>
 cmd.description.private:Make §7<name>§f a private warp
 cmd.description.public:Make §7<name>§f a public warp
 cmd.description.reload:Reload the configuration
-cmd.description.search:Searches for warps under the given §7<name>
+cmd.description.search:Searches for warps under the given §7<name>§f. Use [-p] if the warps should be listed by popularity.
 cmd.description.uninvite:Uninvite §7<player|group>§f from §7<name>
 cmd.description.update:Updates §7<name>§f to your current position
 cmd.description.warpTo:Warp to §7<name>§f if you have the rights to visit it.

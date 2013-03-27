@@ -30,7 +30,7 @@ public class CommandUtils {
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
         MatchList matches = plugin.getWarpList().getMatches(query, player,
-                new popularityWarpComperator());
+                new PopularityWarpComperator());
 
         Warp warp = matches.getMatch();
 

@@ -299,9 +299,10 @@ public class WarpList {
         return warpMap.containsKey(warp);
     }
 
-    public TreeSet<Warp> warpsInvitedTo(Player player, String creator, String world) {
-        TreeSet<Warp> results = new TreeSet<Warp>();
-        
+    public TreeSet<Warp> warpsInvitedTo(Player player, String creator,
+            String world, Comparator<Warp> comperator) {
+        TreeSet<Warp> results = new TreeSet<Warp>(comperator);
+
         if (creator != null) {
             creator = getMatchingCreator(player, creator);
         }
