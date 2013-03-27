@@ -18,7 +18,7 @@ public class MWBlockListener implements Listener {
     private WarpList warpList;
 
     public MWBlockListener(MyWarp plugin) {
-        warpPermissions = MyWarp.getWarpPermissions();
+        warpPermissions = MyWarp.warpPermissions;
         warpList = plugin.getWarpList();
     }
 
@@ -45,7 +45,7 @@ public class MWBlockListener implements Listener {
             Warp warp = warpList.getWarp(name);
 
             if (!warp.playerCanModify(player)
-                    && !MyWarp.getWarpPermissions().createSignWarpAll(player)) {
+                    && !MyWarp.warpPermissions.createSignWarpAll(player)) {
                 player.sendMessage(LanguageManager.getEffectiveString(
                         "sign.noPermission.create", "%warp%", name));
                 event.setCancelled(true);

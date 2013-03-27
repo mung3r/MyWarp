@@ -134,11 +134,11 @@ public class Warp implements Comparable<Warp> {
         }
 
         for (String group : groupPermissions) {
-            if (MyWarp.getWarpPermissions().playerHasGroup(player, group)) {
+            if (MyWarp.warpPermissions.playerHasGroup(player, group)) {
                 return true;
             }
         }
-        if (MyWarp.getWarpPermissions().canAccessAll(player)) {
+        if (MyWarp.warpPermissions.canAccessAll(player)) {
             return true;
         }
 
@@ -197,7 +197,7 @@ public class Warp implements Comparable<Warp> {
         if (creator.equals(player.getName())) {
             return true;
         }
-        if (MyWarp.getWarpPermissions().canModifyAll(player)) {
+        if (MyWarp.warpPermissions.canModifyAll(player)) {
             return true;
         }
         return false;

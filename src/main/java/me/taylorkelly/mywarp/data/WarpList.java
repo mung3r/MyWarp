@@ -1,11 +1,9 @@
 package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
@@ -147,36 +145,6 @@ public class WarpList {
         return warpMap.size();
     }
 
-    public TreeSet<Warp> getSortedWarps(Player player, String creator,
-            int start, int size) {
-        TreeSet<Warp> ret = new TreeSet<Warp>();
-        List<String> sortedNames = new ArrayList<String>(warpMap.keySet());
-        Collections.sort(sortedNames, String.CASE_INSENSITIVE_ORDER);
-
-        int currentCount = 0;
-        for (String name : sortedNames) {
-            if (ret.size() == size) {
-                return ret;
-            }
-            Warp warp = warpMap.get(name);
-
-            if ((player != null && !warp.playerCanWarp(player))
-                    || (creator != null && !warp.playerIsCreator(creator))) {
-                continue;
-            }
-            if (WarpSettings.worldAccess && player != null
-                    && !playerCanAccessWorld(player, warp.world)) {
-                continue;
-            }
-            if (currentCount >= start) {
-                ret.add(warp);
-            } else {
-                currentCount++;
-            }
-        }
-        return ret;
-    }
-
     public Warp getWarp(String name) {
         return warpMap.get(name);
     }
@@ -238,36 +206,36 @@ public class WarpList {
 
     public boolean playerCanAccessWorld(Player player, String worldName) {
         if (player.getWorld().getName().equals(worldName)
-                && MyWarp.getWarpPermissions().canWarpInsideWorld(player)) {
+                && MyWarp.warpPermissions.canWarpInsideWorld(player)) {
             return true;
         }
-        if (MyWarp.getWarpPermissions().canWarpToWorld(player, worldName)) {
+        if (MyWarp.warpPermissions.canWarpToWorld(player, worldName)) {
             return true;
         }
         return false;
     }
 
     public boolean playerCanBuildPrivateWarp(Player player) {
-        if (MyWarp.getWarpPermissions().disobeyPrivateLimit(player)) {
+        if (MyWarp.warpPermissions.disobeyPrivateLimit(player)) {
             return true;
         }
-        return numPrivateWarpsPlayer(player) < MyWarp.getWarpPermissions()
+        return numPrivateWarpsPlayer(player) < MyWarp.warpPermissions
                 .maxPrivateWarps(player);
     }
 
     public boolean playerCanBuildPublicWarp(Player player) {
-        if (MyWarp.getWarpPermissions().disobeyPublicLimit(player)) {
+        if (MyWarp.warpPermissions.disobeyPublicLimit(player)) {
             return true;
         }
-        return numPublicWarpsPlayer(player) < MyWarp.getWarpPermissions()
+        return numPublicWarpsPlayer(player) < MyWarp.warpPermissions
                 .maxPublicWarps(player);
     }
 
     public boolean playerCanBuildWarp(Player player) {
-        if (MyWarp.getWarpPermissions().disobeyTotalLimit(player)) {
+        if (MyWarp.warpPermissions.disobeyTotalLimit(player)) {
             return true;
         }
-        return numWarpsPlayer(player) < MyWarp.getWarpPermissions()
+        return numWarpsPlayer(player) < MyWarp.warpPermissions
                 .maxTotalWarps(player);
     }
 
@@ -331,8 +299,12 @@ public class WarpList {
         return warpMap.containsKey(warp);
     }
 
-    public TreeSet<Warp> warpsInvitedTo(Player player) {
+    public TreeSet<Warp> warpsInvitedTo(Player player, String creator, String world) {
         TreeSet<Warp> results = new TreeSet<Warp>();
+        
+        if (creator != null) {
+            creator = getMatchingCreator(player, creator);
+        }
 
         for (Warp warp : warpMap.values()) {
             if (player != null && !warp.playerCanWarp(player)) {
@@ -340,6 +312,12 @@ public class WarpList {
             }
             if (WarpSettings.worldAccess && player != null
                     && !playerCanAccessWorld(player, warp.world)) {
+                continue;
+            }
+            if (creator != null && !warp.creator.equals(creator)) {
+                continue;
+            }
+            if (world != null && !warp.world.equals(world)) {
                 continue;
             }
             results.add(warp);

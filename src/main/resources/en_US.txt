@@ -1,6 +1,35 @@
 ﻿#English localization for MyWarp
 #This file is UTF-8 encoded, respect this when editing.
+cmd.description.adminWarpTo:Warp §7<player>§f to §7<name>§f if you have the rights to visit it.
+cmd.description.create:Create a new public warp called §7<name>§f at your current position
+cmd.description.createPrivate:Create a new private warp called §7<name>§f at your current position
+cmd.description.delete:Deletes the warp §7<name>
+cmd.description.give:Give your warp §7<name>§f to §7<player>
+cmd.description.help:Displays the help menu
+cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current database
+cmd.description.invite:Invite §7<player|group>§f to §7<name>
+cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. 
+cmd.description.listAll:List the warps you can visit on one page (old style)
+cmd.description.point:Point your compass to §7<name>
+cmd.description.private:Make §7<name>§f a private warp
+cmd.description.public:Make §7<name>§f a public warp
+cmd.description.reload:Reload the configuration
+cmd.description.search:Searches for warps under the given §7<name>
+cmd.description.uninvite:Uninvite §7<player|group>§f from §7<name>
+cmd.description.update:Updates §7<name>§f to your current position
+cmd.description.warpTo:Warp to §7<name>§f if you have the rights to visit it.
+cmd.description.welcome:Change the welcome message of §7<name>§f. You will be ask to enter the welcome message afterwards.
+cmd.usage.creator:creator
+cmd.usage.group:group
+cmd.usage.name:name
+cmd.usage.player:player
+cmd.usage.world:world
 dynmap.createdBy:Created by %creator%
+error.cmd.invalidSender:Could not execute command: invalid sender.
+error.cmd.toFewArgs:Too few arguments.
+error.cmd.toManyArgs:Too many arguments.
+error.cmd.unknown:An error has occurred while performing this command.
+error.cmd.unknownFlag:Unknown flag:
 error.create.warpExists:Warp called '§f%warp%§r' already exists.
 error.give.isOwner:%player% is already the owner.
 error.import.exists:Warp '%warp%' already exists. Skipping...
@@ -11,7 +40,7 @@ error.invite.invited.group:Group '%group%' is already invited to this warp.
 error.invite.invited.player:%player% is already invited to this warp.
 error.noPermission.modify:You do not have permission to modify '%warp%'.
 error.noPermission.world:You do not have permission to access a warp in %world%.
-error.noPermission:Insufficient permission.
+error.noPermission:You do not have permission to do this.
 error.noSuchWarp.suggestion:No such warp '%warp%'. Did you mean '§f%suggestion%§c'?
 error.noSuchWarp:No such warp '%warp%'.
 error.player.offline:Could not find player '%player%'. Maybe he is offline?
@@ -22,52 +51,20 @@ error.uninvite.creator:You cannot uninvite yourself. You're the creator!
 error.uninvite.notInvited.group:Group '%group%' is not invited to this warp.
 error.uninvite.notInvited.player:%player% is not invited to this warp.
 error.warpto.noSuchWorld:World '%world%' does not exist.
-help.command:Command
-help.description.adminWarpTo:Warp §7<player>§f to §7<name>
-help.description.create:Create a new warp called §7<name>
-help.description.createPrivate:Create a new private warp called §7<name>
-help.description.delete:Deletes the warp §7<name>
-help.description.give:Give your warp §7<name>§f to §7<player>
-help.description.help:Displays the help menu
-help.description.import:Imports warps from §7<SQLite|MySQL>
-help.description.invite:Invite §7<player>§f to §7<name>
-help.description.list:List the warps you can visit
-help.description.listAll:List the warps you can visit
-help.description.point:Point your compass to §7<name>
-help.description.private:Make §7<name>§f a private warp
-help.description.public:Make §7<name>§f a public warp
-help.description.reload:Reload settings
-help.description.search:Searches for warps related to §7<query>
-help.description.uninvite:Uninvite §7<player|group>§f from §7<name>
-help.description.update:Updates §7<name>§f to your current position
-help.description.warpTo:Warp to §7<name>
-help.description.welcome:Change the welcome message of §7<name>
-help.description:Description
-help.help:Help
-help.more:§7For more info on a particular command, type §f/<command> ?
-help.usage.group:group
-help.usage.name:name
-help.usage.owner:owner
-help.usage.pageNumber:page#
-help.usage.player:player
-help.usage.query:query
-help.usage:Usage
 limit.private.reached.player:§c%player% has reached his max # of private warps §e(%maxPrivate%)%n§fTell him to delete some of his warps to receive this one.
 limit.private.reached:§cYou have reached your max # of private warps §e(%maxPrivate%)%n§fDelete some of your warps to create more.
 limit.public.reached.player:§c%player% has reached his max # of public warps §e(%maxPublic%)%n§fTell him to delete some of his warps to receive this one.
 limit.public.reached:§cYou have reached your max # of public warps §e(%maxPublic%)%n§fDelete some of your warps to create more.
 limit.total.reached.player:§c%player% has reached his max # of warps §e(%maxTotal%)%n§fTell him to delete some of his warps to receive this one.
 limit.total.reached:§cYou have reached your max # of warps §e(%maxTotal%)%n§fDelete some of your warps to create more.
-list.by:by
-list.console:§cThe console does not own any warps.
-list.noWarps:§cThere are no warps to list.
-list.page.invalid:You must enter a valid number.
-list.page.negative:§cPage number cannot be below 1.
-list.page.toHigh:§cThere are only %pages% pages of warps.
-list.page:Page
-list.you:you
 listAll.list:§bYou can warp to:
-listAll.noWarps:§cYou cannot access any warps at the moment.
+lister.help.head:Help
+lister.noResults:No results match!
+lister.page:Page
+lister.unknownPage:This page does not exist, there are only %pages% pages in total!
+lister.warp.by:by
+lister.warp.head:Warps
+lister.warp.you:you
 reload.config:Config has been reloaded successfully!
 safety.found:§cWarp '%warp%' is not safe. You were teleported to the closest safe location.
 safety.notFound:§cWarp '%warp%' is not safe. Also no safe loaction could be found close to it.
@@ -92,7 +89,7 @@ warp.give.given:§bYou have given '%warp%' to %player%.
 warp.give.received:§bYou have been given '%warp%' by %player%.
 warp.invite.group.private:§bYou have invited group %group% to '%warp%'.
 warp.invite.group.public:§bYou have invited group %group% to '%warp%'.%n§cBut '%warp%' is still public.
-warp.invite.invited:§b%player% has invited to to warp '%warp%'.%n§fUse: §c/warp %warp% §fto warp to it.
+warp.invite.invited:§b%player% has invited you to to warp '%warp%'.%n§fUse: §c/warp %warp% §fto warp to it.
 warp.invite.player.private:§bYou have invited %player% to '%warp%'.
 warp.invite.player.public:§bYou have invited %player% to '%warp%'.%n§cBut '%warp%' is still public.
 warp.point:§bYour compass now guides you to '%warp%'.

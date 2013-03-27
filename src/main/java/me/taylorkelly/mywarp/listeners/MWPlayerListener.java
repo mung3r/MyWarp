@@ -27,7 +27,7 @@ public class MWPlayerListener implements Listener {
 
     public MWPlayerListener(MyWarp plugin) {
         warpList = plugin.getWarpList();
-        warpPermissions = MyWarp.getWarpPermissions();
+        warpPermissions = MyWarp.warpPermissions;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

@@ -4,26 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import me.taylorkelly.mywarp.commands.AdminWarpToCommand;
-import me.taylorkelly.mywarp.commands.CommandHandler;
-import me.taylorkelly.mywarp.commands.CreateCommand;
-import me.taylorkelly.mywarp.commands.CreatePrivateCommand;
-import me.taylorkelly.mywarp.commands.DeleteCommand;
-import me.taylorkelly.mywarp.commands.GiveCommand;
-import me.taylorkelly.mywarp.commands.HelpCommand;
-import me.taylorkelly.mywarp.commands.ImportCommand;
-import me.taylorkelly.mywarp.commands.InviteCommand;
-import me.taylorkelly.mywarp.commands.ListCommand;
-import me.taylorkelly.mywarp.commands.PointCommand;
-import me.taylorkelly.mywarp.commands.PrivateCommand;
-import me.taylorkelly.mywarp.commands.PublicCommand;
-import me.taylorkelly.mywarp.commands.ReloadCommand;
-import me.taylorkelly.mywarp.commands.ListAllCommand;
-import me.taylorkelly.mywarp.commands.SearchCommand;
-import me.taylorkelly.mywarp.commands.UninviteCommand;
-import me.taylorkelly.mywarp.commands.UpdateCommand;
-import me.taylorkelly.mywarp.commands.WarpToCommand;
-import me.taylorkelly.mywarp.commands.WelcomeCommand;
+
+import me.taylorkelly.mywarp.commands.RootCommands;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
@@ -35,6 +17,7 @@ import me.taylorkelly.mywarp.markers.Markers;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.WarpLogger;
+import me.taylorkelly.mywarp.utils.commands.CommandsManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -52,8 +35,8 @@ public class MyWarp extends JavaPlugin {
     public String name;
     public String version;
     private PluginManager pm;
-    private CommandHandler commandHandler;
-    private static WarpPermissions warpPermissions;
+    public CommandsManager commandManager;
+    public static WarpPermissions warpPermissions;
     public static ConnectionManager connectionManager;
     public static Markers markers;
 
@@ -74,6 +57,7 @@ public class MyWarp extends JavaPlugin {
         WarpSettings.initialize(this);
         LanguageManager.initialize(this);
 
+        // initialize the connection
         try {
             connectionManager = new ConnectionManager(WarpSettings.usemySQL,
                     true, true, this);
@@ -84,6 +68,7 @@ public class MyWarp extends JavaPlugin {
             return;
         }
 
+        // check for old database (h-mod) and convert it
         File newDatabase = new File(getDataFolder(), "warps.db");
         File oldDatabase = new File("homes-warps.db");
         if (!newDatabase.exists() && oldDatabase.exists()) {
@@ -92,6 +77,8 @@ public class MyWarp extends JavaPlugin {
 
         warpList = new WarpList(getServer());
         warpPermissions = new WarpPermissions(this);
+
+        // register event listeners
         blockListener = new MWBlockListener(this);
         entityListener = new MWEntityListener();
         playerListener = new MWPlayerListener(this);
@@ -100,6 +87,7 @@ public class MyWarp extends JavaPlugin {
         pm.registerEvents(entityListener, this);
         pm.registerEvents(playerListener, this);
 
+        // initialize Dynmap support
         if (WarpSettings.useDynmap) {
             if (!pm.isPluginEnabled("dynmap")) {
                 WarpLogger
@@ -109,35 +97,11 @@ public class MyWarp extends JavaPlugin {
             }
         }
 
-        commandHandler = new CommandHandler(this);
+        // initialize the command manager and register all used commands
+        commandManager = new CommandsManager(this);
+        commandManager.register(RootCommands.class);
+
         new CommandUtils(this);
-
-        // basic commands
-        commandHandler.addCommand(new CreateCommand(this));
-        commandHandler.addCommand(new CreatePrivateCommand(this));
-        commandHandler.addCommand(new DeleteCommand(this));
-        commandHandler.addCommand(new ListCommand(this));
-        commandHandler.addCommand(new ListAllCommand(this));
-        commandHandler.addCommand(new PointCommand(this));
-        commandHandler.addCommand(new SearchCommand(this));
-        commandHandler.addCommand(new UpdateCommand(this));
-        commandHandler.addCommand(new WelcomeCommand(this));
-        commandHandler.addCommand(new WarpToCommand(this));
-
-        // social commands
-        commandHandler.addCommand(new GiveCommand(this));
-        commandHandler.addCommand(new InviteCommand(this));
-        commandHandler.addCommand(new PrivateCommand(this));
-        commandHandler.addCommand(new PublicCommand(this));
-        commandHandler.addCommand(new UninviteCommand(this));
-
-        // help command
-        commandHandler.addCommand(new HelpCommand(this));
-
-        // admin commands
-        commandHandler.addCommand(new AdminWarpToCommand(this));
-        commandHandler.addCommand(new ReloadCommand(this));
-        commandHandler.addCommand(new ImportCommand(this));
 
         WarpLogger.info(name + " " + version + " enabled");
     }
@@ -195,18 +159,11 @@ public class MyWarp extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command,
             String commandLabel, String[] args) {
-        return commandHandler.dispatch(sender, command, commandLabel, args);
-    }
-
-    public static WarpPermissions getWarpPermissions() {
-        return warpPermissions;
+        return commandManager.handleBukkitCommand(sender, command,
+                commandLabel, args);
     }
 
     public WarpList getWarpList() {
         return warpList;
-    }
-
-    public CommandHandler getCommandHandler() {
-        return commandHandler;
     }
 }
