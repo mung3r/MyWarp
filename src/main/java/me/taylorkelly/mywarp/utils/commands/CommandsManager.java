@@ -69,7 +69,6 @@ public class CommandsManager {
         Class<?>[] params = method.getParameterTypes();
 
         if (params[1] != CommandSender.class &&  !params[1].isAssignableFrom(sender.getClass())) {
-            WarpLogger.info("params[1]:" + params[1].getSimpleName() + ", sender: " + sender.getClass().getSimpleName());
             throw new CommandException(
                     LanguageManager.getString("error.cmd.invalidSender"));
         }
