@@ -8,8 +8,8 @@ cmd.description.give:Gibt §7<Name>§f an §7<Spieler>§f ab
 cmd.description.help:Zeigt das Hilfemenü an.
 cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt.
 cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
-cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Ersteller] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
-cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf. Mit [-c Ersteller] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
+cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
+cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
 cmd.description.point:Richtet den Kompass auf §7<Name>§f aus
 cmd.description.private:Wandelt §7<name>§f in einen privaten Warp um
 cmd.description.public:Wandelt §7<name>§f in einen öffentlichen Warp um
@@ -19,7 +19,7 @@ cmd.description.uninvite:Lädt §7<Spieler|Gruppe>§f vom Warp namens §7<name>�
 cmd.description.update:Aktualisiert §7<Name>§f mit deiner aktuellen Position
 cmd.description.warpTo:Teleportiert dich zu §7<Name>§f, wenn du den Warp besuchen kannst.
 cmd.description.welcome:Ändert die Willkommensnachricht von §7<Name>§f. Anschließend wird seperat nach der Willkommensnachricht gefragt.
-cmd.usage.creator:Ersteller
+cmd.usage.creator:Besitzer
 cmd.usage.group:Gruppe
 cmd.usage.name:Name
 cmd.usage.player:Spieler
@@ -31,6 +31,8 @@ error.cmd.toFewArgs:Zu wenige Argumente.
 error.cmd.toManyArgs:Zu viele Argumente.
 error.cmd.unknown:Während dem Ausführen des Befehls trat ein fehler auf.
 error.cmd.unknownFlag:Unbekannte Flag:
+error.cmd.flagGiven:Die Flag '%flag%' existiert bereits!
+error.cmd.noValue:Für die '%flag%' Flag wurde kein Wert angegeben.
 error.create.warpExists:Ein Warp namens '%warp%' existiert bereits.
 error.give.isOwner:Dieser Warp gehört bereits %player%.
 error.import.exists:Warp '%warp%' existiert bereits. Überspringe ihn...
