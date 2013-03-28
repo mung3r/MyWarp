@@ -259,7 +259,7 @@ public class BasicCommands {
         }
     }
 
-    @Command(aliases = { "update" }, usage = "<name>", desc = "cmd.description.update", min = 1, permissions = { "help.description.update" })
+    @Command(aliases = { "update" }, usage = "<name>", desc = "cmd.description.update", min = 1, permissions = { "mywarp.warp.basic.update" })
     public void updateWarp(CommandContext args, Player sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForModification(sender,
