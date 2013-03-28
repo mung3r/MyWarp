@@ -6,7 +6,7 @@ cmd.description.createPrivate:Erstellt einen neuen privaten Warp namens §7<Name
 cmd.description.delete:Löscht den Warp namens §7<Name>
 cmd.description.give:Gibt §7<Name>§f an §7<Spieler>§f ab
 cmd.description.help:Zeigt das Hilfemenü an.
-cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank.
+cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt.
 cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
 cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Ersteller] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
 cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf (alter Stil)

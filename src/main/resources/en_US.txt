@@ -6,7 +6,7 @@ cmd.description.createPrivate:Create a new private warp called §7<name>§f at y
 cmd.description.delete:Deletes the warp §7<name>
 cmd.description.give:Give your warp §7<name>§f to §7<player>
 cmd.description.help:Displays the help menu
-cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current database
+cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used.
 cmd.description.invite:Invite §7<player|group>§f to §7<name>
 cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
 cmd.description.listAll:List the warps you can visit on one page (old style)

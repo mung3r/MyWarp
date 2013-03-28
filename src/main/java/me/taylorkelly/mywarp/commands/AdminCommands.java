@@ -30,7 +30,7 @@ public class AdminCommands {
         this.plugin = plugin;
     }
 
-    @Command(aliases = { "import" }, usage = "<sqlite/mysql>", desc = "cmd.description.import", min = 1, max = 1, permissions = { "mywarp.admin.import" })
+    @Command(aliases = { "import" }, usage = "<sqlite/mysql>", desc = "cmd.description.import", min = 1, max = 1, flags = "f", permissions = { "mywarp.admin.import" })
     public void importWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         boolean importMySQL;
@@ -56,8 +56,14 @@ public class AdminCommands {
                 Warp importedWarp = importedWarpEntry.getValue();
 
                 if (plugin.getWarpList().warpExists(name)) {
-                    sender.sendMessage(LanguageManager.getEffectiveString(
-                            "error.import.exists", "%warp%", name));
+                    if (!args.hasFlag('f')) {
+                        sender.sendMessage(LanguageManager.getEffectiveString(
+                                "error.import.exists", "%warp%", name));
+                        continue;
+                    }
+                    //remove the old warp before adding the new one
+                    plugin.getWarpList().deleteWarp(
+                            plugin.getWarpList().getWarp(name));
                 } else {
                     plugin.getWarpList().addWarp(name, importedWarp);
                     counter++;
