@@ -77,7 +77,7 @@ public class BasicCommands {
                 "%warp%", warp.name));
     }
 
-    @Command(aliases = { "alist" }, usage = "", desc = "cmd.description.listAll", min = 0, max = 0, permissions = { "mywarp.warp.basic.list" })
+    @Command(aliases = { "alist" }, usage = "", desc = "cmd.description.listAll", max = 0, permissions = { "mywarp.warp.basic.list" })
     public void listAllWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
@@ -92,7 +92,7 @@ public class BasicCommands {
         sender.sendMessage(StringUtils.join(results, ", "));
     }
 
-    @Command(aliases = { "list" }, usage = "[-c creator] [-w world]", desc = "cmd.description.list", min = 0, max = 1, flags = "c:pw:", permissions = { "mywarp.warp.basic.list" })
+    @Command(aliases = { "list" }, usage = "[-c creator] [-w world]", desc = "cmd.description.list", max = 1, flags = "c:pw:", permissions = { "mywarp.warp.basic.list" })
     public void listWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
@@ -209,7 +209,7 @@ public class BasicCommands {
                 "warp.welcome.enter", "%warp%", warp.name));
     }
 
-    @Command(aliases = { "help" }, usage = "#", desc = "cmd.description.help", min = 0, max = 1, permissions = { "mywarp.warp.basic.help" })
+    @Command(aliases = { "help" }, usage = "#", desc = "cmd.description.help", max = 1, permissions = { "mywarp.warp.basic.help" })
     public void showHelp(final CommandContext args, CommandSender sender)
             throws CommandException {
         PaginatedResult<Command> cmdList = new PaginatedResult<Command>(
@@ -240,6 +240,17 @@ public class BasicCommands {
                     "error.cmd.invalidNumber", "%command%",
                     StringUtils.join(args.getCommand(), ' ')));
         }
+    }
+
+    @Command(aliases = { "update" }, usage = "<name>", desc = "cmd.description.update", min = 1, permissions = { "help.description.update" })
+    public void updateWarp(CommandContext args, Player sender)
+            throws CommandException {
+        Warp warp = CommandUtils.getWarpForModification(sender,
+                args.getJoinedStrings(0));
+
+        plugin.getWarpList().updateLocation(warp, sender);
+        sender.sendMessage(LanguageManager.getEffectiveString("warp.update",
+                "%warp%", warp.name));
     }
 
     private void sendWarpMatches(TreeSet<Warp> warps, CommandSender sender) {

@@ -76,7 +76,7 @@ public class AdminCommands {
         }
     }
 
-    @Command(aliases = { "reload" }, usage = "", desc = "cmd.description.reload", min = 0, max = 0, permissions = { "mywarp.admin.reload" })
+    @Command(aliases = { "reload" }, usage = "", desc = "cmd.description.reload", max = 0, permissions = { "mywarp.admin.reload" })
     public void reload(CommandContext args, CommandSender sender)
             throws CommandException {
         plugin.reloadConfig();
