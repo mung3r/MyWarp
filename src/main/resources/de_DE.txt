@@ -25,11 +25,12 @@ cmd.usage.name:Name
 cmd.usage.player:Spieler
 cmd.usage.world:Welt
 dynmap.createdBy:Erstellt von %creator%
-error.cmd.invalidSender:Could not execute command: invalid sender.
+error.cmd.invalidSender:Das Kommando konnte nicht ausgeführt werden: ungültiger Sender.
 error.cmd.toFewArgs:Zu wenige Argumente.
 error.cmd.toManyArgs:Zu viele Argumente.
 error.cmd.unknown:Während dem Ausführen des Befehls trat ein fehler auf.
 error.cmd.unknownFlag:Unbekannte Flag:
+error.cmd.invalidNumber:Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.
 error.create.warpExists:Ein Warp namens '%warp%' existiert bereits.
 error.give.isOwner:Dieser Warp gehört bereits %player%.
 error.import.exists:Warp '%warp%' existiert bereits. Überspringe ihn...

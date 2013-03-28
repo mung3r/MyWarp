@@ -1,6 +1,7 @@
 package me.taylorkelly.mywarp.utils.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 public class CommandContext {
-    protected final String command;
+    protected final String command[];
     protected final List<String> parsedArgs;
     protected final List<Integer> originalArgIndices;
     protected final String[] originalArgs;
@@ -39,8 +40,8 @@ public class CommandContext {
      *            A set containing all value flags. Pass null to disable value
      *            flag parsing.
      * @param level
-     *            An Integer representing where on what command level we are working
-     *            - 0 for root, 1 for sub-commands.
+     *            An Integer representing where on what command level we are
+     *            working - 0 for root, 1 for sub-commands.
      * @throws CommandException
      *             This is thrown if flag fails for some reason.
      */
@@ -52,12 +53,12 @@ public class CommandContext {
 
         originalArgs = args;
         // make sure root- and sub-commands are parsed
-        command = StringUtils.join(args, ' ', 0, level);
+        command = Arrays.copyOfRange(args, 0, ++level);
 
         // Eliminate empty args and combine multiword args first
         List<Integer> argIndexList = new ArrayList<Integer>(args.length);
         List<String> argList = new ArrayList<String>(args.length);
-        for (int i = ++level; i < args.length; ++i) {
+        for (int i = level; i < args.length; ++i) {
             String arg = args[i];
             if (arg.length() == 0) {
                 continue;
@@ -153,12 +154,12 @@ public class CommandContext {
         }
     }
 
-    public String getCommand() {
+    public String[] getCommand() {
         return command;
     }
 
     public boolean matches(String command) {
-        return this.command.equalsIgnoreCase(command);
+        return StringUtils.join(this.command, ' ').equalsIgnoreCase(command);
     }
 
     public String getString(int index) {

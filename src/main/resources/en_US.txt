@@ -30,6 +30,7 @@ error.cmd.toFewArgs:Too few arguments.
 error.cmd.toManyArgs:Too many arguments.
 error.cmd.unknown:An error has occurred while performing this command.
 error.cmd.unknownFlag:Unknown flag:
+error.cmd.invalidNumber:You need to enter a valid number. Check §f/%command% ?§c for more informations.
 error.create.warpExists:Warp called '§f%warp%§r' already exists.
 error.give.isOwner:%player% is already the owner.
 error.import.exists:Warp '%warp%' already exists. Skipping...

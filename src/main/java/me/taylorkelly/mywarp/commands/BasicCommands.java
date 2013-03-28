@@ -101,7 +101,7 @@ public class BasicCommands {
                 args.hasFlag('p') ? new PopularityWarpComperator() : null);
 
         PaginatedResult<Warp> cmdList = new PaginatedResult<Warp>(
-                LanguageManager.getColorlessString("lister.warp.head" + ", ")) {
+                LanguageManager.getColorlessString("lister.warp.head") + ", ") {
 
             @Override
             public String format(Warp warp, CommandSender sender) {
@@ -150,7 +150,13 @@ public class BasicCommands {
             }
         };
 
-        cmdList.display(sender, results, args.getInteger(0, 1));
+        try {
+            cmdList.display(sender, results, args.getInteger(0, 1));
+        } catch (NumberFormatException e) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.cmd.invalidNumber", "%command%",
+                    StringUtils.join(args.getCommand(), ' ')));
+        }
     }
 
     @Command(aliases = { "points" }, usage = "<name>", desc = "cmd.description.point", min = 1, permissions = { "mywarp.warp.basic.compass" })
@@ -214,7 +220,8 @@ public class BasicCommands {
                 // /root sub|sub [flags] <args>
                 StringBuilder ret = new StringBuilder();
                 ret.append(ChatColor.GOLD);
-                ret.append(args.getCommand());
+                ret.append("/");
+                ret.append(args.getCommand()[0]);
                 ret.append(" ");
                 ret.append(StringUtils.join(cmd.aliases(), '|'));
                 ret.append(" ");
@@ -224,9 +231,15 @@ public class BasicCommands {
             }
         };
 
-        cmdList.display(sender,
-                plugin.commandManager.getUsableCommands(sender, "warp"),
-                args.getInteger(0, 1));
+        try {
+            cmdList.display(sender,
+                    plugin.commandManager.getUsableCommands(sender, "warp"),
+                    args.getInteger(0, 1));
+        } catch (NumberFormatException e) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "error.cmd.invalidNumber", "%command%",
+                    StringUtils.join(args.getCommand(), ' ')));
+        }
     }
 
     private void sendWarpMatches(TreeSet<Warp> warps, CommandSender sender) {
