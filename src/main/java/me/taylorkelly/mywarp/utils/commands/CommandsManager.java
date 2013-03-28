@@ -2,13 +2,13 @@ package me.taylorkelly.mywarp.utils.commands;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
@@ -68,7 +68,8 @@ public class CommandsManager {
 
         Class<?>[] params = method.getParameterTypes();
 
-        if (params[1] != CommandSender.class &&  !params[1].isAssignableFrom(sender.getClass())) {
+        if (params[1] != CommandSender.class
+                && !params[1].isAssignableFrom(sender.getClass())) {
             throw new CommandException(
                     LanguageManager.getString("error.cmd.invalidSender"));
         }
@@ -157,16 +158,16 @@ public class CommandsManager {
         // test if the command has too many arguments
         if (cmd.max() != -1 && context.argsLength() > cmd.max()) {
             throw new CommandUsageException(
-                    LanguageManager.getString("error.cmd.toManyArgs"), getUsage(
-                            fullArgs, level, cmd));
+                    LanguageManager.getString("error.cmd.toManyArgs"),
+                    getUsage(fullArgs, level, cmd));
         }
 
         // loop through all flags and catch unsupported ones
         for (char flag : context.getFlags()) {
             if (!newFlags.contains(flag)) {
                 throw new CommandUsageException(
-                        LanguageManager.getString("error.cmd.unknownFlag") + " "
-                                + flag, getUsage(fullArgs, level, cmd));
+                        LanguageManager.getString("error.cmd.unknownFlag")
+                                + " " + flag, getUsage(fullArgs, level, cmd));
             }
         }
         Object instance = instances.get(method);
@@ -218,16 +219,17 @@ public class CommandsManager {
     public String parseCmdUsage(Command cmd) {
         return StringUtils.replace(StringUtils.replace(StringUtils.replace(
                 StringUtils.replace(StringUtils.replace(cmd.usage(), "player",
-                        LanguageManager.getString("cmd.usage.player")),
-                        "name", LanguageManager.getString("cmd.usage.name")),
-                "group", LanguageManager.getString("cmd.usage.group")),
-                "world", LanguageManager.getString("cmd.usage.world")),
-                "creator", LanguageManager.getString("cmd.usage.creator"));
+                        LanguageManager.getString("cmd.usage.player")), "name",
+                        LanguageManager.getString("cmd.usage.name")), "group",
+                LanguageManager.getString("cmd.usage.group")), "world",
+                LanguageManager.getString("cmd.usage.world")), "creator",
+                LanguageManager.getString("cmd.usage.creator"));
     }
 
     /**
-     * Returns a List that contains all commands usable by the sender determined
-     * by the corresponding permission.
+     * Returns a sorted set containing all commands usable (meaning he has the
+     * permission to use this command). The set will be sorted by the first
+     * alias of the command as this is the main alias.
      * 
      * @param sender
      *            the sender
@@ -235,9 +237,14 @@ public class CommandsManager {
      *            the root-level identifier of the commands
      * @return a list of usable commands
      */
-    public List<Command> getUsableCommands(CommandSender sender,
+    public Set<Command> getUsableCommands(CommandSender sender,
             String rootIdentifier) {
-        ArrayList<Command> ret = new ArrayList<Command>();
+        TreeSet<Command> ret = new TreeSet<Command>(new Comparator<Command>() {
+            @Override
+            public int compare(Command cmd1, Command cmd2) {
+                return cmd1.aliases()[0].compareTo(cmd2.aliases()[0]);
+            }
+        });
         Method method = commands.get(null).get(rootIdentifier);
 
         for (Entry<Method, Map<String, Method>> entry : commands.entrySet()) {
