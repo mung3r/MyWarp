@@ -1,6 +1,5 @@
 package me.taylorkelly.mywarp.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -16,14 +15,6 @@ public class CommandUtils {
 
     public CommandUtils(MyWarp plugin) {
         CommandUtils.plugin = plugin;
-    }
-
-    public static String toWarpName(String[] args) {
-        return toWarpName(args, 0);
-    }
-
-    public static String toWarpName(String[] args, int index) {
-        return StringUtils.join(args, ' ', index, args.length);
     }
 
     public static Warp getWarp(CommandSender sender, String query)
