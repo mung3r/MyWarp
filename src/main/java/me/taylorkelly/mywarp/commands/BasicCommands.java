@@ -3,6 +3,7 @@ package me.taylorkelly.mywarp.commands;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -77,19 +78,35 @@ public class BasicCommands {
                 "%warp%", warp.name));
     }
 
-    @Command(aliases = { "alist" }, usage = "", desc = "cmd.description.listAll", max = 0, permissions = { "mywarp.warp.basic.list" })
+    @Command(aliases = { "alist" }, usage = "[-c creator] [-w world]", desc = "cmd.description.listAll", max = 0, flags = "c:pw:", permissions = { "mywarp.warp.basic.list" })
     public void listAllWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = plugin.getWarpList().warpsInvitedTo(player,
-                null, null, null);
+                args.getFlag('c'), args.getFlag('w'),
+                args.hasFlag('p') ? new PopularityWarpComparator() : null);
 
         if (results.isEmpty()) {
             throw new CommandException(
                     LanguageManager.getString("lister.noResults"));
         }
         sender.sendMessage(LanguageManager.getString("listAll.list"));
-        sender.sendMessage(StringUtils.join(results, ", "));
+        
+        StrBuilder ret = new StrBuilder();
+        for (Warp warp : results) {
+            ret.appendSeparator(", ");
+            if (sender instanceof Player
+                    && warp.creator.equals(sender.getName())) {
+                ret.append(ChatColor.AQUA);
+            } else if (warp.publicAll) {
+                ret.append(ChatColor.GREEN);
+            } else {
+                ret.append(ChatColor.RED);
+            }
+            ret.append(warp.name);
+            ret.append(ChatColor.RESET);
+        }
+        sender.sendMessage(ret.toString());
     }
 
     @Command(aliases = { "list" }, usage = "[-c creator] [-w world]", desc = "cmd.description.list", max = 1, flags = "c:pw:", permissions = { "mywarp.warp.basic.list" })

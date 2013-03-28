@@ -9,7 +9,7 @@ cmd.description.help:Displays the help menu
 cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used.
 cmd.description.invite:Invite §7<player|group>§f to §7<name>
 cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
-cmd.description.listAll:List the warps you can visit on one page (old style)
+cmd.description.listAll:List the warps you can visit on one page. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
 cmd.description.point:Point your compass to §7<name>
 cmd.description.private:Make §7<name>§f a private warp
 cmd.description.public:Make §7<name>§f a public warp
@@ -25,12 +25,12 @@ cmd.usage.name:name
 cmd.usage.player:player
 cmd.usage.world:world
 dynmap.createdBy:Created by %creator%
+error.cmd.invalidNumber:You need to enter a valid number. Check §f/%command% ?§c for more informations.
 error.cmd.invalidSender:Could not execute command: invalid sender.
 error.cmd.toFewArgs:Too few arguments.
 error.cmd.toManyArgs:Too many arguments.
 error.cmd.unknown:An error has occurred while performing this command.
 error.cmd.unknownFlag:Unknown flag:
-error.cmd.invalidNumber:You need to enter a valid number. Check §f/%command% ?§c for more informations.
 error.create.warpExists:Warp called '§f%warp%§r' already exists.
 error.give.isOwner:%player% is already the owner.
 error.import.exists:Warp '%warp%' already exists. Skipping...
@@ -58,7 +58,7 @@ limit.public.reached.player:§c%player% has reached his max # of public warps §
 limit.public.reached:§cYou have reached your max # of public warps §e(%maxPublic%)%n§fDelete some of your warps to create more.
 limit.total.reached.player:§c%player% has reached his max # of warps §e(%maxTotal%)%n§fTell him to delete some of his warps to receive this one.
 limit.total.reached:§cYou have reached your max # of warps §e(%maxTotal%)%n§fDelete some of your warps to create more.
-listAll.list:§bYou can warp to:
+listAll.list:§6You can warp to:
 lister.help.head:Help
 lister.noResults:No results match!
 lister.page:Page

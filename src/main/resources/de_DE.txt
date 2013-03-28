@@ -9,7 +9,7 @@ cmd.description.help:Zeigt das Hilfemenü an.
 cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt.
 cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
 cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Ersteller] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
-cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf (alter Stil)
+cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf. Mit [-c Ersteller] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
 cmd.description.point:Richtet den Kompass auf §7<Name>§f aus
 cmd.description.private:Wandelt §7<name>§f in einen privaten Warp um
 cmd.description.public:Wandelt §7<name>§f in einen öffentlichen Warp um
@@ -25,12 +25,12 @@ cmd.usage.name:Name
 cmd.usage.player:Spieler
 cmd.usage.world:Welt
 dynmap.createdBy:Erstellt von %creator%
+error.cmd.invalidNumber:Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.
 error.cmd.invalidSender:Das Kommando konnte nicht ausgeführt werden: ungültiger Sender.
 error.cmd.toFewArgs:Zu wenige Argumente.
 error.cmd.toManyArgs:Zu viele Argumente.
 error.cmd.unknown:Während dem Ausführen des Befehls trat ein fehler auf.
 error.cmd.unknownFlag:Unbekannte Flag:
-error.cmd.invalidNumber:Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.
 error.create.warpExists:Ein Warp namens '%warp%' existiert bereits.
 error.give.isOwner:Dieser Warp gehört bereits %player%.
 error.import.exists:Warp '%warp%' existiert bereits. Überspringe ihn...
@@ -58,6 +58,7 @@ limit.public.reached.player:§c%player% hat sein Maximum an öffentlichen Warps 
 limit.public.reached:§cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)%n§fLösche einige deiner Warps, um neue zu erstellen.
 limit.total.reached.player:§c%player% hat sein Maximum an Warps erreicht §e(%maxTotal%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
 limit.total.reached:§cDu hast dein Maximum an Warps erreicht §e(%maxTotal%)%n§fLösche einige deiner Warps, um neue zu erstellen.
+listAll.list:§6Du kannst folgende Warps benutzen:
 lister.help.head:Hilfe
 lister.noResults:Keine zutreffenden Resultate!
 lister.page:Seite
@@ -65,7 +66,6 @@ lister.unknownPage:Diese Seite existiert nicht, es gibt insgesammt nur %pages% S
 lister.warp.by:von
 lister.warp.head:Warps
 lister.warp.you:dir
-listAll.list:§bDu kannst folgende Warps benutzen:
 reload.config:Die Konfiguration wurde erfolgreich neu geladen!
 safety.found:§cDer Warp '%warp% ist nicht sicher. Du wurdest zum sichersten Ort in seiner Nähe teleportiert.
 safety.notFound:§cDer Warp '%warp% ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden.
