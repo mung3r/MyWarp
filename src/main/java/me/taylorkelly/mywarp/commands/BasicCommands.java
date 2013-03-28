@@ -14,7 +14,7 @@ import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
 import me.taylorkelly.mywarp.utils.PaginatedResult;
-import me.taylorkelly.mywarp.utils.PopularityWarpComperator;
+import me.taylorkelly.mywarp.utils.PopularityWarpComparator;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 import me.taylorkelly.mywarp.utils.commands.Command;
@@ -98,7 +98,7 @@ public class BasicCommands {
         Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = plugin.getWarpList().warpsInvitedTo(player,
                 args.getFlag('c'), args.getFlag('w'),
-                args.hasFlag('p') ? new PopularityWarpComperator() : null);
+                args.hasFlag('p') ? new PopularityWarpComparator() : null);
 
         PaginatedResult<Warp> cmdList = new PaginatedResult<Warp>(
                 LanguageManager.getColorlessString("lister.warp.head") + ", ") {
@@ -176,7 +176,7 @@ public class BasicCommands {
         MatchList matches = plugin.getWarpList().getMatches(
                 args.getJoinedStrings(0),
                 sender instanceof Player ? (Player) sender : null,
-                args.hasFlag('p') ? new PopularityWarpComperator() : null);
+                args.hasFlag('p') ? new PopularityWarpComparator() : null);
 
         if (matches.exactMatches.size() == 0 && matches.matches.size() == 0) {
             sender.sendMessage(LanguageManager.getEffectiveString(
