@@ -53,8 +53,12 @@ public class SafeTeleport {
 
     /**
      * Checks if the given material is solid AND has a material specific height
-     * smaller than 1 (full block) (e.g. steps or stairs will return true,
-     * flowers or saplings will return false).
+     * smaller than 1 (full block). A player might stand 'inside' such a block
+     * without being stuck. 
+     * 
+     * It is important to differ between solid and non
+     * solid: a solid block blocks a player's movement, a non solid allows
+     * players to move freely through it.
      * 
      * Must be updated for new Minecraft versions if new matching blocks were
      * introduced!
@@ -65,24 +69,30 @@ public class SafeTeleport {
      */
     private static boolean isNotFullHeight(Material type) {
         switch (type) {
-        case STEP:
-        case WOOD_STEP:
-        case WOOD_STAIRS:
-        case COBBLESTONE_STAIRS:
-        case BRICK_STAIRS:
-        case SMOOTH_STAIRS:
-        case NETHER_BRICK_STAIRS:
-        case SANDSTONE_STAIRS:
-        case SPRUCE_WOOD_STAIRS:
-        case BIRCH_WOOD_STAIRS:
-        case JUNGLE_WOOD_STAIRS:
-        case BED_BLOCK:
-        case SKULL:
-        case CHEST:
-        case CAKE_BLOCK:
-        case TRAP_DOOR:
-        case ENCHANTMENT_TABLE:
-        case BREWING_STAND:
+        case BED_BLOCK: // 26
+        case STEP: // 44
+        case WOOD_STAIRS: // 53
+        case CHEST: // 54
+        case COBBLESTONE_STAIRS: // 67
+        case CAKE_BLOCK: // 92
+        case TRAP_DOOR: // 96
+        case BRICK_STAIRS: // 108
+        case SMOOTH_STAIRS: // 109
+        case NETHER_BRICK_STAIRS: // 114
+        case ENCHANTMENT_TABLE: // 116
+        case BREWING_STAND: // 117
+        case CAULDRON: // 118
+        case WOOD_STEP: // 126
+        case SANDSTONE_STAIRS: // 128
+        case ENDER_CHEST: // 130
+        case SPRUCE_WOOD_STAIRS: // 134
+        case BIRCH_WOOD_STAIRS: // 135
+        case JUNGLE_WOOD_STAIRS: // 136
+        case SKULL: // 144
+        case TRAPPED_CHEST: // 146
+        case DAYLIGHT_DETECTOR: // 151
+        case HOPPER: // 154
+        case QUARTZ_STAIRS: // 156
             return true;
         default:
             return false;
