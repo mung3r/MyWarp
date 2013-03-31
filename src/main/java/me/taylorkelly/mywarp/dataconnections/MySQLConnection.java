@@ -2,29 +2,19 @@ package me.taylorkelly.mywarp.dataconnections;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+
+import org.apache.tomcat.jdbc.pool.DataSource;
+
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class MySQLConnection implements DataConnection {
 
-    /**
-     * DSN.
-     */
-    private final String dsn;
-    /**
-     * Username.
-     */
-    private final String user;
-    /**
-     * Password.
-     */
-    private final String pass;
     /**
      * Table.
      */
@@ -34,14 +24,11 @@ public class MySQLConnection implements DataConnection {
      */
     private final String WARP_TABLE;
     /**
-     * Database connection.
+     * Database connection pool
      */
-    private Connection conn;
+    private DataSource connectionPool;
 
     public MySQLConnection(String dsn, String user, String pass, String table) {
-        this.dsn = dsn;
-        this.user = user;
-        this.pass = pass;
         this.table = table;
 
         WARP_TABLE = "CREATE TABLE `" + table + "` ("
@@ -59,33 +46,35 @@ public class MySQLConnection implements DataConnection {
                 + "`groupPermissions` text NOT NULL,"
                 + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
                 + "`visits` int DEFAULT '0'" + ");";
-    }
 
-    private Connection getConnection() throws SQLException {
-        if (conn == null || conn.isClosed()) {
-            conn = DriverManager.getConnection(dsn, user, pass);
-        }
-        return conn;
+        // setup the connection pool
+        connectionPool = new DataSource();
+        connectionPool.setDriverClassName("com.mysql.jdbc.Driver");
+        connectionPool.setUrl(dsn);
+        connectionPool.setUsername(user);
+        connectionPool.setPassword(pass);
+
+        // tune the connection pool's settings
+        connectionPool.setInitialSize(2);
+        connectionPool.setMaxActive(20);
+        connectionPool.setMaxIdle(20);
+        connectionPool.setRemoveAbandoned(true);
+        connectionPool.setRemoveAbandonedTimeout(60);
     }
 
     @Override
     public void close() {
-        try {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-            }
-        } catch (SQLException ex) {
-            WarpLogger.severe("Unable to close SQL connection: " + ex);
-        }
+        connectionPool.close();
     }
 
     @Override
     public void checkDB(boolean createIfNotExist)
             throws DataConnectionException {
+        Connection conn = null;
         Statement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
             DatabaseMetaData dbm = conn.getMetaData();
             stmnt = conn.createStatement();
 
@@ -118,10 +107,11 @@ public class MySQLConnection implements DataConnection {
     @Override
     public void updateDB(boolean updateIfNecessary)
             throws DataConnectionException {
+        Connection conn = null;
         Statement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
             DatabaseMetaData dbm = conn.getMetaData();
             stmnt = conn.createStatement();
 
@@ -178,11 +168,12 @@ public class MySQLConnection implements DataConnection {
     @Override
     public HashMap<String, Warp> getMap() {
         HashMap<String, Warp> ret = new HashMap<String, Warp>();
+        Connection conn = null;
         Statement stmnt = null;
         ResultSet rsWarps = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
             stmnt = conn.createStatement();
 
             rsWarps = stmnt.executeQuery("SELECT * FROM " + table);
@@ -228,10 +219,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void addWarp(Warp warp) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn
                     .prepareStatement("INSERT INTO "
@@ -271,10 +263,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void deleteWarp(Warp warp) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn.prepareStatement("DELETE FROM " + table
                     + " WHERE id = ?");
@@ -298,10 +291,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void publicizeWarp(Warp warp, boolean publicAll) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET publicAll = ? WHERE id = ?");
@@ -327,10 +321,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void updateCreator(Warp warp) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET creator = ? WHERE id = ?");
@@ -356,10 +351,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void updateLocation(Warp warp) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn
                     .prepareStatement("UPDATE "
@@ -391,10 +387,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void updatePermissions(Warp warp) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET permissions = ? WHERE id = ?");
@@ -421,10 +418,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void updateGroupPermissions(Warp warp) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET groupPermissions = ? WHERE id = ?");
@@ -451,10 +449,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void updateVisits(Warp warp) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET visits = ? WHERE id = ?");
@@ -479,10 +478,11 @@ public class MySQLConnection implements DataConnection {
 
     @Override
     public void updateWelcomeMessage(Warp warp) {
+        Connection conn = null;
         PreparedStatement stmnt = null;
 
         try {
-            conn = getConnection();
+            conn = connectionPool.getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET welcomeMessage = ? WHERE id = ?");
