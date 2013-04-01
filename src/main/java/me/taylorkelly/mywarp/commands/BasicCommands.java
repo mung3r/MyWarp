@@ -50,7 +50,7 @@ public class BasicCommands {
                 "warp.create.private", "%warp%", name));
     }
 
-    @Command(aliases = { "create", "set" }, usage = "<name>", desc = "cmd.description.create", min = 1, permissions = { "mywarp.warp.basic.create" })
+    @Command(aliases = { "create", "set" }, usage = "<name>", desc = "cmd.description.create", min = 1, permissions = { "mywarp.warp.basic.createpublic" })
     public void createPublicWarp(CommandContext args, Player sender)
             throws CommandException {
         String name = args.getJoinedStrings(0);
