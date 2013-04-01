@@ -104,7 +104,7 @@ public class WarpPermissions {
     public Time getCooldown(Player player) {
         for (Time cooldown : WarpSettings.warpCooldowns) {
             if (hasPermission(player, "mywarp.cooldown."
-                    + cooldown.name)) {
+                    + cooldown.getName())) {
                 return cooldown;
             }
         }
@@ -114,7 +114,7 @@ public class WarpPermissions {
     public Time getWarmup(Player player) {
         for (Time warmup : WarpSettings.warpWarmups) {
             if (hasPermission(player, "mywarp.warmup."
-                    + warmup.name)) {
+                    + warmup.getName())) {
                 return warmup;
             }
         }
@@ -124,31 +124,31 @@ public class WarpPermissions {
     public int maxPrivateWarps(Player player) {
         for (WarpLimit warpLimit : WarpSettings.warpLimits) {
             if (hasPermission(player, "mywarp.limit."
-                    + warpLimit.name)) {
-                return warpLimit.maxPrivate;
+                    + warpLimit.getName())) {
+                return warpLimit.getMaxPrivate();
             }
         }
-        return WarpSettings.defaultLimit.maxPrivate;
+        return WarpSettings.defaultLimit.getMaxPrivate();
     }
 
     public int maxPublicWarps(Player player) {
         for (WarpLimit warpLimit : WarpSettings.warpLimits) {
             if (hasPermission(player, "mywarp.limit."
-                    + warpLimit.name)) {
-                return warpLimit.maxPublic;
+                    + warpLimit.getName())) {
+                return warpLimit.getMaxPublic();
             }
         }
-        return WarpSettings.defaultLimit.maxPublic;
+        return WarpSettings.defaultLimit.getMaxPublic();
     }
 
     public int maxTotalWarps(Player player) {
         for (WarpLimit warpLimit : WarpSettings.warpLimits) {
             if (hasPermission(player, "mywarp.limit."
-                    + warpLimit.name)) {
-                return warpLimit.maxTotal;
+                    + warpLimit.getName())) {
+                return warpLimit.getMaxTotal();
             }
         }
-        return WarpSettings.defaultLimit.maxTotal;
+        return WarpSettings.defaultLimit.getMaxTotal();
     }
 
     public boolean useSignWarp(Player player) {

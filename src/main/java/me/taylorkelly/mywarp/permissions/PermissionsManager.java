@@ -62,27 +62,27 @@ public class PermissionsManager implements PermissionsHandler {
         // mywarp.limit permissions
         for (WarpLimit warpLimit : WarpSettings.warpLimits) {
             pm.addPermission(new org.bukkit.permissions.Permission(
-                    "mywarp.limit." + warpLimit.name,
+                    "mywarp.limit." + warpLimit.getName(),
                     "Gives acess to the number of warps defined for '"
-                            + warpLimit.name + "' in the config",
+                            + warpLimit.getName() + "' in the config",
                     PermissionDefault.FALSE));
         }
 
         // mywarp.cooldown permissions
         for (Time warpCooldown : WarpSettings.warpCooldowns) {
             pm.addPermission(new org.bukkit.permissions.Permission(
-                    "mywarp.cooldown." + warpCooldown.name,
+                    "mywarp.cooldown." + warpCooldown.getName(),
                     "User is affected by the cooldowns defined for '"
-                            + warpCooldown.name + "' in the config",
+                            + warpCooldown.getName() + "' in the config",
                     PermissionDefault.FALSE));
         }
 
         // mywarp.warmup permissions
         for (Time warpWarmup : WarpSettings.warpWarmups) {
             pm.addPermission(new org.bukkit.permissions.Permission(
-                    "mywarp.warmup." + warpWarmup.name,
+                    "mywarp.warmup." + warpWarmup.getName(),
                     "User is affected by the warmups defined for '"
-                            + warpWarmup.name + "' in the config",
+                            + warpWarmup.getName() + "' in the config",
                     PermissionDefault.FALSE));
         }
 

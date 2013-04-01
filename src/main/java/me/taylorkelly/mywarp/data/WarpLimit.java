@@ -1,21 +1,29 @@
 package me.taylorkelly.mywarp.data;
 
-public class WarpLimit implements Comparable<WarpLimit> {
+import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
 
-    public String name;
-    public int maxTotal;
-    public int maxPublic;
-    public int maxPrivate;
+public class WarpLimit extends ValuePermissionContainer {
+
+    private final int maxTotal;
+    private final int maxPublic;
+    private final int maxPrivate;
 
     public WarpLimit(String name, int maxTotal, int maxPublic, int maxPrivate) {
-        this.name = name;
+        super(name);
         this.maxTotal = maxTotal;
         this.maxPublic = maxPublic;
         this.maxPrivate = maxPrivate;
     }
 
-    @Override
-    public int compareTo(WarpLimit l) {
-        return name.compareTo(l.name);
+    public int getMaxTotal() {
+        return maxTotal;
+    }
+
+    public int getMaxPublic() {
+        return maxPublic;
+    }
+
+    public int getMaxPrivate() {
+        return maxPrivate;
     }
 }

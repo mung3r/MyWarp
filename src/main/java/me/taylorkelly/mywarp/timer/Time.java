@@ -1,9 +1,10 @@
 package me.taylorkelly.mywarp.timer;
 
-public class Time implements Comparable<Time> {
+import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
+
+public class Time extends ValuePermissionContainer {
 
     final private double time;
-    final public String name;
 
     /**
      * Instantiates a new time.
@@ -12,18 +13,8 @@ public class Time implements Comparable<Time> {
      *            the time
      */
     public Time(String name, Double time) {
-        this.name = name;
+        super(name);
         this.time = time;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @Override
-    public int compareTo(Time t) {
-        return name.compareTo(t.name);
     }
 
     /**
