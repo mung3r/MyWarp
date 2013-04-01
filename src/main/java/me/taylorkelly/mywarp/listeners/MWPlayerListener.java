@@ -3,7 +3,6 @@ package me.taylorkelly.mywarp.listeners;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
-import me.taylorkelly.mywarp.data.SignWarp;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
@@ -36,22 +35,19 @@ public class MWPlayerListener implements Listener {
             Block block = event.getClickedBlock();
 
             if (block.getState() instanceof Sign
-                    && SignWarp.isSignWarp((Sign) block.getState())) {
+                    && MyWarp.signWarp.isSignWarp((Sign) block.getState())) {
 
-                if (!warpPermissions.useSignWarp(event.getPlayer())) {
-                    event.getPlayer().sendMessage(
-                            LanguageManager.getString("sign.noPermission.use"));
-                    return;
-                }
-                SignWarp.warpSign((Sign) block.getState(), this.warpList,
+                MyWarp.signWarp.warpSign((Sign) block.getState(),
                         event.getPlayer());
+                event.setCancelled(true);
 
             } else if (block.getType() == Material.STONE_BUTTON
                     || block.getType() == Material.WOOD_BUTTON
                     || block.getType() == Material.LEVER) {
 
                 Attachable attachable = (Attachable) block.getState().getData();
-                Block behind = block.getRelative(attachable.getAttachedFace(), 2);
+                Block behind = block.getRelative(attachable.getAttachedFace(),
+                        2);
 
                 if (!(behind.getState() instanceof Sign)) {
                     return;
@@ -61,38 +57,28 @@ public class MWPlayerListener implements Listener {
                         .getState().getData();
                 Sign signBut = (Sign) behind.getState();
 
-                if (!(signMat.getFacing() == attachable.getAttachedFace() && SignWarp
+                if (!(signMat.getFacing() == attachable.getAttachedFace() && MyWarp.signWarp
                         .isSignWarp(signBut))) {
                     return;
                 }
 
-                if (!warpPermissions.useSignWarp(event.getPlayer())) {
-                    event.getPlayer().sendMessage(
-                            LanguageManager.getString("sign.noPermission.use"));
-                    return;
-                }
-                SignWarp.warpSign(signBut, this.warpList, event.getPlayer());
+                MyWarp.signWarp.warpSign(signBut, event.getPlayer());
             }
         } else if (event.getAction().equals(Action.PHYSICAL)) {
             if (event.getClickedBlock().getType() == Material.WOOD_PLATE
                     || event.getClickedBlock().getType() == Material.STONE_PLATE) {
-                Block twoBelow = event.getClickedBlock().getRelative(BlockFace.DOWN, 2);
+                Block twoBelow = event.getClickedBlock().getRelative(
+                        BlockFace.DOWN, 2);
 
                 if (!(twoBelow.getState() instanceof Sign)) {
                     return;
                 }
                 Sign signBelow = (Sign) twoBelow.getState();
 
-                if (!(SignWarp.isSignWarp(signBelow))) {
+                if (!(MyWarp.signWarp.isSignWarp(signBelow))) {
                     return;
                 }
-
-                if (!warpPermissions.useSignWarp(event.getPlayer())) {
-                    event.getPlayer().sendMessage(
-                            LanguageManager.getString("sign.noPermission.use"));
-                    return;
-                }
-                SignWarp.warpSign(signBelow, this.warpList, event.getPlayer());
+                MyWarp.signWarp.warpSign(signBelow, event.getPlayer());
             }
         }
     }
@@ -123,7 +109,8 @@ public class MWPlayerListener implements Listener {
         if (PlayerWarmup.isActive(player.getName())
                 && !warpPermissions.disobeyWarmupMoveAbort(player)) {
             PlayerWarmup.endWarmup(player.getName());
-            player.sendMessage(LanguageManager.getString("timer.warmup.canceled.move"));
+            player.sendMessage(LanguageManager
+                    .getString("timer.warmup.canceled.move"));
         }
     }
 }

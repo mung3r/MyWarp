@@ -1,48 +1,84 @@
 package me.taylorkelly.mywarp.data;
 
 import me.taylorkelly.mywarp.LanguageManager;
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.SignChangeEvent;
 
 public class SignWarp {
 
-    public static void warpSign(Sign sign, WarpList list, Player player) {
-        String name = sign.getLine(2);
+    private MyWarp plugin;
 
-        if (!list.warpExists(name)) {
-            player.sendMessage(ChatColor.RED + LanguageManager.getEffectiveString(
-                    "error.noSuchWarp", "%warp%", name));
+    private static final String SIGN_TEXT = "[MyWarp]";
+
+    public SignWarp(MyWarp plugin) {
+        this.plugin = plugin;
+    }
+
+    public void warpSign(Sign sign, Player player) {
+        
+        if (!MyWarp.getWarpPermissions().useSignWarp(player)) {
+            player.sendMessage(
+                    LanguageManager.getString("sign.noPermission.use"));
             return;
         }
-        Warp warp = list.getWarp(name);
+        
+        String name = sign.getLine(2);
+
+        if (!plugin.getWarpList().warpExists(name)) {
+            player.sendMessage(ChatColor.RED
+                    + LanguageManager.getEffectiveString("error.noSuchWarp",
+                            "%warp%", name));
+            return;
+        }
+        Warp warp = plugin.getWarpList().getWarp(name);
 
         if (!warp.playerCanWarp(player)) {
-            player.sendMessage(ChatColor.RED + LanguageManager.getEffectiveString(
-                    "error.noPermission.warpto", "%warp%", name));
+            player.sendMessage(ChatColor.RED
+                    + LanguageManager.getEffectiveString(
+                            "error.noPermission.warpto", "%warp%", name));
             return;
         }
         if (WarpSettings.worldAccess
-                && !list.playerCanAccessWorld(player, warp.world)) {
-            player.sendMessage(ChatColor.RED + LanguageManager.getEffectiveString(
-                    "error.noPermission.world", "%world%", warp.world));
+                && !plugin.getWarpList().playerCanAccessWorld(player, warp.world)) {
+            player.sendMessage(ChatColor.RED
+                    + LanguageManager.getEffectiveString(
+                            "error.noPermission.world", "%world%", warp.world));
             return;
         }
-        list.warpTo(warp, player);
+        plugin.getWarpList().warpTo(warp, player);
     }
 
-    public static void createSignWarp(SignChangeEvent sign) {
-        sign.setLine(1, "[MyWarp]");
+    public boolean createSignWarp(Sign sign, Player player) {
+        if (!MyWarp.getWarpPermissions().createSignWarp(player)) {
+            player.sendMessage(LanguageManager
+                    .getString("sign.noPermission.create"));
+            return false;
+        }
+        String name = sign.getLine(2);
+
+        if (!plugin.getWarpList().warpExists(name)) {
+            player.sendMessage(LanguageManager.getEffectiveString(
+                    "error.noSuchWarp", "%warp%", name));
+            return false;
+        }
+        Warp warp = plugin.getWarpList().getWarp(name);
+
+        if (!warp.playerCanModify(player)
+                && !MyWarp.getWarpPermissions().createSignWarpAll(player)) {
+            player.sendMessage(LanguageManager.getEffectiveString(
+                    "sign.noPermission.create", "%warp%", name));
+            return false;
+        }
+        sign.setLine(1, SIGN_TEXT);
+        player.sendMessage(LanguageManager.getString("sign.created"));
+        return true;
     }
 
-    public static boolean isSignWarp(Sign sign) {
-        return sign.getLine(1).equals("[MyWarp]");
-    }
-
-    public static boolean isSignWarp(SignChangeEvent sign) {
-        return sign.getLine(1).equalsIgnoreCase("[MyWarp]");
+    public boolean isSignWarp(Sign sign) {
+        return sign.getLine(1).equals(SIGN_TEXT);
     }
 }

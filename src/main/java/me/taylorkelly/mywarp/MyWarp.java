@@ -24,6 +24,7 @@ import me.taylorkelly.mywarp.commands.UninviteCommand;
 import me.taylorkelly.mywarp.commands.UpdateCommand;
 import me.taylorkelly.mywarp.commands.WarpToCommand;
 import me.taylorkelly.mywarp.commands.WelcomeCommand;
+import me.taylorkelly.mywarp.data.SignWarp;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
@@ -56,6 +57,7 @@ public class MyWarp extends JavaPlugin {
     private static WarpPermissions warpPermissions;
     public static ConnectionManager connectionManager;
     public static Markers markers;
+    public static SignWarp signWarp;
 
     @Override
     public void onDisable() {
@@ -92,13 +94,15 @@ public class MyWarp extends JavaPlugin {
 
         warpList = new WarpList(getServer());
         warpPermissions = new WarpPermissions(this);
-        blockListener = new MWBlockListener(this);
+        blockListener = new MWBlockListener();
         entityListener = new MWEntityListener();
         playerListener = new MWPlayerListener(this);
 
         pm.registerEvents(blockListener, this);
         pm.registerEvents(entityListener, this);
         pm.registerEvents(playerListener, this);
+        
+        signWarp = new SignWarp(this);
 
         if (WarpSettings.useDynmap) {
             if (!pm.isPluginEnabled("dynmap")) {
