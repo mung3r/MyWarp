@@ -91,7 +91,6 @@ public class SafeTeleport {
         case SKULL: // 144
         case TRAPPED_CHEST: // 146
         case DAYLIGHT_DETECTOR: // 151
-        case HOPPER: // 154
         case QUARTZ_STAIRS: // 156
             return true;
         default:
