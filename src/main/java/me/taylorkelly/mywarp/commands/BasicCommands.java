@@ -38,7 +38,8 @@ public class BasicCommands {
             throws CommandException {
         String name = args.getJoinedStrings(0);
 
-        CommandUtils.checkLimits(sender, false);
+        CommandUtils.checkTotalLimit(sender);
+        CommandUtils.checkPrivateLimit(sender);
 
         if (plugin.getWarpList().warpExists(name)) {
             throw new CommandException(LanguageManager.getEffectiveString(
@@ -55,7 +56,8 @@ public class BasicCommands {
             throws CommandException {
         String name = args.getJoinedStrings(0);
 
-        CommandUtils.checkLimits(sender, true);
+        CommandUtils.checkTotalLimit(sender);
+        CommandUtils.checkPublicLimit(sender);
 
         if (plugin.getWarpList().warpExists(name)) {
             throw new CommandException(LanguageManager.getEffectiveString(

@@ -64,10 +64,8 @@ public class CommandUtils {
         }
         return warp;
     }
-
-    // TODO simplify
-    public static void checkLimits(CommandSender sender, boolean publicAll)
-            throws CommandException {
+    
+    public static void checkTotalLimit(CommandSender sender) throws CommandException {
         if (!WarpSettings.useWarpLimits || !(sender instanceof Player)) {
             return;
         }
@@ -80,14 +78,29 @@ public class CommandUtils {
                     Integer.toString(MyWarp.warpPermissions.maxTotalWarps(
                             player))));
         }
-        if (publicAll) {
-            if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
-                throw new CommandException(LanguageManager.getEffectiveString(
-                        "limit.public.reached", "%maxPublic%", Integer
-                                .toString(MyWarp.warpPermissions
-                                        .maxPublicWarps(player))));
-            }
-        } else if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
+    }
+    
+    public static void checkPublicLimit(CommandSender sender) throws CommandException {
+        if (!WarpSettings.useWarpLimits || !(sender instanceof Player)) {
+            return;
+        }
+        Player player = (Player) sender;
+
+        if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "limit.public.reached", "%maxPublic%", Integer
+                            .toString(MyWarp.warpPermissions
+                                    .maxPublicWarps(player))));
+        }
+    }
+    
+    public static void checkPrivateLimit(CommandSender sender) throws CommandException {
+        if (!WarpSettings.useWarpLimits || !(sender instanceof Player)) {
+            return;
+        }
+        Player player = (Player) sender;
+
+        if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
             throw new CommandException(LanguageManager
                     .getEffectiveString("limit.private.reached.player", "%maxPrivate%",
                     Integer.toString(MyWarp.warpPermissions

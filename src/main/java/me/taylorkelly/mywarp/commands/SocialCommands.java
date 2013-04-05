@@ -136,7 +136,7 @@ public class SocialCommands {
             throw new CommandException(LanguageManager.getEffectiveString(
                     "error.private.isPrivate", "%warp%", warp.name));
         }
-        CommandUtils.checkLimits(sender, false);
+        CommandUtils.checkPrivateLimit(sender);
 
         plugin.getWarpList().privatize(warp);
         sender.sendMessage(LanguageManager.getEffectiveString("warp.private",
@@ -152,7 +152,7 @@ public class SocialCommands {
             throw new CommandException(LanguageManager.getEffectiveString(
                     "error.public.isPublic", "%warp%", warp.name));
         }
-        CommandUtils.checkLimits(sender, true);
+        CommandUtils.checkPublicLimit(sender);
 
         plugin.getWarpList().publicize(warp);
         sender.sendMessage(LanguageManager.getEffectiveString("warp.public",
