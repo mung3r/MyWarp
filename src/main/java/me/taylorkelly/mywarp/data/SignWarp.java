@@ -3,10 +3,10 @@ package me.taylorkelly.mywarp.data;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
-
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.SignChangeEvent;
 
 public class SignWarp {
 
@@ -19,13 +19,12 @@ public class SignWarp {
     }
 
     public void warpSign(Sign sign, Player player) {
-        
         if (!MyWarp.getWarpPermissions().useSignWarp(player)) {
-            player.sendMessage(
-                    LanguageManager.getString("sign.noPermission.use"));
+            player.sendMessage(LanguageManager
+                    .getString("sign.noPermission.use"));
             return;
         }
-        
+
         String name = sign.getLine(2);
 
         if (!plugin.getWarpList().warpExists(name)) {
@@ -43,7 +42,8 @@ public class SignWarp {
             return;
         }
         if (WarpSettings.worldAccess
-                && !plugin.getWarpList().playerCanAccessWorld(player, warp.world)) {
+                && !plugin.getWarpList().playerCanAccessWorld(player,
+                        warp.world)) {
             player.sendMessage(ChatColor.RED
                     + LanguageManager.getEffectiveString(
                             "error.noPermission.world", "%world%", warp.world));
@@ -52,7 +52,7 @@ public class SignWarp {
         plugin.getWarpList().warpTo(warp, player);
     }
 
-    public boolean createSignWarp(Sign sign, Player player) {
+    public boolean createSignWarp(SignChangeEvent sign, Player player) {
         if (!MyWarp.getWarpPermissions().createSignWarp(player)) {
             player.sendMessage(LanguageManager
                     .getString("sign.noPermission.create"));
@@ -79,6 +79,10 @@ public class SignWarp {
     }
 
     public boolean isSignWarp(Sign sign) {
-        return sign.getLine(1).equals(SIGN_TEXT);
+        return isSignWarp(sign.getLines());
+    }
+
+    public boolean isSignWarp(String[] lines) {
+        return lines[1].equalsIgnoreCase(SIGN_TEXT);
     }
 }
