@@ -3,13 +3,12 @@ package me.taylorkelly.mywarp.dataconnections;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-
-import org.apache.tomcat.jdbc.pool.DataSource;
 
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
@@ -25,13 +24,19 @@ public class SQLiteConnection implements DataConnection {
      * Database creation SQL
      */
     private final String WARP_TABLE;
-    /**
-     * Database connection pool
-     */
-    private DataSource connectionPool;
 
-    public SQLiteConnection(String dsn, String table)
-            throws DataConnectionException {
+    /**
+     * DSN.
+     */
+    private final String dsn;
+
+    /**
+     * Database connection.
+     */
+    private Connection conn;
+
+    public SQLiteConnection(String dsn, String table) {
+        this.dsn = dsn;
         this.table = table;
 
         WARP_TABLE = "CREATE TABLE `" + table + "` ("
@@ -49,23 +54,25 @@ public class SQLiteConnection implements DataConnection {
                 + "`groupPermissions` text NOT NULL,"
                 + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
                 + "`visits` int DEFAULT '0'" + ");";
+    }
 
-        // setup the connection pool
-        connectionPool = new DataSource();
-        connectionPool.setDriverClassName("org.sqlite.JDBC");
-        connectionPool.setUrl(dsn);
+    private synchronized Connection getConnection() throws SQLException {
+        if (conn == null || conn.isClosed()) {
+            conn = DriverManager.getConnection(dsn);
+        }
+        return conn;
 
-        // tune the connection pool's settings
-        connectionPool.setInitialSize(2);
-        connectionPool.setMaxActive(20);
-        connectionPool.setMaxIdle(20);
-        connectionPool.setRemoveAbandoned(true);
-        connectionPool.setRemoveAbandonedTimeout(60);
     }
 
     @Override
     public void close() {
-        connectionPool.close();
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+            }
+        } catch (SQLException ex) {
+            WarpLogger.severe("Unable to close SQL connection: " + ex);
+        }
     }
 
     @Override
@@ -80,11 +87,10 @@ public class SQLiteConnection implements DataConnection {
                         "Database 'warps.db' does not exist.");
             }
         }
-        Connection conn = null;
         Statement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
             DatabaseMetaData dbm = conn.getMetaData();
             stmnt = conn.createStatement();
 
@@ -117,11 +123,10 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public void updateDB(boolean updateIfNecessary)
             throws DataConnectionException {
-        Connection conn = null;
         Statement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
             DatabaseMetaData dbm = conn.getMetaData();
             stmnt = conn.createStatement();
 
@@ -169,12 +174,11 @@ public class SQLiteConnection implements DataConnection {
     @Override
     public HashMap<String, Warp> getMap() {
         HashMap<String, Warp> ret = new HashMap<String, Warp>();
-        Connection conn = null;
         Statement stmnt = null;
         ResultSet rsWarps = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
             stmnt = conn.createStatement();
 
             rsWarps = stmnt.executeQuery("SELECT * FROM " + table);
@@ -219,12 +223,11 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void addWarp(Warp warp) {
-        Connection conn = null;
+    public synchronized void addWarp(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn
                     .prepareStatement("INSERT INTO "
@@ -263,11 +266,10 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void deleteWarp(Warp warp) {
-        Connection conn = null;
+    public synchronized void deleteWarp(Warp warp) {
         PreparedStatement stmnt = null;
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn.prepareStatement("DELETE FROM " + table
                     + " WHERE id = ?");
@@ -290,12 +292,11 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void publicizeWarp(Warp warp, boolean publicAll) {
-        Connection conn = null;
+    public synchronized void publicizeWarp(Warp warp, boolean publicAll) {
         PreparedStatement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET publicAll = ? WHERE id = ?");
@@ -320,12 +321,11 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void updateCreator(Warp warp) {
-        Connection conn = null;
+    public synchronized void updateCreator(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET creator = ? WHERE id = ?");
@@ -350,12 +350,11 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void updateLocation(Warp warp) {
-        Connection conn = null;
+    public synchronized void updateLocation(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn
                     .prepareStatement("UPDATE "
@@ -386,12 +385,11 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void updatePermissions(Warp warp) {
-        Connection conn = null;
+    public synchronized void updatePermissions(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET permissions = ? WHERE id = ?");
@@ -417,12 +415,11 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void updateGroupPermissions(Warp warp) {
-        Connection conn = null;
+    public synchronized void updateGroupPermissions(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET groupPermissions = ? WHERE id = ?");
@@ -448,12 +445,11 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void updateVisits(Warp warp) {
-        Connection conn = null;
+    public synchronized void updateVisits(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET visits = ? WHERE id = ?");
@@ -477,12 +473,11 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void updateWelcomeMessage(Warp warp) {
-        Connection conn = null;
+    public synchronized void updateWelcomeMessage(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
-            conn = connectionPool.getConnection();
+            conn = getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET welcomeMessage = ? WHERE id = ?");
