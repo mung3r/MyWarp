@@ -25,6 +25,7 @@ cmd.usage.name:name
 cmd.usage.player:player
 cmd.usage.world:world
 dynmap.createdBy:Created by %creator%
+economy.transaction.complete:§bYou have been charged %amount%$.
 error.cmd.cannotAfford:You cannot afford using this command. You need at least %amount%$.
 error.cmd.flagGiven:Value flag is '%flag%' already given!
 error.cmd.invalidNumber:You need to enter a valid number. Check §f/%command% ?§c for more informations.

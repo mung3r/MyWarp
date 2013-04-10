@@ -89,11 +89,12 @@ public class MyWarp extends JavaPlugin {
         pm.registerEvents(blockListener, this);
         pm.registerEvents(entityListener, this);
         pm.registerEvents(playerListener, this);
-        
+
         try {
             economyLink = new VaultLink(this);
         } catch (ClassNotFoundException e) {
-            WarpLogger.severe("Unable to hook into Vault. Disabling Economy support.");
+            WarpLogger
+                    .severe("Unable to hook into Vault. Disabling Economy support.");
         }
 
         // initialize Dynmap support

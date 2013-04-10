@@ -2,6 +2,7 @@ package me.taylorkelly.mywarp.economy;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -49,7 +50,12 @@ public class VaultLink implements EconomyLink {
         if (!response.transactionSuccess()) {
             WarpLogger.severe("Could not withdraw " + sender.getName() + ", "
                     + response.errorMessage);
-            sender.sendMessage(ChatColor.RED + LanguageManager.getString("error.economy.unknown"));
+            sender.sendMessage(ChatColor.RED
+                    + LanguageManager.getString("error.economy.unknown"));
+        } else if (WarpSettings.informAfterTransaction) {
+            sender.sendMessage(LanguageManager.getEffectiveString(
+                    "economy.transaction.complete", "%amount%",
+                    Double.toString(amount)));
         }
     }
 }

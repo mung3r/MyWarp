@@ -34,6 +34,7 @@ timers:
     user: 30
 economy:
   enabled: false
+  informAfterTransaction: true
   fees:
     default:
       create: 25

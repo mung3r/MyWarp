@@ -25,6 +25,7 @@ cmd.usage.name:Name
 cmd.usage.player:Spieler
 cmd.usage.world:Welt
 dynmap.createdBy:Erstellt von %creator%
+economy.transaction.complete:§bDir wurden %amount%$ berechnet.
 error.cmd.cannotAfford:Du kannst es dir nicht leisten, diesen befehl zu benutzen. Du brauchst mindestens: %amount%$.
 error.cmd.flagGiven:Die Flag '%flag%' existiert bereits!
 error.cmd.invalidNumber:Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.

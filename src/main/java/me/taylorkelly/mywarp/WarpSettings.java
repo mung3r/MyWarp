@@ -56,6 +56,7 @@ public class WarpSettings {
     public static String mySQLtable;
 
     public static boolean useEconomy;
+    public static boolean informAfterTransaction;
     public static ArrayList<WarpFees> warpFees;
     public static WarpFees defaultWarpFees;
 
@@ -232,6 +233,7 @@ public class WarpSettings {
 
         // economy
         useEconomy = confEconomy.getBoolean("enabled");
+        informAfterTransaction = confEconomy.getBoolean("informAfterTransaction");
 
         for (String key : confEconomyFees.getKeys(
                 false)) {
