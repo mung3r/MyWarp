@@ -65,7 +65,7 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public void close() {
+    public synchronized void close() {
         try {
             if (conn != null && !conn.isClosed()) {
                 conn.close();
