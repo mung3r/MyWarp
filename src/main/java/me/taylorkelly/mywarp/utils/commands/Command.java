@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import me.taylorkelly.mywarp.economy.Fee;
+
 /**
  * This annotation indicates a command. Methods should be marked with this
  * annotation to tell {@link CommandsManager} that the method is a command.
@@ -32,6 +34,15 @@ public @interface Command {
      * @return A description for the command.
      */
     String desc();
+
+    /**
+     * The fee that points to the amount the sender is charged when using the
+     * command. It is parsed via the {@link WarpFees} container. This has only
+     * an effect if economy support is enabled.
+     * 
+     * @return The fee type used for this command
+     */
+    Fee fee() default Fee.NONE;
 
     /**
      * Flags allow special processing for flags such as -h in the command,

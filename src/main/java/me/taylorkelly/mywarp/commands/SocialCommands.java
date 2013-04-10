@@ -7,6 +7,7 @@ import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
@@ -26,7 +27,7 @@ public class SocialCommands {
         this.plugin = plugin;
     }
 
-    @Command(aliases = { "give" }, usage = "<player> <name>", desc = "cmd.description.give", min = 2, permissions = { "mywarp.warp.soc.give" })
+    @Command(aliases = { "give" }, usage = "<player> <name>", desc = "cmd.description.give", fee = Fee.GIVE, min = 2, permissions = { "mywarp.warp.soc.give" })
     public void giveWarp(CommandContext args, CommandSender sender)
             throws CommandException {
         Player givee = plugin.getServer().getPlayer(args.getString(0));
@@ -61,7 +62,7 @@ public class SocialCommands {
         }
     }
 
-    @Command(aliases = { "invite" }, usage = "<player> <name>", desc = "cmd.description.invite", min = 2, permissions = { "mywarp.warp.soc.invite" })
+    @Command(aliases = { "invite" }, usage = "<player> <name>", desc = "cmd.description.invite", fee = Fee.INVITE, min = 2, permissions = { "mywarp.warp.soc.invite" })
     public void inviteToWarp(CommandContext args, CommandSender sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForModification(sender,
@@ -127,7 +128,7 @@ public class SocialCommands {
 
     }
 
-    @Command(aliases = { "private" }, usage = "<name>", desc = "cmd.description.private", min = 1, permissions = { "mywarp.warp.soc.private" })
+    @Command(aliases = { "private" }, usage = "<name>", desc = "cmd.description.private", fee = Fee.PRIVATE, min = 1, permissions = { "mywarp.warp.soc.private" })
     public void privatizeWarp(CommandContext args, CommandSender sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForModification(sender,
@@ -143,7 +144,7 @@ public class SocialCommands {
                 "%warp%", warp.name));
     }
 
-    @Command(aliases = { "public" }, usage = "<name>", desc = "cmd.description.public", min = 1, permissions = { "mywarp.warp.soc.public" })
+    @Command(aliases = { "public" }, usage = "<name>", desc = "cmd.description.public", fee = Fee.PUBLIC, min = 1, permissions = { "mywarp.warp.soc.public" })
     public void publicizeWarp(CommandContext args, CommandSender sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForModification(sender,
@@ -159,7 +160,7 @@ public class SocialCommands {
                 "%warp%", warp.name));
     }
 
-    @Command(aliases = { "uninvite" }, usage = "<player> <name>", desc = "cmd.description.uninvite", min = 2, permissions = { "mywarp.warp.soc.uninvite" })
+    @Command(aliases = { "uninvite" }, usage = "<player> <name>", desc = "cmd.description.uninvite", fee = Fee.UNINVITE, min = 2, permissions = { "mywarp.warp.soc.uninvite" })
     public void uninviteFromWarp(CommandContext args, CommandSender sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForModification(sender,

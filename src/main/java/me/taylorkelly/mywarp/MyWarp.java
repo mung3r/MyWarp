@@ -9,6 +9,8 @@ import me.taylorkelly.mywarp.commands.RootCommands;
 import me.taylorkelly.mywarp.data.WarpList;
 import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
+import me.taylorkelly.mywarp.economy.EconomyLink;
+import me.taylorkelly.mywarp.economy.VaultLink;
 import me.taylorkelly.mywarp.listeners.MWBlockListener;
 import me.taylorkelly.mywarp.listeners.MWEntityListener;
 import me.taylorkelly.mywarp.listeners.MWPlayerListener;
@@ -39,6 +41,7 @@ public class MyWarp extends JavaPlugin {
     public static WarpPermissions warpPermissions;
     public static ConnectionManager connectionManager;
     public static Markers markers;
+    private EconomyLink economyLink;
 
     @Override
     public void onDisable() {
@@ -86,6 +89,12 @@ public class MyWarp extends JavaPlugin {
         pm.registerEvents(blockListener, this);
         pm.registerEvents(entityListener, this);
         pm.registerEvents(playerListener, this);
+        
+        try {
+            economyLink = new VaultLink(this);
+        } catch (ClassNotFoundException e) {
+            WarpLogger.severe("Unable to hook into Vault. Disabling Economy support.");
+        }
 
         // initialize Dynmap support
         if (WarpSettings.useDynmap) {
@@ -165,5 +174,9 @@ public class MyWarp extends JavaPlugin {
 
     public WarpList getWarpList() {
         return warpList;
+    }
+
+    public EconomyLink getEconomyLink() {
+        return economyLink;
     }
 }

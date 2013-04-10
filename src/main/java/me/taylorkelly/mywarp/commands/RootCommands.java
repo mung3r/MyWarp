@@ -4,6 +4,7 @@ import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.timer.PlayerCooldown;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import me.taylorkelly.mywarp.timer.Time;
@@ -30,7 +31,7 @@ public class RootCommands {
 
     @NestedCommand({ AdminCommands.class, BasicCommands.class,
             SocialCommands.class })
-    @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "Warps you to <name>", min = 1, permissions = { "mywarp.warp.basic.warp" })
+    @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "Warps you to <name>", fee = Fee.WARP_TO, min = 1, permissions = { "mywarp.warp.basic.warp" })
     public void warpTo(CommandContext args, Player sender)
             throws CommandException {
 

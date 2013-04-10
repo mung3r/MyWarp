@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.taylorkelly.mywarp.data.WarpLimit;
+import me.taylorkelly.mywarp.economy.WarpFees;
 import me.taylorkelly.mywarp.timer.Time;
 import me.taylorkelly.mywarp.utils.PropertiesFile;
 import me.taylorkelly.mywarp.utils.WarpLogger;
@@ -54,6 +55,10 @@ public class WarpSettings {
     public static String mySQLdb;
     public static String mySQLtable;
 
+    public static boolean useEconomy;
+    public static ArrayList<WarpFees> warpFees;
+    public static WarpFees defaultWarpFees;
+
     public static boolean useDynmap;
     public static boolean hideLayerByDefault;
     public static String layerDisplayName;
@@ -75,6 +80,7 @@ public class WarpSettings {
         warpLimits = new ArrayList<WarpLimit>();
         warpCooldowns = new ArrayList<Time>();
         warpWarmups = new ArrayList<Time>();
+        warpFees = new ArrayList<WarpFees>();
 
         ConfigurationSection confSettings = config
                 .getConfigurationSection("settings");
@@ -94,6 +100,10 @@ public class WarpSettings {
                 .getConfigurationSection("warmups");
         ConfigurationSection confDatabase = config
                 .getConfigurationSection("mysql");
+        ConfigurationSection confEconomy = config
+                .getConfigurationSection("economy");
+        ConfigurationSection confEconomyFees = confEconomy
+                .getConfigurationSection("fees");
         ConfigurationSection confDynmap = config
                 .getConfigurationSection("dynmap");
 
@@ -219,6 +229,39 @@ public class WarpSettings {
         mySQLpass = confDatabase.getString("password");
         mySQLdb = confDatabase.getString("database");
         mySQLtable = confDatabase.getString("table");
+
+        // economy
+        useEconomy = confEconomy.getBoolean("enabled");
+
+        for (String key : confEconomyFees.getKeys(
+                false)) {
+            WarpFees fees = new WarpFees(key, confEconomyFees.getDouble(key
+                    + ".create"),
+                    confEconomyFees.getDouble(key + ".create-private"),
+                    confEconomyFees.getDouble(key + ".delete"),
+                    confEconomyFees.getDouble(key + ".give"),
+                    confEconomyFees.getDouble(key + ".help"),
+                    confEconomyFees.getDouble(key + ".invite"),
+                    confEconomyFees.getDouble(key + ".list"),
+                    confEconomyFees.getDouble(key + ".listall"),
+                    confEconomyFees.getDouble(key + ".point"),
+                    confEconomyFees.getDouble(key + ".private"),
+                    confEconomyFees.getDouble(key + ".public"),
+                    confEconomyFees.getDouble(key + ".search"),
+                    confEconomyFees.getDouble(key + ".uninvite"),
+                    confEconomyFees.getDouble(key + ".update"),
+                    confEconomyFees.getDouble(key + ".warp-player"),
+                    confEconomyFees.getDouble(key + ".warp-sign-create"),
+                    confEconomyFees.getDouble(key + ".warp-sign-use"),
+                    confEconomyFees.getDouble(key + ".warp-to"),
+                    confEconomyFees.getDouble(key + ".welcome"));
+            if (key.equals("default")) {
+                defaultWarpFees = fees;
+            } else {
+                warpFees.add(fees);
+            }
+            Collections.sort(warpFees);
+        }
 
         // dynmap
         useDynmap = confDynmap.getBoolean("enabled");

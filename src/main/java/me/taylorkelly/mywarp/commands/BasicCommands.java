@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
@@ -33,7 +34,7 @@ public class BasicCommands {
         this.plugin = plugin;
     }
 
-    @Command(aliases = { "pcreate", "pset" }, usage = "<name>", desc = "cmd.description.createPrivate", min = 1, permissions = { "mywarp.warp.basic.createprivate" })
+    @Command(aliases = { "pcreate", "pset" }, usage = "<name>", desc = "cmd.description.createPrivate", fee = Fee.CREATE_PRIVATE, min = 1, permissions = { "mywarp.warp.basic.createprivate" })
     public void createPrivateWarp(CommandContext args, Player sender)
             throws CommandException {
         String name = args.getJoinedStrings(0);
@@ -51,7 +52,7 @@ public class BasicCommands {
                 "warp.create.private", "%warp%", name));
     }
 
-    @Command(aliases = { "create", "set" }, usage = "<name>", desc = "cmd.description.create", min = 1, permissions = { "mywarp.warp.basic.createpublic" })
+    @Command(aliases = { "create", "set" }, usage = "<name>", desc = "cmd.description.create", fee = Fee.CREATE, min = 1, permissions = { "mywarp.warp.basic.createpublic" })
     public void createPublicWarp(CommandContext args, Player sender)
             throws CommandException {
         String name = args.getJoinedStrings(0);
@@ -69,7 +70,7 @@ public class BasicCommands {
                 "warp.create.public", "%warp%", name));
     }
 
-    @Command(aliases = { "delete", "remove" }, usage = "<name>", desc = "cmd.description.delete", min = 1, permissions = { "mywarp.warp.basic.delete" })
+    @Command(aliases = { "delete", "remove" }, usage = "<name>", desc = "cmd.description.delete", fee = Fee.DELETE, min = 1, permissions = { "mywarp.warp.basic.delete" })
     public void deleteWarp(CommandContext args, CommandSender sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForModification(sender,
@@ -80,7 +81,7 @@ public class BasicCommands {
                 "%warp%", warp.name));
     }
 
-    @Command(aliases = { "alist" }, usage = "[-c creator] [-w world]", desc = "cmd.description.listAll", max = 0, flags = "c:pw:", permissions = { "mywarp.warp.basic.list" })
+    @Command(aliases = { "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "cmd.description.listAll", fee = Fee.LISTALL, max = 0, permissions = { "mywarp.warp.basic.list" })
     public void listAllWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
@@ -93,7 +94,7 @@ public class BasicCommands {
                     LanguageManager.getString("lister.noResults"));
         }
         sender.sendMessage(LanguageManager.getString("listAll.list"));
-        
+
         StrBuilder ret = new StrBuilder();
         for (Warp warp : results) {
             ret.appendSeparator(", ");
@@ -111,7 +112,7 @@ public class BasicCommands {
         sender.sendMessage(ret.toString());
     }
 
-    @Command(aliases = { "list" }, usage = "[-c creator] [-w world]", desc = "cmd.description.list", max = 1, flags = "c:pw:", permissions = { "mywarp.warp.basic.list" })
+    @Command(aliases = { "list" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "cmd.description.list", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
     public void listWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
@@ -178,7 +179,7 @@ public class BasicCommands {
         }
     }
 
-    @Command(aliases = { "points" }, usage = "<name>", desc = "cmd.description.point", min = 1, permissions = { "mywarp.warp.basic.compass" })
+    @Command(aliases = { "points" }, usage = "<name>", desc = "cmd.description.point", fee = Fee.POINT, min = 1, permissions = { "mywarp.warp.basic.compass" })
     public void pointToWarp(CommandContext args, Player sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForUsage(sender,
@@ -189,7 +190,7 @@ public class BasicCommands {
                 "%warp%", warp.name));
     }
 
-    @Command(aliases = { "search" }, usage = "<name>", desc = "cmd.description.search", min = 1, flags = "p", permissions = { "mywarp.warp.basic.search" })
+    @Command(aliases = { "search" }, flags = "p", usage = "<name>", desc = "cmd.description.search", fee = Fee.SEARCH, min = 1, permissions = { "mywarp.warp.basic.search" })
     public void searchWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         MatchList matches = plugin.getWarpList().getMatches(
@@ -216,7 +217,7 @@ public class BasicCommands {
         }
     }
 
-    @Command(aliases = { "welcome" }, usage = "<name>", desc = "cmd.description.welcome", min = 1, permissions = { "mywarp.warp.basic.welcome" })
+    @Command(aliases = { "welcome" }, usage = "<name>", desc = "cmd.description.welcome", fee = Fee.WELCOME, min = 1, permissions = { "mywarp.warp.basic.welcome" })
     public void setWarpWelcome(CommandContext args, Player sender)
             throws CommandException {
 
@@ -228,7 +229,7 @@ public class BasicCommands {
                 "warp.welcome.enter", "%warp%", warp.name));
     }
 
-    @Command(aliases = { "help" }, usage = "#", desc = "cmd.description.help", max = 1, permissions = { "mywarp.warp.basic.help" })
+    @Command(aliases = { "help" }, usage = "#", desc = "cmd.description.help", fee = Fee.HELP, max = 1, permissions = { "mywarp.warp.basic.help" })
     public void showHelp(final CommandContext args, CommandSender sender)
             throws CommandException {
         PaginatedResult<Command> cmdList = new PaginatedResult<Command>(
@@ -261,7 +262,7 @@ public class BasicCommands {
         }
     }
 
-    @Command(aliases = { "update" }, usage = "<name>", desc = "cmd.description.update", min = 1, permissions = { "mywarp.warp.basic.update" })
+    @Command(aliases = { "update" }, usage = "<name>", desc = "cmd.description.update", fee = Fee.UPDATE, min = 1, permissions = { "mywarp.warp.basic.update" })
     public void updateWarp(CommandContext args, Player sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForModification(sender,

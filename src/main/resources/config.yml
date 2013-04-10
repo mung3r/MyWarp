@@ -32,6 +32,49 @@ timers:
   warmups:
     default: 15
     user: 30
+economy:
+  enabled: false
+  fees:
+    default:
+      create: 25
+      create-private: 25
+      delete: 25
+      give: 25
+      help: 0
+      invite: 25
+      list: 0
+      listall: 0
+      point: 25
+      private: 25
+      public: 25
+      search: 0
+      uninvite: 25
+      update: 25
+      warp-player: 25
+      warp-sign-create: 25
+      warp-sign-use: 25
+      warp-to: 25
+      welcome: 25
+    user:
+      create: 50
+      create-private: 50
+      delete: 50
+      give: 25
+      help: 0
+      invite: 25
+      list: 0
+      listall: 0
+      point: 25
+      private: 25
+      public: 25
+      search: 0
+      uninvite: 25
+      update: 50
+      warp-player: 50
+      warp-sign-create: 25
+      warp-sign-use: 25
+      warp-to: 50
+      welcome: 25
 mysql:
   enabled: false
   host: 'localhost'

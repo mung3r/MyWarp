@@ -12,6 +12,7 @@ import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
+import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
@@ -61,7 +62,7 @@ public class AdminCommands {
                                 "error.import.exists", "%warp%", name));
                         continue;
                     }
-                    //remove the old warp before adding the new one
+                    // remove the old warp before adding the new one
                     plugin.getWarpList().deleteWarp(
                             plugin.getWarpList().getWarp(name));
                 } else {
@@ -85,7 +86,7 @@ public class AdminCommands {
         sender.sendMessage(LanguageManager.getString("reload.config"));
     }
 
-    @Command(aliases = { "player" }, usage = "<player> <name>", desc = "cmd.description.adminWarpTo", min = 2, permissions = { "mywarp.admin.warpto" })
+    @Command(aliases = { "player" }, usage = "<player> <name>", desc = "cmd.description.adminWarpTo", fee = Fee.WARP_PLAYER, min = 2, permissions = { "mywarp.admin.warpto" })
     public void warpPlayer(CommandContext args, CommandSender sender)
             throws CommandException {
         Player invitee = CommandUtils.checkPlayer(args.getString(0));

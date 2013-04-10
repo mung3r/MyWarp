@@ -12,6 +12,8 @@ import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 import me.taylorkelly.mywarp.utils.commands.CommandUsageException;
@@ -43,12 +45,18 @@ public class CommandsManager {
     private Injector injector;
 
     /**
+     * The MyWarp instance
+     */
+    private MyWarp plugin;
+
+    /**
      * Creates the CommandManager and initiates the injector.
      * 
      * @param plugin
      *            the plugin
      */
     public CommandsManager(MyWarp plugin) {
+        this.plugin = plugin;
         injector = new Injector(plugin);
     }
 
@@ -170,6 +178,19 @@ public class CommandsManager {
                                 + " " + flag, getUsage(fullArgs, level, cmd));
             }
         }
+
+        // if economy support is enabled we need to check if the sender can
+        // afford using the command
+        if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE
+                && !MyWarp.warpPermissions.disobeyEconomyFees(sender)) {
+            double fee = MyWarp.warpPermissions.getEconomyPrices(sender).getFee(
+                    cmd.fee());
+            
+            if (!plugin.getEconomyLink().canAfford(
+                    sender, fee)) {
+                throw new CommandException(LanguageManager.getEffectiveString("error.cmd.cannotAfford", "%amount%", Double.toString(fee)));
+            }
+        }
         Object instance = instances.get(method);
 
         // prepare arguments given to the method
@@ -178,6 +199,18 @@ public class CommandsManager {
         methodArgs[1] = sender;
 
         invokeMethod(method, instance, methodArgs);
+
+        // if economy support is enabled whitdraw the sender - at this point the
+        // command should have been executed without any errors
+        // (see CommandException)
+        if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE
+                && !MyWarp.warpPermissions.disobeyEconomyFees(sender)) {
+
+            plugin.getEconomyLink().withdrawSender(
+                    sender,
+                    MyWarp.warpPermissions.getEconomyPrices(sender).getFee(
+                            cmd.fee()));
+        }
     }
 
     /**
