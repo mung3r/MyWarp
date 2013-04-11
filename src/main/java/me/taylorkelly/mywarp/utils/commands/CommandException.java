@@ -1,4 +1,4 @@
-package me.taylorkelly.mywarp.commands;
+package me.taylorkelly.mywarp.utils.commands;
 
 public class CommandException extends Exception {
 

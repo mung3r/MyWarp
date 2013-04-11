@@ -16,7 +16,7 @@ public class MWEntityListener implements Listener {
     private WarpPermissions warpPermissions;
 
     public MWEntityListener() {
-        warpPermissions = MyWarp.getWarpPermissions();
+        warpPermissions = MyWarp.warpPermissions;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

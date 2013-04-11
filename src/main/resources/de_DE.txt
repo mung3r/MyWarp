@@ -1,7 +1,42 @@
 ﻿#German localization for MyWarp (by thee)
 #This file is UTF-8 encoded, respect this when editing.
+cmd.description.adminWarpTo:Teleportiert §7<Spieler>§f zu §7<Name>§f, wenn du den Warp besuchen kannst.
+cmd.description.create:Erstellt einen neuen öffentlichen Warp namens §7<Name>§f auf der aktuellen Position
+cmd.description.createPrivate:Erstellt einen neuen privaten Warp namens §7<Name>§f auf der aktuellen Position
+cmd.description.delete:Löscht den Warp namens §7<Name>
+cmd.description.give:Gibt §7<Name>§f an §7<Spieler>§f ab
+cmd.description.help:Zeigt das Hilfemenü an.
+cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt.
+cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
+cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
+cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
+cmd.description.point:Richtet den Kompass auf §7<Name>§f aus
+cmd.description.private:Wandelt §7<name>§f in einen privaten Warp um
+cmd.description.public:Wandelt §7<name>§f in einen öffentlichen Warp um
+cmd.description.reload:Lädt die Konfiguration neu
+cmd.description.search:Sucht nach Warps unter dem angegebenen §7<Namen>§f. Mit [-p] werden die Warps nach Beliebtheit sortiert.
+cmd.description.uninvite:Lädt §7<Spieler|Gruppe>§f vom Warp namens §7<name>§f aus
+cmd.description.update:Aktualisiert §7<Name>§f mit deiner aktuellen Position
+cmd.description.warpTo:Teleportiert dich zu §7<Name>§f, wenn du den Warp besuchen kannst.
+cmd.description.welcome:Ändert die Willkommensnachricht von §7<Name>§f. Anschließend wird seperat nach der Willkommensnachricht gefragt.
+cmd.usage.creator:Besitzer
+cmd.usage.group:Gruppe
+cmd.usage.name:Name
+cmd.usage.player:Spieler
+cmd.usage.world:Welt
 dynmap.createdBy:Erstellt von %creator%
+economy.transaction.complete:§bDir wurden %amount%$ berechnet.
+error.cmd.cannotAfford:Du kannst es dir nicht leisten, diesen befehl zu benutzen. Du brauchst mindestens: %amount%$.
+error.cmd.flagGiven:Die Flag '%flag%' existiert bereits!
+error.cmd.invalidNumber:Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.
+error.cmd.invalidSender:Das Kommando konnte nicht ausgeführt werden: ungültiger Sender.
+error.cmd.noValue:Für die '%flag%' Flag wurde kein Wert angegeben.
+error.cmd.toFewArgs:Zu wenige Argumente.
+error.cmd.toManyArgs:Zu viele Argumente.
+error.cmd.unknown:Während dem Ausführen des Befehls trat ein fehler auf.
+error.cmd.unknownFlag:Unbekannte Flag:
 error.create.warpExists:Ein Warp namens '%warp%' existiert bereits.
+error.economy.unknown:Die Transaktion konnte nicht abgeschlossen werden.
 error.give.isOwner:Dieser Warp gehört bereits %player%.
 error.import.exists:Warp '%warp%' existiert bereits. Überspringe ihn...
 error.import.invalid:%query% ist keine gültige Import-Option.
@@ -22,58 +57,26 @@ error.uninvite.creator:Du kannst dich nicht selbst ausladen. Du bist der Erstell
 error.uninvite.notInvited.group:Die Gruppe '%group%' ist nicht zu diesem Warp eingeladen.
 error.uninvite.notInvited.player:%player% ist nicht zu diesem Warp eingeladen.
 error.warpto.noSuchWorld:Die Welt '%world%' exisitiert nicht.
-help.command:Befehl
-help.description.adminWarpTo:Teleportiere §7<Spieler>§f zu §7<Name>
-help.description.create:Erstellt einen neuen Warp namens §7<Name>
-help.description.createPrivate:Erstellt einen neuen privaten Warp namens §7<Name>
-help.description.delete:Entfernt den Warp namens §7<Name>
-help.description.give:Gibt deinen Warp namens §7<Name>§f an §7<Spieler>
-help.description.help:Zeigt das Hilfemenü an
-help.description.import:Importiert Warps aus §7<SQLite|MySQL>
-help.description.invite:Lädt §7<Spieler>§f zum Warp namens §7<Name>§f ein
-help.description.list:Listet alle Warp auf, die du besuchen kannst
-help.description.listAll:Listet alle Warp auf, die du besuchen kannst
-help.description.point:Richtet deinen Kompass auf den Warp §7<Name>§f aus
-help.description.private:Privatisiert den Warp §7<Name>
-help.description.public:Veröffentlicht den Warp §7<Name>
-help.description.reload:Lädt die Konfiguration neu
-help.description.search:Sucht nach Warps, die dem §7<Suchwort>§f ähnlich sind
-help.description.uninvite:Lädt §7<Spieler|Gruppe>§f vom Warp namens §7<Name>§f aus
-help.description.update:Aktualisiert den Warp namens §7<Name>§f mit deiner aktuellen Position
-help.description.warpTo:Teleportiert dich zu §7<Name>
-help.description.welcome:Ändert die Willkommensnachricht von §7<Name>
-help.description:Beschreibung
-help.help:Hilfe
-help.more:§cFür mehr Infos über einen bestimmten Befehl nutze: §f/<Befehl> ?
-help.usage.group:Gruppe
-help.usage.name:Name
-help.usage.owner:Ersteller
-help.usage.pageNumber:Seite#
-help.usage.player:Spieler
-help.usage.query:Suchwort
-help.usage:Benutzung
 limit.private.reached.player:§c%player% hat sein Maximum an privaten Warps erreicht §e(%maxPrivate%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
 limit.private.reached:§cDu hast dein Maximum an privaten Warps erreicht §e(%maxPrivate%)%n§fLösche einige deiner Warps, um neue zu erstellen.
 limit.public.reached.player:§c%player% hat sein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
 limit.public.reached:§cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)%n§fLösche einige deiner Warps, um neue zu erstellen.
 limit.total.reached.player:§c%player% hat sein Maximum an Warps erreicht §e(%maxTotal%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
 limit.total.reached:§cDu hast dein Maximum an Warps erreicht §e(%maxTotal%)%n§fLösche einige deiner Warps, um neue zu erstellen.
-list.by:von
-list.console:§cDie Konsole besitzt keine Warps.
-list.noWarps:§cEs gibt keine Warps, die aufgelistet werden könnten.
-list.page.invalid:Du musst eine gültige Nummer eingeben.
-list.page.negative:§cDie Seitenummer kann nicht kleiner als eins sein.
-list.page.toHigh:§cEs gibt nur %pages% Seite(n).
-list.page:Seite
-list.you:dir
-listAll.list:§bDu kannst folgende Warps benutzen:
-listAll.noWarps:§cDu kannst aktuell keine Warps benutzen.
+listAll.list:§6Du kannst folgende Warps benutzen:
+lister.help.head:Hilfe
+lister.noResults:Keine zutreffenden Resultate!
+lister.page:Seite
+lister.unknownPage:Diese Seite existiert nicht, es gibt insgesammt nur %pages% Seiten!
+lister.warp.by:von
+lister.warp.head:Warps
+lister.warp.you:dir
 reload.config:Die Konfiguration wurde erfolgreich neu geladen!
 safety.found:§cDer Warp '%warp% ist nicht sicher. Du wurdest zum sichersten Ort in seiner Nähe teleportiert.
 safety.notFound:§cDer Warp '%warp% ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden.
-search.exactMatches:§Exakte Treffer für die Suche nach: §7%query%.
-search.noMatches:§cKein Treffer für die Suche nach: §7%query%.
-search.partitalMatches:§eTeilweise Treffer für die Suche nach: §7%query%.
+search.exactMatches:§Exakte Treffer für die Suche nach: §o§7%query%
+search.noMatches:§cKein Treffer für die Suche nach: $o§7%query%
+search.partitalMatches:§eTeilweise Treffer für die Suche nach: §o§7%query%
 sign.created:§bDer SchildWarp wurde erfolgreich erstellt.
 sign.noPermission.create:§cDir fehlen die Rechte um einen SchildWarp zu erstellen.
 sign.noPermission.createToWarp:§cDir fehlen die Rechte um einen SchildWarp nach '%warp%' zu erstellen.

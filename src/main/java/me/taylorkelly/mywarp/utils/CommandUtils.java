@@ -1,14 +1,13 @@
 package me.taylorkelly.mywarp.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
-import me.taylorkelly.mywarp.commands.CommandException;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.utils.commands.CommandException;
 
 public class CommandUtils {
 
@@ -18,19 +17,11 @@ public class CommandUtils {
         CommandUtils.plugin = plugin;
     }
 
-    public static String toWarpName(String[] args) {
-        return toWarpName(args, 0);
-    }
-
-    public static String toWarpName(String[] args, int index) {
-        return StringUtils.join(args, ' ', index, args.length);
-    }
-
     public static Warp getWarp(CommandSender sender, String query)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
         MatchList matches = plugin.getWarpList().getMatches(query, player,
-                new popularityWarpComperator());
+                new PopularityWarpComparator());
 
         Warp warp = matches.getMatch();
 
@@ -73,10 +64,8 @@ public class CommandUtils {
         }
         return warp;
     }
-
-    // TODO simplify
-    public static void checkLimits(CommandSender sender, boolean publicAll)
-            throws CommandException {
+    
+    public static void checkTotalLimit(CommandSender sender) throws CommandException {
         if (!WarpSettings.useWarpLimits || !(sender instanceof Player)) {
             return;
         }
@@ -86,20 +75,35 @@ public class CommandUtils {
             throw new CommandException(LanguageManager.getEffectiveString(
                     "limit.total.reached",
                     "%maxTotal%",
-                    Integer.toString(MyWarp.getWarpPermissions().maxTotalWarps(
+                    Integer.toString(MyWarp.warpPermissions.maxTotalWarps(
                             player))));
         }
-        if (publicAll) {
-            if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
-                throw new CommandException(LanguageManager.getEffectiveString(
-                        "limit.public.reached", "%maxPublic%", Integer
-                                .toString(MyWarp.getWarpPermissions()
-                                        .maxPublicWarps(player))));
-            }
-        } else if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
+    }
+    
+    public static void checkPublicLimit(CommandSender sender) throws CommandException {
+        if (!WarpSettings.useWarpLimits || !(sender instanceof Player)) {
+            return;
+        }
+        Player player = (Player) sender;
+
+        if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "limit.public.reached", "%maxPublic%", Integer
+                            .toString(MyWarp.warpPermissions
+                                    .maxPublicWarps(player))));
+        }
+    }
+    
+    public static void checkPrivateLimit(CommandSender sender) throws CommandException {
+        if (!WarpSettings.useWarpLimits || !(sender instanceof Player)) {
+            return;
+        }
+        Player player = (Player) sender;
+
+        if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
             throw new CommandException(LanguageManager
                     .getEffectiveString("limit.private.reached.player", "%maxPrivate%",
-                    Integer.toString(MyWarp.getWarpPermissions()
+                    Integer.toString(MyWarp.warpPermissions
                             .maxPrivateWarps(player))));
         }
     }
@@ -116,21 +120,21 @@ public class CommandUtils {
             throw new CommandException(LanguageManager.getEffectiveString(
                     "limit.total.reached.player",
                     "%maxTotal%",
-                    Integer.toString(MyWarp.getWarpPermissions().maxTotalWarps(
+                    Integer.toString(MyWarp.warpPermissions.maxTotalWarps(
                             player)), "%player%", player.getName()));
         }
         if (publicAll) {
             if (!plugin.getWarpList().playerCanBuildPublicWarp(player)) {
                 throw new CommandException(LanguageManager.getEffectiveString(
                         "limit.public.reached.player", "%maxPublic%", Integer
-                                .toString(MyWarp.getWarpPermissions()
+                                .toString(MyWarp.warpPermissions
                                         .maxPublicWarps(player)), "%player%",
                         player.getName()));
             }
         } else if (!plugin.getWarpList().playerCanBuildPrivateWarp(player)) {
             throw new CommandException(LanguageManager.getEffectiveString(
                     "limit.private.reached.player", "%maxPrivate%", Integer
-                            .toString(MyWarp.getWarpPermissions()
+                            .toString(MyWarp.warpPermissions
                                     .maxPrivateWarps(player)), "%player%",
                     player.getName()));
         }
