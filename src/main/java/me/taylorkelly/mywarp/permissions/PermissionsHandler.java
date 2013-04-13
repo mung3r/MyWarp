@@ -1,9 +1,10 @@
 package me.taylorkelly.mywarp.permissions;
 
 import org.bukkit.entity.Player;
+
 /**
  * Interface for permission handlers
- *
+ * 
  */
 public interface PermissionsHandler {
     /**

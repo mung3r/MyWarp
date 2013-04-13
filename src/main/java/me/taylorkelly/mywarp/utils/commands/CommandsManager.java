@@ -182,13 +182,14 @@ public class CommandsManager {
         // if economy support is enabled we need to check if the sender can
         // afford using the command
         if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE
-                && !MyWarp.warpPermissions.disobeyEconomyFees(sender)) {
-            double fee = MyWarp.warpPermissions.getEconomyPrices(sender).getFee(
-                    cmd.fee());
-            
-            if (!plugin.getEconomyLink().canAfford(
-                    sender, fee)) {
-                throw new CommandException(LanguageManager.getEffectiveString("error.cmd.cannotAfford", "%amount%", Double.toString(fee)));
+                && !MyWarp.getWarpPermissions().disobeyEconomyFees(sender)) {
+            double fee = MyWarp.getWarpPermissions().getEconomyPrices(sender)
+                    .getFee(cmd.fee());
+
+            if (!plugin.getEconomyLink().canAfford(sender, fee)) {
+                throw new CommandException(LanguageManager.getEffectiveString(
+                        "error.cmd.cannotAfford", "%amount%",
+                        Double.toString(fee)));
             }
         }
         Object instance = instances.get(method);
@@ -204,12 +205,12 @@ public class CommandsManager {
         // command should have been executed without any errors
         // (see CommandException)
         if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE
-                && !MyWarp.warpPermissions.disobeyEconomyFees(sender)) {
+                && !MyWarp.getWarpPermissions().disobeyEconomyFees(sender)) {
 
             plugin.getEconomyLink().withdrawSender(
                     sender,
-                    MyWarp.warpPermissions.getEconomyPrices(sender).getFee(
-                            cmd.fee()));
+                    MyWarp.getWarpPermissions().getEconomyPrices(sender)
+                            .getFee(cmd.fee()));
         }
     }
 
@@ -387,7 +388,7 @@ public class CommandsManager {
      */
     private boolean hasPermission(Command command, CommandSender sender) {
         for (String perm : command.permissions()) {
-            if (MyWarp.warpPermissions.hasPermission(sender, perm)) {
+            if (MyWarp.getWarpPermissions().hasPermission(sender, perm)) {
                 return true;
             }
         }

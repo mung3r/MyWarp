@@ -19,7 +19,8 @@ public class MatchList {
     /**
      * Gets the closest match. Will return null if no exact match could be found
      * 
-     * @param name the name
+     * @param name
+     *            the name
      * @return the closest match, must be exact
      */
     public Warp getMatch() {
@@ -31,7 +32,7 @@ public class MatchList {
         }
         return null;
     }
-    
+
     public Warp getLikliestMatch() {
         if (!exactMatches.isEmpty()) {
             return exactMatches.iterator().next();

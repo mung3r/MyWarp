@@ -30,25 +30,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class MyWarp extends JavaPlugin {
 
-    private WarpList warpList;
-    private MWBlockListener blockListener;
-    private MWEntityListener entityListener;
-    private MWPlayerListener playerListener;
-
     public String name;
     public String version;
+
     private PluginManager pm;
-    public CommandsManager commandManager;
-    public static WarpPermissions warpPermissions;
-    public static ConnectionManager connectionManager;
-    public static Markers markers;
-    public static SignWarp signWarp;
+
+    private WarpList warpList;
+    private CommandsManager commandsManager;
+    private ConnectionManager connectionManager;
+    private Markers markers;
+    private SignWarp signWarp;
     private EconomyLink economyLink;
+
+    private static WarpPermissions warpPermissions;
 
     @Override
     public void onDisable() {
-        if (connectionManager != null) {
-            connectionManager.close();
+        if (getConnectionManager() != null) {
+            getConnectionManager().close();
         }
         Bukkit.getServer().getScheduler().cancelTasks(this);
     }
@@ -72,48 +71,52 @@ public class MyWarp extends JavaPlugin {
             return;
         }
 
-        // check for old database (h-mod) and convert it
+        // check for old database and convert it
         File newDatabase = new File(getDataFolder(), "warps.db");
         File oldDatabase = new File("homes-warps.db");
         if (!newDatabase.exists() && oldDatabase.exists()) {
             updateFiles(oldDatabase, newDatabase);
         }
 
-        warpList = new WarpList(getServer());
+        warpList = new WarpList(this);
         warpPermissions = new WarpPermissions(this);
 
         // register event listeners
-        blockListener = new MWBlockListener();
-        entityListener = new MWEntityListener();
-        playerListener = new MWPlayerListener(this);
+        MWBlockListener blockListener = new MWBlockListener(this);
+        MWEntityListener entityListener = new MWEntityListener(this);
+        MWPlayerListener playerListener = new MWPlayerListener(this);
 
         pm.registerEvents(blockListener, this);
         pm.registerEvents(entityListener, this);
         pm.registerEvents(playerListener, this);
-        
+
         signWarp = new SignWarp(this);
 
-        try {
-            economyLink = new VaultLink(this);
-        } catch (ClassNotFoundException e) {
-            WarpLogger
-                    .severe("Unable to hook into Vault. Disabling Economy support.");
+        // initialize EconomySupport
+        if (WarpSettings.useEconomy) {
+            try {
+                economyLink = new VaultLink(this);
+            } catch (NoClassDefFoundError e) {
+                WarpLogger
+                        .severe("Failed to hook into Vault. Disabling Economy support.");
+                WarpSettings.useEconomy = false;
+            }
         }
 
         // initialize Dynmap support
         if (WarpSettings.useDynmap) {
             if (!pm.isPluginEnabled("dynmap")) {
                 WarpLogger
-                        .severe("Failed to hook into Dynmap. Disabeling Dynmap support.");
+                        .severe("Failed to hook into Dynmap. Disabling Dynmap support.");
+                WarpSettings.useDynmap = false;
             } else {
                 markers = new DynmapMarkers(this);
             }
         }
 
         // initialize the command manager and register all used commands
-        commandManager = new CommandsManager(this);
-        commandManager.register(RootCommands.class);
-
+        commandsManager = new CommandsManager(this);
+        getCommandsManager().register(RootCommands.class);
         new CommandUtils(this);
 
         WarpLogger.info(name + " " + version + " enabled");
@@ -172,7 +175,7 @@ public class MyWarp extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command,
             String commandLabel, String[] args) {
-        return commandManager.handleBukkitCommand(sender, command,
+        return getCommandsManager().handleBukkitCommand(sender, command,
                 commandLabel, args);
     }
 
@@ -182,5 +185,25 @@ public class MyWarp extends JavaPlugin {
 
     public EconomyLink getEconomyLink() {
         return economyLink;
+    }
+
+    public CommandsManager getCommandsManager() {
+        return commandsManager;
+    }
+
+    public ConnectionManager getConnectionManager() {
+        return connectionManager;
+    }
+
+    public Markers getMarkers() {
+        return markers;
+    }
+
+    public SignWarp getSignWarp() {
+        return signWarp;
+    }
+
+    public static WarpPermissions getWarpPermissions() {
+        return warpPermissions;
     }
 }

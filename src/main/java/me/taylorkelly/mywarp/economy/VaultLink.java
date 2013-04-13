@@ -20,7 +20,7 @@ public class VaultLink implements EconomyLink {
 
     private final Economy economy;
 
-    public VaultLink(MyWarp plugin) throws ClassNotFoundException {
+    public VaultLink(MyWarp plugin) throws NoClassDefFoundError {
         RegisteredServiceProvider<Economy> economyProvider = plugin.getServer()
                 .getServicesManager()
                 .getRegistration(net.milkbowl.vault.economy.Economy.class);

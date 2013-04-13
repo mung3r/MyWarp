@@ -8,9 +8,11 @@ public interface DataConnection {
 
     public void close();
 
-    public void checkDB(boolean createIfNotExist) throws DataConnectionException;
+    public void checkDB(boolean createIfNotExist)
+            throws DataConnectionException;
 
-    public void updateDB(boolean updateIfNecessary) throws DataConnectionException;
+    public void updateDB(boolean updateIfNecessary)
+            throws DataConnectionException;
 
     public HashMap<String, Warp> getMap();
 

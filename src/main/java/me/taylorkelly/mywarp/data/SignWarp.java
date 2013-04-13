@@ -19,7 +19,7 @@ public class SignWarp {
     }
 
     public void warpSign(Sign sign, Player player) {
-        if (!MyWarp.warpPermissions.useSignWarp(player)) {
+        if (!MyWarp.getWarpPermissions().useSignWarp(player)) {
             player.sendMessage(LanguageManager
                     .getString("sign.noPermission.use"));
             return;
@@ -53,7 +53,7 @@ public class SignWarp {
     }
 
     public boolean createSignWarp(SignChangeEvent sign, Player player) {
-        if (!MyWarp.warpPermissions.createSignWarp(player)) {
+        if (!MyWarp.getWarpPermissions().createSignWarp(player)) {
             player.sendMessage(LanguageManager
                     .getString("sign.noPermission.create"));
             return false;
@@ -68,7 +68,7 @@ public class SignWarp {
         Warp warp = plugin.getWarpList().getWarp(name);
 
         if (!warp.playerCanModify(player)
-                && !MyWarp.warpPermissions.createSignWarpAll(player)) {
+                && !MyWarp.getWarpPermissions().createSignWarpAll(player)) {
             player.sendMessage(LanguageManager.getEffectiveString(
                     "sign.noPermission.create", "%warp%", name));
             return false;

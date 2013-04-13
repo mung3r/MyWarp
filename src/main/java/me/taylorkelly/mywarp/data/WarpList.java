@@ -13,28 +13,28 @@ import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 public class WarpList {
-    private Server server;
+    private final MyWarp plugin;
+
     private HashMap<String, Warp> warpMap;
     private HashMap<String, Warp> welcomeMessage;
 
-    public WarpList(Server server) {
-        this.server = server;
+    public WarpList(MyWarp plugin) {
+        this.plugin = plugin;
 
         welcomeMessage = new HashMap<String, Warp>();
-        warpMap = MyWarp.connectionManager.getMap();
+        warpMap = plugin.getConnectionManager().getMap();
         WarpLogger.info(getSize() + " warps loaded");
     }
 
     public void addWarp(String name, Warp warp) {
         warpMap.put(name, warp);
-        MyWarp.connectionManager.addWarp(warp);
+        plugin.getConnectionManager().addWarp(warp);
 
-        if (MyWarp.markers != null) {
-            MyWarp.markers.addWarp(warp);
+        if (plugin.getMarkers() != null) {
+            plugin.getMarkers().addWarp(warp);
         }
     }
 
@@ -50,10 +50,10 @@ public class WarpList {
 
     public void deleteWarp(Warp warp) {
         warpMap.remove(warp.name);
-        MyWarp.connectionManager.deleteWarp(warp);
+        plugin.getConnectionManager().deleteWarp(warp);
 
-        if (MyWarp.markers != null) {
-            MyWarp.markers.deleteWarp(warp);
+        if (plugin.getMarkers() != null) {
+            plugin.getMarkers().deleteWarp(warp);
         }
     }
 
@@ -151,21 +151,21 @@ public class WarpList {
 
     public void give(Warp warp, String giveeName) {
         warp.setCreator(giveeName);
-        MyWarp.connectionManager.updateCreator(warp);
+        plugin.getConnectionManager().updateCreator(warp);
 
-        if (MyWarp.markers != null) {
-            MyWarp.markers.updateWarp(warp);
+        if (plugin.getMarkers() != null) {
+            plugin.getMarkers().updateWarp(warp);
         }
     }
 
     public void inviteGroup(Warp warp, String inviteeName) {
         warp.inviteGroup(inviteeName);
-        MyWarp.connectionManager.updateGroupPermissions(warp);
+        plugin.getConnectionManager().updateGroupPermissions(warp);
     }
 
     public void invitePlayer(Warp warp, String inviteeName) {
         warp.invite(inviteeName);
-        MyWarp.connectionManager.updatePermissions(warp);
+        plugin.getConnectionManager().updatePermissions(warp);
     }
 
     public void notWaiting(Player player) {
@@ -206,58 +206,58 @@ public class WarpList {
 
     public boolean playerCanAccessWorld(Player player, String worldName) {
         if (player.getWorld().getName().equals(worldName)
-                && MyWarp.warpPermissions.canWarpInsideWorld(player)) {
+                && MyWarp.getWarpPermissions().canWarpInsideWorld(player)) {
             return true;
         }
-        if (MyWarp.warpPermissions.canWarpToWorld(player, worldName)) {
+        if (MyWarp.getWarpPermissions().canWarpToWorld(player, worldName)) {
             return true;
         }
         return false;
     }
 
     public boolean playerCanBuildPrivateWarp(Player player) {
-        if (MyWarp.warpPermissions.disobeyPrivateLimit(player)) {
+        if (MyWarp.getWarpPermissions().disobeyPrivateLimit(player)) {
             return true;
         }
-        return numPrivateWarpsPlayer(player) < MyWarp.warpPermissions
+        return numPrivateWarpsPlayer(player) < MyWarp.getWarpPermissions()
                 .maxPrivateWarps(player);
     }
 
     public boolean playerCanBuildPublicWarp(Player player) {
-        if (MyWarp.warpPermissions.disobeyPublicLimit(player)) {
+        if (MyWarp.getWarpPermissions().disobeyPublicLimit(player)) {
             return true;
         }
-        return numPublicWarpsPlayer(player) < MyWarp.warpPermissions
+        return numPublicWarpsPlayer(player) < MyWarp.getWarpPermissions()
                 .maxPublicWarps(player);
     }
 
     public boolean playerCanBuildWarp(Player player) {
-        if (MyWarp.warpPermissions.disobeyTotalLimit(player)) {
+        if (MyWarp.getWarpPermissions().disobeyTotalLimit(player)) {
             return true;
         }
-        return numWarpsPlayer(player) < MyWarp.warpPermissions
+        return numWarpsPlayer(player) < MyWarp.getWarpPermissions()
                 .maxTotalWarps(player);
     }
 
     public void point(Warp warp, Player player) {
-        player.setCompassTarget(warp.getLocation(server));
+        player.setCompassTarget(warp.getLocation(plugin.getServer()));
     }
 
     public void privatize(Warp warp) {
         warp.publicAll = false;
-        MyWarp.connectionManager.publicizeWarp(warp, false);
+        plugin.getConnectionManager().publicizeWarp(warp, false);
 
-        if (MyWarp.markers != null) {
-            MyWarp.markers.deleteWarp(warp);
+        if (plugin.getMarkers() != null) {
+            plugin.getMarkers().deleteWarp(warp);
         }
     }
 
     public void publicize(Warp warp) {
         warp.publicAll = true;
-        MyWarp.connectionManager.publicizeWarp(warp, true);
+        plugin.getConnectionManager().publicizeWarp(warp, true);
 
-        if (MyWarp.markers != null) {
-            MyWarp.markers.addWarp(warp);
+        if (plugin.getMarkers() != null) {
+            plugin.getMarkers().addWarp(warp);
         }
     }
 
@@ -265,7 +265,7 @@ public class WarpList {
         if (welcomeMessage.containsKey(player.getName())) {
             Warp warp = welcomeMessage.get(player.getName());
             warp.welcomeMessage = message;
-            MyWarp.connectionManager.updateWelcomeMessage(warp);
+            plugin.getConnectionManager().updateWelcomeMessage(warp);
             player.sendMessage(LanguageManager
                     .getString("warp.welcome.received"));
             player.sendMessage(message);
@@ -274,20 +274,20 @@ public class WarpList {
 
     public void uninviteGroup(Warp warp, String inviteeName) {
         warp.uninviteGroup(inviteeName);
-        MyWarp.connectionManager.updateGroupPermissions(warp);
+        plugin.getConnectionManager().updateGroupPermissions(warp);
     }
 
     public void uninvitePlayer(Warp warp, String inviteeName) {
         warp.uninvite(inviteeName);
-        MyWarp.connectionManager.updatePermissions(warp);
+        plugin.getConnectionManager().updatePermissions(warp);
     }
 
     public void updateLocation(Warp warp, Player player) {
         warp.setLocation(player.getLocation());
-        MyWarp.connectionManager.updateLocation(warp);
+        plugin.getConnectionManager().updateLocation(warp);
 
-        if (MyWarp.markers != null) {
-            MyWarp.markers.updateWarp(warp);
+        if (plugin.getMarkers() != null) {
+            plugin.getMarkers().updateWarp(warp);
         }
     }
 
@@ -327,9 +327,9 @@ public class WarpList {
     }
 
     public void warpTo(Warp warp, Player player) {
-        if (warp.warp(player, server)) {
+        if (warp.warp(player, plugin.getServer())) {
             warp.visits++;
-            MyWarp.connectionManager.updateVisits(warp);
+            plugin.getConnectionManager().updateVisits(warp);
             player.sendMessage(ChatColor.AQUA
                     + warp.getSpecificWelcomeMessage(player));
         }

@@ -140,7 +140,7 @@ public class LanguageManager {
         // Read the original file provided in the plugin's jar file
         Scanner scan = null;
         try {
-            // forcing UTF-8 BOM default since we provide the file 
+            // forcing UTF-8 BOM default since we provide the file
             scan = new Scanner(
                     new UnicodeBOMInputStream(plugin.getResource("lang/"
                             + original + ".txt"), BOM.UTF_8).skipBOM(), "UTF-8");

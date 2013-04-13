@@ -5,27 +5,62 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 
 /**
- * The {@link UnicodeBOMInputStream} class wraps any
- * {@link InputStream} and detects the presence of any Unicode BOM
- * (Byte Order Mark) at its beginning, as defined by
- * <a href="http://www.faqs.org/rfcs/rfc3629.html">RFC 3629 - UTF-8, a transformation format of ISO 10646</a>
- *
- * <p>The
- * <a href="http://www.unicode.org/unicode/faq/utf_bom.html">Unicode FAQ</a>
- * defines 5 types of BOMs:<ul>
- * <li><pre>00 00 FE FF  = UTF-32, big-endian</pre></li>
- * <li><pre>FF FE 00 00  = UTF-32, little-endian</pre></li>
- * <li><pre>FE FF        = UTF-16, big-endian</pre></li>
- * <li><pre>FF FE        = UTF-16, little-endian</pre></li>
- * <li><pre>EF BB BF     = UTF-8</pre></li>
- * </ul></p>
- *
- * <p>Use the {@link #getBOM()} method to know whether a BOM has been detected
- * or not.
+ * The {@link UnicodeBOMInputStream} class wraps any {@link InputStream} and
+ * detects the presence of any Unicode BOM (Byte Order Mark) at its beginning,
+ * as defined by <a href="http://www.faqs.org/rfcs/rfc3629.html">RFC 3629 -
+ * UTF-8, a transformation format of ISO 10646</a>
+ * 
+ * <p>
+ * The <a href="http://www.unicode.org/unicode/faq/utf_bom.html">Unicode FAQ</a>
+ * defines 5 types of BOMs:
+ * <ul>
+ * <li>
+ * 
+ * <pre>
+ * 00 00 FE FF  = UTF-32, big-endian
+ * </pre>
+ * 
+ * </li>
+ * <li>
+ * 
+ * <pre>
+ * FF FE 00 00  = UTF-32, little-endian
+ * </pre>
+ * 
+ * </li>
+ * <li>
+ * 
+ * <pre>
+ * FE FF        = UTF-16, big-endian
+ * </pre>
+ * 
+ * </li>
+ * <li>
+ * 
+ * <pre>
+ * FF FE        = UTF-16, little-endian
+ * </pre>
+ * 
+ * </li>
+ * <li>
+ * 
+ * <pre>
+ * EF BB BF     = UTF-8
+ * </pre>
+ * 
+ * </li>
+ * </ul>
  * </p>
- * <p>Use the {@link #skipBOM()} method to remove the detected BOM from the
- * wrapped {@link InputStream} object.</p>
- *
+ * 
+ * <p>
+ * Use the {@link #getBOM()} method to know whether a BOM has been detected or
+ * not.
+ * </p>
+ * <p>
+ * Use the {@link #skipBOM()} method to remove the detected BOM from the wrapped
+ * {@link InputStream} object.
+ * </p>
+ * 
  * @author Gregory Pakosz
  * @see http://stackoverflow.com/q/1835430/39321#1835529
  */
@@ -43,8 +78,8 @@ public class UnicodeBOMInputStream extends InputStream {
         /**
          * UTF-8 BOM (EF BB BF).
          */
-        public static final BOM UTF_8 = new BOM(new byte[] { (byte) 0xEF, (byte) 0xBB,
-                (byte) 0xBF }, "UTF-8");
+        public static final BOM UTF_8 = new BOM(new byte[] { (byte) 0xEF,
+                (byte) 0xBB, (byte) 0xBF }, "UTF-8");
 
         /**
          * UTF-16, little-endian (FF FE).
@@ -99,12 +134,13 @@ public class UnicodeBOMInputStream extends InputStream {
         private final String description;
 
     }
-    
-    public UnicodeBOMInputStream(final InputStream inputStream) throws IOException
+
+    public UnicodeBOMInputStream(final InputStream inputStream)
+            throws IOException
 
     {
         this(inputStream, BOM.NONE);
-    
+
     }
 
     /**
@@ -118,7 +154,8 @@ public class UnicodeBOMInputStream extends InputStream {
      *             on reading from the specified {@link InputStream} when trying
      *             to detect the Unicode BOM.
      */
-    public UnicodeBOMInputStream(final InputStream inputStream, final BOM defaultBOM) throws IOException
+    public UnicodeBOMInputStream(final InputStream inputStream,
+            final BOM defaultBOM) throws IOException
 
     {
         in = new PushbackInputStream(inputStream, 4);
@@ -184,7 +221,8 @@ public class UnicodeBOMInputStream extends InputStream {
      *             when trying to skip the BOM from the wrapped
      *             {@link InputStream} object.
      */
-    public final synchronized UnicodeBOMInputStream skipBOM() throws IOException {
+    public final synchronized UnicodeBOMInputStream skipBOM()
+            throws IOException {
         if (!skipped) {
             in.skip(bom.bytes.length);
             skipped = true;
@@ -209,8 +247,8 @@ public class UnicodeBOMInputStream extends InputStream {
     /**
      * {@inheritDoc}
      */
-    public int read(final byte b[], final int off, final int len) throws IOException,
-            NullPointerException {
+    public int read(final byte b[], final int off, final int len)
+            throws IOException, NullPointerException {
         return in.read(b, off, len);
     }
 

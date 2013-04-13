@@ -38,8 +38,8 @@ public class RootCommands {
         Warp warp = CommandUtils.getWarpForUsage(sender,
                 args.getJoinedStrings(0));
         if (WarpSettings.useTimers) {
-            Time cooldown = MyWarp.warpPermissions.getCooldown(sender);
-            Time warmup = MyWarp.warpPermissions.getWarmup(sender);
+            Time cooldown = MyWarp.getWarpPermissions().getCooldown(sender);
+            Time warmup = MyWarp.getWarpPermissions().getWarmup(sender);
 
             if (PlayerCooldown.isActive(sender.getName())) {
                 throw new CommandException(LanguageManager.getEffectiveString(
@@ -55,10 +55,10 @@ public class RootCommands {
                                         .getRemainingWarmup(sender.getName()))));
             }
 
-            if (MyWarp.warpPermissions.disobeyWarmup(sender)) {
+            if (MyWarp.getWarpPermissions().disobeyWarmup(sender)) {
                 plugin.getWarpList().warpTo(warp, sender);
 
-                if (!MyWarp.warpPermissions.disobeyCooldown(sender)) {
+                if (!MyWarp.getWarpPermissions().disobeyCooldown(sender)) {
                     new PlayerCooldown(plugin, sender, cooldown);
                 }
                 return;

@@ -246,15 +246,14 @@ public class BasicCommands {
                 ret.append(StringUtils.join(cmd.aliases(), '|'));
                 ret.append(" ");
                 ret.append(ChatColor.GRAY);
-                ret.append(plugin.commandManager.getArguments(cmd));
+                ret.append(plugin.getCommandsManager().getArguments(cmd));
                 return (ret.toString());
             }
         };
 
         try {
-            cmdList.display(sender,
-                    plugin.commandManager.getUsableCommands(sender, "warp"),
-                    args.getInteger(0, 1));
+            cmdList.display(sender, plugin.getCommandsManager()
+                    .getUsableCommands(sender, "warp"), args.getInteger(0, 1));
         } catch (NumberFormatException e) {
             throw new CommandException(LanguageManager.getEffectiveString(
                     "error.cmd.invalidNumber", "%command%",

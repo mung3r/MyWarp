@@ -32,17 +32,22 @@ public abstract class PaginatedResult<T> {
     public void display(CommandSender sender, List<? extends T> results,
             int page) throws CommandException {
         if (results.size() == 0) {
-            throw new CommandException(LanguageManager.getString("lister.noResults"));
+            throw new CommandException(
+                    LanguageManager.getString("lister.noResults"));
         }
         --page;
 
         int maxPages = results.size() / PER_PAGE;
         if (page < 0 || page > maxPages) {
-            throw new CommandException(LanguageManager.getEffectiveString("lister.unknownPage", "%pages%", Integer.toString(maxPages -1)));
+            throw new CommandException(LanguageManager.getEffectiveString(
+                    "lister.unknownPage", "%pages%",
+                    Integer.toString(maxPages - 1)));
         }
 
-        sender.sendMessage(ChatColor.GOLD + MinecraftFontWidthCalculator.centralize(" " + header + LanguageManager.getColorlessString("lister.page") +" " + (page + 1)
-                + "/" + (maxPages + 1) + " ", '-'));
+        sender.sendMessage(ChatColor.GOLD
+                + MinecraftFontWidthCalculator.centralize(" " + header
+                        + LanguageManager.getColorlessString("lister.page")
+                        + " " + (page + 1) + "/" + (maxPages + 1) + " ", '-'));
         for (int i = PER_PAGE * page; i < PER_PAGE * page + PER_PAGE
                 && i < results.size(); i++) {
             sender.sendMessage(format(results.get(i), sender));

@@ -7,5 +7,5 @@ package me.taylorkelly.mywarp.utils.commands;
 public class CommandPermissionsException extends CommandException {
 
     private static final long serialVersionUID = -5114058878574167402L;
-    
+
 }

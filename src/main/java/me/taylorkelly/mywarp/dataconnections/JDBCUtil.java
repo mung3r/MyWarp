@@ -55,10 +55,11 @@ public class JDBCUtil {
      * @throws SQLException
      *             if an exception is encountered while accessing the database
      */
-    public static boolean tableExists(DatabaseMetaData dbMetaData, String tableName)
-            throws SQLException {
+    public static boolean tableExists(DatabaseMetaData dbMetaData,
+            String tableName) throws SQLException {
         return (tableExistsCaseSensitive(dbMetaData, tableName)
-                || tableExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US)) || tableExistsCaseSensitive(
+                || tableExistsCaseSensitive(dbMetaData,
+                        tableName.toUpperCase(Locale.US)) || tableExistsCaseSensitive(
                     dbMetaData, tableName.toLowerCase(Locale.US)));
     }
 
@@ -100,8 +101,8 @@ public class JDBCUtil {
      * @throws SQLException
      *             if an exception is encountered while accessing the database
      */
-    public static boolean columnExists(DatabaseMetaData dbMetaData, String tableName,
-            String columnName) throws SQLException {
+    public static boolean columnExists(DatabaseMetaData dbMetaData,
+            String tableName, String columnName) throws SQLException {
         return (columnExistsCaseSensitive(dbMetaData, tableName, columnName)
                 || columnExistsCaseSensitive(dbMetaData, tableName,
                         columnName.toUpperCase(Locale.US))
@@ -139,9 +140,11 @@ public class JDBCUtil {
      * @throws SQLException
      *             if an exception is encountered while accessing the database
      */
-    public static boolean columnExistsCaseSensitive(DatabaseMetaData dbMetaData,
-            String tableName, String columnName) throws SQLException {
-        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName, columnName);
+    public static boolean columnExistsCaseSensitive(
+            DatabaseMetaData dbMetaData, String tableName, String columnName)
+            throws SQLException {
+        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName,
+                columnName);
         try {
             boolean found = rsTables.next();
             return found;
@@ -168,8 +171,10 @@ public class JDBCUtil {
      *             if an exception is encountered while accessing the database
      */
     public static boolean columnIsDataType(DatabaseMetaData dbMetaData,
-            String tableName, String columnName, String dataType) throws SQLException {
-        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName, columnName);
+            String tableName, String columnName, String dataType)
+            throws SQLException {
+        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName,
+                columnName);
         try {
             return (rsTables.next()
                     && rsTables.getString("COLUMN_NAME").equals(columnName) && rsTables
@@ -192,7 +197,8 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            WarpLogger.severe("Unexpected exception while closing database connection.");
+            WarpLogger
+                    .severe("Unexpected exception while closing database connection.");
         }
     }
 
@@ -209,7 +215,8 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            WarpLogger.severe("Unexpected exception while closing database statement.");
+            WarpLogger
+                    .severe("Unexpected exception while closing database statement.");
         }
     }
 
@@ -226,7 +233,8 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            WarpLogger.severe("Unexpected exception while closing database result set.");
+            WarpLogger
+                    .severe("Unexpected exception while closing database result set.");
         }
     }
 }

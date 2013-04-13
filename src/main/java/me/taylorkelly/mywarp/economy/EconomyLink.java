@@ -13,8 +13,10 @@ public interface EconomyLink {
     /**
      * Checks if the given sender can afford a transaction of the given amount
      * 
-     * @param sender the sender to check
-     * @param the amount that the sender needs to hold
+     * @param sender
+     *            the sender to check
+     * @param the
+     *            amount that the sender needs to hold
      * @return true if the sender has the given amount
      */
     public boolean canAfford(CommandSender sender, double amount);
@@ -22,8 +24,10 @@ public interface EconomyLink {
     /**
      * Withdraw the given sender with the given amount
      * 
-     * @param sender the sender 
-     * @param amount the amount
+     * @param sender
+     *            the sender
+     * @param amount
+     *            the amount
      */
     public void withdrawSender(CommandSender sender, double amount);
 }

@@ -54,11 +54,11 @@ public class SafeTeleport {
     /**
      * Checks if the given material is solid AND has a material specific height
      * smaller than 1 (full block). A player might stand 'inside' such a block
-     * without being stuck. 
+     * without being stuck.
      * 
-     * It is important to differ between solid and non
-     * solid: a solid block blocks a player's movement, a non solid allows
-     * players to move freely through it.
+     * It is important to differ between solid and non solid: a solid block
+     * blocks a player's movement, a non solid allows players to move freely
+     * through it.
      * 
      * Must be updated for new Minecraft versions if new matching blocks were
      * introduced!

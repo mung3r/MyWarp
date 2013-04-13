@@ -3,7 +3,6 @@ package me.taylorkelly.mywarp.listeners;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
-import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -13,10 +12,10 @@ import org.bukkit.event.Listener;
 
 public class MWEntityListener implements Listener {
 
-    private WarpPermissions warpPermissions;
+    private final MyWarp plugin;
 
-    public MWEntityListener() {
-        warpPermissions = MyWarp.warpPermissions;
+    public MWEntityListener(MyWarp plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -29,9 +28,10 @@ public class MWEntityListener implements Listener {
         Player victim = (Player) event.getEntity();
 
         if (PlayerWarmup.isActive(victim.getName())
-                && !warpPermissions.disobeyWarmupDmgAbort(victim)) {
+                && !MyWarp.getWarpPermissions().disobeyWarmupDmgAbort(victim)) {
             PlayerWarmup.endWarmup(victim.getName());
-            victim.sendMessage(LanguageManager.getString("timer.warmup.canceled.damage"));
+            victim.sendMessage(LanguageManager
+                    .getString("timer.warmup.canceled.damage"));
         }
     }
 }

@@ -38,9 +38,10 @@ public class PermissionsManager implements PermissionsHandler {
         checkPermissions();
         registerPermissions();
     }
-    
+
     /**
-     * Returns if the given command sender has the given permission. Using Superperms only.
+     * Returns if the given command sender has the given permission. Using
+     * Superperms only.
      * 
      * @param executor
      *            the command sender

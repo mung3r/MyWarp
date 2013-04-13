@@ -3,9 +3,8 @@ package me.taylorkelly.mywarp.listeners;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
-import me.taylorkelly.mywarp.data.WarpList;
-import me.taylorkelly.mywarp.permissions.WarpPermissions;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -21,12 +20,11 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.material.Attachable;
 
 public class MWPlayerListener implements Listener {
-    private WarpList warpList;
-    private WarpPermissions warpPermissions;
+
+    private final MyWarp plugin;
 
     public MWPlayerListener(MyWarp plugin) {
-        warpList = plugin.getWarpList();
-        warpPermissions = MyWarp.warpPermissions;
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -35,9 +33,9 @@ public class MWPlayerListener implements Listener {
             Block block = event.getClickedBlock();
 
             if (block.getState() instanceof Sign
-                    && MyWarp.signWarp.isSignWarp((Sign) block.getState())) {
+                    && plugin.getSignWarp().isSignWarp((Sign) block.getState())) {
 
-                MyWarp.signWarp.warpSign((Sign) block.getState(),
+                plugin.getSignWarp().warpSign((Sign) block.getState(),
                         event.getPlayer());
                 event.setCancelled(true);
 
@@ -57,12 +55,12 @@ public class MWPlayerListener implements Listener {
                         .getState().getData();
                 Sign signBut = (Sign) behind.getState();
 
-                if (!(signMat.getFacing() == attachable.getAttachedFace() && MyWarp.signWarp
-                        .isSignWarp(signBut))) {
+                if (!(signMat.getFacing() == attachable.getAttachedFace() && plugin
+                        .getSignWarp().isSignWarp(signBut))) {
                     return;
                 }
 
-                MyWarp.signWarp.warpSign(signBut, event.getPlayer());
+                plugin.getSignWarp().warpSign(signBut, event.getPlayer());
             }
         } else if (event.getAction().equals(Action.PHYSICAL)) {
             if (event.getClickedBlock().getType() == Material.WOOD_PLATE
@@ -75,10 +73,10 @@ public class MWPlayerListener implements Listener {
                 }
                 Sign signBelow = (Sign) twoBelow.getState();
 
-                if (!(MyWarp.signWarp.isSignWarp(signBelow))) {
+                if (!(plugin.getSignWarp().isSignWarp(signBelow))) {
                     return;
                 }
-                MyWarp.signWarp.warpSign(signBelow, event.getPlayer());
+                plugin.getSignWarp().warpSign(signBelow, event.getPlayer());
             }
         }
     }
@@ -86,9 +84,9 @@ public class MWPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        if (this.warpList.waitingForWelcome(player)) {
-            this.warpList.setWelcomeMessage(player, event.getMessage());
-            this.warpList.notWaiting(player);
+        if (plugin.getWarpList().waitingForWelcome(player)) {
+            plugin.getWarpList().setWelcomeMessage(player, event.getMessage());
+            plugin.getWarpList().notWaiting(player);
             event.setCancelled(true);
         }
     }
@@ -107,7 +105,7 @@ public class MWPlayerListener implements Listener {
 
         Player player = event.getPlayer();
         if (PlayerWarmup.isActive(player.getName())
-                && !warpPermissions.disobeyWarmupMoveAbort(player)) {
+                && !MyWarp.getWarpPermissions().disobeyWarmupMoveAbort(player)) {
             PlayerWarmup.endWarmup(player.getName());
             player.sendMessage(LanguageManager
                     .getString("timer.warmup.canceled.move"));

@@ -9,10 +9,16 @@ import org.bukkit.event.block.SignChangeEvent;
 
 public class MWBlockListener implements Listener {
 
+    private final MyWarp plugin;
+
+    public MWBlockListener(MyWarp plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSignChange(SignChangeEvent event) {
-        if (MyWarp.signWarp.isSignWarp(event.getLines())) {
-            if (!MyWarp.signWarp.createSignWarp(event, event.getPlayer())) {
+        if (plugin.getSignWarp().isSignWarp(event.getLines())) {
+            if (!plugin.getSignWarp().createSignWarp(event, event.getPlayer())) {
                 event.getBlock().breakNaturally();
                 event.setCancelled(true);
             }

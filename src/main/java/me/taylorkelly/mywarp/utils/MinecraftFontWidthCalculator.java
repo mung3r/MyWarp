@@ -227,7 +227,7 @@ public class MinecraftFontWidthCalculator {
      */
     public static String trim(String str, int length) {
         char[] chars = str.toCharArray();
-        for (int i = chars.length-1; i > 0; i--) {
+        for (int i = chars.length - 1; i > 0; i--) {
             if (getStringWidth(String.valueOf(chars)) <= length) {
                 return String.copyValueOf(chars);
             }
@@ -296,7 +296,7 @@ public class MinecraftFontWidthCalculator {
         // the length is negative if both strings are larger than the required
         // length. If this happens we trim the left string.
         if (length < 0) {
-            //TODO check if right is bigger?
+            // TODO check if right is bigger?
             left = trim(left, getStringWidth(left) + length);
         }
         return left

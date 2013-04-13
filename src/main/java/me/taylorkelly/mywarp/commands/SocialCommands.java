@@ -70,7 +70,7 @@ public class SocialCommands {
 
         // invite group
         if (args.getString(0).startsWith("g:")) {
-            if (!MyWarp.warpPermissions.canInviteGroup(sender)) {
+            if (!MyWarp.getWarpPermissions().canInviteGroup(sender)) {
                 throw new CommandPermissionsException();
             }
 
@@ -168,7 +168,7 @@ public class SocialCommands {
 
         // uninvite group
         if (args.getString(0).startsWith("g:")) {
-            if (!MyWarp.warpPermissions.canUninviteGroup(sender)) {
+            if (!MyWarp.getWarpPermissions().canUninviteGroup(sender)) {
                 throw new CommandPermissionsException();
             }
             String inviteeName = args.getString(0).substring(2);

@@ -17,8 +17,8 @@ public abstract class PlayerTimer extends BukkitRunnable {
         this.player = player;
         this.durration = durration;
         this.startTime = System.currentTimeMillis();
-        
-        //run the task right on creation
+
+        // run the task right on creation
         runTaskLater(plugin, durration.getTicks());
         getTimerMap().put(player.getName(), this);
     }
@@ -29,7 +29,7 @@ public abstract class PlayerTimer extends BukkitRunnable {
     public void run() {
         getTimerMap().remove(player.getName());
     }
-    
+
     @Override
     public void cancel() {
         super.cancel();
