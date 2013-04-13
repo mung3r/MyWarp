@@ -1,14 +1,19 @@
 name: MyWarp
 version: ${project.version}
-author: thee
+description: Provides the ability to create private and public warp points that can be shared with other players in various ways.
 authors:
   - tkelly
   - flames
   - spathizilla
   - mung3r
+  - thee
 softdepend:
+  - bPermissions
+  - PermissionsEx
+  - GroupManager
   - Vault
   - dynmap
+website: ${project.url}
 main: me.taylorkelly.mywarp.MyWarp
 commands:
   warp:

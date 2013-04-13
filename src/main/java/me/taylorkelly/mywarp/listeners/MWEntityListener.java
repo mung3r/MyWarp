@@ -12,12 +12,6 @@ import org.bukkit.event.Listener;
 
 public class MWEntityListener implements Listener {
 
-    private final MyWarp plugin;
-
-    public MWEntityListener(MyWarp plugin) {
-        this.plugin = plugin;
-    }
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.isCancelled() || !(event.getEntity() instanceof Player)

@@ -83,7 +83,7 @@ public class MyWarp extends JavaPlugin {
 
         // register event listeners
         MWBlockListener blockListener = new MWBlockListener(this);
-        MWEntityListener entityListener = new MWEntityListener(this);
+        MWEntityListener entityListener = new MWEntityListener();
         MWPlayerListener playerListener = new MWPlayerListener(this);
 
         pm.registerEvents(blockListener, this);
