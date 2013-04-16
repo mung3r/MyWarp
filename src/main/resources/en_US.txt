@@ -26,7 +26,6 @@ cmd.usage.player:player
 cmd.usage.world:world
 dynmap.createdBy:Created by %creator%
 economy.transaction.complete:§bYou have been charged %amount%$.
-error.cmd.cannotAfford:You cannot afford using this command. You need at least %amount%$.
 error.cmd.flagGiven:Value flag is '%flag%' already given!
 error.cmd.invalidNumber:You need to enter a valid number. Check §f/%command% ?§c for more informations.
 error.cmd.invalidSender:Could not execute command: invalid sender.
@@ -36,6 +35,7 @@ error.cmd.toManyArgs:Too many arguments.
 error.cmd.unknown:An error has occurred while performing this command.
 error.cmd.unknownFlag:Unknown flag:
 error.create.warpExists:Warp called '§f%warp%§r' already exists.
+error.economy.cannotAfford:You cannot afford this. You need at least %amount%$.
 error.economy.unknown:The transaction could not completed.
 error.give.isOwner:%player% is already the owner.
 error.import.exists:Warp '%warp%' already exists. Skipping...

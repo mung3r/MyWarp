@@ -188,7 +188,7 @@ public class CommandsManager {
 
             if (!plugin.getEconomyLink().canAfford(sender, fee)) {
                 throw new CommandException(LanguageManager.getEffectiveString(
-                        "error.cmd.cannotAfford", "%amount%",
+                        "error.economy.cannotAfford", "%amount%",
                         Double.toString(fee)));
             }
         }

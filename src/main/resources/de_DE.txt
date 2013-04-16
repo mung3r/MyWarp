@@ -26,7 +26,6 @@ cmd.usage.player:Spieler
 cmd.usage.world:Welt
 dynmap.createdBy:Erstellt von %creator%
 economy.transaction.complete:§bDir wurden %amount%$ berechnet.
-error.cmd.cannotAfford:Du kannst es dir nicht leisten, diesen befehl zu benutzen. Du brauchst mindestens: %amount%$.
 error.cmd.flagGiven:Die Flag '%flag%' existiert bereits!
 error.cmd.invalidNumber:Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.
 error.cmd.invalidSender:Das Kommando konnte nicht ausgeführt werden: ungültiger Sender.
@@ -36,6 +35,7 @@ error.cmd.toManyArgs:Zu viele Argumente.
 error.cmd.unknown:Während dem Ausführen des Befehls trat ein fehler auf.
 error.cmd.unknownFlag:Unbekannte Flag:
 error.create.warpExists:Ein Warp namens '%warp%' existiert bereits.
+error.economy.cannotAfford:Du kannst es dir das nicht leisten. Du brauchst mindestens: %amount%$.
 error.economy.unknown:Die Transaktion konnte nicht abgeschlossen werden.
 error.give.isOwner:Dieser Warp gehört bereits %player%.
 error.import.exists:Warp '%warp%' existiert bereits. Überspringe ihn...

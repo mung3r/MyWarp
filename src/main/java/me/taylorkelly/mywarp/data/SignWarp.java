@@ -3,6 +3,8 @@ package me.taylorkelly.mywarp.data;
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.economy.Fee;
+
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -49,6 +51,18 @@ public class SignWarp {
                             "error.noPermission.world", "%world%", warp.world));
             return;
         }
+
+        if (WarpSettings.useEconomy) {
+            double fee = MyWarp.getWarpPermissions().getEconomyPrices(player)
+                    .getFee(Fee.WARP_SIGN_USE);
+            if (!plugin.getEconomyLink().canAfford(player, fee)) {
+                player.sendMessage(ChatColor.RED
+                        + LanguageManager.getEffectiveString(
+                                "error.economy.cannotAfford", "%amount%",
+                                Double.toString(fee)));
+            }
+            plugin.getEconomyLink().withdrawSender(player, fee);
+        }
         plugin.getWarpList().warpTo(warp, player);
     }
 
@@ -73,6 +87,19 @@ public class SignWarp {
                     "sign.noPermission.create", "%warp%", name));
             return false;
         }
+
+        if (WarpSettings.useEconomy) {
+            double fee = MyWarp.getWarpPermissions().getEconomyPrices(player)
+                    .getFee(Fee.WARP_SIGN_CREATE);
+            if (!plugin.getEconomyLink().canAfford(player, fee)) {
+                player.sendMessage(ChatColor.RED
+                        + LanguageManager.getEffectiveString(
+                                "error.economy.cannotAfford", "%amount%",
+                                Double.toString(fee)));
+            }
+            plugin.getEconomyLink().withdrawSender(player, fee);
+        }
+
         sign.setLine(1, SIGN_TEXT);
         player.sendMessage(LanguageManager.getString("sign.created"));
         return true;
