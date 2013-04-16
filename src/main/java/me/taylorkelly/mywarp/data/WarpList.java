@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
@@ -19,12 +20,14 @@ public class WarpList {
     private final MyWarp plugin;
 
     private HashMap<String, Warp> warpMap;
-    private HashMap<String, Warp> welcomeMessage;
+    private ConcurrentHashMap<String, Warp> welcomeMessage;
+
+    private static final int CLEANUP_TIME = 30;
 
     public WarpList(MyWarp plugin) {
         this.plugin = plugin;
 
-        welcomeMessage = new HashMap<String, Warp>();
+        welcomeMessage = new ConcurrentHashMap<String, Warp>();
         warpMap = plugin.getConnectionManager().getMap();
         WarpLogger.info(getSize() + " warps loaded");
     }
@@ -261,14 +264,30 @@ public class WarpList {
         }
     }
 
+    /**
+     * Sets the welcome message to the given message for the warp that is stored
+     * under the given player in the welcomeMessages-Map. Threadsafe.
+     * 
+     * @param player
+     *            the player
+     * @param message
+     *            the message
+     */
     public void setWelcomeMessage(Player player, String message) {
         if (welcomeMessage.containsKey(player.getName())) {
             Warp warp = welcomeMessage.get(player.getName());
-            warp.welcomeMessage = message;
+
+            // this method is almost always called asnyc so the warp needs to be
+            // locked for changes
+            synchronized (warp) {
+                warp.welcomeMessage = message;
+            }
             plugin.getConnectionManager().updateWelcomeMessage(warp);
-            player.sendMessage(LanguageManager
-                    .getString("warp.welcome.received"));
-            player.sendMessage(message);
+
+            // sendMessage is threadsafe
+            player.sendMessage(LanguageManager.getEffectiveString(
+                    "warp.welcome.received", "%warp%", warp.name));
+            player.sendMessage(ChatColor.AQUA + message);
         }
     }
 
@@ -335,7 +354,14 @@ public class WarpList {
         }
     }
 
-    public void welcomeMessage(Warp warp, Player player) {
+    public void welcomeMessage(Warp warp, final Player player) {
         welcomeMessage.put(player.getName(), warp);
+        plugin.getServer().getScheduler()
+                .runTaskLaterAsynchronously(plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        welcomeMessage.remove(player.getName());
+                    }
+                }, CLEANUP_TIME * 20);
     }
 }
