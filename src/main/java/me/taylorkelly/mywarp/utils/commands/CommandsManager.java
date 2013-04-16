@@ -102,7 +102,7 @@ public class CommandsManager {
         // sub-command, we need to execute this sub-command. If not we
         // execute the root-command's method.
         if (method.isAnnotationPresent(NestedCommand.class)
-                && fullArgs.length > 2 && hasSubComand(method, fullArgs[1])) {
+                && fullArgs.length >= 2 && hasSubComand(method, fullArgs[1])) {
             executeMethod(commands.get(method).get(fullArgs[1]), sender, 1,
                     fullArgs);
         } else {
