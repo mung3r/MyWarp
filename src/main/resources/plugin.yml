@@ -120,6 +120,9 @@ permissions:
   mywarp.warmup.disobey.moveabort:
     description: Can move damage while warming up
     default: op
+  mywarp.economy.free:
+    description: Is never charged anywhere.
+    default: op
   mywarp.limit.unlimited:
     description: Can disobey all limits for warp creation
     children:
@@ -173,3 +176,5 @@ permissions:
     children:
       mywarp.warp.*: true
       mywarp.admin.*: true
+      mywarp.limit.unlimited: true
+      mywarp.economy.free: true

@@ -138,7 +138,7 @@ public class WarpPermissions {
     }
 
     public boolean disobeyEconomyFees(CommandSender sender) {
-        return hasPermission(sender, "mywarp.economy.disobey");
+        return hasPermission(sender, "mywarp.economy.free");
     }
 
     public WarpFees getEconomyPrices(CommandSender sender) {

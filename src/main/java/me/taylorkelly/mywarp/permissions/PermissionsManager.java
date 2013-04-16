@@ -4,8 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import me.taylorkelly.mywarp.WarpSettings;
-import me.taylorkelly.mywarp.data.WarpLimit;
-import me.taylorkelly.mywarp.timer.Time;
+import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 import net.milkbowl.vault.permission.Permission;
 
@@ -61,29 +60,29 @@ public class PermissionsManager implements PermissionsHandler {
     // Only register permissions here that cannot be registered in plugin.yml!!!
     private void registerPermissions() {
         // mywarp.limit permissions
-        for (WarpLimit warpLimit : WarpSettings.warpLimits) {
+        for (ValuePermissionContainer container : WarpSettings.warpLimits) {
             pm.addPermission(new org.bukkit.permissions.Permission(
-                    "mywarp.limit." + warpLimit.getName(),
+                    "mywarp.limit." + container.getName(),
                     "Gives acess to the number of warps defined for '"
-                            + warpLimit.getName() + "' in the config",
+                            + container.getName() + "' in the config",
                     PermissionDefault.FALSE));
         }
 
         // mywarp.cooldown permissions
-        for (Time warpCooldown : WarpSettings.warpCooldowns) {
+        for (ValuePermissionContainer container : WarpSettings.warpCooldowns) {
             pm.addPermission(new org.bukkit.permissions.Permission(
-                    "mywarp.cooldown." + warpCooldown.getName(),
+                    "mywarp.cooldown." + container.getName(),
                     "User is affected by the cooldowns defined for '"
-                            + warpCooldown.getName() + "' in the config",
+                            + container.getName() + "' in the config",
                     PermissionDefault.FALSE));
         }
 
         // mywarp.warmup permissions
-        for (Time warpWarmup : WarpSettings.warpWarmups) {
+        for (ValuePermissionContainer container : WarpSettings.warpWarmups) {
             pm.addPermission(new org.bukkit.permissions.Permission(
-                    "mywarp.warmup." + warpWarmup.getName(),
+                    "mywarp.warmup." + container.getName(),
                     "User is affected by the warmups defined for '"
-                            + warpWarmup.getName() + "' in the config",
+                            + container.getName() + "' in the config",
                     PermissionDefault.FALSE));
         }
 
@@ -101,6 +100,15 @@ public class PermissionsManager implements PermissionsHandler {
         pm.addPermission(new org.bukkit.permissions.Permission(
                 "mywarp.warp.world.*", "User may warp to all worlds",
                 PermissionDefault.OP, worldMap));
+
+        // mywarp.economy permissions
+        for (ValuePermissionContainer container : WarpSettings.warpFees) {
+            pm.addPermission(new org.bukkit.permissions.Permission(
+                    "mywarp.economy." + container.getName(),
+                    "User is affected by the fees defined for '"
+                            + container.getName() + "' in the config",
+                    PermissionDefault.FALSE));
+        }
     }
 
     private void checkPermissions() {
