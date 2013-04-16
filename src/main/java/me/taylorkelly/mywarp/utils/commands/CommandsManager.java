@@ -181,8 +181,7 @@ public class CommandsManager {
 
         // if economy support is enabled we need to check if the sender can
         // afford using the command
-        if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE
-                && !MyWarp.getWarpPermissions().disobeyEconomyFees(sender)) {
+        if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE) {
             double fee = MyWarp.getWarpPermissions().getEconomyPrices(sender)
                     .getFee(cmd.fee());
 
@@ -204,8 +203,7 @@ public class CommandsManager {
         // if economy support is enabled whitdraw the sender - at this point the
         // command should have been executed without any errors
         // (see CommandException)
-        if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE
-                && !MyWarp.getWarpPermissions().disobeyEconomyFees(sender)) {
+        if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE) {
 
             plugin.getEconomyLink().withdrawSender(
                     sender,

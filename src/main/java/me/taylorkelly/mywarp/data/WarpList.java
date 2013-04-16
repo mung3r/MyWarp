@@ -36,7 +36,7 @@ public class WarpList {
         warpMap.put(name, warp);
         plugin.getConnectionManager().addWarp(warp);
 
-        if (plugin.getMarkers() != null) {
+        if (WarpSettings.useDynmap) {
             plugin.getMarkers().addWarp(warp);
         }
     }
@@ -55,7 +55,7 @@ public class WarpList {
         warpMap.remove(warp.name);
         plugin.getConnectionManager().deleteWarp(warp);
 
-        if (plugin.getMarkers() != null) {
+        if (WarpSettings.useDynmap) {
             plugin.getMarkers().deleteWarp(warp);
         }
     }
@@ -156,7 +156,7 @@ public class WarpList {
         warp.setCreator(giveeName);
         plugin.getConnectionManager().updateCreator(warp);
 
-        if (plugin.getMarkers() != null) {
+        if (WarpSettings.useDynmap) {
             plugin.getMarkers().updateWarp(warp);
         }
     }
@@ -250,7 +250,7 @@ public class WarpList {
         warp.publicAll = false;
         plugin.getConnectionManager().publicizeWarp(warp, false);
 
-        if (plugin.getMarkers() != null) {
+        if (WarpSettings.useDynmap) {
             plugin.getMarkers().deleteWarp(warp);
         }
     }
@@ -259,7 +259,7 @@ public class WarpList {
         warp.publicAll = true;
         plugin.getConnectionManager().publicizeWarp(warp, true);
 
-        if (plugin.getMarkers() != null) {
+        if (WarpSettings.useDynmap) {
             plugin.getMarkers().addWarp(warp);
         }
     }
@@ -305,7 +305,7 @@ public class WarpList {
         warp.setLocation(player.getLocation());
         plugin.getConnectionManager().updateLocation(warp);
 
-        if (plugin.getMarkers() != null) {
+        if (WarpSettings.useDynmap) {
             plugin.getMarkers().updateWarp(warp);
         }
     }

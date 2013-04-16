@@ -31,7 +31,7 @@ public class VaultLink implements EconomyLink {
     public boolean canAfford(CommandSender sender, double amount) {
         // non players can always afford a transaction as we escape them when
         // doing the transaction
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player) || MyWarp.getWarpPermissions().disobeyEconomyFees(sender)) {
             return true;
         }
         return economy.has(sender.getName(), ((Player) sender).getWorld()
@@ -41,7 +41,7 @@ public class VaultLink implements EconomyLink {
     @Override
     public void withdrawSender(CommandSender sender, double amount) {
         // non players cannot be withdrawn so we return here
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player) || MyWarp.getWarpPermissions().disobeyEconomyFees(sender)) {
             return;
         }
         EconomyResponse response = economy.withdrawPlayer(sender.getName(),
