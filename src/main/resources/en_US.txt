@@ -71,7 +71,7 @@ lister.unknownPage:This page does not exist, there are only %pages% pages in tot
 lister.warp.by:by
 lister.warp.head:Warps
 lister.warp.you:you
-reload.config:Config has been reloaded successfully!
+reload.config:§bConfig has been reloaded successfully!
 safety.found:§cWarp '%warp%' is not safe. You were teleported to the closest safe location.
 safety.notFound:§cWarp '%warp%' is not safe. Also no safe loaction could be found close to it.
 search.exactMatches:§eExact matches for search: §o§7%query%

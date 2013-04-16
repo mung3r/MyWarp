@@ -71,7 +71,7 @@ lister.unknownPage:Diese Seite existiert nicht, es gibt insgesammt nur %pages% S
 lister.warp.by:von
 lister.warp.head:Warps
 lister.warp.you:dir
-reload.config:Die Konfiguration wurde erfolgreich neu geladen!
+reload.config:§bDie Konfiguration wurde erfolgreich neu geladen!
 safety.found:§cDer Warp '%warp% ist nicht sicher. Du wurdest zum sichersten Ort in seiner Nähe teleportiert.
 safety.notFound:§cDer Warp '%warp% ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden.
 search.exactMatches:§Exakte Treffer für die Suche nach: §o§7%query%
