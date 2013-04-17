@@ -10,7 +10,7 @@ cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current 
 cmd.description.invite:Invite §7<player|group>§f to §7<name>
 cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
 cmd.description.listAll:List the warps you can visit on one page. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
-cmd.description.point:Point your compass to §7<name>
+cmd.description.point:Point your compass to §7[name]§f. If you want to reset the compass, simply use this command without specifying a warp.
 cmd.description.private:Make §7<name>§f a private warp
 cmd.description.public:Make §7<name>§f a public warp
 cmd.description.reload:Reload the configuration
@@ -98,6 +98,7 @@ warp.invite.group.public:§bYou have invited group %group% to '%warp%'.%n§cBut 
 warp.invite.invited:§b%player% has invited you to to warp '%warp%'.%n§fUse: §c/warp %warp% §fto warp to it.
 warp.invite.player.private:§bYou have invited %player% to '%warp%'.
 warp.invite.player.public:§bYou have invited %player% to '%warp%'.%n§cBut '%warp%' is still public.
+warp.point.reset:§bYour compass now points back to the spawn point.
 warp.point:§bYour compass now guides you to '%warp%'.
 warp.private:§bYou have privatized '%warp%'%n§fIf you'd like to invite others to it,%n§fUse: §c/warp invite <player> %warp%
 warp.public:§bYou have publicized '%warp%'.

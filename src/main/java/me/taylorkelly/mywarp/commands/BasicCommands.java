@@ -179,15 +179,20 @@ public class BasicCommands {
         }
     }
 
-    @Command(aliases = { "points" }, usage = "<name>", desc = "cmd.description.point", fee = Fee.POINT, min = 1, permissions = { "mywarp.warp.basic.compass" })
+    @Command(aliases = { "point" }, usage = "[name]", desc = "cmd.description.point", fee = Fee.POINT, permissions = { "mywarp.warp.basic.compass" })
     public void pointToWarp(CommandContext args, Player sender)
             throws CommandException {
-        Warp warp = CommandUtils.getWarpForUsage(sender,
-                args.getJoinedStrings(0));
+        if (args.argsLength() == 0) {
+            sender.setCompassTarget(sender.getWorld().getSpawnLocation());
+            sender.sendMessage(LanguageManager.getString("warp.point.reset"));
+        } else {
+            Warp warp = CommandUtils.getWarpForUsage(sender,
+                    args.getJoinedStrings(0));
 
-        plugin.getWarpList().point(warp, sender);
-        sender.sendMessage(LanguageManager.getEffectiveString("warp.point",
-                "%warp%", warp.name));
+            plugin.getWarpList().point(warp, sender);
+            sender.sendMessage(LanguageManager.getEffectiveString("warp.point",
+                    "%warp%", warp.name));
+        }
     }
 
     @Command(aliases = { "search" }, flags = "p", usage = "<name>", desc = "cmd.description.search", fee = Fee.SEARCH, min = 1, permissions = { "mywarp.warp.basic.search" })

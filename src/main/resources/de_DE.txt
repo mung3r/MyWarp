@@ -10,7 +10,7 @@ cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die akt
 cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
 cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
 cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
-cmd.description.point:Richtet den Kompass auf §7<Name>§f aus
+cmd.description.point:Richtet den Kompass auf §7<Name>§f aus. Um den Kompass wieder zurückzusetzten, nutze diesen befehl einfach ohne einen Warp anzugeben.
 cmd.description.private:Wandelt §7<name>§f in einen privaten Warp um
 cmd.description.public:Wandelt §7<name>§f in einen öffentlichen Warp um
 cmd.description.reload:Lädt die Konfiguration neu
@@ -98,6 +98,7 @@ warp.invite.group.public:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.%n
 warp.invite.invited:§b%player% hat dich zum Warp '%warp%' eingeladen.%n§fNutze: §c/warp %warp% §fum dich zu ihm zu teleportieren.
 warp.invite.player.private:§bDu hast %player% zu '%warp%' eingeladen.
 warp.invite.player.public:§bDu hast %player% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+warp.point.reset:§bDein Kompass zeigt jetzt wieder auf den ursprünglichen Spawnpunkt.
 warp.point:§bDein Kompass zeigt jetzt auf '%warp%'.
 warp.private:§bDu hast '%warp%' privatisiert.%n§fWenn du andere Spieler einladen möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%
 warp.public:§bDu hast '%warp%' veröffentlicht.
