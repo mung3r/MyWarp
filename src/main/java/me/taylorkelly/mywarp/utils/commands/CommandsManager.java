@@ -327,7 +327,6 @@ public class CommandsManager {
         if (desc.length() > 0) {
             usage.append("\n");
             usage.append(ChatColor.RESET);
-            usage.append(ChatColor.ITALIC);
             usage.append(desc);
         }
         return usage.toString();
