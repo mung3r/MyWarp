@@ -26,6 +26,7 @@ cmd.usage.player:Spieler
 cmd.usage.world:Welt
 dynmap.createdBy:Erstellt von %creator%
 economy.transaction.complete:§bDir wurden %amount%$ berechnet.
+error.accept.noWarp:Es gibt keine Warps, die akzeptiert werden könnten.
 error.cmd.flagGiven:Die Flag '%flag%' existiert bereits!
 error.cmd.invalidNumber:Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.
 error.cmd.invalidSender:Das Kommando konnte nicht ausgeführt werden: ungültiger Sender.
@@ -77,10 +78,10 @@ safety.notFound:§cDer Warp '%warp% ist nicht sicher. Es konnte auch kein sicher
 search.exactMatches:§Exakte Treffer für die Suche nach: §o§7%query%
 search.noMatches:§cKein Treffer für die Suche nach: $o§7%query%
 search.partitalMatches:§eTeilweise Treffer für die Suche nach: §o§7%query%
-sign.created:§bDer SchildWarp wurde erfolgreich erstellt.
-sign.noPermission.create:§cDir fehlen die Rechte um einen SchildWarp zu erstellen.
-sign.noPermission.createToWarp:§cDir fehlen die Rechte um einen SchildWarp nach '%warp%' zu erstellen.
-sign.noPermission.use:§cDir fehlen die Rechte um SchildWarps zu nutzen.
+sign.created:§bDas Warp-Schild wurde erfolgreich erstellt.
+sign.noPermission.create:§cDir fehlen die Rechte um ein Warp-Schild zu erstellen.
+sign.noPermission.createToWarp:§cDir fehlen die Rechte um ein Warp-Schild nach '%warp%' zu erstellen.
+sign.noPermission.use:§cDir fehlen die Rechte um Warp-Schilder zu nutzen.
 timer.cooldown.cooling:§cDu musst noch %seconds% Sekunden warten, bevor du dich wieder warpen kannst.
 timer.cooldown.ended:§bDu bist abgekühlt und kannst §f/warp §b wieder nutzen.
 timer.warmup.canceled.damage:§cDu darfst keinen Schaden nehmen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
@@ -91,8 +92,9 @@ warp.create.private:§bWarp '%warp%' wurde erfolgreich erstellt%n§fWenn du ande
 warp.create.public:§bWarp '%warp%' wurde erfolgreich erstellt%n§fWenn du ihn Privatisieren möchtest,%n§fNutze: §c/warp private %warp%
 warp.default.welcomeMessage:Willkommen am Warp '%warp%', %player%.
 warp.delete:§bDu hast '%warp%' gelöscht.
+warp.give.accept:§b'%warp%' gehört nun dir.
+warp.give.asked:§b%player% möchte '%warp%' an dich abgeben. Nutze '§f/warp accept§b' um ihn zu akzeptieren.
 warp.give.given:§bDu hast '%warp%' an %player% abgegeben.
-warp.give.received:§bDu hast '%warp%' von %player% erhalten.
 warp.invite.group.private:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.
 warp.invite.group.public:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
 warp.invite.invited:§b%player% hat dich zum Warp '%warp%' eingeladen.%n§fNutze: §c/warp %warp% §fum dich zu ihm zu teleportieren.

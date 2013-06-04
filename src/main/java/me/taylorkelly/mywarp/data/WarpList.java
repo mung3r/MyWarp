@@ -11,6 +11,7 @@ import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.utils.MatchList;
+import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
 import me.taylorkelly.mywarp.utils.WarpLogger;
 
 import org.bukkit.ChatColor;
@@ -22,12 +23,10 @@ public class WarpList {
     private HashMap<String, Warp> warpMap;
     private ConcurrentHashMap<String, Warp> welcomeMessage;
 
-    private static final int CLEANUP_TIME = 30;
-
     public WarpList(MyWarp plugin) {
         this.plugin = plugin;
-
-        welcomeMessage = new ConcurrentHashMap<String, Warp>();
+        
+        welcomeMessage = new TempConcurrentHashMap<String, Warp>(plugin);
         warpMap = plugin.getConnectionManager().getMap();
         WarpLogger.info(getSize() + " warps loaded");
     }
@@ -356,12 +355,5 @@ public class WarpList {
 
     public void welcomeMessage(Warp warp, final Player player) {
         welcomeMessage.put(player.getName(), warp);
-        plugin.getServer().getScheduler()
-                .runTaskLaterAsynchronously(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        welcomeMessage.remove(player.getName());
-                    }
-                }, CLEANUP_TIME * 20);
     }
 }

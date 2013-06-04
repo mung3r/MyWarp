@@ -37,6 +37,7 @@ economy:
   informAfterTransaction: true
   fees:
     default:
+      accept: 0
       create: 25
       create-private: 25
       delete: 25
@@ -57,6 +58,7 @@ economy:
       warp-to: 25
       welcome: 25
     user:
+      accept: 25
       create: 50
       create-private: 50
       delete: 50

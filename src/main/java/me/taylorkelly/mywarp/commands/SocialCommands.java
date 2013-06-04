@@ -5,10 +5,10 @@ import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
+import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
@@ -21,28 +21,34 @@ import me.taylorkelly.mywarp.utils.commands.CommandPermissionsException;
  */
 public class SocialCommands {
 
-    private MyWarp plugin;
+    private final MyWarp plugin;
+    private TempConcurrentHashMap<String, Warp> givenWarps;
 
     public SocialCommands(MyWarp plugin) {
         this.plugin = plugin;
+        givenWarps = new TempConcurrentHashMap<String, Warp>(plugin);
     }
 
-    @Command(aliases = { "give" }, usage = "<player> <name>", desc = "cmd.description.give", fee = Fee.GIVE, min = 2, permissions = { "mywarp.warp.soc.give" })
+    @Command(aliases = { "give" }, usage = "<player> <name>", desc = "cmd.description.give", fee = Fee.GIVE, min = 2, flags = "df", permissions = { "mywarp.warp.soc.give" })
     public void giveWarp(CommandContext args, CommandSender sender)
             throws CommandException {
+        // 'd' - give the warp directly without asking for acception
+        // 'f' - ignore limits if enabled
+
         Player givee = plugin.getServer().getPlayer(args.getString(0));
         String giveeName;
 
-        // TODO simplify
-        if (WarpSettings.useWarpLimits) {
-            if (givee == null) {
+        if (givee == null) {
+            // givee needs to be online unless the warp is given directly
+            if (!args.hasFlag('d')) {
                 throw new CommandException(LanguageManager.getEffectiveString(
                         "error.player.offline", "%player%", args.getString(0)));
             }
-            giveeName = givee.getName();
-        } else {
             giveeName = args.getString(0);
+        } else {
+            giveeName = givee.getName();
         }
+
         Warp warp = CommandUtils.getWarpForModification(sender,
                 args.getJoinedStrings(1));
 
@@ -50,16 +56,51 @@ public class SocialCommands {
             throw new CommandException(LanguageManager.getEffectiveString(
                     "error.give.isOwner", "%player%", giveeName));
         }
-        CommandUtils.checkPlayerLimits(givee, warp.publicAll);
 
-        plugin.getWarpList().give(warp, giveeName);
-        sender.sendMessage(LanguageManager.getEffectiveString(
-                "warp.give.given", "%warp%", warp.name, "%player%", giveeName));
-        if (givee != null) {
+        if (!args.hasFlag('f')) {
+            CommandUtils.checkPlayerLimits(givee, warp.publicAll);
+        } else {
+            if (!MyWarp.getWarpPermissions().hasPermission(sender,
+                    "mywarp.warp.soc.give.force")) {
+                throw new CommandPermissionsException();
+            }
+        }
+
+        // if 'd' is present the warp is given directly
+        if (args.hasFlag('d')) {
+            if (!MyWarp.getWarpPermissions().hasPermission(sender,
+                    "mywarp.warp.soc.give.direct")) {
+                throw new CommandPermissionsException();
+            }
+            plugin.getWarpList().give(warp, giveeName);
+
+            if (givee != null) {
+                givee.sendMessage(LanguageManager.getEffectiveString(
+                        "warp.give.accept", "%warp%", warp.name));
+            }
+        } else {
+            givenWarps.put(giveeName, warp);
             givee.sendMessage(LanguageManager.getEffectiveString(
-                    "warp.give.received", "%warp%", warp.name, "%player%",
+                    "warp.give.asked", "%warp%", warp.name, "%player%",
                     sender.getName()));
         }
+        sender.sendMessage(LanguageManager.getEffectiveString(
+                "warp.give.given", "%warp%", warp.name, "%player%", giveeName));
+    }
+
+    @Command(aliases = { "accept" }, usage = "", desc = "cmd.description.accept", fee = Fee.ACCEPT, max = 0, permissions = { "mywarp.warp.soc.accept" })
+    public void acceptGivenWarp(CommandContext args, CommandSender sender)
+            throws CommandException {
+        if (!givenWarps.containsKey(sender.getName())) {
+            // TODO translate
+            throw new CommandException(
+                    LanguageManager.getString("error.accept.noWarp"));
+        }
+        Warp warp = givenWarps.get(sender.getName());
+
+        plugin.getWarpList().give(warp, sender.getName());
+        sender.sendMessage(LanguageManager.getEffectiveString(
+                "warp.give.accept", "%warp%", warp.name));
     }
 
     @Command(aliases = { "invite" }, usage = "<player> <name>", desc = "cmd.description.invite", fee = Fee.INVITE, min = 2, permissions = { "mywarp.warp.soc.invite" })

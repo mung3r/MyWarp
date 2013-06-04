@@ -238,9 +238,10 @@ public class WarpSettings {
 
         for (String key : confEconomyFees.getKeys(false)) {
             WarpFees fees = new WarpFees(key, confEconomyFees.getDouble(key
-                    + ".create"), confEconomyFees.getDouble(key
-                    + ".create-private"), confEconomyFees.getDouble(key
-                    + ".delete"), confEconomyFees.getDouble(key + ".give"),
+                    + ".accept"), confEconomyFees.getDouble(key + ".create"),
+                    confEconomyFees.getDouble(key + ".create-private"),
+                    confEconomyFees.getDouble(key + ".delete"),
+                    confEconomyFees.getDouble(key + ".give"),
                     confEconomyFees.getDouble(key + ".help"),
                     confEconomyFees.getDouble(key + ".invite"),
                     confEconomyFees.getDouble(key + ".list"),

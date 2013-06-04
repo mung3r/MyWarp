@@ -67,7 +67,16 @@ permissions:
     description: Can change the welcome message
     default: op
   mywarp.warp.soc.give:
-    description: Can give to your /warp
+    description: Can give your /warp
+    default: op
+  mywarp.warp.soc.accept:
+    description: Can accept given warps
+    default: op
+  mywarp.warp.soc.give.force:
+    description: Can give your /warp and ignore limits
+    default: op
+  mywarp.warp.soc.give.direct:
+    description: Can give your /warp directly
     default: op
   mywarp.warp.soc.invite:
     description: Can invite players to your /warp
@@ -152,6 +161,8 @@ permissions:
     description: Social /warp commands
     children:
       mywarp.warp.soc.give: true
+      mywarp.warp.soc.give.direct: true
+      mywarp.warp.soc.give.force: true
       mywarp.warp.soc.invite: true
       mywarp.warp.soc.invite.group: true
       mywarp.warp.soc.uninvite: true
