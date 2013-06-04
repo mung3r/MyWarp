@@ -60,6 +60,7 @@ public class SignWarp {
                         + LanguageManager.getEffectiveString(
                                 "error.economy.cannotAfford", "%amount%",
                                 Double.toString(fee)));
+                return;
             }
             plugin.getEconomyLink().withdrawSender(player, fee);
         }
@@ -96,6 +97,7 @@ public class SignWarp {
                         + LanguageManager.getEffectiveString(
                                 "error.economy.cannotAfford", "%amount%",
                                 Double.toString(fee)));
+                return false;
             }
             plugin.getEconomyLink().withdrawSender(player, fee);
         }
