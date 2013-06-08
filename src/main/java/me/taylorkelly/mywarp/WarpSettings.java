@@ -236,6 +236,7 @@ public class WarpSettings {
                     configuredFees.getDouble(key + ".delete"),
                     configuredFees.getDouble(key + ".give"),
                     configuredFees.getDouble(key + ".help"),
+                    configuredFees.getDouble(key + ".info"),
                     configuredFees.getDouble(key + ".invite"),
                     configuredFees.getDouble(key + ".list"),
                     configuredFees.getDouble(key + ".listall"),

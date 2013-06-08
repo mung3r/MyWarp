@@ -43,6 +43,7 @@ economy:
       delete: 25
       give: 25
       help: 0
+      info: 0
       invite: 25
       list: 0
       listall: 0
@@ -64,6 +65,7 @@ economy:
       delete: 50
       give: 25
       help: 0
+      info: 0
       invite: 25
       list: 0
       listall: 0

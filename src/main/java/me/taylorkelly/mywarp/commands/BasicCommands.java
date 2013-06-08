@@ -257,8 +257,11 @@ public class BasicCommands {
                 args.getJoinedStrings(0));
 
         MyWarp.inst().getWarpList().welcomeMessage(warp, sender);
-        sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.welcome.enter", "%warp%", warp.getName()));
+        sender.sendMessage(MyWarp
+                .inst()
+                .getLanguageManager()
+                .getEffectiveString("warp.welcome.enter", "%warp%",
+                        warp.getName()));
     }
 
     @Command(aliases = { "help" }, usage = "#", desc = "cmd.description.help", fee = Fee.HELP, max = 1, permissions = { "mywarp.warp.basic.help" })
@@ -306,6 +309,87 @@ public class BasicCommands {
         MyWarp.inst().getWarpList().updateLocation(warp, sender);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.update", "%warp%", warp.getName()));
+    }
+
+    @Command(aliases = { "info" }, usage = "<name>", desc = "cmd.description.info", fee = Fee.INFO, min = 1, permissions = { "mywarp.warp.basic.info" })
+    public void showWarpInfo(CommandContext args, CommandSender sender)
+            throws CommandException {
+        Warp warp = CommandUtils.getWarpForUsage(sender,
+                args.getJoinedStrings(0));
+        StringBuilder infos = new StringBuilder();
+
+        infos.append(ChatColor.GOLD);
+        // color the warp depending on its visibility
+        infos.append(MyWarp
+                .inst()
+                .getLanguageManager()
+                .getEffectiveString(
+                        "warp.info.about",
+                        "%warp%",
+                        (warp.isPublicAll() ? ChatColor.GREEN : ChatColor.RED)
+                                + warp.getName() + ChatColor.GOLD));
+        infos.append("\n");
+
+        infos.append(ChatColor.GRAY);
+        infos.append(MyWarp.inst().getLanguageManager()
+                .getString("warp.info.created"));
+        infos.append(" ");
+        infos.append(ChatColor.WHITE);
+        infos.append(warp.getCreator());
+        if (warp.getCreator().equals(sender.getName())) {
+            infos.append(" ");
+            infos.append(MyWarp.inst().getLanguageManager()
+                    .getString("warp.info.created.you"));
+        }
+        infos.append("\n");
+
+        infos.append(ChatColor.GRAY);
+        infos.append(MyWarp.inst().getLanguageManager()
+                .getString("warp.info.location"));
+        infos.append(" ");
+        infos.append(ChatColor.WHITE);
+        infos.append(Math.round(warp.getX()));
+        infos.append(", ");
+        infos.append(warp.getY());
+        infos.append(", ");
+        infos.append(Math.round(warp.getZ()));
+        infos.append(" ");
+        infos.append(MyWarp
+                .inst()
+                .getLanguageManager()
+                .getEffectiveString("warp.info.location.world", "%world%",
+                        warp.getWorld()));
+        infos.append("\n");
+
+        if (warp.playerCanModify(sender instanceof Player ? (Player) sender
+                : null)) {
+            infos.append(ChatColor.GRAY);
+            infos.append(MyWarp.inst().getLanguageManager()
+                    .getString("warp.info.invitedPlayers"));
+            infos.append(" ");
+            infos.append(ChatColor.WHITE);
+            infos.append(warp.getAllInvitedPlayers().isEmpty() ? "-"
+                    : StringUtils.join(warp.getAllInvitedPlayers(), ", "));
+            infos.append("\n");
+
+            infos.append(ChatColor.GRAY);
+            infos.append(MyWarp.inst().getLanguageManager()
+                    .getString("warp.info.invitedGroups"));
+            infos.append(" ");
+            infos.append(ChatColor.WHITE);
+            infos.append(warp.getAllInvitedGroups().isEmpty() ? "-"
+                    : StringUtils.join(warp.getAllInvitedGroups(), ", "));
+            infos.append("\n");
+        }
+
+        infos.append(ChatColor.GRAY);
+        infos.append(MyWarp.inst().getLanguageManager()
+                .getString("warp.info.visits"));
+        infos.append(" ");
+        infos.append(ChatColor.WHITE);
+        infos.append(warp.getVisits());
+
+        sender.sendMessage(infos.toString());
     }
 
     private void sendWarpMatches(TreeSet<Warp> warps, CommandSender sender) {

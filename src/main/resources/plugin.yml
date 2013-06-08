@@ -54,6 +54,9 @@ permissions:
   mywarp.warp.basic.help:
     description: Help can be used
     default: op
+  mywarp.warp.basic.info:
+    description: Gives informations about warps
+    default: op
   mywarp.warp.basic.list:
     description: Can list warps
     default: op
@@ -157,6 +160,7 @@ permissions:
       mywarp.warp.basic.update: true
       mywarp.warp.basic.compass: true
       mywarp.warp.basic.help: true
+      mywarp.warp.basic.info: true
   mywarp.warp.soc.*:
     description: Social /warp commands
     children:

@@ -1,5 +1,6 @@
 ﻿#German localization for MyWarp (by thee)
 #This file is UTF-8 encoded, respect this when editing.
+cmd.description.accept:Akzeptiert einen Warp, den ein anderer Spieler an dich abgeben möchte.
 cmd.description.adminWarpTo:Teleportiert §7<Spieler>§f zu §7<Name>§f, wenn du den Warp besuchen kannst.
 cmd.description.create:Erstellt einen neuen öffentlichen Warp namens §7<Name>§f auf der aktuellen Position
 cmd.description.createPrivate:Erstellt einen neuen privaten Warp namens §7<Name>§f auf der aktuellen Position
@@ -7,6 +8,7 @@ cmd.description.delete:Löscht den Warp namens §7<Name>
 cmd.description.give:Gibt §7<Name>§f an §7<Spieler>§f ab
 cmd.description.help:Zeigt das Hilfemenü an.
 cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt.
+cmd.description.info:Zeigt Informationen zu §7<Name>§f an
 cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
 cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
 cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
@@ -95,6 +97,14 @@ warp.delete:§bDu hast '%warp%' gelöscht.
 warp.give.accept:§b'%warp%' gehört nun dir.
 warp.give.asked:§b%player% möchte '%warp%' an dich abgeben. Nutze '§f/warp accept§b' um ihn zu akzeptieren.
 warp.give.given:§bDu hast '%warp%' an %player% abgegeben.
+warp.info.about:Informationen über '%warp%':
+warp.info.created.you:(das bist du!)
+warp.info.created:Erstellt von:
+warp.info.invitedGroups:Eingeladene Gruppen:
+warp.info.invitedPlayers:Eingeladene Spieler:
+warp.info.location.world:(in '%world%')
+warp.info.location:Lage:
+warp.info.visits:Besuche:
 warp.invite.group.private:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.
 warp.invite.group.public:§bDu hast die Gruppe %group% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
 warp.invite.invited:§b%player% hat dich zum Warp '%warp%' eingeladen.%n§fNutze: §c/warp %warp% §fum dich zu ihm zu teleportieren.

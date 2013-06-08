@@ -2,6 +2,7 @@ package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.safety.SafeTeleport;
@@ -516,5 +517,13 @@ public class Warp implements Comparable<Warp> {
                             getWorld()));
             return false;
         }
+    }
+    
+    public List<String> getAllInvitedPlayers() {
+        return permissions;
+    }
+    
+    public List<String> getAllInvitedGroups() {
+        return groupPermissions;
     }
 }

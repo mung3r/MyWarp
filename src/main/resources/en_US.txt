@@ -8,6 +8,7 @@ cmd.description.delete:Deletes the warp §7<name>
 cmd.description.give:Give your warp §7<name>§f to §7<player>
 cmd.description.help:Displays the help menu
 cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used.
+cmd.description.info:Prints out informations about §7<name>
 cmd.description.invite:Invite §7<player|group>§f to §7<name>
 cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
 cmd.description.listAll:List the warps you can visit on one page. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
@@ -96,6 +97,14 @@ warp.delete:§bYou have deleted '%warp%'.
 warp.give.accept:§b'%warp%' is now owned by you.
 warp.give.asked:§b%player% wants to give you '%warp%'. Use '§f/warp accept§b' to accept it.
 warp.give.given:§bYou have given '%warp%' to %player%.
+warp.info.about:Informations about '%warp%':
+warp.info.created.you:(that is you!)
+warp.info.created:Created by:
+warp.info.invitedGroups:Invited group(s):
+warp.info.invitedPlayers:Invited player(s):
+warp.info.location.world:(in '%world%')
+warp.info.location:Location:
+warp.info.visits:Visits:
 warp.invite.group.private:§bYou have invited group %group% to '%warp%'.
 warp.invite.group.public:§bYou have invited group %group% to '%warp%'.%n§cBut '%warp%' is still public.
 warp.invite.invited:§b%player% has invited you to to warp '%warp%'.%n§fUse: §c/warp %warp% §fto warp to it.
