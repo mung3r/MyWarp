@@ -3,7 +3,7 @@ package me.taylorkelly.mywarp.utils.commands;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import me.taylorkelly.mywarp.utils.WarpLogger;
+import me.taylorkelly.mywarp.MyWarp;
 
 public class Injector {
     private Object[] args;
@@ -23,23 +23,23 @@ public class Injector {
             ctr.setAccessible(true);
             return ctr.newInstance(args);
         } catch (NoSuchMethodException e) {
-            WarpLogger.severe("Error initializing commands class " + clazz
-                    + ": ");
+            MyWarp.logger().severe(
+                    "Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         } catch (InvocationTargetException e) {
-            WarpLogger.severe("Error initializing commands class " + clazz
-                    + ": ");
+            MyWarp.logger().severe(
+                    "Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         } catch (InstantiationException e) {
-            WarpLogger.severe("Error initializing commands class " + clazz
-                    + ": ");
+            MyWarp.logger().severe(
+                    "Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         } catch (IllegalAccessException e) {
-            WarpLogger.severe("Error initializing commands class " + clazz
-                    + ": ");
+            MyWarp.logger().severe(
+                    "Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         }

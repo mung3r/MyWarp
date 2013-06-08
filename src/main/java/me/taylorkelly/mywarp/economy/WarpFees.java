@@ -5,11 +5,13 @@ import java.util.EnumMap;
 import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
 
 /**
- * A storage object for all possible fees used if economy support is enabled.
- * 
+ * This storage object stores represents one warp-fee with it's respective values
  */
 public class WarpFees extends ValuePermissionContainer {
 
+    /**
+     * Stores the fees under their identifier
+     */
     private EnumMap<Fee, Double> prices = new EnumMap<Fee, Double>(Fee.class);
 
     // CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INVITE, LIST, LISTALL, NONE,
@@ -60,13 +62,13 @@ public class WarpFees extends ValuePermissionContainer {
      * @param welcomeFee
      *            used when the welcome message is changed
      */
-    public WarpFees(String name, double acceptFee, double createFee, double createPrivateFee,
-            double deleteFee, double giveFee, double helpFee, double inviteFee,
-            double listFee, double listAllFee, double pointFee,
-            double privatizeFee, double publicizeFee, double searchFee,
-            double uninviteFee, double updateFee, double warpPlayerFee,
-            double warpSignCreateFee, double warpSignUseFee, double warpFee,
-            double welcomeFee) {
+    public WarpFees(String name, double acceptFee, double createFee,
+            double createPrivateFee, double deleteFee, double giveFee,
+            double helpFee, double inviteFee, double listFee,
+            double listAllFee, double pointFee, double privatizeFee,
+            double publicizeFee, double searchFee, double uninviteFee,
+            double updateFee, double warpPlayerFee, double warpSignCreateFee,
+            double warpSignUseFee, double warpFee, double welcomeFee) {
         super(name);
 
         prices.put(Fee.ACCEPT, acceptFee);

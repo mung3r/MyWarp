@@ -1,7 +1,6 @@
 package me.taylorkelly.mywarp.safety;
 
-import me.taylorkelly.mywarp.LanguageManager;
-import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -9,8 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 /**
- * Provides several static methods to handle safe teleports
- * 
+ * This class provides and manages several methods to teleport players to safe locations
  */
 public class SafeTeleport {
 
@@ -33,17 +31,17 @@ public class SafeTeleport {
         if (isNotFullHeight(l.getBlock().getType())) {
             l.add(0, 1, 0);
         }
-        if (WarpSettings.useWarpSafety) {
+        if (MyWarp.inst().getWarpSettings().useWarpSafety) {
             Location safe = SafeLocation.getSafeLocation(l);
             if (safe == null) {
-                player.sendMessage(LanguageManager.getEffectiveString(
-                        "safety.notFound", "%warp%", name));
+                player.sendMessage(MyWarp.inst().getLanguageManager()
+                        .getEffectiveString("safety.notFound", "%warp%", name));
                 return false;
             }
             if (safe != l) {
                 teleport(player, safe);
-                player.sendMessage(LanguageManager.getEffectiveString(
-                        "safety.found", "%warp%", name));
+                player.sendMessage(MyWarp.inst().getLanguageManager()
+                        .getEffectiveString("safety.found", "%warp%", name));
                 return false;
             }
         }
@@ -113,12 +111,12 @@ public class SafeTeleport {
         if (player.isInsideVehicle()) {
             player.getVehicle().eject();
         }
-        if (WarpSettings.warpEffect) {
+        if (MyWarp.inst().getWarpSettings().warpEffect) {
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
         }
-        if (WarpSettings.loadChunks
+        if (MyWarp.inst().getWarpSettings().loadChunks
                 && !to.getWorld().isChunkLoaded(to.getBlockX(), to.getBlockZ())) {
             to.getWorld().refreshChunk(to.getBlockX(), to.getBlockZ());
         }

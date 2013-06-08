@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Locale;
 
-import me.taylorkelly.mywarp.utils.WarpLogger;
+import me.taylorkelly.mywarp.MyWarp;
 
 /**
  * <p>
@@ -197,8 +197,8 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            WarpLogger
-                    .severe("Unexpected exception while closing database connection.");
+            MyWarp.logger().severe(
+                    "Unexpected exception while closing database connection.");
         }
     }
 
@@ -215,8 +215,8 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            WarpLogger
-                    .severe("Unexpected exception while closing database statement.");
+            MyWarp.logger().severe(
+                    "Unexpected exception while closing database statement.");
         }
     }
 
@@ -233,8 +233,8 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            WarpLogger
-                    .severe("Unexpected exception while closing database result set.");
+            MyWarp.logger().severe(
+                    "Unexpected exception while closing database result set.");
         }
     }
 }

@@ -8,8 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class MySQLConnection implements DataConnection {
 
@@ -61,6 +64,13 @@ public class MySQLConnection implements DataConnection {
                 + "`visits` int DEFAULT '0'" + ");";
     }
 
+    /**
+     * Establishes a connection with the database
+     * 
+     * @return a valid connection to the database
+     * @throws SQLException
+     *             if a database access error occurs
+     */
     private synchronized Connection getConnection() throws SQLException {
         if (conn == null || conn.isClosed()) {
             conn = DriverManager.getConnection(dsn, user, pass);
@@ -75,7 +85,8 @@ public class MySQLConnection implements DataConnection {
                 conn.close();
             }
         } catch (SQLException ex) {
-            WarpLogger.severe("Unable to close SQL connection: " + ex);
+            MyWarp.logger().log(Level.SEVERE,
+                    "Unable to close SQL connection: " + ex);
         }
     }
 
@@ -99,7 +110,7 @@ public class MySQLConnection implements DataConnection {
             }
 
         } catch (SQLException ex) {
-            WarpLogger.severe("Table Check Exception: " + ex);
+            MyWarp.logger().log(Level.SEVERE, "Table Check Exception: " + ex);
             throw new DataConnectionException(ex);
         } finally {
             try {
@@ -110,7 +121,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Table Check Exception (on close): " + ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Table Check Exception (on close): " + ex);
             }
         }
     }
@@ -159,7 +171,7 @@ public class MySQLConnection implements DataConnection {
             }
 
         } catch (SQLException ex) {
-            WarpLogger.severe("Table Update Exception: " + ex);
+            MyWarp.logger().log(Level.SEVERE, "Table Update Exception: " + ex);
             throw new DataConnectionException(ex);
         } finally {
             try {
@@ -170,13 +182,14 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Table Update Exception (on close): " + ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Table Update Exception (on close): " + ex);
             }
         }
     }
 
     @Override
-    public HashMap<String, Warp> getMap() {
+    public Map<String, Warp> getMap() {
         HashMap<String, Warp> ret = new HashMap<String, Warp>();
         Statement stmnt = null;
         ResultSet rsWarps = null;
@@ -207,7 +220,7 @@ public class MySQLConnection implements DataConnection {
                 ret.put(name, warp);
             }
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Load Exception: " + ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Load Exception: " + ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -220,7 +233,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Load Exception (on close): " + ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Load Exception (on close): " + ex);
             }
         }
         return ret;
@@ -237,23 +251,23 @@ public class MySQLConnection implements DataConnection {
                     .prepareStatement("INSERT INTO "
                             + table
                             + " (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            stmnt.setInt(1, warp.index);
-            stmnt.setString(2, warp.name);
-            stmnt.setString(3, warp.creator);
-            stmnt.setString(4, warp.world);
-            stmnt.setDouble(5, warp.x);
-            stmnt.setInt(6, warp.y);
-            stmnt.setDouble(7, warp.z);
-            stmnt.setInt(8, warp.yaw);
-            stmnt.setInt(9, warp.pitch);
-            stmnt.setBoolean(10, warp.publicAll);
+            stmnt.setInt(1, warp.getIndex());
+            stmnt.setString(2, warp.getName());
+            stmnt.setString(3, warp.getCreator());
+            stmnt.setString(4, warp.getWorld());
+            stmnt.setDouble(5, warp.getX());
+            stmnt.setInt(6, warp.getY());
+            stmnt.setDouble(7, warp.getZ());
+            stmnt.setInt(8, warp.getYaw());
+            stmnt.setInt(9, warp.getPitch());
+            stmnt.setBoolean(10, warp.isPublicAll());
             stmnt.setString(11, warp.permissionsString());
             stmnt.setString(12, warp.groupPermissionsString());
-            stmnt.setString(13, warp.welcomeMessage);
-            stmnt.setInt(14, warp.visits);
+            stmnt.setString(13, warp.getRawWelcomeMessage());
+            stmnt.setInt(14, warp.getVisits());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Insert Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Insert Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -263,7 +277,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Insert Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Insert Exception (on close): ", ex);
             }
         }
 
@@ -278,10 +293,10 @@ public class MySQLConnection implements DataConnection {
 
             stmnt = conn.prepareStatement("DELETE FROM " + table
                     + " WHERE id = ?");
-            stmnt.setInt(1, warp.index);
+            stmnt.setInt(1, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Delete Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Delete Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -291,7 +306,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Delete Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Delete Exception (on close): ", ex);
             }
         }
     }
@@ -306,10 +322,10 @@ public class MySQLConnection implements DataConnection {
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET publicAll = ? WHERE id = ?");
             stmnt.setBoolean(1, publicAll);
-            stmnt.setInt(2, warp.index);
+            stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Publicize Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Publicize Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -319,7 +335,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Publicize Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Publicize Exception (on close): ", ex);
             }
         }
 
@@ -334,11 +351,11 @@ public class MySQLConnection implements DataConnection {
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET creator = ? WHERE id = ?");
-            stmnt.setString(1, warp.creator);
-            stmnt.setInt(2, warp.index);
+            stmnt.setString(1, warp.getCreator());
+            stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Creator Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -348,7 +365,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Creator Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Creator Exception (on close): ", ex);
             }
         }
 
@@ -365,16 +383,16 @@ public class MySQLConnection implements DataConnection {
                     .prepareStatement("UPDATE "
                             + table
                             + " SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE id = ?");
-            stmnt.setString(1, warp.world);
-            stmnt.setDouble(2, warp.x);
-            stmnt.setInt(3, warp.y);
-            stmnt.setDouble(4, warp.z);
-            stmnt.setInt(5, warp.yaw);
-            stmnt.setInt(6, warp.pitch);
-            stmnt.setInt(7, warp.index);
+            stmnt.setString(1, warp.getWorld());
+            stmnt.setDouble(2, warp.getX());
+            stmnt.setInt(3, warp.getY());
+            stmnt.setDouble(4, warp.getZ());
+            stmnt.setInt(5, warp.getYaw());
+            stmnt.setInt(6, warp.getPitch());
+            stmnt.setInt(7, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Location Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Location Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -384,7 +402,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Location Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Location Exception (on close): ", ex);
             }
         }
     }
@@ -399,10 +418,11 @@ public class MySQLConnection implements DataConnection {
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET permissions = ? WHERE id = ?");
             stmnt.setString(1, warp.permissionsString());
-            stmnt.setInt(2, warp.index);
+            stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Permissions Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Permissions Exception: ",
+                    ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -412,8 +432,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger
-                        .severe("Warp Permissions Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Permissions Exception (on close): ", ex);
             }
         }
 
@@ -429,10 +449,11 @@ public class MySQLConnection implements DataConnection {
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET groupPermissions = ? WHERE id = ?");
             stmnt.setString(1, warp.groupPermissionsString());
-            stmnt.setInt(2, warp.index);
+            stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp GroupPermissions Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE,
+                    "Warp GroupPermissions Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -442,7 +463,7 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe(
+                MyWarp.logger().log(Level.SEVERE,
                         "Warp GroupPermissions Exception (on close): ", ex);
             }
         }
@@ -458,11 +479,11 @@ public class MySQLConnection implements DataConnection {
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET visits = ? WHERE id = ?");
-            stmnt.setInt(1, warp.visits);
-            stmnt.setInt(2, warp.index);
+            stmnt.setInt(1, warp.getVisits());
+            stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Visits Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Visits Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -472,7 +493,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Visits Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Visits Exception (on close): ", ex);
             }
         }
     }
@@ -486,12 +508,12 @@ public class MySQLConnection implements DataConnection {
 
             stmnt = conn.prepareStatement("UPDATE " + table
                     + " SET welcomeMessage = ? WHERE id = ?");
-            stmnt.setString(1, warp.welcomeMessage);
-            stmnt.setInt(2, warp.index);
+            stmnt.setString(1, warp.getRawWelcomeMessage());
+            stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
 
         } catch (SQLException ex) {
-            WarpLogger.severe("Warp Welcome Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Welcome Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -501,7 +523,8 @@ public class MySQLConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                WarpLogger.severe("Warp Welcome Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE,
+                        "Warp Welcome Exception (on close): ", ex);
             }
         }
     }

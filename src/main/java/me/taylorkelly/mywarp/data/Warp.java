@@ -1,34 +1,75 @@
 package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
-import me.taylorkelly.mywarp.LanguageManager;
+import java.util.Arrays;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.safety.SafeTeleport;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+/**
+ * This class represents a usable warp. Note that not all values are changeable
+ * or even accessible.
+ */
 public class Warp implements Comparable<Warp> {
 
-    public int index;
-    public String name;
-    public String creator;
-    public String world;
-    public double x;
-    public int y;
-    public double z;
-    public int yaw;
-    public int pitch;
-    public int visits;
-    public boolean publicAll;
-    public String welcomeMessage;
-    public ArrayList<String> permissions;
-    public ArrayList<String> groupPermissions;
-    public static int nextIndex = 1;
+    private static final char LIST_SEPERATOR = ',';
 
+    private final int index;
+    private final String name;
+    private String creator;
+    private boolean publicAll;
+    private String world;
+    private double x;
+    private int y;
+    private double z;
+    private int yaw;
+    private int pitch;
+    private int visits;
+    private String welcomeMessage;
+
+    private final transient ArrayList<String> permissions;
+    private final transient ArrayList<String> groupPermissions;
+
+    private static int nextIndex = 1;
+
+    /**
+     * Creates a new warp using all provided values
+     * 
+     * @param index
+     *            the internal index
+     * @param name
+     *            the name
+     * @param creator
+     *            the creator's name
+     * @param world
+     *            the world's name
+     * @param x
+     *            the x-coordinate
+     * @param y
+     *            the y-coordinate
+     * @param z
+     *            the z-coordinate
+     * @param yaw
+     *            the yaw
+     * @param pitch
+     *            the pitch
+     * @param publicAll
+     *            true if the warp should be public, false if it should be
+     *            private
+     * @param permissions
+     *            a list of invited players, joined by a predefined character
+     * @param groupPermissions
+     *            a list of invited groups, joined by a predefined character
+     * @param welcomeMessage
+     *            the welcome message
+     * @param visits
+     *            the vivists
+     */
     public Warp(int index, String name, String creator, String world, double x,
             int y, double z, int yaw, int pitch, boolean publicAll,
             String permissions, String groupPermissions, String welcomeMessage,
@@ -45,7 +86,7 @@ public class Warp implements Comparable<Warp> {
         this.publicAll = publicAll;
         this.permissions = processList(permissions);
         this.groupPermissions = processList(groupPermissions);
-        this.welcomeMessage = welcomeMessage;
+        this.setWelcomeMessage(welcomeMessage);
         this.visits = visits;
         if (index > nextIndex) {
             nextIndex = index;
@@ -53,30 +94,30 @@ public class Warp implements Comparable<Warp> {
         nextIndex++;
     }
 
+    /**
+     * Creates a new public warp at the position of the given player
+     * 
+     * @param name
+     *            the name of this warp
+     * @param creator
+     *            the player at whose position the warp will be created
+     */
     public Warp(String name, Player creator) {
         this(name, creator, true);
     }
 
-    public Warp(String name, Location location) {
-        this.index = nextIndex;
-        nextIndex++;
-        this.name = name;
-        this.creator = "No Player";
-        this.world = location.getWorld().getName();
-        this.x = location.getX();
-        this.y = location.getBlockY();
-        this.z = location.getZ();
-        this.yaw = Math.round(location.getYaw()) % 360;
-        this.pitch = Math.round(location.getPitch()) % 360;
-        this.publicAll = true;
-        this.permissions = new ArrayList<String>();
-        this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = LanguageManager
-                .getString("warp.default.welcomeMessage");
-        this.visits = 0;
-    }
-
-    public Warp(String name, Player creator, boolean b) {
+    /**
+     * Creates a new warp at the position of the given player
+     * 
+     * @param name
+     *            the name of this warp
+     * @param creator
+     *            the player at whose position the warp will be created
+     * @param publicAll
+     *            true if the warp should be public, false if it should be
+     *            private
+     */
+    public Warp(String name, Player creator, boolean publicAll) {
         this.index = nextIndex;
         nextIndex++;
         this.name = name;
@@ -87,44 +128,235 @@ public class Warp implements Comparable<Warp> {
         this.z = creator.getLocation().getZ();
         this.yaw = Math.round(creator.getLocation().getYaw()) % 360;
         this.pitch = Math.round(creator.getLocation().getPitch()) % 360;
-        this.publicAll = b;
+        this.setPublicAll(publicAll);
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = LanguageManager
+        this.welcomeMessage = MyWarp.inst().getLanguageManager()
                 .getString("warp.default.welcomeMessage");
         this.visits = 0;
     }
 
-    private ArrayList<String> processList(String permissions) {
-        String[] names = permissions.split(",");
-        ArrayList<String> ret = new ArrayList<String>();
-        for (String name : names) {
-            if (name.equals("")) {
-                continue;
-            }
-            ret.add(name.trim());
-        }
-        return ret;
+    @Override
+    public int compareTo(Warp warp) {
+        return this.getName().compareTo(warp.getName());
     }
+
+    /**
+     * Gets the creator's name
+     * 
+     * @return the creator
+     */
+    public String getCreator() {
+        return creator;
+    }
+
+    /**
+     * Gets the internal index of this warp
+     * 
+     * @return the warp's index number
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * Gets the location of this warp. This actually constructs a new
+     * {@link Location} - may return null if the world of this warp does not
+     * exist anymore.
+     * 
+     * @return the warp's location
+     */
+    public Location getLocation() {
+        World currWorld = null;
+        // fallback
+        if (getWorld().equals("0")) {
+            currWorld = MyWarp.server().getWorlds().get(0);
+        } else {
+            currWorld = MyWarp.server().getWorld(getWorld());
+        }
+        if (currWorld == null) {
+            return null;
+        } else {
+            Location location = new Location(currWorld, getX(), getY(), getZ(),
+                    getYaw(), getPitch());
+            return location;
+        }
+    }
+
+    /**
+     * Gets the name of the warp
+     * 
+     * @return the warp's name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gets the welcome message of this warp. This method will not attempt to
+     * replace any values found.
+     * 
+     * @return the warp's welcome message
+     */
+    public String getRawWelcomeMessage() {
+        return welcomeMessage;
+    }
+
+    /**
+     * Gets the welcome message of this warp in its specific form for the given
+     * player. Unlike {@link #getRawWelcomeMessage()}, all values will be
+     * replaced.
+     * 
+     * @param player
+     *            the player
+     * @return the warp's welcome message with replaced values
+     */
+    public String getSpecificWelcomeMessage(Player player) {
+        return StringUtils.replace(StringUtils.replace(StringUtils.replace(
+                StringUtils.replace(getRawWelcomeMessage(), "%player%",
+                        player.getName()), "%warp%", name), "%creator%",
+                creator), "%visits%", Integer.toString(visits));
+    }
+
+    /**
+     * Gets the visit number of this warp
+     * 
+     * @return the warp's visits
+     */
+    public int getVisits() {
+        return visits;
+    }
+
+    /**
+     * Gets the name of the world this warp is located in
+     * 
+     * @return the world name
+     */
+    public String getWorld() {
+        return world;
+    }
+
+    /**
+     * Gets the x-coordinate of this warp
+     * 
+     * @return the warp's x-coordinate
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * Gets the y-coordinate of this warp
+     * 
+     * @return the warp's y-coordinate
+     */
+    public int getY() {
+        return y;
+    }
+
+    /**
+     * Gets the z-coordinate of this warp
+     * 
+     * @return the warp's z-coordinate
+     */
+    public double getZ() {
+        return z;
+    }
+
+    /**
+     * Gets the yaw of this warp
+     * 
+     * @return the warp's yaw
+     */
+    public int getYaw() {
+        return yaw;
+    }
+
+    /**
+     * Gets the pitch of this warp
+     * 
+     * @return the warp's pitch
+     */
+    public int getPitch() {
+        return pitch;
+    }
+
+    /**
+     * Gets all invited player, joined by a predefined character
+     * 
+     * @return all player invited
+     */
+    public boolean groupIsInvited(String group) {
+        return groupPermissions.contains(group);
+    }
+    
 
     public String permissionsString() {
-        StringBuilder ret = new StringBuilder();
-        for (String name : permissions) {
-            ret.append(name);
-            ret.append(",");
-        }
-        return ret.toString();
+        return StringUtils.join(permissions, LIST_SEPERATOR);
     }
 
+    /**
+     * Gets all invited groups, joined by a predefined character
+     * 
+     * @return all groups invited
+     */
     public String groupPermissionsString() {
-        StringBuilder ret = new StringBuilder();
-        for (String name : groupPermissions) {
-            ret.append(name);
-            ret.append(",");
-        }
-        return ret.toString();
+        return StringUtils.join(groupPermissions, LIST_SEPERATOR);
     }
 
+    /**
+     * Invites the player of the given name to the warp
+     * 
+     * @param group
+     *            the player's name
+     */
+    public void invite(String player) {
+        permissions.add(player);
+    }
+
+    /**
+     * Invites the group of the given name to the warp
+     * 
+     * @param group
+     *            the group's name
+     */
+    public void inviteGroup(String group) {
+        groupPermissions.add(group);
+    }
+
+    /**
+     * Checks if this warp is public
+     * 
+     * @return true if the warp is public, false if it is private
+     */
+    public boolean isPublicAll() {
+        return publicAll;
+    }
+
+    /**
+     * Checks if the given player can modify this warp
+     * 
+     * @param player
+     *            the player
+     * @return true if the player can modify this warp, false if not
+     */
+    public boolean playerCanModify(Player player) {
+        if (creator.equals(player.getName())) {
+            return true;
+        }
+        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.admin.modifyall")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the given player can use this warp
+     * 
+     * @param player
+     *            the player
+     * @return true if the player can use this warp, false if not
+     */
     public boolean playerCanWarp(Player player) {
         if (creator.equals(player.getName())) {
             return true;
@@ -134,83 +366,69 @@ public class Warp implements Comparable<Warp> {
         }
 
         for (String group : groupPermissions) {
-            if (MyWarp.getWarpPermissions().playerHasGroup(player, group)) {
+            if (MyWarp.inst().getPermissionsManager()
+                    .playerHasGroup(player, group)) {
                 return true;
             }
         }
-        if (MyWarp.getWarpPermissions().canAccessAll(player)) {
+        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.admin.accessall")) {
             return true;
         }
 
         return publicAll;
     }
 
-    public boolean warp(Player player, Server server) {
-        World currWorld = null;
-        if (world.equals("0")) {
-            currWorld = server.getWorlds().get(0);
-        } else {
-            currWorld = server.getWorld(world);
-        }
-        if (currWorld != null) {
-            Location location = new Location(currWorld, x, y, z, yaw, pitch);
-            return SafeTeleport.safeTeleport(player, location, name);
-        } else {
-            player.sendMessage(LanguageManager.getEffectiveString(
-                    "error.warpto.noSuchWorld", "%world%", world));
-            return false;
-        }
+    /**
+     * Checks if the given player is the creator of this warp
+     * 
+     * @param player
+     *            the player's name
+     * @return true if the player is this warp's creator, false if not
+     */
+    public boolean playerIsCreator(String player) {
+        return creator.equals(player);
     }
 
-    public boolean playerIsCreator(String name) {
-        if (creator.equals(name)) {
-            return true;
-        }
-        return false;
-    }
-
-    public void inviteGroup(String group) {
-        groupPermissions.add(group);
-    }
-
-    public boolean groupIsInvited(String group) {
-        return groupPermissions.contains(group);
-    }
-
-    public void invite(String player) {
-        permissions.add(player);
-    }
-
-    public void uninviteGroup(String group) {
-        groupPermissions.remove(group);
-    }
-
+    /**
+     * Checks if the given player is invited to this warp
+     * 
+     * @param player
+     *            the player's name
+     * @return true if the player is invited, false if not
+     */
     public boolean playerIsInvited(String player) {
         return permissions.contains(player);
     }
 
-    public void uninvite(String inviteeName) {
-        permissions.remove(inviteeName);
+    /**
+     * Converts a given string into an array list by splitting it around a
+     * predefined character.
+     * 
+     * @param string
+     *            the string
+     * @return an array list with the splitted string
+     */
+    private ArrayList<String> processList(String string) {
+        return new ArrayList<String>(Arrays.asList(StringUtils.split(string,
+                LIST_SEPERATOR)));
     }
 
-    public boolean playerCanModify(Player player) {
-        if (creator.equals(player.getName())) {
-            return true;
-        }
-        if (MyWarp.getWarpPermissions().canModifyAll(player)) {
-            return true;
-        }
-        return false;
-    }
-
+    /**
+     * Sets the creator of this warp to the given one
+     * 
+     * @param giveeName
+     *            the new creator of this warp
+     */
     public void setCreator(String giveeName) {
         this.creator = giveeName;
     }
 
-    public String toString() {
-        return name;
-    }
-
+    /**
+     * sets the location of this warp to the given one
+     * 
+     * @param location
+     *            the new location
+     */
     public void setLocation(Location location) {
         this.world = location.getWorld().getName();
         this.x = location.getX();
@@ -220,31 +438,83 @@ public class Warp implements Comparable<Warp> {
         this.pitch = Math.round(location.getPitch()) % 360;
     }
 
-    public Location getLocation(Server server) {
-        World currWorld = null;
-        if (world.equals("0")) {
-            currWorld = server.getWorlds().get(0);
-        } else {
-            currWorld = server.getWorld(world);
-        }
-        if (currWorld == null) {
-            return null;
-        } else {
-            Location location = new Location(currWorld, x, y, z, yaw, pitch);
-            return location;
-        }
+    /**
+     * Changes this warps visibility (public, private)
+     * 
+     * @param publicAll
+     *            true for public, false for private
+     */
+    public void setPublicAll(boolean publicAll) {
+        this.publicAll = publicAll;
     }
 
-    public String getSpecificWelcomeMessage(Player player) {
-        return StringUtils.replace(StringUtils.replace(
-                StringUtils.replace(
-                        StringUtils.replace(welcomeMessage, "%player%",
-                                player.getName()), "%warp%", name),
-                "%creator%", creator), "%visits%", Integer.toString(visits));
+    /**
+     * Sets the welcome message of this warp
+     * 
+     * @param welcomeMessage
+     *            the new welcome message
+     */
+    public void setWelcomeMessage(String welcomeMessage) {
+        this.welcomeMessage = welcomeMessage;
     }
 
     @Override
-    public int compareTo(Warp warp) {
-        return this.name.compareTo(warp.name);
+    public String toString() {
+        return name;
+    }
+
+    /**
+     * Uninvites the player of the given name from this warp
+     * 
+     * @param inviteeName
+     *            the player's name
+     */
+    public void uninvite(String inviteeName) {
+        permissions.remove(inviteeName);
+    }
+
+    /**
+     * Uninvites the group of the given name from this warp
+     * 
+     * @param group
+     *            the group's name
+     */
+    public void uninviteGroup(String group) {
+        groupPermissions.remove(group);
+    }
+
+    /**
+     * Counts up the visits-counter by one
+     */
+    public void visit() {
+        visits++;
+    }
+
+    /**
+     * Attempts to teleport the given player to this warp. Will send an error
+     * message to the player, if the warp's world does not exist. The teleport
+     * itself is handled via
+     * {@link me.taylorkelly.mywarp.safety.SafeTeleport#safeTeleport(Player, Location, String)}
+     * .
+     * 
+     * Will return true only if the player could be teleported to the original
+     * (!) location.
+     * 
+     * @param player
+     *            the player
+     * @return true if the player was teleported successfully, false if not
+     */
+    public boolean warp(Player player) {
+        Location location = getLocation();
+        if (location != null) {
+            return SafeTeleport.safeTeleport(player, location, name);
+        } else {
+            player.sendMessage(MyWarp
+                    .inst()
+                    .getLanguageManager()
+                    .getEffectiveString("error.warpto.noSuchWorld", "%world%",
+                            getWorld()));
+            return false;
+        }
     }
 }

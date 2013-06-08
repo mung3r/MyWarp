@@ -13,8 +13,8 @@ public interface PermissionsHandler {
      * @param player
      *            the player
      * @param group
-     *            the groupname
-     * @return
+     *            the name of the group
+     * @return whether the player has this group or not
      */
     boolean playerHasGroup(Player player, String group);
 }

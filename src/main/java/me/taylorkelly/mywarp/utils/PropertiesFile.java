@@ -1,11 +1,20 @@
 package me.taylorkelly.mywarp.utils;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Manager for the legacy configuration-file (settings.properties). Should not
+ * be used anything other than migrating!
+ */
 public class PropertiesFile {
     private HashMap<String, PropertiesEntry> map;
     private File file;

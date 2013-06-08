@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
  * This interface needs to be implemented by all economy links as it contains
  * all methods that are used elsewhere in the plugin to handle economy-related
  * tasks.
- * 
  */
 public interface EconomyLink {
 

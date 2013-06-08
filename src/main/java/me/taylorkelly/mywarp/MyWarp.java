@@ -1,13 +1,10 @@
 package me.taylorkelly.mywarp;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.logging.Logger;
 
 import me.taylorkelly.mywarp.commands.RootCommands;
-import me.taylorkelly.mywarp.data.SignWarp;
-import me.taylorkelly.mywarp.data.WarpList;
+import me.taylorkelly.mywarp.data.WarpManager;
 import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.economy.EconomyLink;
@@ -17,161 +14,187 @@ import me.taylorkelly.mywarp.listeners.MWEntityListener;
 import me.taylorkelly.mywarp.listeners.MWPlayerListener;
 import me.taylorkelly.mywarp.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.markers.Markers;
-import me.taylorkelly.mywarp.permissions.WarpPermissions;
-import me.taylorkelly.mywarp.utils.CommandUtils;
-import me.taylorkelly.mywarp.utils.WarpLogger;
+import me.taylorkelly.mywarp.permissions.PermissionsManager;
 import me.taylorkelly.mywarp.utils.commands.CommandsManager;
+import net.milkbowl.vault.economy.Economy;
 
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.FileUtil;
+import org.dynmap.DynmapCommonAPI;
 
 public class MyWarp extends JavaPlugin {
 
-    public String name;
-    public String version;
+    /**
+     * The plugin instance for MyWarp
+     */
+    private static MyWarp instance;
 
-    private PluginManager pm;
-
-    private WarpList warpList;
+    /**
+     * The commands manager, which handles all commands together with arguments,
+     * flags etc.
+     */
     private CommandsManager commandsManager;
+
+    /**
+     * Manages the database connections
+     */
     private ConnectionManager connectionManager;
-    private Markers markers;
-    private SignWarp signWarp;
+
+    /**
+     * The economy Link in use
+     */
     private EconomyLink economyLink;
 
-    private static WarpPermissions warpPermissions;
+    /**
+     * The language-manger
+     */
+    private LanguageManager languageManager;
 
-    @Override
-    public void onDisable() {
-        if (getConnectionManager() != null) {
-            getConnectionManager().close();
-        }
-        Bukkit.getServer().getScheduler().cancelTasks(this);
-    }
+    /**
+     * Represents the marker API in use
+     */
+    private Markers markers;
 
-    @Override
-    public void onEnable() {
-        name = this.getDescription().getName();
-        version = this.getDescription().getVersion();
-        pm = getServer().getPluginManager();
+    /**
+     * The primary warp-data object
+     */
+    private WarpManager warpManager;
 
-        WarpSettings.initialize(this);
-        LanguageManager.initialize(this);
+    /**
+     * the permissions-manage that handles all permission-related tasks
+     */
+    private PermissionsManager permissionsManager;
 
-        try {
-            connectionManager = new ConnectionManager(WarpSettings.usemySQL,
-                    true, true, this);
-        } catch (DataConnectionException e) {
-            WarpLogger
-                    .severe("Could not establish database connection. Disabling MyWarp.");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
+    /**
+     * The parsed plugin-configuration
+     */
+    private WarpSettings warpSettings;
 
-        // check for old database and convert it
-        File newDatabase = new File(getDataFolder(), "warps.db");
-        File oldDatabase = new File("homes-warps.db");
-        if (!newDatabase.exists() && oldDatabase.exists()) {
-            updateFiles(oldDatabase, newDatabase);
-        }
-
-        warpList = new WarpList(this);
-        warpPermissions = new WarpPermissions(this);
-
-        // register event listeners
-        MWBlockListener blockListener = new MWBlockListener(this);
-        MWEntityListener entityListener = new MWEntityListener();
-        MWPlayerListener playerListener = new MWPlayerListener(this);
-
-        pm.registerEvents(blockListener, this);
-        pm.registerEvents(entityListener, this);
-        pm.registerEvents(playerListener, this);
-
-        signWarp = new SignWarp(this);
-
-        // initialize EconomySupport
-        if (WarpSettings.useEconomy) {
-            try {
-                economyLink = new VaultLink(this);
-            } catch (NoClassDefFoundError e) {
-                WarpLogger
-                        .severe("Failed to hook into Vault. Disabling Economy support.");
-                WarpSettings.useEconomy = false;
-            }
-        }
-
-        // initialize Dynmap support
-        if (WarpSettings.useDynmap) {
-            if (!pm.isPluginEnabled("dynmap")) {
-                WarpLogger
-                        .severe("Failed to hook into Dynmap. Disabling Dynmap support.");
-                WarpSettings.useDynmap = false;
-            } else {
-                markers = new DynmapMarkers(this);
-            }
-        }
-
-        // initialize the command manager and register all used commands
-        commandsManager = new CommandsManager(this);
-        getCommandsManager().register(RootCommands.class);
-        new CommandUtils(this);
-
-        WarpLogger.info(name + " " + version + " enabled");
-    }
-
-    private void updateFiles(File oldDatabase, File newDatabase) {
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdirs();
-        }
-        if (newDatabase.exists()) {
-            newDatabase.delete();
-        }
-        try {
-            newDatabase.createNewFile();
-        } catch (IOException ex) {
-            WarpLogger.severe("Could not create new database file", ex);
-        }
-        copyFile(oldDatabase, newDatabase);
+    /**
+     * Constructs the instance
+     */
+    public MyWarp() {
+        instance = this;
     }
 
     /**
-     * File copier from xZise
+     * Returns the plugin's instance
      * 
-     * @param fromFile
-     * @param toFile
+     * @return the plugin's instance
      */
-    private void copyFile(File fromFile, File toFile) {
-        FileInputStream from = null;
-        FileOutputStream to = null;
-        try {
-            from = new FileInputStream(fromFile);
-            to = new FileOutputStream(toFile);
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-
-            while ((bytesRead = from.read(buffer)) != -1) {
-                to.write(buffer, 0, bytesRead);
-            }
-        } catch (IOException ex) {
-            WarpLogger.severe("Failed to rename " + fromFile.getName() + "to "
-                    + toFile.getName() + ": ", ex);
-        } finally {
-
-            try {
-                if (from != null) {
-                    from.close();
-                }
-                if (to != null) {
-                    to.close();
-                }
-            } catch (IOException e) {
-            }
-        }
+    public static MyWarp inst() {
+        return instance;
     }
 
+    /**
+     * Return the plugin's logger
+     * 
+     * @return the logger
+     */
+    public static Logger logger() {
+        return instance.getLogger();
+    }
+
+    /**
+     * Returns the server instance that runs this plugin
+     * 
+     * @return the server instance
+     */
+    public static Server server() {
+        return instance.getServer();
+    }
+
+    /**
+     * Gets MyWarp's {@link CommandsManager}
+     * 
+     * @return the commands-manager
+     */
+    public CommandsManager getCommandsManager() {
+        return commandsManager;
+    }
+
+    /**
+     * Gets MyWarp's {@link ConnectionManager}, this method should be used for
+     * all database access.
+     * 
+     * This method can return null.
+     * 
+     * @return the connection manager
+     */
+    public ConnectionManager getConnectionManager() {
+        return connectionManager;
+    }
+
+    /**
+     * Gets the {@link EconomyLink} service if it exists, this method should be
+     * used for economic actions.
+     * 
+     * This method can return null.
+     * 
+     * @return the economy link
+     */
+    public EconomyLink getEconomyLink() {
+        return economyLink;
+    }
+
+    /**
+     * Gets MyWarp's {@link LanguageManager}, that handles all translations
+     * 
+     * @return the language manager
+     */
+    public LanguageManager getLanguageManager() {
+        return languageManager;
+    }
+
+    /**
+     * Gets the {@link Markers} service, this method provides access to all
+     * marker-APIs in use
+     * 
+     * This method can return null.
+     * 
+     * @return the markers
+     */
+    public Markers getMarkers() {
+        return markers;
+    }
+
+    /**
+     * Returns the warp-list used by the plugin
+     * 
+     * @return the warp list
+     */
+    public WarpManager getWarpList() {
+        return warpManager;
+    }
+
+    /**
+     * Gets MyWarp's {@link PermissionsManager}, this method should be used for
+     * tasks involving direct permission-access
+     * 
+     * @return the permissions manager
+     */
+    public PermissionsManager getPermissionsManager() {
+        return permissionsManager;
+    }
+
+    /**
+     * Gets MyWarp's {@link WarpSettings}, and therefore provides direct access
+     * to the settings
+     * 
+     * @return the warp settings
+     */
+    public WarpSettings getWarpSettings() {
+        return warpSettings;
+    }
+
+    /**
+     * Called on command-execution
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command,
             String commandLabel, String[] args) {
@@ -179,31 +202,116 @@ public class MyWarp extends JavaPlugin {
                 commandLabel, args);
     }
 
-    public WarpList getWarpList() {
-        return warpList;
+    /**
+     * Called when the plugin is disabled
+     */
+    @Override
+    public void onDisable() {
+        // close all open database connections
+        if (getConnectionManager() != null) {
+            getConnectionManager().close();
+        }
+
+        // cancel all pending tasks
+        getServer().getScheduler().cancelTasks(this);
     }
 
-    public EconomyLink getEconomyLink() {
-        return economyLink;
+    /**
+     * Called when the plugin is enabled
+     */
+    @Override
+    public void onEnable() {
+
+        // setup the configurations
+        warpSettings = new WarpSettings();
+
+        // initialize the command manager and register all used commands
+        commandsManager = new CommandsManager();
+        getCommandsManager().register(RootCommands.class);
+
+        // rename extremely old sqlite-database file - this needs to be done
+        // before
+        // creating the database connection
+        File newDatabase = new File(getDataFolder(), "warps.db");
+        File oldDatabase = new File("homes-warps.db");
+        if (!newDatabase.exists() && oldDatabase.exists()) {
+            if (!FileUtil.copy(oldDatabase, newDatabase)) {
+                logger().severe(
+                        "Failed to copy " + oldDatabase.getName() + "to "
+                                + newDatabase.getName()
+                                + ", the old databse will be ignored!");
+            } else {
+                logger().info(
+                        "Your old SQlite database has been copied to the new format.");
+            }
+        }
+
+        // initialize the database connection
+        try {
+            connectionManager = new ConnectionManager(
+                    getWarpSettings().usemySQL, true, true);
+        } catch (DataConnectionException e) {
+            logger().severe(
+                    "Could not establish database connection. Disabling MyWarp.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // setup the core functions
+        permissionsManager = new PermissionsManager();
+        warpManager = new WarpManager();
+
+        setupConfigurableFunctions();
+
+        registerEvents();
     }
 
-    public CommandsManager getCommandsManager() {
-        return commandsManager;
+    /**
+     * Registers all events used by MyWarp
+     */
+    private void registerEvents() {
+        getServer().getPluginManager().registerEvents(new MWBlockListener(),
+                this);
+        getServer().getPluginManager().registerEvents(new MWEntityListener(),
+                this);
+        getServer().getPluginManager().registerEvents(new MWPlayerListener(),
+                this);
     }
 
-    public ConnectionManager getConnectionManager() {
-        return connectionManager;
-    }
+    /**
+     * This method setups functions, whose instances rely itself upon
+     * configurable values such as the {@link LanguageManager} or the
+     * {@link Markers}. This method should be called whenever the configuration
+     * is edited.
+     */
+    public void setupConfigurableFunctions() {
+        languageManager = new LanguageManager();
 
-    public Markers getMarkers() {
-        return markers;
-    }
+        // initialize EconomySupport
+        if (getWarpSettings().useEconomy) {
+            try {
+                RegisteredServiceProvider<Economy> economyProvider = getServer()
+                        .getServicesManager().getRegistration(
+                                net.milkbowl.vault.economy.Economy.class);
+                economyLink = new VaultLink(economyProvider);
+            } catch (NoClassDefFoundError e) {
+                // thrown if no economyProvider is found using this class
+                logger().severe(
+                        "Failed to hook into Vault. Disabling Economy support.");
+                getWarpSettings().useEconomy = false;
+            }
+        }
 
-    public SignWarp getSignWarp() {
-        return signWarp;
-    }
-
-    public static WarpPermissions getWarpPermissions() {
-        return warpPermissions;
+        // initialize Dynmap support
+        if (getWarpSettings().useDynmap) {
+            Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
+            if (dynmap != null && dynmap.isEnabled()) {
+                markers = new DynmapMarkers((DynmapCommonAPI) dynmap);
+            } else {
+                logger().severe(
+                        "Failed to hook into Dynmap. Disabling Dynmap support.");
+                getWarpSettings().useDynmap = false;
+            }
+        }
     }
 }

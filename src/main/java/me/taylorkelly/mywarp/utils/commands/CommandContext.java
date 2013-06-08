@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import me.taylorkelly.mywarp.LanguageManager;
+import me.taylorkelly.mywarp.MyWarp;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -137,17 +137,19 @@ public class CommandContext {
 
                 if (valueFlags.contains(flagName)) {
                     if (this.valueFlags.containsKey(flagName)) {
-                        throw new CommandException(
-                                LanguageManager.getEffectiveString(
-                                        "error.cmd.flagGiven", "%flag%",
-                                        Character.toString(flagName)));
+                        throw new CommandException(MyWarp
+                                .inst()
+                                .getLanguageManager()
+                                .getEffectiveString("error.cmd.flagGiven",
+                                        "%flag%", Character.toString(flagName)));
                     }
 
                     if (nextArg >= argList.size()) {
-                        throw new CommandException(
-                                LanguageManager.getEffectiveString(
-                                        "error.cmd.noValue:", "%flag%",
-                                        Character.toString(flagName)));
+                        throw new CommandException(MyWarp
+                                .inst()
+                                .getLanguageManager()
+                                .getEffectiveString("error.cmd.noValue:",
+                                        "%flag%", Character.toString(flagName)));
                     }
 
                     // If it is a value flag, read another argument and add it

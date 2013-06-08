@@ -9,15 +9,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
-import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.economy.Fee;
-import me.taylorkelly.mywarp.utils.WarpLogger;
-import me.taylorkelly.mywarp.utils.commands.CommandException;
-import me.taylorkelly.mywarp.utils.commands.CommandUsageException;
-import me.taylorkelly.mywarp.utils.commands.Injector;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,19 +40,10 @@ public class CommandsManager {
     private Injector injector;
 
     /**
-     * The MyWarp instance
-     */
-    private MyWarp plugin;
-
-    /**
      * Creates the CommandManager and initiates the injector.
-     * 
-     * @param plugin
-     *            the plugin
      */
-    public CommandsManager(MyWarp plugin) {
-        this.plugin = plugin;
-        injector = new Injector(plugin);
+    public CommandsManager() {
+        injector = new Injector();
     }
 
     /**
@@ -78,8 +64,8 @@ public class CommandsManager {
 
         if (params[1] != CommandSender.class
                 && !params[1].isAssignableFrom(sender.getClass())) {
-            throw new CommandException(
-                    LanguageManager.getString("error.cmd.invalidSender"));
+            throw new CommandException(MyWarp.inst().getLanguageManager()
+                    .getString("error.cmd.invalidSender"));
         }
     }
 
@@ -158,37 +144,40 @@ public class CommandsManager {
 
         // test if the command has too few arguments
         if (context.argsLength() < cmd.min()) {
-            throw new CommandUsageException(
-                    LanguageManager.getString("error.cmd.toFewArgs"), getUsage(
-                            fullArgs, level, cmd));
+            throw new CommandUsageException(MyWarp.inst().getLanguageManager()
+                    .getString("error.cmd.toFewArgs"), getUsage(fullArgs,
+                    level, cmd));
         }
 
         // test if the command has too many arguments
         if (cmd.max() != -1 && context.argsLength() > cmd.max()) {
-            throw new CommandUsageException(
-                    LanguageManager.getString("error.cmd.toManyArgs"),
-                    getUsage(fullArgs, level, cmd));
+            throw new CommandUsageException(MyWarp.inst().getLanguageManager()
+                    .getString("error.cmd.toManyArgs"), getUsage(fullArgs,
+                    level, cmd));
         }
 
         // loop through all flags and catch unsupported ones
         for (char flag : context.getFlags()) {
             if (!newFlags.contains(flag)) {
-                throw new CommandUsageException(
-                        LanguageManager.getString("error.cmd.unknownFlag")
-                                + " " + flag, getUsage(fullArgs, level, cmd));
+                throw new CommandUsageException(MyWarp.inst()
+                        .getLanguageManager()
+                        .getString("error.cmd.unknownFlag")
+                        + " " + flag, getUsage(fullArgs, level, cmd));
             }
         }
 
         // if economy support is enabled we need to check if the sender can
         // afford using the command
-        if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE) {
-            double fee = MyWarp.getWarpPermissions().getEconomyPrices(sender)
-                    .getFee(cmd.fee());
+        if (MyWarp.inst().getWarpSettings().useEconomy && cmd.fee() != Fee.NONE) {
+            double fee = MyWarp.inst().getPermissionsManager()
+                    .getEconomyPrices(sender).getFee(cmd.fee());
 
-            if (!plugin.getEconomyLink().canAfford(sender, fee)) {
-                throw new CommandException(LanguageManager.getEffectiveString(
-                        "error.economy.cannotAfford", "%amount%",
-                        Double.toString(fee)));
+            if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
+                throw new CommandException(MyWarp
+                        .inst()
+                        .getLanguageManager()
+                        .getEffectiveString("error.economy.cannotAfford",
+                                "%amount%", Double.toString(fee)));
             }
         }
         Object instance = instances.get(method);
@@ -203,12 +192,14 @@ public class CommandsManager {
         // if economy support is enabled whitdraw the sender - at this point the
         // command should have been executed without any errors
         // (see CommandException)
-        if (WarpSettings.useEconomy && cmd.fee() != Fee.NONE) {
+        if (MyWarp.inst().getWarpSettings().useEconomy && cmd.fee() != Fee.NONE) {
 
-            plugin.getEconomyLink().withdrawSender(
-                    sender,
-                    MyWarp.getWarpPermissions().getEconomyPrices(sender)
-                            .getFee(cmd.fee()));
+            MyWarp.inst()
+                    .getEconomyLink()
+                    .withdrawSender(
+                            sender,
+                            MyWarp.inst().getPermissionsManager()
+                                    .getEconomyPrices(sender).getFee(cmd.fee()));
         }
     }
 
@@ -242,20 +233,39 @@ public class CommandsManager {
 
     /**
      * Parses the usage of the given command by replacing key-words with the
-     * translations received from the LanguageManager.
+     * translations received from the MyWarp.inst().getLanguageManager().
      * 
      * @param cmd
      *            the command
      * @return the translated command usage
      */
     public String parseCmdUsage(Command cmd) {
-        return StringUtils.replace(StringUtils.replace(StringUtils.replace(
-                StringUtils.replace(StringUtils.replace(cmd.usage(), "player",
-                        LanguageManager.getString("cmd.usage.player")), "name",
-                        LanguageManager.getString("cmd.usage.name")), "group",
-                LanguageManager.getString("cmd.usage.group")), "world",
-                LanguageManager.getString("cmd.usage.world")), "creator",
-                LanguageManager.getString("cmd.usage.creator"));
+        return StringUtils
+                .replace(
+                        StringUtils.replace(
+                                StringUtils.replace(
+                                        StringUtils
+                                                .replace(
+                                                        StringUtils
+                                                                .replace(
+                                                                        cmd.usage(),
+                                                                        "player",
+                                                                        MyWarp.inst()
+                                                                                .getLanguageManager()
+                                                                                .getString(
+                                                                                        "cmd.usage.player")),
+                                                        "name",
+                                                        MyWarp.inst()
+                                                                .getLanguageManager()
+                                                                .getString(
+                                                                        "cmd.usage.name")),
+                                        "group", MyWarp.inst()
+                                                .getLanguageManager()
+                                                .getString("cmd.usage.group")),
+                                "world", MyWarp.inst().getLanguageManager()
+                                        .getString("cmd.usage.world")),
+                        "creator", MyWarp.inst().getLanguageManager()
+                                .getString("cmd.usage.creator"));
     }
 
     /**
@@ -323,7 +333,8 @@ public class CommandsManager {
 
         usage.append(getArguments(cmd));
 
-        final String desc = LanguageManager.getString(cmd.desc());
+        final String desc = MyWarp.inst().getLanguageManager()
+                .getString(cmd.desc());
         if (desc.length() > 0) {
             usage.append("\n");
             usage.append(ChatColor.RESET);
@@ -363,7 +374,8 @@ public class CommandsManager {
             execute(sender, command.getName(), args);
         } catch (CommandPermissionsException e) {
             sender.sendMessage(ChatColor.RED
-                    + LanguageManager.getString("error.noPermission"));
+                    + MyWarp.inst().getLanguageManager()
+                            .getString("error.noPermission"));
         } catch (CommandUsageException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
             sender.sendMessage(e.getUsage());
@@ -385,7 +397,8 @@ public class CommandsManager {
      */
     private boolean hasPermission(Command command, CommandSender sender) {
         for (String perm : command.permissions()) {
-            if (MyWarp.getWarpPermissions().hasPermission(sender, perm)) {
+            if (MyWarp.inst().getPermissionsManager()
+                    .hasPermission(sender, perm)) {
                 return true;
             }
         }
@@ -425,20 +438,21 @@ public class CommandsManager {
         try {
             method.invoke(instance, methodArgs);
         } catch (IllegalArgumentException e) {
-            WarpLogger.severe("Failed to execute command", e);
-            throw new CommandException(
-                    LanguageManager.getString("error.cmd.unknown"));
+            MyWarp.logger().log(Level.SEVERE, "Failed to execute command", e);
+            throw new CommandException(MyWarp.inst().getLanguageManager()
+                    .getString("error.cmd.unknown"));
         } catch (IllegalAccessException e) {
-            WarpLogger.severe("Failed to execute command", e);
-            throw new CommandException(
-                    LanguageManager.getString("error.cmd.unknown"));
+            MyWarp.logger().log(Level.SEVERE, "Failed to execute command", e);
+            throw new CommandException(MyWarp.inst().getLanguageManager()
+                    .getString("error.cmd.unknown"));
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof CommandException) {
                 throw (CommandException) e.getCause();
             } else {
-                WarpLogger.severe("Failed to execute command", e);
-                throw new CommandException(
-                        LanguageManager.getString("error.cmd.unknown"));
+                MyWarp.logger().log(Level.SEVERE, "Failed to execute command",
+                        e);
+                throw new CommandException(MyWarp.inst().getLanguageManager()
+                        .getString("error.cmd.unknown"));
             }
         }
     }

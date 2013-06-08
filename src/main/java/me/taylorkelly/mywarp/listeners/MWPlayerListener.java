@@ -1,8 +1,7 @@
 package me.taylorkelly.mywarp.listeners;
 
-import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.WarpSettings;
+import me.taylorkelly.mywarp.data.WarpSignUtils;
 import me.taylorkelly.mywarp.timer.PlayerWarmup;
 
 import org.bukkit.Material;
@@ -21,21 +20,21 @@ import org.bukkit.material.Attachable;
 
 public class MWPlayerListener implements Listener {
 
-    private final MyWarp plugin;
-
-    public MWPlayerListener(MyWarp plugin) {
-        this.plugin = plugin;
-    }
-
+    /**
+     * Called whenever a player interacts with a block
+     * 
+     * @param event
+     *            the event
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             Block block = event.getClickedBlock();
 
             if (block.getState() instanceof Sign
-                    && plugin.getSignWarp().isSignWarp((Sign) block.getState())) {
+                    && WarpSignUtils.isSignWarp((Sign) block.getState())) {
 
-                plugin.getSignWarp().warpSign((Sign) block.getState(),
+                WarpSignUtils.warpFromSign((Sign) block.getState(),
                         event.getPlayer());
                 event.setCancelled(true);
 
@@ -55,12 +54,12 @@ public class MWPlayerListener implements Listener {
                         .getState().getData();
                 Sign signBut = (Sign) behind.getState();
 
-                if (!(signMat.getFacing() == attachable.getAttachedFace() && plugin
-                        .getSignWarp().isSignWarp(signBut))) {
+                if (!(signMat.getFacing() == attachable.getAttachedFace() && WarpSignUtils
+                        .isSignWarp(signBut))) {
                     return;
                 }
 
-                plugin.getSignWarp().warpSign(signBut, event.getPlayer());
+                WarpSignUtils.warpFromSign(signBut, event.getPlayer());
             }
         } else if (event.getAction().equals(Action.PHYSICAL)) {
             if (event.getClickedBlock().getType() == Material.WOOD_PLATE
@@ -73,27 +72,41 @@ public class MWPlayerListener implements Listener {
                 }
                 Sign signBelow = (Sign) twoBelow.getState();
 
-                if (!(plugin.getSignWarp().isSignWarp(signBelow))) {
+                if (!(WarpSignUtils.isSignWarp(signBelow))) {
                     return;
                 }
-                plugin.getSignWarp().warpSign(signBelow, event.getPlayer());
+                WarpSignUtils.warpFromSign(signBelow, event.getPlayer());
             }
         }
     }
 
+    /**
+     * Called when a player sends a chat message. Asynchronous, called methods
+     * must be threadsafe.
+     * 
+     * @param event
+     *            the event
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getWarpList().waitingForWelcome(player)) {
-            plugin.getWarpList().setWelcomeMessage(player, event.getMessage());
-            plugin.getWarpList().notWaiting(player);
+        if (MyWarp.inst().getWarpList().waitingForWelcome(player)) {
+            MyWarp.inst().getWarpList()
+                    .setWelcomeMessage(player, event.getMessage());
+            MyWarp.inst().getWarpList().notWaiting(player);
             event.setCancelled(true);
         }
     }
 
+    /**
+     * Called when a player moves
+     * 
+     * @param event
+     *            the event
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (event.isCancelled() || !WarpSettings.abortOnMove) {
+        if (event.isCancelled() || !MyWarp.inst().getWarpSettings().abortOnMove) {
             return;
         }
 
@@ -105,9 +118,13 @@ public class MWPlayerListener implements Listener {
 
         Player player = event.getPlayer();
         if (PlayerWarmup.isActive(player.getName())
-                && !MyWarp.getWarpPermissions().disobeyWarmupMoveAbort(player)) {
+                && !MyWarp
+                        .inst()
+                        .getPermissionsManager()
+                        .hasPermission(player,
+                                "mywarp.warmup.disobey.moveabort")) {
             PlayerWarmup.endWarmup(player.getName());
-            player.sendMessage(LanguageManager
+            player.sendMessage(MyWarp.inst().getLanguageManager()
                     .getString("timer.warmup.canceled.move"));
         }
     }

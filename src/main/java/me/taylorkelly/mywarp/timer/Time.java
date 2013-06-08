@@ -2,6 +2,10 @@ package me.taylorkelly.mywarp.timer;
 
 import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
 
+/**
+ * This storage-object represents one time-configuration for warmups and
+ * cooldowns
+ */
 public class Time extends ValuePermissionContainer {
 
     final private double time;
@@ -9,6 +13,8 @@ public class Time extends ValuePermissionContainer {
     /**
      * Instantiates a new time.
      * 
+     * @param name
+     *            the name used on permission lookup
      * @param time
      *            the time
      */
@@ -18,6 +24,7 @@ public class Time extends ValuePermissionContainer {
     }
 
     /**
+     * Gets the time in minecraft-ticks
      * 
      * @return the minecraft long
      */

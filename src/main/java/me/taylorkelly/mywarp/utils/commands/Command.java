@@ -6,6 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import me.taylorkelly.mywarp.economy.Fee;
+import me.taylorkelly.mywarp.economy.WarpFees;
+
+import org.bukkit.command.CommandSender;
 
 /**
  * This annotation indicates a command. Methods should be marked with this

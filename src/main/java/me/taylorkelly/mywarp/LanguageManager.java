@@ -14,12 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
-
 import me.taylorkelly.mywarp.utils.UnicodeBOMInputStream;
 import me.taylorkelly.mywarp.utils.UnicodeBOMInputStream.BOM;
-import me.taylorkelly.mywarp.utils.WarpLogger;
+
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 
 /**
  * This class provides several static that are needed to manage languages. It
@@ -28,34 +27,36 @@ import me.taylorkelly.mywarp.utils.WarpLogger;
  */
 public class LanguageManager {
 
-    private static MyWarp plugin;
-    private static HashMap<String, String> languageMap = new HashMap<String, String>();
-
     /**
-     * Initializes the language manager, creates default files and loads the
-     * activated locale into the language map
-     * 
-     * @param plugin
-     *            the MyWarp instance
+     * The language map with all used messages stored under their individual
+     * key.
      */
-    public static void initialize(MyWarp plugin) {
-        LanguageManager.plugin = plugin;
+    private HashMap<String, String> languageMap = new HashMap<String, String>();
 
+    public LanguageManager() {
         createLanguageFile("en_US");
         createLanguageFile("de_DE");
         try {
-            loadLanguage(WarpSettings.locale);
-            WarpLogger.info("Using localization: " + WarpSettings.locale);
+            loadLanguage(MyWarp.inst().getWarpSettings().locale);
+            MyWarp.logger().info(
+                    "Using localization: "
+                            + MyWarp.inst().getWarpSettings().locale);
         } catch (IOException e) {
-            WarpLogger.severe("Could not load file: ." + File.separator
-                    + plugin.getDataFolder().getName() + File.separator
-                    + WarpSettings.locale + ".txt, defaulting to en_US");
+            MyWarp.logger().severe(
+                    "Could not load file: ." + File.separator
+                            + MyWarp.inst().getDataFolder().getName()
+                            + File.separator
+                            + MyWarp.inst().getWarpSettings().locale
+                            + ".txt, defaulting to en_US");
             try {
                 loadLanguage("en_US");
             } catch (IOException e1) {
-                WarpLogger.severe("Could not load file: ." + File.separator
-                        + plugin.getDataFolder().getName() + File.separator
-                        + WarpSettings.locale + ".txt");
+                MyWarp.logger().severe(
+                        "Could not load file: ." + File.separator
+                                + MyWarp.inst().getDataFolder().getName()
+                                + File.separator
+                                + MyWarp.inst().getWarpSettings().locale
+                                + ".txt");
             }
         }
     }
@@ -72,24 +73,24 @@ public class LanguageManager {
      * @param name
      *            the name of the language file
      */
-    private static void createLanguageFile(String name) {
-        File actual = new File(plugin.getDataFolder(), name + ".txt");
+    private void createLanguageFile(String name) {
+        File actual = new File(MyWarp.inst().getDataFolder(), name + ".txt");
 
-        InputStream input = plugin.getResource("lang/" + name + ".txt");
+        InputStream input = MyWarp.inst().getResource("lang/" + name + ".txt");
         if (!actual.exists()) {
             if (input != null) {
                 FileOutputStream output = null;
 
                 try {
-                    output = new FileOutputStream(plugin.getDataFolder()
+                    output = new FileOutputStream(MyWarp.inst().getDataFolder()
                             + File.separator + name + ".txt");
                     byte[] buf = new byte[8192];
                     int length = 0;
                     while ((length = input.read(buf)) > 0) {
                         output.write(buf, 0, length);
                     }
-                    WarpLogger.info("Default language file written: " + name
-                            + ".txt");
+                    MyWarp.logger().info(
+                            "Default language file written: " + name + ".txt");
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -118,7 +119,7 @@ public class LanguageManager {
      *            the name of the file that should be checked (equals the
      *            filename without ending)
      */
-    private static void checkLanguageFile(String name) {
+    private void checkLanguageFile(String name) {
         checkLanguageFile(name, name);
     }
 
@@ -131,10 +132,10 @@ public class LanguageManager {
      *            the name of the file that should be checked (equals the
      *            filename without ending)
      * @param original
-     *            the name of the original thats bundled with the plugin (equals
-     *            the filename without ending)
+     *            the name of the original thats bundled with the MyWarp.inst()
+     *            (equals the filename without ending)
      */
-    private static void checkLanguageFile(String name, String original) {
+    private void checkLanguageFile(String name, String original) {
         HashMap<String, String> map = new HashMap<String, String>();
 
         // Read the original file provided in the plugin's jar file
@@ -142,11 +143,12 @@ public class LanguageManager {
         try {
             // forcing UTF-8 BOM default since we provide the file
             scan = new Scanner(
-                    new UnicodeBOMInputStream(plugin.getResource("lang/"
-                            + original + ".txt"), BOM.UTF_8).skipBOM(), "UTF-8");
-        } catch (IOException e) {
-            scan = new Scanner(plugin.getResource("lang/" + original + ".txt"),
+                    new UnicodeBOMInputStream(MyWarp.inst().getResource(
+                            "lang/" + original + ".txt"), BOM.UTF_8).skipBOM(),
                     "UTF-8");
+        } catch (IOException e) {
+            scan = new Scanner(MyWarp.inst().getResource(
+                    "lang/" + original + ".txt"), "UTF-8");
         }
 
         while (scan.hasNextLine()) {
@@ -155,9 +157,10 @@ public class LanguageManager {
                 continue;
             }
             if (line.split(":", 2).length != 2) {
-                WarpLogger.severe("Error reading default language file "
-                        + original + ".txt, line " + line
-                        + " - Please inform the developer.");
+                MyWarp.logger().severe(
+                        "Error reading default language file " + original
+                                + ".txt, line " + line
+                                + " - Please inform the developer.");
                 continue;
             }
 
@@ -168,7 +171,7 @@ public class LanguageManager {
         }
 
         // Read the given file and determine if it contains all keys
-        File f = new File(plugin.getDataFolder() + File.separator + name
+        File f = new File(MyWarp.inst().getDataFolder() + File.separator + name
                 + ".txt");
         if (f.exists()) {
             UnicodeBOMInputStream uis = null;
@@ -190,11 +193,13 @@ public class LanguageManager {
                     }
                 }
             } catch (FileNotFoundException e) {
-                WarpLogger.severe("Could not find file: " + f.getPath()
-                        + File.separator + f.getName());
+                MyWarp.logger().severe(
+                        "Could not find file: " + f.getPath() + File.separator
+                                + f.getName());
             } catch (IOException e) {
-                WarpLogger.severe("Failed to read file: " + f.getPath()
-                        + File.separator + f.getName() + ": " + e);
+                MyWarp.logger().severe(
+                        "Failed to read file: " + f.getPath() + File.separator
+                                + f.getName() + ": " + e);
             } finally {
                 if (br != null) {
                     try {
@@ -220,7 +225,8 @@ public class LanguageManager {
                         output.newLine();
                         output.write(entry.getKey() + ":" + entry.getValue());
                     }
-                    WarpLogger.info("Updated language file: " + name + ".txt");
+                    MyWarp.logger().info(
+                            "Updated language file: " + name + ".txt");
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -246,14 +252,14 @@ public class LanguageManager {
      * @throws IOException
      *             if any problems encounter during reading.
      */
-    private static void loadLanguage(String locale) throws IOException {
+    private void loadLanguage(String locale) throws IOException {
         UnicodeBOMInputStream uis = null;
         BufferedReader br = null;
         try {
             if (!locale.equals("en_US") || !locale.equals("de_DE")) {
                 checkLanguageFile(locale, "en_US");
             }
-            File f = new File(plugin.getDataFolder(), locale + ".txt");
+            File f = new File(MyWarp.inst().getDataFolder(), locale + ".txt");
 
             uis = new UnicodeBOMInputStream(new FileInputStream(f));
             br = new BufferedReader(new InputStreamReader(uis.skipBOM(),
@@ -284,7 +290,7 @@ public class LanguageManager {
      *            the key of the string
      * @return the corresponding string out of the language map
      */
-    public static String getString(String key) {
+    public String getString(String key) {
         return languageMap.get(key) != null ? ChatColor
                 .translateAlternateColorCodes('§',
                         StringUtils.replace(languageMap.get(key), "%n", "\n"))
@@ -298,7 +304,7 @@ public class LanguageManager {
      *            the key of the string
      * @return the corresponding string out of the language map without colors
      */
-    public static String getColorlessString(String key) {
+    public String getColorlessString(String key) {
         return ChatColor.stripColor(getString(key));
     }
 
@@ -315,12 +321,12 @@ public class LanguageManager {
      * @return the corresponding string out of the language map with replaced
      *         values
      */
-    public static String getEffectiveString(String key, String... replacements) {
+    public String getEffectiveString(String key, String... replacements) {
         if (replacements.length % 2 != 0) {
             throw new IllegalArgumentException(
                     "The given arguments length must be equal");
         }
-        String trans = LanguageManager.getString(key);
+        String trans = getString(key);
 
         for (int i = 0; i < replacements.length; i = i + 2) {
             trans = StringUtils.replace(trans, replacements[i],

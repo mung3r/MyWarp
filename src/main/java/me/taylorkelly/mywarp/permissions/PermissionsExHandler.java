@@ -1,6 +1,7 @@
 package me.taylorkelly.mywarp.permissions;
 
 import org.bukkit.entity.Player;
+
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 

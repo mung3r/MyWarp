@@ -3,6 +3,9 @@ package me.taylorkelly.mywarp.safety;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+/**
+ * This class provides and manages methods to determine if a certain location is safe
+ */
 public class BlockSafety {
 
     /**

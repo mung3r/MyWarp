@@ -1,16 +1,13 @@
 package me.taylorkelly.mywarp.markers;
 
+import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.data.Warp;
+
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
-
-import me.taylorkelly.mywarp.LanguageManager;
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.WarpSettings;
-import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.utils.WarpLogger;
 
 public class DynmapMarkers implements Markers {
 
@@ -22,60 +19,67 @@ public class DynmapMarkers implements Markers {
     private static final String MARKER_ID = "mywarp.warp.";
     private static final String ICON_ID = "mywarp_warp-32";
 
-    public DynmapMarkers(MyWarp plugin) {
-        markerAPI = ((DynmapCommonAPI) plugin.getServer().getPluginManager()
-                .getPlugin("dynmap")).getMarkerAPI();
+    public DynmapMarkers(DynmapCommonAPI dynmapPlugin) {
+        markerAPI = dynmapPlugin.getMarkerAPI();
 
         // get Icon for all markers
-        markerIcon = markerAPI.getMarkerIcon(WarpSettings.markerIconID);
-        if (markerIcon == null && !WarpSettings.markerIconID.equals(ICON_ID)) {
-            WarpLogger.warning("MarkerIcon '" + WarpSettings.markerIconID
-                    + "' does not exist. Using the default one.");
+        markerIcon = markerAPI
+                .getMarkerIcon(MyWarp.inst().getWarpSettings().markerIconID);
+        if (markerIcon == null
+                && !MyWarp.inst().getWarpSettings().markerIconID
+                        .equals(ICON_ID)) {
+            MyWarp.logger().warning(
+                    "MarkerIcon '"
+                            + MyWarp.inst().getWarpSettings().markerIconID
+                            + "' does not exist. Using the default one.");
             markerIcon = markerAPI.getMarkerIcon(ICON_ID);
         }
         if (markerIcon == null) {
-            markerIcon = markerAPI.createMarkerIcon(ICON_ID, "Warp",
-                    plugin.getResource("mywarp_warp-32.png"));
+            markerIcon = markerAPI.createMarkerIcon(ICON_ID, "Warp", MyWarp
+                    .inst().getResource("mywarp_warp-32.png"));
         }
 
         // create the label
         markerSet = markerAPI.getMarkerSet(LABEL_ID);
         if (markerSet == null) {
-            markerSet = markerAPI.createMarkerSet(LABEL_ID,
-                    WarpSettings.layerDisplayName, null, false);
+            markerSet = markerAPI.createMarkerSet(LABEL_ID, MyWarp.inst()
+                    .getWarpSettings().layerDisplayName, null, false);
         } else {
-            markerSet.setMarkerSetLabel(WarpSettings.layerDisplayName);
+            markerSet
+                    .setMarkerSetLabel(MyWarp.inst().getWarpSettings().layerDisplayName);
         }
-        markerSet.setLayerPriority(WarpSettings.layerPriority);
-        markerSet.setHideByDefault(WarpSettings.hideLayerByDefault);
-        markerSet.setLabelShow(WarpSettings.showMarkerLable);
-        markerSet.setMinZoom(WarpSettings.markerMinZoom);
+        markerSet
+                .setLayerPriority(MyWarp.inst().getWarpSettings().layerPriority);
+        markerSet
+                .setHideByDefault(MyWarp.inst().getWarpSettings().hideLayerByDefault);
+        markerSet.setLabelShow(MyWarp.inst().getWarpSettings().showMarkerLable);
+        markerSet.setMinZoom(MyWarp.inst().getWarpSettings().markerMinZoom);
 
         // add all warps
-        for (Warp warp : plugin.getWarpList().getPublicWarps()) {
+        for (Warp warp : MyWarp.inst().getWarpList().getPublicWarps()) {
             addWarp(warp);
         }
     }
 
     @Override
     public void addWarp(Warp warp) {
-        markerSet.createMarker(MARKER_ID + warp.name, warpLabel(warp), true,
-                warp.world, warp.x, warp.y, warp.z, markerIcon, false);
+        markerSet.createMarker(MARKER_ID + warp.getName(), warpLabel(warp), true,
+                warp.getWorld(), warp.getX(), warp.getY(), warp.getZ(), markerIcon, false);
     }
 
     @Override
     public void updateWarp(Warp warp) {
-        Marker marker = getMatchingMarker(MARKER_ID + warp.name);
+        Marker marker = getMatchingMarker(MARKER_ID + warp.getName());
 
         if (marker != null) {
-            marker.setLocation(warp.world, warp.x, warp.y, warp.z);
+            marker.setLocation(warp.getWorld(), warp.getX(), warp.getY(), warp.getZ());
             marker.setLabel(warpLabel(warp));
         }
     }
 
     @Override
     public void deleteWarp(Warp warp) {
-        Marker marker = getMatchingMarker(MARKER_ID + warp.name);
+        Marker marker = getMatchingMarker(MARKER_ID + warp.getName());
 
         if (marker != null) {
             marker.deleteMarker();
@@ -93,10 +97,12 @@ public class DynmapMarkers implements Markers {
 
     private String warpLabel(Warp warp) {
         return "<b>"
-                + warp.name
+                + warp.getName()
                 + "</b></br><i>"
-                + LanguageManager.getEffectiveString("dynmap.createdBy",
-                        "%creator%", warp.creator) + "</i>";
+                + MyWarp.inst()
+                        .getLanguageManager()
+                        .getEffectiveString("dynmap.createdBy", "%creator%",
+                                warp.getCreator()) + "</i>";
 
     }
 }

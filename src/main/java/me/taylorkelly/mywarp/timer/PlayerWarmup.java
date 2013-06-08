@@ -3,23 +3,35 @@ package me.taylorkelly.mywarp.timer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.entity.Player;
-
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 
+import org.bukkit.entity.Player;
+
+/**
+ * This class manages and acts as warp-warmups from players
+ */
 public class PlayerWarmup extends PlayerTimer {
 
-    final private MyWarp plugin;
     final private Time cooldown;
     final private Warp warp;
 
-    public static Map<String, PlayerTimer> warmups = new HashMap<String, PlayerTimer>();
+    private static Map<String, PlayerTimer> warmups = new HashMap<String, PlayerTimer>();
 
-    public PlayerWarmup(MyWarp plugin, Player player, Time durration,
-            Warp warp, Time cooldown) {
-        super(plugin, player, durration);
-        this.plugin = plugin;
+    /**
+     * Initializes this player warmup
+     * 
+     * @param player
+     *            the player this warmup applies for
+     * @param durration
+     *            the duration of this warmup
+     * @param warp
+     *            the warp that should be used after warming up
+     * @param cooldown
+     *            the cooldown that applies after the warp
+     */
+    public PlayerWarmup(Player player, Time durration, Warp warp, Time cooldown) {
+        super(player, durration);
         this.cooldown = cooldown;
         this.warp = warp;
     }
@@ -32,9 +44,9 @@ public class PlayerWarmup extends PlayerTimer {
         }
         // even if the warp is removed while the warmup is running, the
         // garbage collector does not delete it until the warmup is over
-        plugin.getWarpList().warpTo(warp, player);
-        if (!MyWarp.getWarpPermissions().disobeyCooldown(player)) {
-            new PlayerCooldown(plugin, player, cooldown);
+        MyWarp.inst().getWarpList().warpTo(warp, player);
+        if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.cooldown.disobey")) {
+            new PlayerCooldown(player, cooldown);
         }
     }
 
@@ -43,6 +55,14 @@ public class PlayerWarmup extends PlayerTimer {
         return warmups;
     }
 
+    /**
+     * Gets the remaining time on the warmup of the given player. Will return 0
+     * if the player is not warming up.
+     * 
+     * @param player
+     *            the player#s name
+     * @return the remaining time on the warmup in seconds
+     */
     public static Integer getRemainingWarmup(String player) {
         PlayerTimer pw = warmups.get(player);
         if (pw != null) {
@@ -51,10 +71,23 @@ public class PlayerWarmup extends PlayerTimer {
         return 0;
     }
 
+    /**
+     * Checks if the given player is warming up
+     * 
+     * @param player
+     *            the player's name
+     * @return whether the player is warming up
+     */
     public static Boolean isActive(String player) {
         return warmups.containsKey(player);
     }
 
+    /**
+     * Ends the warmup for the given player
+     * 
+     * @param player
+     *            the player's name
+     */
     public static void endWarmup(String player) {
         PlayerTimer pw = warmups.get(player);
         if (pw != null) {

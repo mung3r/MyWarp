@@ -1,8 +1,6 @@
 package me.taylorkelly.mywarp.commands;
 
-import me.taylorkelly.mywarp.LanguageManager;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.WarpSettings;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.timer.PlayerCooldown;
@@ -23,12 +21,6 @@ import org.bukkit.entity.Player;
  */
 public class RootCommands {
 
-    private MyWarp plugin;
-
-    public RootCommands(MyWarp plugin) {
-        this.plugin = plugin;
-    }
-
     @NestedCommand({ AdminCommands.class, BasicCommands.class,
             SocialCommands.class })
     @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "Warps you to <name>", fee = Fee.WARP_TO, min = 1, permissions = { "mywarp.warp.basic.warp" })
@@ -37,43 +29,58 @@ public class RootCommands {
 
         Warp warp = CommandUtils.getWarpForUsage(sender,
                 args.getJoinedStrings(0));
-        if (WarpSettings.useTimers) {
-            Time cooldown = MyWarp.getWarpPermissions().getCooldown(sender);
-            Time warmup = MyWarp.getWarpPermissions().getWarmup(sender);
+        if (MyWarp.inst().getWarpSettings().useTimers) {
+            Time cooldown = MyWarp.inst().getPermissionsManager()
+                    .getCooldown(sender);
+            Time warmup = MyWarp.inst().getPermissionsManager()
+                    .getWarmup(sender);
 
             if (PlayerCooldown.isActive(sender.getName())) {
-                throw new CommandException(LanguageManager.getEffectiveString(
-                        "timer.cooldown.cooling", "%seconds%",
-                        Integer.toString(PlayerCooldown
-                                .getRemainingCooldown(sender.getName()))));
+                throw new CommandException(
+                        MyWarp.inst()
+                                .getLanguageManager()
+                                .getEffectiveString(
+                                        "timer.cooldown.cooling",
+                                        "%seconds%",
+                                        Integer.toString(PlayerCooldown
+                                                .getRemainingCooldown(sender
+                                                        .getName()))));
             }
 
             if (PlayerWarmup.isActive(sender.getName())) {
-                throw new CommandException(LanguageManager.getEffectiveString(
-                        "timer.warmup.warming", "%seconds%", Integer
-                                .toString(PlayerWarmup
+                throw new CommandException(MyWarp
+                        .inst()
+                        .getLanguageManager()
+                        .getEffectiveString(
+                                "timer.warmup.warming",
+                                "%seconds%",
+                                Integer.toString(PlayerWarmup
                                         .getRemainingWarmup(sender.getName()))));
             }
 
-            if (MyWarp.getWarpPermissions().disobeyWarmup(sender)) {
-                plugin.getWarpList().warpTo(warp, sender);
+            if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.warmup.disobey")) {
+                MyWarp.inst().getWarpList().warpTo(warp, sender);
 
-                if (!MyWarp.getWarpPermissions().disobeyCooldown(sender)) {
-                    new PlayerCooldown(plugin, sender, cooldown);
+                if (!MyWarp.inst().getPermissionsManager()
+                        .hasPermission(sender, "mywarp.cooldown.disobey")) {
+                    new PlayerCooldown(sender, cooldown);
                 }
                 return;
             }
 
-            new PlayerWarmup(plugin, sender, warmup, warp, cooldown);
+            new PlayerWarmup(sender, warmup, warp, cooldown);
 
-            if (WarpSettings.warmUpNotify) {
-                sender.sendMessage(LanguageManager.getEffectiveString(
-                        "timer.warmup.warming", "%warp%", warp.name,
-                        "%seconds%", Integer.toString(warmup.getInt())));
+            if (MyWarp.inst().getWarpSettings().warmUpNotify) {
+                sender.sendMessage(MyWarp
+                        .inst()
+                        .getLanguageManager()
+                        .getEffectiveString("timer.warmup.warming", "%warp%",
+                                warp.getName(), "%seconds%",
+                                Integer.toString(warmup.getInt())));
             }
 
         } else {
-            plugin.getWarpList().warpTo(warp, sender);
+            MyWarp.inst().getWarpList().warpTo(warp, sender);
         }
     }
 

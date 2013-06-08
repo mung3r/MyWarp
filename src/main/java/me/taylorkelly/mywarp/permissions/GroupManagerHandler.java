@@ -1,16 +1,15 @@
 package me.taylorkelly.mywarp.permissions;
 
+import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.anjocaido.groupmanager.GroupManager;
-import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
 
 /**
  * Handler for GroupManager
  * 
  */
 public class GroupManagerHandler implements PermissionsHandler {
-    private final transient GroupManager manager;
+    private final GroupManager manager;
 
     public GroupManagerHandler(final Plugin permissionsPlugin) {
         manager = ((GroupManager) permissionsPlugin);
@@ -18,8 +17,7 @@ public class GroupManagerHandler implements PermissionsHandler {
 
     @Override
     public boolean playerHasGroup(Player player, String group) {
-        AnjoPermissionsHandler handler = manager.getWorldsHolder()
-                .getWorldPermissions(player);
-        return handler.inGroup(player.getName(), group);
+        return manager.getWorldsHolder().getWorldPermissions(player)
+                .inGroup(player.getName(), group);
     }
 }
