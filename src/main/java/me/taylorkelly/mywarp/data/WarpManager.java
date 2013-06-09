@@ -1,6 +1,5 @@
 package me.taylorkelly.mywarp.data;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -11,6 +10,7 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -87,7 +87,8 @@ public class WarpManager {
      * Removes the given warp from the network. Will also remove the marker if
      * needed.
      * 
-     * @param warp the warp
+     * @param warp
+     *            the warp
      */
     public void deleteWarp(Warp warp) {
         warpMap.remove(warp.getName());
@@ -123,7 +124,8 @@ public class WarpManager {
             }
             if (warp.getName().equalsIgnoreCase(name)) {
                 exactMatches.add(warp);
-            } else if (warp.getName().toLowerCase().contains(name.toLowerCase())) {
+            } else if (warp.getName().toLowerCase()
+                    .contains(name.toLowerCase())) {
                 matches.add(warp);
             }
         }
@@ -143,34 +145,37 @@ public class WarpManager {
     /**
      * Attempts to match the given creator string to a creator who owns warps in
      * the network. This method will always return the full name of the searched
-     * creator, and an empty string if there is no exactly matching creator.
+     * creator or null if there either no or more than on match(es)
      * 
      * @param player
      *            the player
      * @param creator
      *            the (part of) the searched creator
      * @return the an exactly matching creator existing in the network or an
-     *         empty string if not exact match exist
+     *         null if not exact match exist
      */
     public String getMatchingCreator(Player player, String creator) {
-        ArrayList<String> matches = new ArrayList<String>();
+        String match = null;
 
         for (Warp warp : warpMap.values()) {
             if (!isWarpAccessible(warp, player)) {
                 continue;
             }
-            if (warp.getCreator().equalsIgnoreCase(creator)) {
-                return creator;
+            String warpCreator = warp.getCreator();
+
+            // minecraft usernames are case insensitive
+            if (warpCreator.equalsIgnoreCase(creator)) {
+                return warpCreator;
             }
-            if (warp.getCreator().toLowerCase().contains(creator.toLowerCase())
-                    && !matches.contains(warp.getCreator())) {
-                matches.add(warp.getCreator());
+            if (!StringUtils.containsIgnoreCase(warpCreator, creator)) {
+                continue;
             }
+            if (match != null && !match.equals(warpCreator)) {
+                return null;
+            }
+            match = warpCreator;
         }
-        if (matches.size() == 1) {
-            return matches.get(0);
-        }
-        return "";
+        return match;
     }
 
     /**
@@ -336,7 +341,8 @@ public class WarpManager {
      *         not
      */
     public boolean playerCanBuildPrivateWarp(Player player) {
-        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.private.unlimited")) {
+        if (MyWarp.inst().getPermissionsManager()
+                .hasPermission(player, "mywarp.limit.private.unlimited")) {
             return true;
         }
         return numPrivateWarpsPlayer(player) < MyWarp.inst()
@@ -354,7 +360,8 @@ public class WarpManager {
      *         not
      */
     public boolean playerCanBuildPublicWarp(Player player) {
-        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.public.unlimited")) {
+        if (MyWarp.inst().getPermissionsManager()
+                .hasPermission(player, "mywarp.limit.public.unlimited")) {
             return true;
         }
         return numPublicWarpsPlayer(player) < MyWarp.inst()
@@ -371,7 +378,8 @@ public class WarpManager {
      * @return true if the player can build additional warps, false if not
      */
     public boolean playerCanBuildWarp(Player player) {
-        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.total.unlimited")) {
+        if (MyWarp.inst().getPermissionsManager()
+                .hasPermission(player, "mywarp.limit.total.unlimited")) {
             return true;
         }
         return numWarpsPlayer(player) < MyWarp.inst().getPermissionsManager()
@@ -541,6 +549,11 @@ public class WarpManager {
 
         if (creator != null) {
             creator = getMatchingCreator(player, creator);
+            
+            //unable to find a matching creator
+            if (creator == null) {
+                return results;
+            }
         }
 
         for (Warp warp : warpMap.values()) {
@@ -591,9 +604,9 @@ public class WarpManager {
 
     /**
      * Checks if the given warp is accessible for the given player. This method
-     * bundles all accessible checks (generally usability, per world
-     * etc.), that are ALWAYS used. Method specific checks should be handled in
-     * the specific methods.
+     * bundles all accessible checks (generally usability, per world etc.), that
+     * are ALWAYS used. Method specific checks should be handled in the specific
+     * methods.
      * 
      * @param warp
      *            the warp to check
@@ -605,8 +618,10 @@ public class WarpManager {
         if (player != null && !warp.playerCanWarp(player)) {
             return false;
         }
-        if (MyWarp.inst().getWarpSettings().worldAccess && player != null
-                && !MyWarp.inst().getPermissionsManager().playerCanAccessWorld(player, warp.getWorld())) {
+        if (MyWarp.inst().getWarpSettings().worldAccess
+                && player != null
+                && !MyWarp.inst().getPermissionsManager()
+                        .playerCanAccessWorld(player, warp.getWorld())) {
             return false;
         }
         return true;
