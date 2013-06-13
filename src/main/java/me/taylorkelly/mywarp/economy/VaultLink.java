@@ -19,14 +19,31 @@ public class VaultLink implements EconomyLink {
      */
     private final Economy economy;
 
+    /**
+     * Initializes the economy-link
+     * 
+     * @param economyProvider
+     *            the economy provider - represents Vault
+     */
     public VaultLink(RegisteredServiceProvider<Economy> economyProvider) {
         economy = economyProvider.getProvider();
     }
-    
+
+    /**
+     * Returns whether the sender can disobey fees or not. This method should be
+     * checked before calling the economy implementation.
+     * 
+     * @param sender
+     *            the sender
+     * @param amount
+     *            the amount that should be charged
+     * @return true if the player can dispbey fees, false if not
+     */
     private boolean canDisobeyFees(CommandSender sender, double amount) {
         return !(sender instanceof Player)
                 || MyWarp.inst().getPermissionsManager()
-                .hasPermission(sender, "mywarp.economy.free") || amount <= 0;
+                        .hasPermission(sender, "mywarp.economy.free")
+                || amount <= 0;
     }
 
     @Override

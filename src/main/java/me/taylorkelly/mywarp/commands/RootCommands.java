@@ -23,9 +23,22 @@ public class RootCommands {
 
     @NestedCommand({ AdminCommands.class, BasicCommands.class,
             SocialCommands.class })
-    @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "Warps you to <name>", fee = Fee.WARP_TO, min = 1, permissions = { "mywarp.warp.basic.warp" })
+    @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "Warps you to <name>", min = 1, permissions = { "mywarp.warp.basic.warp" })
     public void warpTo(CommandContext args, Player sender)
             throws CommandException {
+        // first check the economy
+        if (MyWarp.inst().getWarpSettings().useEconomy) {
+            double fee = MyWarp.inst().getPermissionsManager()
+                    .getEconomyPrices(sender).getFee(Fee.WARP_TO);
+
+            if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
+                throw new CommandException(MyWarp
+                        .inst()
+                        .getLanguageManager()
+                        .getEffectiveString("error.economy.cannotAfford",
+                                "%amount%", Double.toString(fee)));
+            }
+        }
 
         Warp warp = CommandUtils.getWarpForUsage(sender,
                 args.getJoinedStrings(0));
@@ -58,7 +71,8 @@ public class RootCommands {
                                         .getRemainingWarmup(sender.getName()))));
             }
 
-            if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.warmup.disobey")) {
+            if (MyWarp.inst().getPermissionsManager()
+                    .hasPermission(sender, "mywarp.warmup.disobey")) {
                 MyWarp.inst().getWarpList().warpTo(warp, sender);
 
                 if (!MyWarp.inst().getPermissionsManager()

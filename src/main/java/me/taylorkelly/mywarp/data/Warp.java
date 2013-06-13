@@ -6,6 +6,7 @@ import java.util.List;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.safety.SafeTeleport;
+import me.taylorkelly.mywarp.safety.SafeTeleport.TeleportStatus;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
@@ -290,7 +291,6 @@ public class Warp implements Comparable<Warp> {
     public boolean groupIsInvited(String group) {
         return groupPermissions.contains(group);
     }
-    
 
     public String permissionsString() {
         return StringUtils.join(permissions, LIST_SEPERATOR);
@@ -345,7 +345,8 @@ public class Warp implements Comparable<Warp> {
         if (creator.equals(player.getName())) {
             return true;
         }
-        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.admin.modifyall")) {
+        if (MyWarp.inst().getPermissionsManager()
+                .hasPermission(player, "mywarp.admin.modifyall")) {
             return true;
         }
         return false;
@@ -372,7 +373,8 @@ public class Warp implements Comparable<Warp> {
                 return true;
             }
         }
-        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.admin.accessall")) {
+        if (MyWarp.inst().getPermissionsManager()
+                .hasPermission(player, "mywarp.admin.accessall")) {
             return true;
         }
 
@@ -461,7 +463,8 @@ public class Warp implements Comparable<Warp> {
 
     @Override
     public String toString() {
-        return name;
+        return "Warp{" + "name=" + name + " creator=" + creator + "publicAll="
+                + publicAll + "}";
     }
 
     /**
@@ -498,14 +501,12 @@ public class Warp implements Comparable<Warp> {
      * {@link me.taylorkelly.mywarp.safety.SafeTeleport#safeTeleport(Player, Location, String)}
      * .
      * 
-     * Will return true only if the player could be teleported to the original
-     * (!) location.
-     * 
      * @param player
      *            the player
-     * @return true if the player was teleported successfully, false if not
+     * @return The corresponding
+     *         {@link me.taylorkelly.mywarp.safety.SafeTeleport.TeleportStatus}
      */
-    public boolean warp(Player player) {
+    public TeleportStatus warp(Player player) {
         Location location = getLocation();
         if (location != null) {
             return SafeTeleport.safeTeleport(player, location, name);
@@ -515,14 +516,14 @@ public class Warp implements Comparable<Warp> {
                     .getLanguageManager()
                     .getEffectiveString("error.warpto.noSuchWorld", "%world%",
                             getWorld()));
-            return false;
+            return TeleportStatus.NONE;
         }
     }
-    
+
     public List<String> getAllInvitedPlayers() {
         return permissions;
     }
-    
+
     public List<String> getAllInvitedGroups() {
         return groupPermissions;
     }

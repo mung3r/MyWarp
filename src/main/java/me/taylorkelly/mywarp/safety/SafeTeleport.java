@@ -8,9 +8,17 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 /**
- * This class provides and manages several methods to teleport players to safe locations
+ * This class provides and manages several methods to teleport players to safe
+ * locations
  */
 public class SafeTeleport {
+
+    /**
+     * The individual teleport-status
+     */
+    public enum TeleportStatus {
+        NONE, ORIGINAL_LOC, SAFE_LOC,
+    };
 
     /**
      * Teleports the player to the given location if it is safe. If not, it
@@ -22,9 +30,9 @@ public class SafeTeleport {
      *            the location
      * @param name
      *            the name of the warp
-     * @return True if the player could be teleported to the given location
+     * @return The resulting {@link TeleportStatus}
      */
-    public static boolean safeTeleport(Player player, Location l, String name) {
+    public static TeleportStatus safeTeleport(Player player, Location l, String name) {
         // warp height is always the block's Y so we may need to adjust the
         // height for blocks that are smaller than one full block (steps,
         // skulls...)
@@ -36,17 +44,17 @@ public class SafeTeleport {
             if (safe == null) {
                 player.sendMessage(MyWarp.inst().getLanguageManager()
                         .getEffectiveString("safety.notFound", "%warp%", name));
-                return false;
+                return TeleportStatus.NONE;
             }
             if (safe != l) {
                 teleport(player, safe);
                 player.sendMessage(MyWarp.inst().getLanguageManager()
                         .getEffectiveString("safety.found", "%warp%", name));
-                return false;
+                return TeleportStatus.SAFE_LOC;
             }
         }
         teleport(player, l);
-        return true;
+        return TeleportStatus.ORIGINAL_LOC;
     }
 
     /**
@@ -97,7 +105,7 @@ public class SafeTeleport {
     }
 
     /**
-     * Teleports a player to a location. Before teleporting the player is
+     * Teleports a player to a location. Before teleporting, the player is
      * ejected if he uses any vehicle, the warp-effect is played (if enabled)
      * and chunks are loaded (if enabled and not loaded before).
      * 

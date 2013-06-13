@@ -5,7 +5,9 @@ import java.util.Map;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.economy.Fee;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -42,10 +44,25 @@ public class PlayerWarmup extends PlayerTimer {
         if (!player.isOnline()) {
             return;
         }
-        // even if the warp is removed while the warmup is running, the
-        // garbage collector does not delete it until the warmup is over
+
+        if (MyWarp.inst().getWarpSettings().useEconomy) {
+            double fee = MyWarp.inst().getPermissionsManager()
+                    .getEconomyPrices(player).getFee(Fee.WARP_TO);
+
+            if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
+                player.sendMessage(ChatColor.RED
+                        + MyWarp.inst()
+                                .getLanguageManager()
+                                .getEffectiveString(
+                                        "error.economy.cannotAfford",
+                                        "%amount%", Double.toString(fee)));
+                return;
+            }
+        }
+
         MyWarp.inst().getWarpList().warpTo(warp, player);
-        if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.cooldown.disobey")) {
+        if (!MyWarp.inst().getPermissionsManager()
+                .hasPermission(player, "mywarp.cooldown.disobey")) {
             new PlayerCooldown(player, cooldown);
         }
     }

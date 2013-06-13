@@ -7,6 +7,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
 
@@ -549,8 +550,8 @@ public class WarpManager {
 
         if (creator != null) {
             creator = getMatchingCreator(player, creator);
-            
-            //unable to find a matching creator
+
+            // unable to find a matching creator
             if (creator == null) {
                 return results;
             }
@@ -572,8 +573,7 @@ public class WarpManager {
     }
 
     /**
-     * Warps the given player to the given warp and updates the warp's visit
-     * counter
+     * Warps the given player to the given warp. Visit-counter and welcome-message are handled as needed.
      * 
      * @param warp
      *            the warp
@@ -581,11 +581,25 @@ public class WarpManager {
      *            the player
      */
     public void warpTo(Warp warp, Player player) {
-        if (warp.warp(player)) {
-            warp.visit();
-            MyWarp.inst().getConnectionManager().updateVisits(warp);
+        switch (warp.warp(player)) {
+        case NONE:
+            break;
+        case ORIGINAL_LOC:
             player.sendMessage(ChatColor.AQUA
                     + warp.getSpecificWelcomeMessage(player));
+        case SAFE_LOC:
+            warp.visit();
+            MyWarp.inst().getConnectionManager().updateVisits(warp);
+            
+            if (MyWarp.inst().getWarpSettings().useEconomy) {
+                MyWarp.inst()
+                        .getEconomyLink()
+                        .withdrawSender(
+                                player,
+                                MyWarp.inst().getPermissionsManager()
+                                        .getEconomyPrices(player).getFee(Fee.WARP_TO));
+            }
+            break;
         }
     }
 
