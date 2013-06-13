@@ -169,14 +169,14 @@ public class WarpSettings {
                 continue;
             } else if (key.equals("default")) {
                 defaultLimit = new WarpLimit(key, configuredLimits.getInt(key
-                        + ".maxTotal"), configuredLimits.getInt(key
-                        + ".maxPublic"), configuredLimits.getInt(key
-                        + ".maxPrivate"));
+                        + ".maxTotal", 0), configuredLimits.getInt(key
+                        + ".maxPublic", 0), configuredLimits.getInt(key
+                        + ".maxPrivate", 0));
             } else {
                 warpLimits.add(new WarpLimit(key, configuredLimits.getInt(key
-                        + ".maxTotal"), configuredLimits.getInt(key
-                        + ".maxPublic"), configuredLimits.getInt(key
-                        + ".maxPrivate")));
+                        + ".maxTotal", 0), configuredLimits.getInt(key
+                        + ".maxPublic", 0), configuredLimits.getInt(key
+                        + ".maxPrivate", 0)));
             }
         }
         Collections.sort(warpLimits);
@@ -231,26 +231,26 @@ public class WarpSettings {
                 .getConfigurationSection("economy.fees");
         for (String key : configuredFees.getKeys(false)) {
             WarpFees fees = new WarpFees(key, configuredFees.getDouble(key
-                    + ".accept"), configuredFees.getDouble(key + ".create"),
-                    configuredFees.getDouble(key + ".create-private"),
-                    configuredFees.getDouble(key + ".delete"),
-                    configuredFees.getDouble(key + ".give"),
-                    configuredFees.getDouble(key + ".help"),
-                    configuredFees.getDouble(key + ".info"),
-                    configuredFees.getDouble(key + ".invite"),
-                    configuredFees.getDouble(key + ".list"),
-                    configuredFees.getDouble(key + ".listall"),
-                    configuredFees.getDouble(key + ".point"),
-                    configuredFees.getDouble(key + ".private"),
-                    configuredFees.getDouble(key + ".public"),
-                    configuredFees.getDouble(key + ".search"),
-                    configuredFees.getDouble(key + ".uninvite"),
-                    configuredFees.getDouble(key + ".update"),
-                    configuredFees.getDouble(key + ".warp-player"),
-                    configuredFees.getDouble(key + ".warp-sign-create"),
-                    configuredFees.getDouble(key + ".warp-sign-use"),
-                    configuredFees.getDouble(key + ".warp-to"),
-                    configuredFees.getDouble(key + ".welcome"));
+                    + ".accept", 0), configuredFees.getDouble(key + ".create", 0),
+                    configuredFees.getDouble(key + ".create-private", 0),
+                    configuredFees.getDouble(key + ".delete", 0),
+                    configuredFees.getDouble(key + ".give", 0),
+                    configuredFees.getDouble(key + ".help", 0),
+                    configuredFees.getDouble(key + ".info", 0),
+                    configuredFees.getDouble(key + ".invite", 0),
+                    configuredFees.getDouble(key + ".list", 0),
+                    configuredFees.getDouble(key + ".listall", 0),
+                    configuredFees.getDouble(key + ".point", 0),
+                    configuredFees.getDouble(key + ".private", 0),
+                    configuredFees.getDouble(key + ".public", 0),
+                    configuredFees.getDouble(key + ".search", 0),
+                    configuredFees.getDouble(key + ".uninvite", 0),
+                    configuredFees.getDouble(key + ".update", 0),
+                    configuredFees.getDouble(key + ".warp-player", 0),
+                    configuredFees.getDouble(key + ".warp-sign-create", 0),
+                    configuredFees.getDouble(key + ".warp-sign-use", 0),
+                    configuredFees.getDouble(key + ".warp-to", 0),
+                    configuredFees.getDouble(key + ".welcome", 0));
             if (key.equals("default")) {
                 defaultWarpFees = fees;
             } else {
