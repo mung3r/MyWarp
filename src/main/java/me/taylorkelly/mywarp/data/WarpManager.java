@@ -120,7 +120,7 @@ public class WarpManager {
         TreeSet<Warp> matches = new TreeSet<Warp>(comperator);
 
         for (Warp warp : warpMap.values()) {
-            if (!isWarpAccessible(warp, player)) {
+            if (player != null && !warp.playerCanWarp(player)) {
                 continue;
             }
             if (warp.getName().equalsIgnoreCase(name)) {
@@ -159,7 +159,7 @@ public class WarpManager {
         String match = null;
 
         for (Warp warp : warpMap.values()) {
-            if (!isWarpAccessible(warp, player)) {
+            if (player != null && !warp.playerCanWarp(player)) {
                 continue;
             }
             String warpCreator = warp.getCreator();
@@ -558,7 +558,7 @@ public class WarpManager {
         }
 
         for (Warp warp : warpMap.values()) {
-            if (!isWarpAccessible(warp, player)) {
+            if (player != null && !warp.playerCanWarp(player)) {
                 continue;
             }
             if (creator != null && !warp.getCreator().equals(creator)) {
@@ -614,30 +614,5 @@ public class WarpManager {
      */
     public void welcomeMessage(Warp warp, final Player player) {
         welcomeMessage.put(player.getName(), warp);
-    }
-
-    /**
-     * Checks if the given warp is accessible for the given player. This method
-     * bundles all accessible checks (generally usability, per world etc.), that
-     * are ALWAYS used. Method specific checks should be handled in the specific
-     * methods.
-     * 
-     * @param warp
-     *            the warp to check
-     * @param player
-     *            the player
-     * @return true if the warp is accessible, false if not
-     */
-    private boolean isWarpAccessible(Warp warp, Player player) {
-        if (player != null && !warp.playerCanWarp(player)) {
-            return false;
-        }
-        if (MyWarp.inst().getWarpSettings().worldAccess
-                && player != null
-                && !MyWarp.inst().getPermissionsManager()
-                        .playerCanAccessWorld(player, warp.getWorld())) {
-            return false;
-        }
-        return true;
     }
 }

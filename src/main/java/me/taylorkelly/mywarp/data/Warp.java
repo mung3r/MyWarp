@@ -360,6 +360,12 @@ public class Warp implements Comparable<Warp> {
      * @return true if the player can use this warp, false if not
      */
     public boolean playerCanWarp(Player player) {
+        if (MyWarp.inst().getWarpSettings().worldAccess
+                && !MyWarp.inst().getPermissionsManager()
+                        .playerCanAccessWorld(player, world)) {
+            return false;
+        }
+
         if (creator.equals(player.getName())) {
             return true;
         }
