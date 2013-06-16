@@ -26,7 +26,7 @@ cmd.usage.group:Gruppe
 cmd.usage.name:Name
 cmd.usage.player:Spieler
 cmd.usage.world:Welt
-dynmap.createdBy:Erstellt von %creator%
+dynmap.marker:<b>%warp%</b></br><i>Erstellt von %creator%</i>
 economy.transaction.complete:§bDir wurden %amount%$ berechnet.
 error.accept.noWarp:Es gibt keine Warps, die akzeptiert werden könnten.
 error.cmd.flagGiven:Die Flag '%flag%' existiert bereits!

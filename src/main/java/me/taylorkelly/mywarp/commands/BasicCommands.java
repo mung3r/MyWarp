@@ -172,11 +172,11 @@ public class BasicCommands {
                 StringBuilder last = new StringBuilder();
                 last.append(ChatColor.RESET);
                 last.append("@(");
-                last.append((int) warp.getX());
+                last.append(Math.round(warp.getX()));
                 last.append(", ");
-                last.append((int) warp.getY());
+                last.append(warp.getY());
                 last.append(", ");
-                last.append((int) warp.getZ());
+                last.append(Math.round(warp.getZ()));
                 last.append(")");
                 return (MinecraftFontWidthCalculator.rightLeftAlign(
                         first.toString(), last.toString()));

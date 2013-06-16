@@ -26,7 +26,7 @@ cmd.usage.group:group
 cmd.usage.name:name
 cmd.usage.player:player
 cmd.usage.world:world
-dynmap.createdBy:Created by %creator%
+dynmap.marker:<b>%warp%</b></br><i>Created by %creator%</i>
 economy.transaction.complete:§bYou have been charged %amount%$.
 error.accept.noWarp:There are no warps to accept.
 error.cmd.flagGiven:Value flag is '%flag%' already given!

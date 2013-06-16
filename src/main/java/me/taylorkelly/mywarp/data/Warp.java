@@ -214,10 +214,8 @@ public class Warp implements Comparable<Warp> {
      * @return the warp's welcome message with replaced values
      */
     public String getSpecificWelcomeMessage(Player player) {
-        return StringUtils.replace(StringUtils.replace(StringUtils.replace(
-                StringUtils.replace(getRawWelcomeMessage(), "%player%",
-                        player.getName()), "%warp%", name), "%creator%",
-                creator), "%visits%", Integer.toString(visits));
+        return StringUtils.replace(replaceWarpMacros(welcomeMessage),
+                "%player%", player.getName());
     }
 
     /**
@@ -526,11 +524,40 @@ public class Warp implements Comparable<Warp> {
         }
     }
 
+    /**
+     * Gets a list with all player names who are invited to this warp
+     * 
+     * @return a List with all invited players
+     */
     public List<String> getAllInvitedPlayers() {
         return permissions;
     }
 
+    /**
+     * Gets a list with all group names that are invited to this warp
+     * 
+     * @return a list with all invited groups
+     */
     public List<String> getAllInvitedGroups() {
         return groupPermissions;
+    }
+
+    /**
+     * Replaces all macros (e.g. %creator%, %name%) in the given string with the
+     * corresponding value of this warp.
+     * 
+     * @param str
+     *            the original string
+     * @return the String with replaced macros
+     */
+    public String replaceWarpMacros(String str) {
+        str = StringUtils.replace(str, "%creator%", creator);
+        str = StringUtils.replace(str, "%warp%", name);
+        str = StringUtils.replace(str, "%visits%", Integer.toString(visits));
+        str = StringUtils.replace(str, "%world%", world);
+        str = StringUtils.replace(str, "%loc%", "(" + Math.round(x) + ", " + y
+                + ", " + Math.round(z) + ")");
+
+        return str;
     }
 }

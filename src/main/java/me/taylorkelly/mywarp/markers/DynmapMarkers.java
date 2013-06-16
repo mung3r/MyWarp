@@ -96,13 +96,9 @@ public class DynmapMarkers implements Markers {
     }
 
     private String warpLabel(Warp warp) {
-        return "<b>"
-                + warp.getName()
-                + "</b></br><i>"
-                + MyWarp.inst()
+        return warp.replaceWarpMacros(MyWarp.inst()
                         .getLanguageManager()
-                        .getEffectiveString("dynmap.createdBy", "%creator%",
-                                warp.getCreator()) + "</i>";
+                        .getString("dynmap.marker"));
 
     }
 }
