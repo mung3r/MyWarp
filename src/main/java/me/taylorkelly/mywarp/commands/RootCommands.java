@@ -23,7 +23,7 @@ public class RootCommands {
 
     @NestedCommand({ AdminCommands.class, BasicCommands.class,
             SocialCommands.class })
-    @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "Warps you to <name>", min = 1, permissions = { "mywarp.warp.basic.warp" })
+    @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "cmd.description.warpTo", min = 1, permissions = { "mywarp.warp.basic.warp" })
     public void warpTo(CommandContext args, Player sender)
             throws CommandException {
         // first check the economy
