@@ -35,7 +35,7 @@ public class BasicCommands {
         CommandUtils.checkTotalLimit(sender);
         CommandUtils.checkPrivateLimit(sender);
 
-        if (MyWarp.inst().getWarpList().warpExists(name)) {
+        if (MyWarp.inst().getWarpManager().warpExists(name)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
@@ -43,7 +43,7 @@ public class BasicCommands {
                             name));
         }
 
-        MyWarp.inst().getWarpList().addWarpPrivate(name, sender);
+        MyWarp.inst().getWarpManager().addWarpPrivate(name, sender);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.create.private", "%warp%", name));
     }
@@ -56,7 +56,7 @@ public class BasicCommands {
         CommandUtils.checkTotalLimit(sender);
         CommandUtils.checkPublicLimit(sender);
 
-        if (MyWarp.inst().getWarpList().warpExists(name)) {
+        if (MyWarp.inst().getWarpManager().warpExists(name)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
@@ -64,7 +64,7 @@ public class BasicCommands {
                             name));
         }
 
-        MyWarp.inst().getWarpList().addWarpPublic(name, sender);
+        MyWarp.inst().getWarpManager().addWarpPublic(name, sender);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.create.public", "%warp%", name));
     }
@@ -75,18 +75,56 @@ public class BasicCommands {
         Warp warp = CommandUtils.getWarpForModification(sender,
                 args.getJoinedStrings(0));
 
-        MyWarp.inst().getWarpList().deleteWarp(warp);
+        MyWarp.inst().getWarpManager().deleteWarp(warp);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.delete", "%warp%", warp.getName()));
     }
 
+    @Command(aliases = { "stats", "plist" }, flags = "p", usage = "[player]", desc = "cmd.description.stats", fee = Fee.LISTALL, max = 0, permissions = { "mywarp.warp.basic.stats" })
+    public void listPlayerWarps(CommandContext args, CommandSender sender)
+            throws CommandException {
+        Player player = sender instanceof Player ? (Player) sender : null;
+        TreeSet<Warp> results = MyWarp
+                .inst()
+                .getWarpManager()
+                .warpsInvitedTo(
+                        player,
+                        args.getFlag('c'),
+                        args.getFlag('w'),
+                        args.hasFlag('p') ? new PopularityWarpComparator()
+                                : null);
+
+        if (results.isEmpty()) {
+            throw new CommandException(MyWarp.inst().getLanguageManager()
+                    .getString("lister.noResults"));
+        }
+        sender.sendMessage(MyWarp.inst().getLanguageManager()
+                .getString("listAll.list"));
+
+        StrBuilder ret = new StrBuilder();
+        for (Warp warp : results) {
+            ret.appendSeparator(", ");
+            if (sender instanceof Player
+                    && warp.getCreator().equals(sender.getName())) {
+                ret.append(ChatColor.AQUA);
+            } else if (warp.isPublicAll()) {
+                ret.append(ChatColor.GREEN);
+            } else {
+                ret.append(ChatColor.RED);
+            }
+            ret.append(warp.getName());
+            ret.append(ChatColor.RESET);
+        }
+        sender.sendMessage(ret.toString());
+    }
+    
     @Command(aliases = { "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "cmd.description.listAll", fee = Fee.LISTALL, max = 0, permissions = { "mywarp.warp.basic.list" })
     public void listAllWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = MyWarp
                 .inst()
-                .getWarpList()
+                .getWarpManager()
                 .warpsInvitedTo(
                         player,
                         args.getFlag('c'),
@@ -124,7 +162,7 @@ public class BasicCommands {
         Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = MyWarp
                 .inst()
-                .getWarpList()
+                .getWarpManager()
                 .warpsInvitedTo(
                         player,
                         args.getFlag('c'),
@@ -205,7 +243,7 @@ public class BasicCommands {
             Warp warp = CommandUtils.getWarpForUsage(sender,
                     args.getJoinedStrings(0));
 
-            MyWarp.inst().getWarpList().point(warp, sender);
+            MyWarp.inst().getWarpManager().point(warp, sender);
             sender.sendMessage(MyWarp.inst().getLanguageManager()
                     .getEffectiveString("warp.point", "%warp%", warp.getName()));
         }
@@ -216,7 +254,7 @@ public class BasicCommands {
             throws CommandException {
         MatchList matches = MyWarp
                 .inst()
-                .getWarpList()
+                .getWarpManager()
                 .getMatches(
                         args.getJoinedStrings(0),
                         sender instanceof Player ? (Player) sender : null,
@@ -256,7 +294,7 @@ public class BasicCommands {
         Warp warp = CommandUtils.getWarpForModification(sender,
                 args.getJoinedStrings(0));
 
-        MyWarp.inst().getWarpList().welcomeMessage(warp, sender);
+        MyWarp.inst().getWarpManager().welcomeMessage(warp, sender);
         sender.sendMessage(MyWarp
                 .inst()
                 .getLanguageManager()
@@ -306,7 +344,7 @@ public class BasicCommands {
         Warp warp = CommandUtils.getWarpForModification(sender,
                 args.getJoinedStrings(0));
 
-        MyWarp.inst().getWarpList().updateLocation(warp, sender);
+        MyWarp.inst().getWarpManager().updateLocation(warp, sender);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.update", "%warp%", warp.getName()));
     }

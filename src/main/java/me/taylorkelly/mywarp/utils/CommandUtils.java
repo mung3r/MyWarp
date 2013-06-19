@@ -34,7 +34,7 @@ public class CommandUtils {
     public static Warp getWarpForUsage(CommandSender sender, String query)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
-        MatchList matches = MyWarp.inst().getWarpList()
+        MatchList matches = MyWarp.inst().getWarpManager()
                 .getMatches(query, player, new PopularityWarpComparator());
 
         Warp warp = matches.getMatch();
@@ -102,7 +102,7 @@ public class CommandUtils {
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpList().playerCanBuildWarp(player)) {
+        if (!MyWarp.inst().getWarpManager().playerCanBuildWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
@@ -132,7 +132,7 @@ public class CommandUtils {
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpList().playerCanBuildPublicWarp(player)) {
+        if (!MyWarp.inst().getWarpManager().playerCanBuildPublicWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
@@ -162,7 +162,7 @@ public class CommandUtils {
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpList().playerCanBuildPrivateWarp(player)) {
+        if (!MyWarp.inst().getWarpManager().playerCanBuildPrivateWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
@@ -196,7 +196,7 @@ public class CommandUtils {
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpList().playerCanBuildWarp(player)) {
+        if (!MyWarp.inst().getWarpManager().playerCanBuildWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
@@ -209,7 +209,7 @@ public class CommandUtils {
                             player.getName()));
         }
         if (publicAll) {
-            if (!MyWarp.inst().getWarpList().playerCanBuildPublicWarp(player)) {
+            if (!MyWarp.inst().getWarpManager().playerCanBuildPublicWarp(player)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLanguageManager()
@@ -221,7 +221,7 @@ public class CommandUtils {
                                         .maxPublicWarps(player)), "%player%",
                                 player.getName()));
             }
-        } else if (!MyWarp.inst().getWarpList()
+        } else if (!MyWarp.inst().getWarpManager()
                 .playerCanBuildPrivateWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()

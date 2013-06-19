@@ -51,7 +51,7 @@ public class AdminCommands {
                 String name = importedWarpEntry.getKey();
                 Warp importedWarp = importedWarpEntry.getValue();
 
-                if (MyWarp.inst().getWarpList().warpExists(name)) {
+                if (MyWarp.inst().getWarpManager().warpExists(name)) {
                     if (!args.hasFlag('f')) {
                         sender.sendMessage(MyWarp
                                 .inst()
@@ -62,11 +62,11 @@ public class AdminCommands {
                     }
                     // remove the old warp before adding the new one
                     MyWarp.inst()
-                            .getWarpList()
+                            .getWarpManager()
                             .deleteWarp(
-                                    MyWarp.inst().getWarpList().getWarp(name));
+                                    MyWarp.inst().getWarpManager().getWarp(name));
                 } else {
-                    MyWarp.inst().getWarpList().addWarp(name, importedWarp);
+                    MyWarp.inst().getWarpManager().addWarp(name, importedWarp);
                     counter++;
                 }
             }
@@ -95,7 +95,7 @@ public class AdminCommands {
         Warp warp = CommandUtils.getWarpForUsage(sender,
                 args.getJoinedStrings(1));
 
-        MyWarp.inst().getWarpList().warpTo(warp, invitee);
+        MyWarp.inst().getWarpManager().warpTo(warp, invitee);
         sender.sendMessage(MyWarp
                 .inst()
                 .getLanguageManager()

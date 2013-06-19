@@ -73,7 +73,7 @@ public class RootCommands {
 
             if (MyWarp.inst().getPermissionsManager()
                     .hasPermission(sender, "mywarp.warmup.disobey")) {
-                MyWarp.inst().getWarpList().warpTo(warp, sender);
+                MyWarp.inst().getWarpManager().warpTo(warp, sender);
 
                 if (!MyWarp.inst().getPermissionsManager()
                         .hasPermission(sender, "mywarp.cooldown.disobey")) {
@@ -94,7 +94,7 @@ public class RootCommands {
             }
 
         } else {
-            MyWarp.inst().getWarpList().warpTo(warp, sender);
+            MyWarp.inst().getWarpManager().warpTo(warp, sender);
         }
     }
 

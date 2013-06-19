@@ -164,11 +164,11 @@ public class MyWarp extends JavaPlugin {
     }
 
     /**
-     * Returns the warp-list used by the plugin
+     * Returns the warp-manager that holds all warps
      * 
-     * @return the warp list
+     * @return the warp manager
      */
-    public WarpManager getWarpList() {
+    public WarpManager getWarpManager() {
         return warpManager;
     }
 

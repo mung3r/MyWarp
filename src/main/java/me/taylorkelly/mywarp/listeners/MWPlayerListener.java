@@ -90,10 +90,10 @@ public class MWPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        if (MyWarp.inst().getWarpList().waitingForWelcome(player)) {
-            MyWarp.inst().getWarpList()
+        if (MyWarp.inst().getWarpManager().waitingForWelcome(player)) {
+            MyWarp.inst().getWarpManager()
                     .setWelcomeMessage(player, event.getMessage());
-            MyWarp.inst().getWarpList().notWaiting(player);
+            MyWarp.inst().getWarpManager().notWaiting(player);
             event.setCancelled(true);
         }
     }

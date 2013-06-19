@@ -56,7 +56,7 @@ public class DynmapMarkers implements Markers {
         markerSet.setMinZoom(MyWarp.inst().getWarpSettings().markerMinZoom);
 
         // add all warps
-        for (Warp warp : MyWarp.inst().getWarpList().getPublicWarps()) {
+        for (Warp warp : MyWarp.inst().getWarpManager().getPublicWarps()) {
             addWarp(warp);
         }
     }

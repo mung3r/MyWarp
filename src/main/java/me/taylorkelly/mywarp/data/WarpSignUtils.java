@@ -33,7 +33,7 @@ public class WarpSignUtils {
 
         String name = sign.getLine(2);
 
-        if (!MyWarp.inst().getWarpList().warpExists(name)) {
+        if (!MyWarp.inst().getWarpManager().warpExists(name)) {
             player.sendMessage(ChatColor.RED
                     + MyWarp.inst()
                             .getLanguageManager()
@@ -41,7 +41,7 @@ public class WarpSignUtils {
                                     name));
             return;
         }
-        Warp warp = MyWarp.inst().getWarpList().getWarp(name);
+        Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
 
         if (!warp.playerCanWarp(player)) {
             player.sendMessage(ChatColor.RED
@@ -66,7 +66,7 @@ public class WarpSignUtils {
             }
             MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
         }
-        MyWarp.inst().getWarpList().warpTo(warp, player);
+        MyWarp.inst().getWarpManager().warpTo(warp, player);
     }
 
     /**
@@ -87,12 +87,12 @@ public class WarpSignUtils {
         }
         String name = sign.getLine(2);
 
-        if (!MyWarp.inst().getWarpList().warpExists(name)) {
+        if (!MyWarp.inst().getWarpManager().warpExists(name)) {
             player.sendMessage(MyWarp.inst().getLanguageManager()
                     .getEffectiveString("error.noSuchWarp", "%warp%", name));
             return false;
         }
-        Warp warp = MyWarp.inst().getWarpList().getWarp(name);
+        Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
 
         if (!warp.playerCanModify(player)
                 && !MyWarp.inst().getPermissionsManager()

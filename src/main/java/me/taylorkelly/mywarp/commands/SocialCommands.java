@@ -71,7 +71,7 @@ public class SocialCommands {
                     .hasPermission(sender, "mywarp.warp.soc.give.direct")) {
                 throw new CommandPermissionsException();
             }
-            MyWarp.inst().getWarpList().give(warp, giveeName);
+            MyWarp.inst().getWarpManager().give(warp, giveeName);
 
             if (givee != null) {
                 givee.sendMessage(MyWarp
@@ -105,7 +105,7 @@ public class SocialCommands {
         }
         Warp warp = givenWarps.get(sender.getName());
 
-        MyWarp.inst().getWarpList().give(warp, sender.getName());
+        MyWarp.inst().getWarpManager().give(warp, sender.getName());
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.give.accept", "%warp%", warp.getName()));
     }
@@ -130,7 +130,7 @@ public class SocialCommands {
                                 "%group%", inviteeName));
             }
 
-            MyWarp.inst().getWarpList().inviteGroup(warp, inviteeName);
+            MyWarp.inst().getWarpManager().inviteGroup(warp, inviteeName);
 
             if (warp.isPublicAll()) {
                 sender.sendMessage(MyWarp
@@ -168,7 +168,7 @@ public class SocialCommands {
                             inviteeName));
         }
 
-        MyWarp.inst().getWarpList().invitePlayer(warp, inviteeName);
+        MyWarp.inst().getWarpManager().invitePlayer(warp, inviteeName);
         if (warp.isPublicAll()) {
             sender.sendMessage(MyWarp
                     .inst()
@@ -207,7 +207,7 @@ public class SocialCommands {
         }
         CommandUtils.checkPrivateLimit(sender);
 
-        MyWarp.inst().getWarpList().privatize(warp);
+        MyWarp.inst().getWarpManager().privatize(warp);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.private", "%warp%", warp.getName()));
     }
@@ -226,7 +226,7 @@ public class SocialCommands {
         }
         CommandUtils.checkPublicLimit(sender);
 
-        MyWarp.inst().getWarpList().publicize(warp);
+        MyWarp.inst().getWarpManager().publicize(warp);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.public", "%warp%", warp.getName()));
     }
@@ -250,7 +250,7 @@ public class SocialCommands {
                                 "%group%", inviteeName));
             }
 
-            MyWarp.inst().getWarpList().uninviteGroup(warp, inviteeName);
+            MyWarp.inst().getWarpManager().uninviteGroup(warp, inviteeName);
 
             if (warp.isPublicAll()) {
                 sender.sendMessage(MyWarp
@@ -288,7 +288,7 @@ public class SocialCommands {
                             inviteeName));
         }
 
-        MyWarp.inst().getWarpList().uninvitePlayer(warp, inviteeName);
+        MyWarp.inst().getWarpManager().uninvitePlayer(warp, inviteeName);
 
         if (warp.isPublicAll()) {
             sender.sendMessage(MyWarp
