@@ -95,7 +95,7 @@ public class AdminCommands {
         Warp warp = CommandUtils.getWarpForUsage(sender,
                 args.getJoinedStrings(1));
 
-        MyWarp.inst().getWarpManager().warpTo(warp, invitee);
+        MyWarp.inst().getWarpManager().warpTo(warp, invitee, false);
         sender.sendMessage(MyWarp
                 .inst()
                 .getLanguageManager()

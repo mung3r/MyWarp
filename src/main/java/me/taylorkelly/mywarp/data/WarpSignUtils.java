@@ -66,7 +66,7 @@ public class WarpSignUtils {
             }
             MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
         }
-        MyWarp.inst().getWarpManager().warpTo(warp, player);
+        MyWarp.inst().getWarpManager().warpTo(warp, player, false);
     }
 
     /**

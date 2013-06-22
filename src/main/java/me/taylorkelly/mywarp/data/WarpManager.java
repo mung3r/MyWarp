@@ -573,14 +573,20 @@ public class WarpManager {
     }
 
     /**
-     * Warps the given player to the given warp. Visit-counter and welcome-message are handled as needed.
+     * Warps the given player to the given warp. Visit-counter and
+     * welcome-message are handled as needed.
+     * 
+     * TODO Remove crappy implementation for warp-fees!
      * 
      * @param warp
      *            the warp
      * @param player
      *            the player
+     * @param charge
+     *            whether the player should be charged with the corresponding
+     *            warp-fee
      */
-    public void warpTo(Warp warp, Player player) {
+    public void warpTo(Warp warp, Player player, boolean charge) {
         switch (warp.warp(player)) {
         case NONE:
             break;
@@ -590,14 +596,15 @@ public class WarpManager {
         case SAFE_LOC:
             warp.visit();
             MyWarp.inst().getConnectionManager().updateVisits(warp);
-            
-            if (MyWarp.inst().getWarpSettings().useEconomy) {
+
+            if (MyWarp.inst().getWarpSettings().useEconomy && charge) {
                 MyWarp.inst()
                         .getEconomyLink()
                         .withdrawSender(
                                 player,
                                 MyWarp.inst().getPermissionsManager()
-                                        .getEconomyPrices(player).getFee(Fee.WARP_TO));
+                                        .getEconomyPrices(player)
+                                        .getFee(Fee.WARP_TO));
             }
             break;
         }
