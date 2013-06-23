@@ -47,7 +47,7 @@ public class WarpSignUtils {
             player.sendMessage(ChatColor.RED
                     + MyWarp.inst()
                             .getLanguageManager()
-                            .getEffectiveString("error.noPermission.warpto",
+                            .getEffectiveString("sign.noPermission.warpto",
                                     "%warp%", name));
             return;
         }

@@ -1,14 +1,14 @@
 ﻿#English localization for MyWarp
 #This file is UTF-8 encoded, respect this when editing.
-cmd.description.accept:Accepts a warp that has been given to you by an other player
+cmd.description.accept:Accepts a warp that has been given to you by another player
 cmd.description.adminWarpTo:Warp §7<player>§f to §7<name>§f if you have the rights to visit it.
 cmd.description.create:Create a new public warp called §7<name>§f at your current position
 cmd.description.createPrivate:Create a new private warp called §7<name>§f at your current position
 cmd.description.delete:Deletes the warp §7<name>
-cmd.description.give:Give your warp §7<name>§f to §7<player>
+cmd.description.give:Give your warp §7<name>§f to §7<player>§f. Use [-d] to give the warp directly and [-f] to ignore warp limits (if enabled).
 cmd.description.help:Displays the help menu
 cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used.
-cmd.description.info:Prints out informations about §7<name>
+cmd.description.info:Gives you all available informations about §7<name>
 cmd.description.invite:Invite §7<player|group>§f to §7<name>
 cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
 cmd.description.listAll:List the warps you can visit on one page. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
@@ -48,7 +48,6 @@ error.invite.creator:%player% is the creator, of course he is invited.
 error.invite.invited.group:Group '%group%' is already invited to this warp.
 error.invite.invited.player:%player% is already invited to this warp.
 error.noPermission.modify:You do not have permission to modify '%warp%'.
-error.noPermission.world:You do not have permission to access a warp in %world%.
 error.noPermission:You do not have permission to do this.
 error.noSuchWarp.suggestion:No such warp '%warp%'. Did you mean '§f%suggestion%§c'?
 error.noSuchWarp:No such warp '%warp%'.
@@ -84,6 +83,7 @@ sign.created:§bSuccessfully created a warp sign.
 sign.noPermission.create:§cYou do not have permission to create warp signs.
 sign.noPermission.createToWarp:§cYou do not have permission to create a warp sign to '%warp%'.
 sign.noPermission.use:§cYou do not have permission to use warp signs.
+sign.noPermission.warpto:§cYou do not have permission to use '%warp%'.
 timer.cooldown.cooling:§cYou still need to wait %seconds% seconds before you can warp again.
 timer.cooldown.ended:§bYou have cooled down, feel free to use §f/warp §bagain.
 timer.warmup.canceled.damage:§cYou must not take damage while warming up. Your §f/warp §cwas canceled.

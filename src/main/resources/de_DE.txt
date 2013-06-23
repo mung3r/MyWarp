@@ -5,10 +5,10 @@ cmd.description.adminWarpTo:Teleportiert §7<Spieler>§f zu §7<Name>§f, wenn d
 cmd.description.create:Erstellt einen neuen öffentlichen Warp namens §7<Name>§f auf der aktuellen Position
 cmd.description.createPrivate:Erstellt einen neuen privaten Warp namens §7<Name>§f auf der aktuellen Position
 cmd.description.delete:Löscht den Warp namens §7<Name>
-cmd.description.give:Gibt §7<Name>§f an §7<Spieler>§f ab
+cmd.description.give:Gibt §7<Name>§f an §7<Spieler>§f ab. Nutze [-d] um den Warp direkt abzugeben und [-f] um Limits zu ignorieren.
 cmd.description.help:Zeigt das Hilfemenü an.
 cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt.
-cmd.description.info:Zeigt Informationen zu §7<Name>§f an
+cmd.description.info:Zeigt alle verfügbaren Informationen zu §7<Name>§f an
 cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
 cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
 cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
@@ -47,8 +47,7 @@ error.import.noConnection:Es konnte keine Verbindung zum Import aufgebaut werden
 error.invite.creator:%player% hat diesen Warp erstellt, natürlich ist er eingeladen.
 error.invite.invited.group:Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
 error.invite.invited.player:%player% ist bereits zu diesem Warp eingeladen.
-error.noPermission.modify:Dir fehlen die Rechte um '%warp%' zu modifizieren..
-error.noPermission.world:Dir fehlen die Rechte um dich zu einem Warp in %world% zu teleportieren.
+error.noPermission.modify:Dir fehlen die Rechte um '%warp%' zu modifizieren.
 error.noPermission:Unzureichende Rechte.
 error.noSuchWarp.suggestion:Der Warp '%warp%' existiert nicht. Meintest du vielleicht '§f%suggestion%§c'?
 error.noSuchWarp:Der Warp '%warp%' existiert nicht.
@@ -84,6 +83,7 @@ sign.created:§bDas Warp-Schild wurde erfolgreich erstellt.
 sign.noPermission.create:§cDir fehlen die Rechte um ein Warp-Schild zu erstellen.
 sign.noPermission.createToWarp:§cDir fehlen die Rechte um ein Warp-Schild nach '%warp%' zu erstellen.
 sign.noPermission.use:§cDir fehlen die Rechte um Warp-Schilder zu nutzen.
+sign.noPermission.warpto:§cDir fehlen die Rechte um '%warp%' zu nutzen.
 timer.cooldown.cooling:§cDu musst noch %seconds% Sekunden warten, bevor du dich wieder warpen kannst.
 timer.cooldown.ended:§bDu bist abgekühlt und kannst §f/warp §b wieder nutzen.
 timer.warmup.canceled.damage:§cDu darfst keinen Schaden nehmen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
