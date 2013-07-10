@@ -106,11 +106,13 @@ public class WarpSettings {
         FileConfiguration config = defaultConfig;
 
         try {
+            // create the configuration path if it does not exist
+            if (!configFile.getParentFile().exists()) {
+                configFile.getParentFile().mkdirs();
+            }
             // create the configuration file if it does not exist
             if (!configFile.exists()) {
-                configFile.mkdirs();
                 configFile.createNewFile();
-
                 MyWarp.logger().info(
                         "Default " + configFile.getName()
                                 + " created successfully!");
