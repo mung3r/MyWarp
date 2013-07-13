@@ -47,7 +47,6 @@ economy:
       info: 0
       invite: 25
       list: 0
-      listall: 0
       point: 25
       private: 25
       public: 25
@@ -70,7 +69,6 @@ economy:
       info: 0
       invite: 25
       list: 0
-      listall: 0
       point: 25
       private: 25
       public: 25

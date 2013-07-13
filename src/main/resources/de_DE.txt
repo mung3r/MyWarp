@@ -12,7 +12,6 @@ cmd.description.import:Importiert alle Warps aus §7<SQLite|MySQL>§f in die akt
 cmd.description.info:Zeigt alle verfügbaren Informationen zu §7<Name>§f an
 cmd.description.invite:Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
 cmd.description.list:Listet alle Warps die besucht werden können auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
-cmd.description.listAll:Listet alle Warps die besucht werden können, auf einer Seite auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
 cmd.description.point:Richtet den Kompass auf §7[Name]§f aus. Um den Kompass wieder zurückzusetzten, nutze diesen befehl einfach ohne einen Warp anzugeben.
 cmd.description.private:Wandelt §7<name>§f in einen privaten Warp um
 cmd.description.public:Wandelt §7<name>§f in einen öffentlichen Warp um
@@ -66,7 +65,6 @@ limit.public.reached.player:§c%player% hat sein Maximum an öffentlichen Warps 
 limit.public.reached:§cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)%n§fLösche einige deiner Warps, um neue zu erstellen.
 limit.total.reached.player:§c%player% hat sein Maximum an Warps erreicht §e(%maxTotal%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
 limit.total.reached:§cDu hast dein Maximum an Warps erreicht §e(%maxTotal%)%n§fLösche einige deiner Warps, um neue zu erstellen.
-listAll.list:§6Du kannst folgende Warps benutzen:
 lister.help.head:Hilfe
 lister.noResults:Keine zutreffenden Resultate!
 lister.page:Seite

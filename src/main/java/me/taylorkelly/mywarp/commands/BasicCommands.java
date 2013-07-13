@@ -152,48 +152,9 @@ public class BasicCommands {
                 + ChatColor.WHITE + joinWarps(privateWarps, ", "));
         sender.sendMessage(ChatColor.GRAY + privateHeader + ": "
                 + ChatColor.WHITE + joinWarps(publicWarps, ", "));
-
     }
 
-    @Command(aliases = { "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "cmd.description.listAll", fee = Fee.LISTALL, max = 0, permissions = { "mywarp.warp.basic.list" })
-    public void listAllWarps(CommandContext args, CommandSender sender)
-            throws CommandException {
-        Player player = sender instanceof Player ? (Player) sender : null;
-        TreeSet<Warp> results = MyWarp
-                .inst()
-                .getWarpManager()
-                .warpsInvitedTo(
-                        player,
-                        args.getFlag('c'),
-                        args.getFlag('w'),
-                        args.hasFlag('p') ? new PopularityWarpComparator()
-                                : null);
-
-        if (results.isEmpty()) {
-            throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getString("lister.noResults"));
-        }
-        sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getString("listAll.list"));
-
-        StrBuilder ret = new StrBuilder();
-        for (Warp warp : results) {
-            ret.appendSeparator(", ");
-            if (sender instanceof Player
-                    && warp.getCreator().equals(sender.getName())) {
-                ret.append(ChatColor.AQUA);
-            } else if (warp.isPublicAll()) {
-                ret.append(ChatColor.GREEN);
-            } else {
-                ret.append(ChatColor.RED);
-            }
-            ret.append(warp.getName());
-            ret.append(ChatColor.RESET);
-        }
-        sender.sendMessage(ret.toString());
-    }
-
-    @Command(aliases = { "list" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "cmd.description.list", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
+    @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "cmd.description.list", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
     public void listWarps(CommandContext args, CommandSender sender)
             throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;

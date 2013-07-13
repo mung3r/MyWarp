@@ -5,7 +5,8 @@ import java.util.EnumMap;
 import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
 
 /**
- * This storage object stores represents one warp-fee with it's respective values
+ * This storage object stores represents one warp-fee with it's respective
+ * values
  */
 public class WarpFees extends ValuePermissionContainer {
 
@@ -14,7 +15,8 @@ public class WarpFees extends ValuePermissionContainer {
      */
     private EnumMap<Fee, Double> prices = new EnumMap<Fee, Double>(Fee.class);
 
-    // ACCEPT, ASSETS, CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE, LIST, LISTALL, NONE,
+    // ACCEPT, ASSETS, CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE,
+    // LIST, NONE,
     // POINT, PRIVATE, PUBLIC, SEARCH, UNINVITE, UPDATE, WARP_PLAYER,
     // WARP_SIGN_CREATE, WARP_SIGN_USE, WARP_TO, WELCOME
 
@@ -43,8 +45,6 @@ public class WarpFees extends ValuePermissionContainer {
      *            used when inviting a user or a group
      * @param listFee
      *            used when warps are listed via /warp list
-     * @param listAllFee
-     *            used when all warps are listed at once (/warp alist)
      * @param pointFee
      *            used when the compass is pointed to a warp
      * @param privatizeFee
@@ -68,10 +68,10 @@ public class WarpFees extends ValuePermissionContainer {
      * @param welcomeFee
      *            used when the welcome message is changed
      */
-    public WarpFees(String name, double acceptFee, double assetsFee, double createFee,
-            double createPrivateFee, double deleteFee, double giveFee,
-            double helpFee, double infoFee, double inviteFee, double listFee,
-            double listAllFee, double pointFee, double privatizeFee,
+    public WarpFees(String name, double acceptFee, double assetsFee,
+            double createFee, double createPrivateFee, double deleteFee,
+            double giveFee, double helpFee, double infoFee, double inviteFee,
+            double listFee, double pointFee, double privatizeFee,
             double publicizeFee, double searchFee, double uninviteFee,
             double updateFee, double warpPlayerFee, double warpSignCreateFee,
             double warpSignUseFee, double warpFee, double welcomeFee) {
@@ -87,7 +87,6 @@ public class WarpFees extends ValuePermissionContainer {
         prices.put(Fee.INFO, infoFee);
         prices.put(Fee.INVITE, inviteFee);
         prices.put(Fee.LIST, listFee);
-        prices.put(Fee.LISTALL, listAllFee);
         prices.put(Fee.POINT, pointFee);
         prices.put(Fee.PRIVATE, privatizeFee);
         prices.put(Fee.PUBLIC, publicizeFee);

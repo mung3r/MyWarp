@@ -12,7 +12,6 @@ cmd.description.import:Imports warps from §7<SQLite|MySQL>§f into the current 
 cmd.description.info:Gives you all available informations about §7<name>
 cmd.description.invite:Invite §7<player|group>§f to §7<name>
 cmd.description.list:List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
-cmd.description.listAll:List the warps you can visit on one page. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
 cmd.description.point:Point your compass to §7[name]§f. If you want to reset the compass, simply use this command without specifying a warp.
 cmd.description.private:Make §7<name>§f a private warp
 cmd.description.public:Make §7<name>§f a public warp
@@ -66,7 +65,6 @@ limit.public.reached.player:§c%player% has reached his max # of public warps §
 limit.public.reached:§cYou have reached your max # of public warps §e(%maxPublic%)%n§fDelete some of your warps to create more.
 limit.total.reached.player:§c%player% has reached his max # of warps §e(%maxTotal%)%n§fTell him to delete some of his warps to receive this one.
 limit.total.reached:§cYou have reached your max # of warps §e(%maxTotal%)%n§fDelete some of your warps to create more.
-listAll.list:§6You can warp to:
 lister.help.head:Help
 lister.noResults:No results match!
 lister.page:Page
