@@ -37,6 +37,7 @@ economy:
   informAfterTransaction: true
   fees:
     default:
+      assets: 0
       accept: 0
       create: 25
       create-private: 25
@@ -59,6 +60,7 @@ economy:
       warp-to: 25
       welcome: 25
     user:
+      assets: 0
       accept: 25
       create: 50
       create-private: 50

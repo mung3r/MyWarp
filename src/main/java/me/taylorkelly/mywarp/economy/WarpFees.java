@@ -14,7 +14,7 @@ public class WarpFees extends ValuePermissionContainer {
      */
     private EnumMap<Fee, Double> prices = new EnumMap<Fee, Double>(Fee.class);
 
-    // CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE, LIST, LISTALL, NONE,
+    // ACCEPT, ASSETS, CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE, LIST, LISTALL, NONE,
     // POINT, PRIVATE, PUBLIC, SEARCH, UNINVITE, UPDATE, WARP_PLAYER,
     // WARP_SIGN_CREATE, WARP_SIGN_USE, WARP_TO, WELCOME
 
@@ -23,6 +23,10 @@ public class WarpFees extends ValuePermissionContainer {
      * 
      * @param name
      *            the name used on permission lookup
+     * @param acceptFee
+     *            used when accepting a given warp
+     * @param assetsFee
+     *            used when listing a player's warps with limits
      * @param createFee
      *            used when creating a public warp
      * @param createPrivateFee
@@ -64,7 +68,7 @@ public class WarpFees extends ValuePermissionContainer {
      * @param welcomeFee
      *            used when the welcome message is changed
      */
-    public WarpFees(String name, double acceptFee, double createFee,
+    public WarpFees(String name, double acceptFee, double assetsFee, double createFee,
             double createPrivateFee, double deleteFee, double giveFee,
             double helpFee, double infoFee, double inviteFee, double listFee,
             double listAllFee, double pointFee, double privatizeFee,
@@ -74,6 +78,7 @@ public class WarpFees extends ValuePermissionContainer {
         super(name);
 
         prices.put(Fee.ACCEPT, acceptFee);
+        prices.put(Fee.ASSETS, assetsFee);
         prices.put(Fee.CREATE, createFee);
         prices.put(Fee.CREATE_PRIVATE, createPrivateFee);
         prices.put(Fee.DELETE, deleteFee);

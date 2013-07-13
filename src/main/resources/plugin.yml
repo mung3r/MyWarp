@@ -39,6 +39,12 @@ permissions:
   mywarp.warp.basic.warp:
     description: Usage of /warp
     default: op
+  mywarp.warp.basic.assets:
+    description: Warps and limits can be listed
+    default: op 
+  mywarp.warp.basic.assets.other:
+    description: Warps and limits of other players can be listed
+    default: op 
   mywarp.warp.basic.compass:
     description: Compass can be used
     default: op 
@@ -151,6 +157,8 @@ permissions:
     description: Basic /warp commands
     children:
       mywarp.warp.basic.warp: true
+      mywarp.warp.basic.assets: true
+      mywarp.warp.basic.assets.other: true
       mywarp.warp.basic.delete: true
       mywarp.warp.basic.list: true
       mywarp.warp.basic.welcome: true

@@ -1,6 +1,7 @@
 ﻿#German localization for MyWarp (by thee)
 #This file is UTF-8 encoded, respect this when editing.
 cmd.description.accept:Akzeptiert einen Warp, den ein anderer Spieler an dich abgeben möchte.
+cmd.description.assets:Listet alle Warps des angegebenen [Spielers] zusammen mit dem entsprechenden Limit auf,
 cmd.description.adminWarpTo:Teleportiert §7<Spieler>§f zu §7<Name>§f, wenn du den Warp besuchen kannst.
 cmd.description.create:Erstellt einen neuen öffentlichen Warp namens §7<Name>§f auf der aktuellen Position
 cmd.description.createPrivate:Erstellt einen neuen privaten Warp namens §7<Name>§f auf der aktuellen Position
@@ -90,6 +91,9 @@ timer.warmup.canceled.damage:§cDu darfst keinen Schaden nehmen, währen du aufg
 timer.warmup.canceled.move:§cDu darfst dich nicht bewegen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
 timer.warmup.started:§bDu wirst in %seconds% Sekunden zu '%warp%' teleportiert.
 timer.warmup.warming:§cDu musst noch %seconds% Sekunden warten, bevor du teleportiert wirst.
+warp.assets.head:%player%s Warps
+warp.assets.public:Öffentliche Warps
+warp.assets.private:Private Warps
 warp.create.private:§bWarp '%warp%' wurde erfolgreich erstellt%n§fWenn du andere Spieler einladen möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%
 warp.create.public:§bWarp '%warp%' wurde erfolgreich erstellt%n§fWenn du ihn Privatisieren möchtest,%n§fNutze: §c/warp private %warp%
 warp.default.welcomeMessage:Willkommen am Warp '%warp%', %player%.

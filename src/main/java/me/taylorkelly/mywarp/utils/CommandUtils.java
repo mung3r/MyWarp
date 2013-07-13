@@ -47,7 +47,8 @@ public class CommandUtils {
                         .inst()
                         .getLanguageManager()
                         .getEffectiveString("error.noSuchWarp.suggestion",
-                                "%warp%", query, "%suggestion%", match.getName()));
+                                "%warp%", query, "%suggestion%",
+                                match.getName()));
             } else {
                 throw new CommandException(
                         MyWarp.inst()
@@ -60,8 +61,8 @@ public class CommandUtils {
     }
 
     /**
-     * Gets a warp using {@link #getWarpForUsage(CommandSender, String)} and determines
-     * if the given sender may modify it.
+     * Gets a warp using {@link #getWarpForUsage(CommandSender, String)} and
+     * determines if the given sender may modify it.
      * 
      * @param sender
      *            the command sender
@@ -209,7 +210,8 @@ public class CommandUtils {
                             player.getName()));
         }
         if (publicAll) {
-            if (!MyWarp.inst().getWarpManager().playerCanBuildPublicWarp(player)) {
+            if (!MyWarp.inst().getWarpManager()
+                    .playerCanBuildPublicWarp(player)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLanguageManager()
@@ -255,6 +257,25 @@ public class CommandUtils {
                             name));
         }
         return actuallPlayer;
+    }
+
+    /**
+     * Checks to see if the sender is a player, otherwise throws an exception.
+     * 
+     * @param sender
+     *            the sender
+     * @return The corresponding Player
+     * @throws CommandException
+     *             if the given sender is not a Player
+     */
+    public static Player checkPlayer(CommandSender sender)
+            throws CommandException {
+        if (sender instanceof Player) {
+            return (Player) sender;
+        } else {
+            throw new CommandException(MyWarp.inst().getLanguageManager()
+                    .getString("error.cmd.invalidSender"));
+        }
     }
 
     /**

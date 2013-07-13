@@ -184,11 +184,28 @@ public class WarpManager {
      * 
      * @return a set with all existing public warps
      */
+    @Deprecated
     public TreeSet<Warp> getPublicWarps() {
         TreeSet<Warp> ret = new TreeSet<Warp>();
 
         for (Warp warp : warpMap.values()) {
             if (warp.isPublicAll()) {
+                ret.add(warp);
+            }
+        }
+        return ret;
+    }
+    
+    /**
+     * Gets a sorted set with all warps matching the criteria in the network.
+     * 
+     * @return a set with all existing public warps
+     */
+    public TreeSet<Warp> getWarps(boolean publicAll, String creator) {
+        TreeSet<Warp> ret = new TreeSet<Warp>();
+
+        for (Warp warp : warpMap.values()) {
+            if (warp.isPublicAll() == publicAll && creator != null && warp.playerIsCreator(creator)) {
                 ret.add(warp);
             }
         }

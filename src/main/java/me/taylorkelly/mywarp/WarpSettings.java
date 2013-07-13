@@ -204,8 +204,7 @@ public class WarpSettings {
 
         ConfigurationSection configuredWarmups = config
                 .getConfigurationSection("timers.warmups");
-        for (String key : configuredWarmups.getKeys(
-                false)) {
+        for (String key : configuredWarmups.getKeys(false)) {
             if (key.equals("default")) {
                 defaultWarmup = new Time(key, configuredWarmups.getDouble(key));
             } else {
@@ -233,7 +232,8 @@ public class WarpSettings {
                 .getConfigurationSection("economy.fees");
         for (String key : configuredFees.getKeys(false)) {
             WarpFees fees = new WarpFees(key, configuredFees.getDouble(key
-                    + ".accept", 0), configuredFees.getDouble(key + ".create", 0),
+                    + ".accept", 0), configuredFees.getDouble(key + ".assets",
+                    0), configuredFees.getDouble(key + ".create", 0),
                     configuredFees.getDouble(key + ".create-private", 0),
                     configuredFees.getDouble(key + ".delete", 0),
                     configuredFees.getDouble(key + ".give", 0),

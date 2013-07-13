@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.commands;
 
+import java.util.Collection;
 import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -80,44 +81,80 @@ public class BasicCommands {
                 .getEffectiveString("warp.delete", "%warp%", warp.getName()));
     }
 
-    @Command(aliases = { "stats", "plist" }, flags = "p", usage = "[player]", desc = "cmd.description.stats", fee = Fee.LISTALL, max = 0, permissions = { "mywarp.warp.basic.stats" })
+    @Command(aliases = { "assets", "pstats", "pinfo", "limits" }, usage = "[player]", desc = "cmd.description.assets", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
     public void listPlayerWarps(CommandContext args, CommandSender sender)
             throws CommandException {
-        Player player = sender instanceof Player ? (Player) sender : null;
-        TreeSet<Warp> results = MyWarp
+        Player player = null;
+        if (args.argsLength() < 0) {
+            player = CommandUtils.checkPlayer(sender);
+        } else {
+            CommandUtils.checkPermissions(sender,
+                    "mywarp.warp.basic.assets.other");
+            player = CommandUtils.matchPlayer(args.getString(0));
+        }
+
+        TreeSet<Warp> publicWarps = MyWarp.inst().getWarpManager()
+                .getWarps(true, player.getName());
+        TreeSet<Warp> privateWarps = MyWarp.inst().getWarpManager()
+                .getWarps(false, player.getName());
+
+        String header = MyWarp
                 .inst()
-                .getWarpManager()
-                .warpsInvitedTo(
-                        player,
-                        args.getFlag('c'),
-                        args.getFlag('w'),
-                        args.hasFlag('p') ? new PopularityWarpComparator()
-                                : null);
+                .getLanguageManager()
+                .getEffectiveString("warp.assets.head", "%player%",
+                        player.getName());
+        String publicHeader = MyWarp.inst().getLanguageManager()
+                .getString("warp.assets.public");
+        String privateHeader = MyWarp.inst().getLanguageManager()
+                .getString("warp.assets.private");
 
-        if (results.isEmpty()) {
-            throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getString("lister.noResults"));
-        }
-        sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getString("listAll.list"));
+        if (MyWarp.inst().getWarpSettings().useWarpLimits) {
+            header = header
+                    + " ("
+                    + (publicWarps.size() + privateWarps.size())
+                    + "/"
+                    + (MyWarp
+                            .inst()
+                            .getPermissionsManager()
+                            .hasPermission(player,
+                                    "mywarp.limit.total.unlimited") ? "-"
+                            : MyWarp.inst().getPermissionsManager()
+                                    .maxTotalWarps(player)) + ")";
 
-        StrBuilder ret = new StrBuilder();
-        for (Warp warp : results) {
-            ret.appendSeparator(", ");
-            if (sender instanceof Player
-                    && warp.getCreator().equals(sender.getName())) {
-                ret.append(ChatColor.AQUA);
-            } else if (warp.isPublicAll()) {
-                ret.append(ChatColor.GREEN);
-            } else {
-                ret.append(ChatColor.RED);
-            }
-            ret.append(warp.getName());
-            ret.append(ChatColor.RESET);
+            privateHeader = privateHeader
+                    + " ("
+                    + privateWarps.size()
+                    + "/"
+                    + (MyWarp
+                            .inst()
+                            .getPermissionsManager()
+                            .hasPermission(player,
+                                    "mywarp.limit.private.unlimited") ? "-"
+                            : MyWarp.inst().getPermissionsManager()
+                                    .maxPrivateWarps(player)) + ")";
+
+            publicHeader = publicHeader
+                    + " ("
+                    + publicWarps.size()
+                    + "/"
+                    + (MyWarp
+                            .inst()
+                            .getPermissionsManager()
+                            .hasPermission(player,
+                                    "mywarp.limit.public.unlimited") ? "-"
+                            : MyWarp.inst().getPermissionsManager()
+                                    .maxPublicWarps(player)) + ")";
         }
-        sender.sendMessage(ret.toString());
+
+        sender.sendMessage(ChatColor.GOLD
+                + MinecraftFontWidthCalculator.centralize(header, '-'));
+        sender.sendMessage(ChatColor.GRAY + publicHeader + ": "
+                + ChatColor.WHITE + joinWarps(privateWarps, ", "));
+        sender.sendMessage(ChatColor.GRAY + privateHeader + ": "
+                + ChatColor.WHITE + joinWarps(publicWarps, ", "));
+
     }
-    
+
     @Command(aliases = { "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "cmd.description.listAll", fee = Fee.LISTALL, max = 0, permissions = { "mywarp.warp.basic.list" })
     public void listAllWarps(CommandContext args, CommandSender sender)
             throws CommandException {
@@ -469,5 +506,14 @@ public class BasicCommands {
             ret.append(")");
             sender.sendMessage(ret.toString());
         }
+    }
+
+    private String joinWarps(Collection<Warp> warps, String separator) {
+        StrBuilder ret = new StrBuilder();
+        for (Warp warp : warps) {
+            ret.appendSeparator(separator);
+            ret.append(warp.getName());
+        }
+        return ret.toString();
     }
 }
