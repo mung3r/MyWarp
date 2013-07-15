@@ -35,7 +35,7 @@ error.cmd.invalidSender:Das Kommando konnte nicht ausgeführt werden: ungültige
 error.cmd.noValue:Für die '%flag%' Flag wurde kein Wert angegeben.
 error.cmd.toFewArgs:Zu wenige Argumente.
 error.cmd.toManyArgs:Zu viele Argumente.
-error.cmd.unknown:Während dem Ausführen des Befehls trat ein fehler auf.
+error.cmd.unknown:Während dem Ausführen des Befehls trat ein Fehler auf.
 error.cmd.unknownFlag:Unbekannte Flag:
 error.create.warpExists:Ein Warp namens '%warp%' existiert bereits.
 error.economy.cannotAfford:Du kannst es dir das nicht leisten. Du brauchst mindestens: %amount%$.

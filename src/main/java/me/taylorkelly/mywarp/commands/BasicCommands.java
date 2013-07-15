@@ -86,11 +86,11 @@ public class BasicCommands {
             throws CommandException {
         Player player = null;
         if (args.argsLength() < 0) {
-            player = CommandUtils.checkPlayer(sender);
-        } else {
             CommandUtils.checkPermissions(sender,
                     "mywarp.warp.basic.assets.other");
             player = CommandUtils.matchPlayer(args.getString(0));
+        } else {
+            player = CommandUtils.checkPlayer(sender);
         }
 
         TreeSet<Warp> publicWarps = MyWarp.inst().getWarpManager()

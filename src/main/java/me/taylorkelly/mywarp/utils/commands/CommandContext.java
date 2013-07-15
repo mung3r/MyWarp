@@ -148,7 +148,7 @@ public class CommandContext {
                         throw new CommandException(MyWarp
                                 .inst()
                                 .getLanguageManager()
-                                .getEffectiveString("error.cmd.noValue:",
+                                .getEffectiveString("error.cmd.noValue",
                                         "%flag%", Character.toString(flagName)));
                     }
 
