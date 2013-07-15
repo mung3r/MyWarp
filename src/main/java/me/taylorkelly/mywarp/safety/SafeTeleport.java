@@ -5,10 +5,10 @@ import me.taylorkelly.mywarp.MyWarp;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 /**
- * This class provides and manages several methods to teleport players to safe
+ * This class provides and manages several methods to teleport entity to safe
  * locations
  */
 public class SafeTeleport {
@@ -21,16 +21,16 @@ public class SafeTeleport {
     };
 
     /**
-     * Teleports the player to the given location if it is safe. If not, it
-     * searches the closest safe location and teleports the player there.
+     * Teleports the entity to the given location if it is safe. If not, it
+     * searches the closest safe location and teleports the entity there.
      * 
-     * @param player
-     *            the player
+     * @param entity
+     *            the entity
      * @param l
      *            the location
      * @return The resulting {@link TeleportStatus}
      */
-    public static TeleportStatus safeTeleport(Player player, Location l) {
+    public static TeleportStatus safeTeleport(Entity entity, Location l) {
         // warp height is always the block's Y so we may need to adjust the
         // height for blocks that are smaller than one full block (steps,
         // skulls...)
@@ -43,21 +43,21 @@ public class SafeTeleport {
                 return TeleportStatus.NONE;
             }
             if (safe != l) {
-                teleport(player, safe);
+                teleport(entity, safe);
                 return TeleportStatus.SAFE_LOC;
             }
         }
-        teleport(player, l);
+        teleport(entity, l);
         return TeleportStatus.ORIGINAL_LOC;
     }
 
     /**
      * Checks if the given material is solid AND has a material specific height
-     * smaller than 1 (full block). A player might stand 'inside' such a block
+     * smaller than 1 (full block). An entity might stand 'inside' such a block
      * without being stuck.
      * 
      * It is important to differ between solid and non solid: a solid block
-     * blocks a player's movement, a non solid allows players to move freely
+     * blocks an entity's movement, a non solid allows entity to move freely
      * through it.
      * 
      * Must be updated for new Minecraft versions if new matching blocks were
@@ -99,19 +99,19 @@ public class SafeTeleport {
     }
 
     /**
-     * Teleports a player to a location. Before teleporting, the player is
-     * ejected if he uses any vehicle, the warp-effect is played (if enabled)
+     * Teleports an entity to a location. Before teleporting, the entity is
+     * ejected if needed, the warp-effect is played (if enabled)
      * and chunks are loaded (if enabled and not loaded before).
      * 
-     * @param player
-     *            the player to teleport
+     * @param entity
+     *            the entity to teleport
      * @param to
-     *            the location the player should be teleported to
+     *            the location the entity should be teleported to
      */
-    private static void teleport(Player player, Location to) {
-        Location from = player.getLocation();
-        if (player.isInsideVehicle()) {
-            player.getVehicle().eject();
+    private static void teleport(Entity entity, Location to) {
+        Location from = entity.getLocation();
+        if (entity.isInsideVehicle()) {
+            entity.getVehicle().eject();
         }
         if (MyWarp.inst().getWarpSettings().warpEffect) {
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
@@ -122,6 +122,6 @@ public class SafeTeleport {
                 && !to.getWorld().isChunkLoaded(to.getBlockX(), to.getBlockZ())) {
             to.getWorld().refreshChunk(to.getBlockX(), to.getBlockZ());
         }
-        player.teleport(to);
+        entity.teleport(to);
     }
 }
