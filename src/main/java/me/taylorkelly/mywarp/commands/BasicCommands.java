@@ -347,7 +347,7 @@ public class BasicCommands {
                 .getEffectiveString("warp.update", "%warp%", warp.getName()));
     }
 
-    @Command(aliases = { "info" }, usage = "<name>", desc = "cmd.description.info", fee = Fee.INFO, min = 1, permissions = { "mywarp.warp.basic.info" })
+    @Command(aliases = { "info", "stats" }, usage = "<name>", desc = "cmd.description.info", fee = Fee.INFO, min = 1, permissions = { "mywarp.warp.basic.info" })
     public void showWarpInfo(CommandContext args, CommandSender sender)
             throws CommandException {
         Warp warp = CommandUtils.getWarpForUsage(sender,
