@@ -233,39 +233,25 @@ public class CommandsManager {
 
     /**
      * Parses the usage of the given command by replacing key-words with the
-     * translations received from the MyWarp.inst().getLanguageManager().
+     * translations received from the LanguageManager.
      * 
      * @param cmd
      *            the command
      * @return the translated command usage
      */
     public String parseCmdUsage(Command cmd) {
-        return StringUtils
-                .replace(
-                        StringUtils.replace(
-                                StringUtils.replace(
-                                        StringUtils
-                                                .replace(
-                                                        StringUtils
-                                                                .replace(
-                                                                        cmd.usage(),
-                                                                        "player",
-                                                                        MyWarp.inst()
-                                                                                .getLanguageManager()
-                                                                                .getString(
-                                                                                        "cmd.usage.player")),
-                                                        "name",
-                                                        MyWarp.inst()
-                                                                .getLanguageManager()
-                                                                .getString(
-                                                                        "cmd.usage.name")),
-                                        "group", MyWarp.inst()
-                                                .getLanguageManager()
-                                                .getString("cmd.usage.group")),
-                                "world", MyWarp.inst().getLanguageManager()
-                                        .getString("cmd.usage.world")),
-                        "creator", MyWarp.inst().getLanguageManager()
-                                .getString("cmd.usage.creator"));
+        String ret = StringUtils.replace(cmd.usage(), "player", MyWarp.inst()
+                .getLanguageManager().getString("cmd.usage.player"));
+        ret = StringUtils.replace(ret, "name", MyWarp.inst()
+                .getLanguageManager().getString("cmd.usage.name"));
+        ret = StringUtils.replace(ret, "group", MyWarp.inst()
+                .getLanguageManager().getString("cmd.usage.group"));
+        ret = StringUtils.replace(ret, "world", MyWarp.inst()
+                .getLanguageManager().getString("cmd.usage.world"));
+        ret = StringUtils.replace(ret, "creator", MyWarp.inst()
+                .getLanguageManager().getString("cmd.usage.creator"));
+
+        return ret;
     }
 
     /**

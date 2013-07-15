@@ -28,11 +28,9 @@ public class SafeTeleport {
      *            the player
      * @param l
      *            the location
-     * @param name
-     *            the name of the warp
      * @return The resulting {@link TeleportStatus}
      */
-    public static TeleportStatus safeTeleport(Player player, Location l, String name) {
+    public static TeleportStatus safeTeleport(Player player, Location l) {
         // warp height is always the block's Y so we may need to adjust the
         // height for blocks that are smaller than one full block (steps,
         // skulls...)
@@ -42,14 +40,10 @@ public class SafeTeleport {
         if (MyWarp.inst().getWarpSettings().useWarpSafety) {
             Location safe = SafeLocation.getSafeLocation(l);
             if (safe == null) {
-                player.sendMessage(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("safety.notFound", "%warp%", name));
                 return TeleportStatus.NONE;
             }
             if (safe != l) {
                 teleport(player, safe);
-                player.sendMessage(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("safety.found", "%warp%", name));
                 return TeleportStatus.SAFE_LOC;
             }
         }

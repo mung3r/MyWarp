@@ -7,7 +7,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
 
@@ -180,23 +179,6 @@ public class WarpManager {
     }
 
     /**
-     * Gets a sorted set with all public warps in the network.
-     * 
-     * @return a set with all existing public warps
-     */
-    @Deprecated
-    public TreeSet<Warp> getPublicWarps() {
-        TreeSet<Warp> ret = new TreeSet<Warp>();
-
-        for (Warp warp : warpMap.values()) {
-            if (warp.isPublicAll()) {
-                ret.add(warp);
-            }
-        }
-        return ret;
-    }
-    
-    /**
      * Gets a sorted set with all warps matching the criteria in the network.
      * 
      * @return a set with all existing public warps
@@ -205,7 +187,8 @@ public class WarpManager {
         TreeSet<Warp> ret = new TreeSet<Warp>();
 
         for (Warp warp : warpMap.values()) {
-            if (warp.isPublicAll() == publicAll && creator != null && warp.playerIsCreator(creator)) {
+            if (warp.isPublicAll() == publicAll && creator != null
+                    && warp.playerIsCreator(creator)) {
                 ret.add(warp);
             }
         }
@@ -231,51 +214,6 @@ public class WarpManager {
      */
     public Warp getWarp(String name) {
         return warpMap.get(name);
-    }
-
-    /**
-     * Changes the creator of the given warp to the given new player
-     * 
-     * @param warp
-     *            the warp
-     * @param giveeName
-     *            the name of the new creator
-     */
-    public void give(Warp warp, String giveeName) {
-        warp.setCreator(giveeName);
-        MyWarp.inst().getConnectionManager().updateCreator(warp);
-
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
-            MyWarp.inst().getMarkers().updateWarp(warp);
-        }
-    }
-
-    /**
-     * Invites the group of the given name to the given name, making it usable
-     * for all players in this group
-     * 
-     * @param warp
-     *            the warp
-     * @param inviteeName
-     *            the group's name
-     */
-    public void inviteGroup(Warp warp, String inviteeName) {
-        warp.inviteGroup(inviteeName);
-        MyWarp.inst().getConnectionManager().updateGroupPermissions(warp);
-    }
-
-    /**
-     * Invites the player of the given name to the given name, making it usable
-     * for him
-     * 
-     * @param warp
-     *            the warp
-     * @param inviteeName
-     *            the player's name
-     */
-    public void invitePlayer(Warp warp, String inviteeName) {
-        warp.invite(inviteeName);
-        MyWarp.inst().getConnectionManager().updatePermissions(warp);
     }
 
     /**
@@ -418,36 +356,6 @@ public class WarpManager {
     }
 
     /**
-     * Privatizes the given warp
-     * 
-     * @param warp
-     *            the warp
-     */
-    public void privatize(Warp warp) {
-        warp.setPublicAll(false);
-        MyWarp.inst().getConnectionManager().publicizeWarp(warp, false);
-
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
-            MyWarp.inst().getMarkers().deleteWarp(warp);
-        }
-    }
-
-    /**
-     * Publicizes the given warp
-     * 
-     * @param warp
-     *            the warp
-     */
-    public void publicize(Warp warp) {
-        warp.setPublicAll(true);
-        MyWarp.inst().getConnectionManager().publicizeWarp(warp, true);
-
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
-            MyWarp.inst().getMarkers().addWarp(warp);
-        }
-    }
-
-    /**
      * Sets the welcome message to the given message for the warp that is stored
      * under the given player in the welcomeMessages-Map. Threadsafe.
      * 
@@ -465,7 +373,6 @@ public class WarpManager {
             synchronized (warp) {
                 warp.setWelcomeMessage(message);
             }
-            MyWarp.inst().getConnectionManager().updateWelcomeMessage(warp);
 
             // sendMessage is threadsafe
             player.sendMessage(MyWarp
@@ -474,50 +381,6 @@ public class WarpManager {
                     .getEffectiveString("warp.welcome.received", "%warp%",
                             warp.getName()));
             player.sendMessage(ChatColor.AQUA + message);
-        }
-    }
-
-    /**
-     * uninvites the group with the given name from the given warp
-     * 
-     * @param warp
-     *            the warp
-     * @param inviteeName
-     *            the name of the group
-     */
-    public void uninviteGroup(Warp warp, String inviteeName) {
-        warp.uninviteGroup(inviteeName);
-        MyWarp.inst().getConnectionManager().updateGroupPermissions(warp);
-    }
-
-    /**
-     * Uninvites the player with the given name from the given warp
-     * 
-     * @param warp
-     *            the warp
-     * @param inviteeName
-     *            the name of the player
-     */
-    public void uninvitePlayer(Warp warp, String inviteeName) {
-        warp.uninvite(inviteeName);
-        MyWarp.inst().getConnectionManager().updatePermissions(warp);
-    }
-
-    /**
-     * Updates the location of the warp with those of the given player. Will
-     * also update the marker if needed
-     * 
-     * @param warp
-     *            the warp
-     * @param player
-     *            the player
-     */
-    public void updateLocation(Warp warp, Player player) {
-        warp.setLocation(player.getLocation());
-        MyWarp.inst().getConnectionManager().updateLocation(warp);
-
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
-            MyWarp.inst().getMarkers().updateWarp(warp);
         }
     }
 
@@ -587,44 +450,6 @@ public class WarpManager {
             results.add(warp);
         }
         return results;
-    }
-
-    /**
-     * Warps the given player to the given warp. Visit-counter and
-     * welcome-message are handled as needed.
-     * 
-     * TODO Remove crappy implementation for warp-fees!
-     * 
-     * @param warp
-     *            the warp
-     * @param player
-     *            the player
-     * @param charge
-     *            whether the player should be charged with the corresponding
-     *            warp-fee
-     */
-    public void warpTo(Warp warp, Player player, boolean charge) {
-        switch (warp.warp(player)) {
-        case NONE:
-            break;
-        case ORIGINAL_LOC:
-            player.sendMessage(ChatColor.AQUA
-                    + warp.getSpecificWelcomeMessage(player));
-        case SAFE_LOC:
-            warp.visit();
-            MyWarp.inst().getConnectionManager().updateVisits(warp);
-
-            if (MyWarp.inst().getWarpSettings().useEconomy && charge) {
-                MyWarp.inst()
-                        .getEconomyLink()
-                        .withdrawSender(
-                                player,
-                                MyWarp.inst().getPermissionsManager()
-                                        .getEconomyPrices(player)
-                                        .getFee(Fee.WARP_TO));
-            }
-            break;
-        }
     }
 
     /**

@@ -60,7 +60,7 @@ public class PlayerWarmup extends PlayerTimer {
             }
         }
 
-        MyWarp.inst().getWarpManager().warpTo(warp, player, true);
+        warp.warp(player, true);
         if (!MyWarp.inst().getPermissionsManager()
                 .hasPermission(player, "mywarp.cooldown.disobey")) {
             new PlayerCooldown(player, cooldown);

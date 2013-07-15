@@ -5,10 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.safety.SafeTeleport;
-import me.taylorkelly.mywarp.safety.SafeTeleport.TeleportStatus;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -311,6 +312,7 @@ public class Warp implements Comparable<Warp> {
      */
     public void invite(String player) {
         permissions.add(player);
+        MyWarp.inst().getConnectionManager().updatePermissions(this);
     }
 
     /**
@@ -321,6 +323,7 @@ public class Warp implements Comparable<Warp> {
      */
     public void inviteGroup(String group) {
         groupPermissions.add(group);
+        MyWarp.inst().getConnectionManager().updateGroupPermissions(this);
     }
 
     /**
@@ -428,6 +431,11 @@ public class Warp implements Comparable<Warp> {
      */
     public void setCreator(String giveeName) {
         this.creator = giveeName;
+
+        MyWarp.inst().getConnectionManager().updateCreator(this);
+        if (MyWarp.inst().getWarpSettings().useDynmap) {
+            MyWarp.inst().getMarkers().updateWarp(this);
+        }
     }
 
     /**
@@ -443,6 +451,12 @@ public class Warp implements Comparable<Warp> {
         this.z = location.getZ();
         this.yaw = Math.round(location.getYaw()) % 360;
         this.pitch = Math.round(location.getPitch()) % 360;
+
+        MyWarp.inst().getConnectionManager().updateLocation(this);
+
+        if (MyWarp.inst().getWarpSettings().useDynmap) {
+            MyWarp.inst().getMarkers().updateWarp(this);
+        }
     }
 
     /**
@@ -453,6 +467,16 @@ public class Warp implements Comparable<Warp> {
      */
     public void setPublicAll(boolean publicAll) {
         this.publicAll = publicAll;
+        
+        MyWarp.inst().getConnectionManager().publicizeWarp(this, publicAll);
+
+        if (MyWarp.inst().getWarpSettings().useDynmap) {
+            if (publicAll) {
+                MyWarp.inst().getMarkers().addWarp(this);
+            } else {
+                MyWarp.inst().getMarkers().deleteWarp(this);
+            }
+        }
     }
 
     /**
@@ -463,6 +487,7 @@ public class Warp implements Comparable<Warp> {
      */
     public void setWelcomeMessage(String welcomeMessage) {
         this.welcomeMessage = welcomeMessage;
+        MyWarp.inst().getConnectionManager().updateWelcomeMessage(this);
     }
 
     @Override
@@ -479,6 +504,7 @@ public class Warp implements Comparable<Warp> {
      */
     public void uninvite(String inviteeName) {
         permissions.remove(inviteeName);
+        MyWarp.inst().getConnectionManager().updatePermissions(this);
     }
 
     /**
@@ -489,13 +515,15 @@ public class Warp implements Comparable<Warp> {
      */
     public void uninviteGroup(String group) {
         groupPermissions.remove(group);
+        MyWarp.inst().getConnectionManager().updateGroupPermissions(this);
     }
 
     /**
      * Counts up the visits-counter by one
      */
-    public void visit() {
+    private void visit() {
         visits++;
+        MyWarp.inst().getConnectionManager().updateVisits(this);
     }
 
     /**
@@ -503,24 +531,66 @@ public class Warp implements Comparable<Warp> {
      * message to the player, if the warp's world does not exist. The teleport
      * itself is handled via
      * {@link me.taylorkelly.mywarp.safety.SafeTeleport#safeTeleport(Player, Location, String)}
-     * .
+     * 
+     * TODO Remove crappy implementation for warp-fees!
      * 
      * @param player
      *            the player
-     * @return The corresponding
-     *         {@link me.taylorkelly.mywarp.safety.SafeTeleport.TeleportStatus}
+     * @param charge
+     *            whether the player should be charged with the corresponding
+     *            warp-fee
      */
-    public TeleportStatus warp(Player player) {
+    public void warp(Player player, boolean charge) {
         Location location = getLocation();
-        if (location != null) {
-            return SafeTeleport.safeTeleport(player, location, name);
-        } else {
+        if (location == null) {
             player.sendMessage(MyWarp
                     .inst()
                     .getLanguageManager()
                     .getEffectiveString("error.warpto.noSuchWorld", "%world%",
                             getWorld()));
-            return TeleportStatus.NONE;
+        } else {
+
+            switch (SafeTeleport.safeTeleport(player, location)) {
+            case NONE:
+                player.sendMessage(MyWarp
+                        .inst()
+                        .getLanguageManager()
+                        .getEffectiveString("safety.notFound", "%warp%",
+                                getName()));
+                break;
+            case ORIGINAL_LOC:
+                player.sendMessage(ChatColor.AQUA
+                        + getSpecificWelcomeMessage(player));
+                visit();
+
+                if (MyWarp.inst().getWarpSettings().useEconomy && charge) {
+                    MyWarp.inst()
+                            .getEconomyLink()
+                            .withdrawSender(
+                                    player,
+                                    MyWarp.inst().getPermissionsManager()
+                                            .getEconomyPrices(player)
+                                            .getFee(Fee.WARP_TO));
+                }
+                break;
+            case SAFE_LOC:
+                player.sendMessage(MyWarp
+                        .inst()
+                        .getLanguageManager()
+                        .getEffectiveString("safety.found", "%warp%", getName()));
+                visit();
+
+                if (MyWarp.inst().getWarpSettings().useEconomy && charge) {
+                    MyWarp.inst()
+                            .getEconomyLink()
+                            .withdrawSender(
+                                    player,
+                                    MyWarp.inst().getPermissionsManager()
+                                            .getEconomyPrices(player)
+                                            .getFee(Fee.WARP_TO));
+                }
+                break;
+            }
         }
     }
 

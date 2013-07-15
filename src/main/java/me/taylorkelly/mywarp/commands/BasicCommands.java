@@ -342,7 +342,7 @@ public class BasicCommands {
         Warp warp = CommandUtils.getWarpForModification(sender,
                 args.getJoinedStrings(0));
 
-        MyWarp.inst().getWarpManager().updateLocation(warp, sender);
+        warp.setLocation(sender.getLocation());
         sender.sendMessage(MyWarp.inst().getLanguageManager()
                 .getEffectiveString("warp.update", "%warp%", warp.getName()));
     }
