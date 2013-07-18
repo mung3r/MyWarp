@@ -147,11 +147,11 @@ public class BasicCommands {
         }
 
         sender.sendMessage(ChatColor.GOLD
-                + MinecraftFontWidthCalculator.centralize(header, '-'));
+                + MinecraftFontWidthCalculator.centralize(" " + header + " ", '-'));
         sender.sendMessage(ChatColor.GRAY + publicHeader + ": "
-                + ChatColor.WHITE + joinWarps(privateWarps, ", "));
-        sender.sendMessage(ChatColor.GRAY + privateHeader + ": "
                 + ChatColor.WHITE + joinWarps(publicWarps, ", "));
+        sender.sendMessage(ChatColor.GRAY + privateHeader + ": "
+                + ChatColor.WHITE + joinWarps(privateWarps, ", "));
     }
 
     @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "cmd.description.list", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
@@ -470,6 +470,10 @@ public class BasicCommands {
     }
 
     private String joinWarps(Collection<Warp> warps, String separator) {
+        if (warps.isEmpty()) {
+            return "-";
+        }
+
         StrBuilder ret = new StrBuilder();
         for (Warp warp : warps) {
             ret.appendSeparator(separator);

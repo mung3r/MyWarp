@@ -1,7 +1,7 @@
 ﻿#German localization for MyWarp (by thee)
 #This file is UTF-8 encoded, respect this when editing.
 cmd.description.accept:Akzeptiert einen Warp, den ein anderer Spieler an dich abgeben möchte.
-cmd.description.assets:Listet alle Warps des angegebenen [Spielers] zusammen mit dem entsprechenden Limit auf,
+cmd.description.assets:Listet alle Warps des angegebenen [Spielers] zusammen mit dem entsprechenden Limit auf.
 cmd.description.adminWarpTo:Teleportiert §7<Spieler>§f zu §7<Name>§f, wenn du den Warp besuchen kannst.
 cmd.description.create:Erstellt einen neuen öffentlichen Warp namens §7<Name>§f auf der aktuellen Position
 cmd.description.createPrivate:Erstellt einen neuen privaten Warp namens §7<Name>§f auf der aktuellen Position
