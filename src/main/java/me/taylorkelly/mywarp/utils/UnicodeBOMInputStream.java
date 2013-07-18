@@ -78,32 +78,31 @@ public class UnicodeBOMInputStream extends InputStream {
         /**
          * UTF-8 BOM (EF BB BF).
          */
-        public static final BOM UTF_8 = new BOM(new byte[] { (byte) 0xEF,
-                (byte) 0xBB, (byte) 0xBF }, "UTF-8");
+        public static final BOM UTF_8 = new BOM(new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF }, "UTF-8");
 
         /**
          * UTF-16, little-endian (FF FE).
          */
-        public static final BOM UTF_16_LE = new BOM(new byte[] { (byte) 0xFF,
-                (byte) 0xFE }, "UTF-16 little-endian");
+        public static final BOM UTF_16_LE = new BOM(new byte[] { (byte) 0xFF, (byte) 0xFE },
+                "UTF-16 little-endian");
 
         /**
          * UTF-16, big-endian (FE FF).
          */
-        public static final BOM UTF_16_BE = new BOM(new byte[] { (byte) 0xFE,
-                (byte) 0xFF }, "UTF-16 big-endian");
+        public static final BOM UTF_16_BE = new BOM(new byte[] { (byte) 0xFE, (byte) 0xFF },
+                "UTF-16 big-endian");
 
         /**
          * UTF-32, little-endian (FF FE 00 00).
          */
-        public static final BOM UTF_32_LE = new BOM(new byte[] { (byte) 0xFF,
-                (byte) 0xFE, (byte) 0x00, (byte) 0x00 }, "UTF-32 little-endian");
+        public static final BOM UTF_32_LE = new BOM(new byte[] { (byte) 0xFF, (byte) 0xFE, (byte) 0x00,
+                (byte) 0x00 }, "UTF-32 little-endian");
 
         /**
          * UTF-32, big-endian (00 00 FE FF).
          */
-        public static final BOM UTF_32_BE = new BOM(new byte[] { (byte) 0x00,
-                (byte) 0x00, (byte) 0xFE, (byte) 0xFF }, "UTF-32 big-endian");
+        public static final BOM UTF_32_BE = new BOM(new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0xFE,
+                (byte) 0xFF }, "UTF-32 big-endian");
 
         /**
          * Returns a {@link String} representation of this {@link BOM}. value.
@@ -135,8 +134,7 @@ public class UnicodeBOMInputStream extends InputStream {
 
     }
 
-    public UnicodeBOMInputStream(final InputStream inputStream)
-            throws IOException
+    public UnicodeBOMInputStream(final InputStream inputStream) throws IOException
 
     {
         this(inputStream, BOM.NONE);
@@ -154,8 +152,7 @@ public class UnicodeBOMInputStream extends InputStream {
      *             on reading from the specified {@link InputStream} when trying
      *             to detect the Unicode BOM.
      */
-    public UnicodeBOMInputStream(final InputStream inputStream,
-            final BOM defaultBOM) throws IOException
+    public UnicodeBOMInputStream(final InputStream inputStream, final BOM defaultBOM) throws IOException
 
     {
         in = new PushbackInputStream(inputStream, 4);
@@ -165,19 +162,18 @@ public class UnicodeBOMInputStream extends InputStream {
 
         switch (read) {
         case 4:
-            if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)
-                    && (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
+            if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00)
+                    && (bom[3] == (byte) 0x00)) {
                 this.bom = BOM.UTF_32_LE;
                 break;
-            } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00)
-                    && (bom[2] == (byte) 0xFE) && (bom[3] == (byte) 0xFF)) {
+            } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) && (bom[2] == (byte) 0xFE)
+                    && (bom[3] == (byte) 0xFF)) {
                 this.bom = BOM.UTF_32_BE;
                 break;
             }
 
         case 3:
-            if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB)
-                    && (bom[2] == (byte) 0xBF)) {
+            if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
                 this.bom = BOM.UTF_8;
                 break;
             }
@@ -221,8 +217,7 @@ public class UnicodeBOMInputStream extends InputStream {
      *             when trying to skip the BOM from the wrapped
      *             {@link InputStream} object.
      */
-    public final synchronized UnicodeBOMInputStream skipBOM()
-            throws IOException {
+    public final synchronized UnicodeBOMInputStream skipBOM() throws IOException {
         if (!skipped) {
             in.skip(bom.bytes.length);
             skipped = true;
@@ -247,8 +242,7 @@ public class UnicodeBOMInputStream extends InputStream {
     /**
      * {@inheritDoc}
      */
-    public int read(final byte b[], final int off, final int len)
-            throws IOException, NullPointerException {
+    public int read(final byte b[], final int off, final int len) throws IOException, NullPointerException {
         return in.read(b, off, len);
     }
 

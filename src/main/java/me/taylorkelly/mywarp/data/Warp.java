@@ -73,9 +73,8 @@ public class Warp implements Comparable<Warp> {
      * @param visits
      *            the vivists
      */
-    public Warp(int index, String name, String creator, String world, double x,
-            int y, double z, int yaw, int pitch, boolean publicAll,
-            String permissions, String groupPermissions, String welcomeMessage,
+    public Warp(int index, String name, String creator, String world, double x, int y, double z, int yaw,
+            int pitch, boolean publicAll, String permissions, String groupPermissions, String welcomeMessage,
             int visits) {
         this.index = index;
         this.name = name;
@@ -134,8 +133,7 @@ public class Warp implements Comparable<Warp> {
         this.setPublicAll(publicAll);
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = MyWarp.inst().getLanguageManager()
-                .getString("warp.default.welcomeMessage");
+        this.welcomeMessage = MyWarp.inst().getLanguageManager().getString("warp.default.welcomeMessage");
         this.visits = 0;
     }
 
@@ -180,8 +178,7 @@ public class Warp implements Comparable<Warp> {
         if (currWorld == null) {
             return null;
         } else {
-            Location location = new Location(currWorld, getX(), getY(), getZ(),
-                    getYaw(), getPitch());
+            Location location = new Location(currWorld, getX(), getY(), getZ(), getYaw(), getPitch());
             return location;
         }
     }
@@ -215,8 +212,7 @@ public class Warp implements Comparable<Warp> {
      * @return the warp's welcome message with replaced values
      */
     public String getSpecificWelcomeMessage(Player player) {
-        return StringUtils.replace(replaceWarpMacros(welcomeMessage),
-                "%player%", player.getName());
+        return StringUtils.replace(replaceWarpMacros(welcomeMessage), "%player%", player.getName());
     }
 
     /**
@@ -346,8 +342,7 @@ public class Warp implements Comparable<Warp> {
         if (creator.equals(player.getName())) {
             return true;
         }
-        if (MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.admin.modifyall")) {
+        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.admin.modifyall")) {
             return true;
         }
         return false;
@@ -362,8 +357,7 @@ public class Warp implements Comparable<Warp> {
      */
     public boolean playerCanWarp(Player player) {
         if (MyWarp.inst().getWarpSettings().worldAccess
-                && !MyWarp.inst().getPermissionsManager()
-                        .playerCanAccessWorld(player, world)) {
+                && !MyWarp.inst().getPermissionsManager().playerCanAccessWorld(player, world)) {
             return false;
         }
 
@@ -375,13 +369,11 @@ public class Warp implements Comparable<Warp> {
         }
 
         for (String group : groupPermissions) {
-            if (MyWarp.inst().getPermissionsManager()
-                    .playerHasGroup(player, group)) {
+            if (MyWarp.inst().getPermissionsManager().playerHasGroup(player, group)) {
                 return true;
             }
         }
-        if (MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.admin.accessall")) {
+        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.admin.accessall")) {
             return true;
         }
 
@@ -419,8 +411,7 @@ public class Warp implements Comparable<Warp> {
      * @return an array list with the splitted string
      */
     private ArrayList<String> processList(String string) {
-        return new ArrayList<String>(Arrays.asList(StringUtils.split(string,
-                LIST_SEPERATOR)));
+        return new ArrayList<String>(Arrays.asList(StringUtils.split(string, LIST_SEPERATOR)));
     }
 
     /**
@@ -467,7 +458,7 @@ public class Warp implements Comparable<Warp> {
      */
     public void setPublicAll(boolean publicAll) {
         this.publicAll = publicAll;
-        
+
         MyWarp.inst().getConnectionManager().publicizeWarp(this, publicAll);
 
         if (MyWarp.inst().getWarpSettings().useDynmap) {
@@ -492,8 +483,7 @@ public class Warp implements Comparable<Warp> {
 
     @Override
     public String toString() {
-        return "Warp{" + "name=" + name + " creator=" + creator + "publicAll="
-                + publicAll + "}";
+        return "Warp{" + "name=" + name + " creator=" + creator + "publicAll=" + publicAll + "}";
     }
 
     /**
@@ -543,24 +533,17 @@ public class Warp implements Comparable<Warp> {
     public void warp(Player player, boolean charge) {
         Location location = getLocation();
         if (location == null) {
-            player.sendMessage(MyWarp
-                    .inst()
-                    .getLanguageManager()
-                    .getEffectiveString("error.warpto.noSuchWorld", "%world%",
-                            getWorld()));
+            player.sendMessage(MyWarp.inst().getLanguageManager()
+                    .getEffectiveString("error.warpto.noSuchWorld", "%world%", getWorld()));
         } else {
 
             switch (SafeTeleport.safeTeleport(player, location)) {
             case NONE:
-                player.sendMessage(MyWarp
-                        .inst()
-                        .getLanguageManager()
-                        .getEffectiveString("safety.notFound", "%warp%",
-                                getName()));
+                player.sendMessage(MyWarp.inst().getLanguageManager()
+                        .getEffectiveString("safety.notFound", "%warp%", getName()));
                 break;
             case ORIGINAL_LOC:
-                player.sendMessage(ChatColor.AQUA
-                        + getSpecificWelcomeMessage(player));
+                player.sendMessage(ChatColor.AQUA + getSpecificWelcomeMessage(player));
                 visit();
 
                 if (MyWarp.inst().getWarpSettings().useEconomy && charge) {
@@ -568,15 +551,12 @@ public class Warp implements Comparable<Warp> {
                             .getEconomyLink()
                             .withdrawSender(
                                     player,
-                                    MyWarp.inst().getPermissionsManager()
-                                            .getEconomyPrices(player)
+                                    MyWarp.inst().getPermissionsManager().getEconomyPrices(player)
                                             .getFee(Fee.WARP_TO));
                 }
                 break;
             case SAFE_LOC:
-                player.sendMessage(MyWarp
-                        .inst()
-                        .getLanguageManager()
+                player.sendMessage(MyWarp.inst().getLanguageManager()
                         .getEffectiveString("safety.found", "%warp%", getName()));
                 visit();
 
@@ -585,8 +565,7 @@ public class Warp implements Comparable<Warp> {
                             .getEconomyLink()
                             .withdrawSender(
                                     player,
-                                    MyWarp.inst().getPermissionsManager()
-                                            .getEconomyPrices(player)
+                                    MyWarp.inst().getPermissionsManager().getEconomyPrices(player)
                                             .getFee(Fee.WARP_TO));
                 }
                 break;
@@ -625,8 +604,7 @@ public class Warp implements Comparable<Warp> {
         str = StringUtils.replace(str, "%warp%", name);
         str = StringUtils.replace(str, "%visits%", Integer.toString(visits));
         str = StringUtils.replace(str, "%world%", world);
-        str = StringUtils.replace(str, "%loc%", "(" + Math.round(x) + ", " + y
-                + ", " + Math.round(z) + ")");
+        str = StringUtils.replace(str, "%loc%", "(" + Math.round(x) + ", " + y + ", " + Math.round(z) + ")");
 
         return str;
     }

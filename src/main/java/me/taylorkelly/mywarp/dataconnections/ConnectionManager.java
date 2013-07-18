@@ -8,7 +8,8 @@ import me.taylorkelly.mywarp.data.Warp;
 
 /**
  * This class manages data connections and provides a centralized (and asyc)
- * access to their methods. Each ConnectionManager handles one data connection only.
+ * access to their methods. Each ConnectionManager handles one data connection
+ * only.
  */
 public class ConnectionManager implements DataConnection {
 
@@ -31,18 +32,15 @@ public class ConnectionManager implements DataConnection {
      * @throws DataConnectionException
      *             if any circumstance prevents working with the database
      */
-    public ConnectionManager(boolean useMySQL, boolean createIfNotExist,
-            boolean updateIfNecessary) throws DataConnectionException {
+    public ConnectionManager(boolean useMySQL, boolean createIfNotExist, boolean updateIfNecessary)
+            throws DataConnectionException {
 
         if (useMySQL) {
             // Use MySQL
-            handler = new MySQLConnection("jdbc:mysql://"
-                    + MyWarp.inst().getWarpSettings().mySQLhost + ":"
+            handler = new MySQLConnection("jdbc:mysql://" + MyWarp.inst().getWarpSettings().mySQLhost + ":"
                     + MyWarp.inst().getWarpSettings().mySQLport + "/"
-                    + MyWarp.inst().getWarpSettings().mySQLdb, MyWarp.inst()
-                    .getWarpSettings().mySQLuname, MyWarp.inst()
-                    .getWarpSettings().mySQLpass, MyWarp.inst()
-                    .getWarpSettings().mySQLtable);
+                    + MyWarp.inst().getWarpSettings().mySQLdb, MyWarp.inst().getWarpSettings().mySQLuname,
+                    MyWarp.inst().getWarpSettings().mySQLpass, MyWarp.inst().getWarpSettings().mySQLtable);
         } else {
             // Use SQLite
             try {
@@ -53,8 +51,7 @@ public class ConnectionManager implements DataConnection {
                 MyWarp.logger().severe("Unable to find SQLite library.");
                 throw new DataConnectionException();
             }
-            handler = new SQLiteConnection("jdbc:sqlite://"
-                    + MyWarp.inst().getDataFolder().getAbsolutePath()
+            handler = new SQLiteConnection("jdbc:sqlite://" + MyWarp.inst().getDataFolder().getAbsolutePath()
                     + File.separator + "warps.db", "warpTable");
         }
 
@@ -68,14 +65,12 @@ public class ConnectionManager implements DataConnection {
     }
 
     @Override
-    public void checkDB(boolean createIfNotExist)
-            throws DataConnectionException {
+    public void checkDB(boolean createIfNotExist) throws DataConnectionException {
         handler.checkDB(createIfNotExist);
     }
 
     @Override
-    public void updateDB(boolean updateIfNecessary)
-            throws DataConnectionException {
+    public void updateDB(boolean updateIfNecessary) throws DataConnectionException {
         handler.updateDB(updateIfNecessary);
     }
 

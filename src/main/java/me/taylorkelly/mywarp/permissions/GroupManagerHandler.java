@@ -17,7 +17,6 @@ public class GroupManagerHandler implements PermissionsHandler {
 
     @Override
     public boolean playerHasGroup(Player player, String group) {
-        return manager.getWorldsHolder().getWorldPermissions(player)
-                .inGroup(player.getName(), group);
+        return manager.getWorldsHolder().getWorldPermissions(player).inGroup(player.getName(), group);
     }
 }

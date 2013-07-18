@@ -57,13 +57,11 @@ public class CommandsManager {
      * @throws CommandException
      *             If the sender may not execute the command
      */
-    private void checkSender(Method method, CommandSender sender)
-            throws CommandException {
+    private void checkSender(Method method, CommandSender sender) throws CommandException {
 
         Class<?>[] params = method.getParameterTypes();
 
-        if (params[1] != CommandSender.class
-                && !params[1].isAssignableFrom(sender.getClass())) {
+        if (params[1] != CommandSender.class && !params[1].isAssignableFrom(sender.getClass())) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
                     .getString("error.cmd.invalidSender"));
         }
@@ -80,17 +78,15 @@ public class CommandsManager {
      *            the full arguments given when executing the command
      * @throws CommandException
      */
-    private void execute(CommandSender sender, String topCmdName,
-            String[] fullArgs) throws CommandException {
+    private void execute(CommandSender sender, String topCmdName, String[] fullArgs) throws CommandException {
         Method method = commands.get(null).get(topCmdName);
 
         // If we execute a nested command and the second argument is a valid
         // sub-command, we need to execute this sub-command. If not we
         // execute the root-command's method.
-        if (method.isAnnotationPresent(NestedCommand.class)
-                && fullArgs.length >= 2 && hasSubComand(method, fullArgs[1])) {
-            executeMethod(commands.get(method).get(fullArgs[1]), sender, 1,
-                    fullArgs);
+        if (method.isAnnotationPresent(NestedCommand.class) && fullArgs.length >= 2
+                && hasSubComand(method, fullArgs[1])) {
+            executeMethod(commands.get(method).get(fullArgs[1]), sender, 1, fullArgs);
         } else {
             executeMethod(method, sender, 0, fullArgs);
         }
@@ -115,8 +111,8 @@ public class CommandsManager {
      *             When conditions defined for this command (flags,
      *             argument-count, permissions...) are not met.
      */
-    private void executeMethod(Method method, CommandSender sender, int level,
-            String[] fullArgs) throws CommandException {
+    private void executeMethod(Method method, CommandSender sender, int level, String[] fullArgs)
+            throws CommandException {
         Command cmd = method.getAnnotation(Command.class);
         if (!hasPermission(cmd, sender)) {
             throw new CommandPermissionsException();
@@ -145,22 +141,19 @@ public class CommandsManager {
         // test if the command has too few arguments
         if (context.argsLength() < cmd.min()) {
             throw new CommandUsageException(MyWarp.inst().getLanguageManager()
-                    .getString("error.cmd.toFewArgs"), getUsage(fullArgs,
-                    level, cmd));
+                    .getString("error.cmd.toFewArgs"), getUsage(fullArgs, level, cmd));
         }
 
         // test if the command has too many arguments
         if (cmd.max() != -1 && context.argsLength() > cmd.max()) {
             throw new CommandUsageException(MyWarp.inst().getLanguageManager()
-                    .getString("error.cmd.toManyArgs"), getUsage(fullArgs,
-                    level, cmd));
+                    .getString("error.cmd.toManyArgs"), getUsage(fullArgs, level, cmd));
         }
 
         // loop through all flags and catch unsupported ones
         for (char flag : context.getFlags()) {
             if (!newFlags.contains(flag)) {
-                throw new CommandUsageException(MyWarp.inst()
-                        .getLanguageManager()
+                throw new CommandUsageException(MyWarp.inst().getLanguageManager()
                         .getString("error.cmd.unknownFlag")
                         + " " + flag, getUsage(fullArgs, level, cmd));
             }
@@ -169,15 +162,11 @@ public class CommandsManager {
         // if economy support is enabled we need to check if the sender can
         // afford using the command
         if (MyWarp.inst().getWarpSettings().useEconomy && cmd.fee() != Fee.NONE) {
-            double fee = MyWarp.inst().getPermissionsManager()
-                    .getEconomyPrices(sender).getFee(cmd.fee());
+            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(cmd.fee());
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
-                throw new CommandException(MyWarp
-                        .inst()
-                        .getLanguageManager()
-                        .getEffectiveString("error.economy.cannotAfford",
-                                "%amount%", Double.toString(fee)));
+                throw new CommandException(MyWarp.inst().getLanguageManager()
+                        .getEffectiveString("error.economy.cannotAfford", "%amount%", Double.toString(fee)));
             }
         }
         Object instance = instances.get(method);
@@ -196,10 +185,8 @@ public class CommandsManager {
 
             MyWarp.inst()
                     .getEconomyLink()
-                    .withdrawSender(
-                            sender,
-                            MyWarp.inst().getPermissionsManager()
-                                    .getEconomyPrices(sender).getFee(cmd.fee()));
+                    .withdrawSender(sender,
+                            MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(cmd.fee()));
         }
     }
 
@@ -240,16 +227,16 @@ public class CommandsManager {
      * @return the translated command usage
      */
     public String parseCmdUsage(Command cmd) {
-        String ret = StringUtils.replace(cmd.usage(), "player", MyWarp.inst()
-                .getLanguageManager().getString("cmd.usage.player"));
-        ret = StringUtils.replace(ret, "name", MyWarp.inst()
-                .getLanguageManager().getString("cmd.usage.name"));
-        ret = StringUtils.replace(ret, "group", MyWarp.inst()
-                .getLanguageManager().getString("cmd.usage.group"));
-        ret = StringUtils.replace(ret, "world", MyWarp.inst()
-                .getLanguageManager().getString("cmd.usage.world"));
-        ret = StringUtils.replace(ret, "creator", MyWarp.inst()
-                .getLanguageManager().getString("cmd.usage.creator"));
+        String ret = StringUtils.replace(cmd.usage(), "player",
+                MyWarp.inst().getLanguageManager().getString("cmd.usage.player"));
+        ret = StringUtils
+                .replace(ret, "name", MyWarp.inst().getLanguageManager().getString("cmd.usage.name"));
+        ret = StringUtils.replace(ret, "group",
+                MyWarp.inst().getLanguageManager().getString("cmd.usage.group"));
+        ret = StringUtils.replace(ret, "world",
+                MyWarp.inst().getLanguageManager().getString("cmd.usage.world"));
+        ret = StringUtils.replace(ret, "creator",
+                MyWarp.inst().getLanguageManager().getString("cmd.usage.creator"));
 
         return ret;
     }
@@ -265,8 +252,7 @@ public class CommandsManager {
      *            the root-level identifier of the commands
      * @return a list of usable commands
      */
-    public Set<Command> getUsableCommands(CommandSender sender,
-            String rootIdentifier) {
+    public Set<Command> getUsableCommands(CommandSender sender, String rootIdentifier) {
         TreeSet<Command> ret = new TreeSet<Command>(new Comparator<Command>() {
             @Override
             public int compare(Command cmd1, Command cmd2) {
@@ -319,8 +305,7 @@ public class CommandsManager {
 
         usage.append(getArguments(cmd));
 
-        final String desc = MyWarp.inst().getLanguageManager()
-                .getString(cmd.desc());
+        final String desc = MyWarp.inst().getLanguageManager().getString(cmd.desc());
         if (desc.length() > 0) {
             usage.append("\n");
             usage.append(ChatColor.RESET);
@@ -347,9 +332,8 @@ public class CommandsManager {
      *            command's identifier on root-level!)
      * @return true if the command is managed by MyWarp, false if not
      */
-    public boolean handleBukkitCommand(CommandSender sender,
-            org.bukkit.command.Command command, String commandLabel,
-            String[] args) {
+    public boolean handleBukkitCommand(CommandSender sender, org.bukkit.command.Command command,
+            String commandLabel, String[] args) {
         if (!hasRootCommand(command.getName())) {
             return false;
         }
@@ -360,8 +344,7 @@ public class CommandsManager {
             execute(sender, command.getName(), args);
         } catch (CommandPermissionsException e) {
             sender.sendMessage(ChatColor.RED
-                    + MyWarp.inst().getLanguageManager()
-                            .getString("error.noPermission"));
+                    + MyWarp.inst().getLanguageManager().getString("error.noPermission"));
         } catch (CommandUsageException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
             sender.sendMessage(e.getUsage());
@@ -383,8 +366,7 @@ public class CommandsManager {
      */
     private boolean hasPermission(Command command, CommandSender sender) {
         for (String perm : command.permissions()) {
-            if (MyWarp.inst().getPermissionsManager()
-                    .hasPermission(sender, perm)) {
+            if (MyWarp.inst().getPermissionsManager().hasPermission(sender, perm)) {
                 return true;
             }
         }
@@ -419,26 +401,21 @@ public class CommandsManager {
      *            the arguments used to invoke the method
      * @throws CommandException
      */
-    private void invokeMethod(Method method, Object instance,
-            Object[] methodArgs) throws CommandException {
+    private void invokeMethod(Method method, Object instance, Object[] methodArgs) throws CommandException {
         try {
             method.invoke(instance, methodArgs);
         } catch (IllegalArgumentException e) {
             MyWarp.logger().log(Level.SEVERE, "Failed to execute command", e);
-            throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getString("error.cmd.unknown"));
+            throw new CommandException(MyWarp.inst().getLanguageManager().getString("error.cmd.unknown"));
         } catch (IllegalAccessException e) {
             MyWarp.logger().log(Level.SEVERE, "Failed to execute command", e);
-            throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getString("error.cmd.unknown"));
+            throw new CommandException(MyWarp.inst().getLanguageManager().getString("error.cmd.unknown"));
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof CommandException) {
                 throw (CommandException) e.getCause();
             } else {
-                MyWarp.logger().log(Level.SEVERE, "Failed to execute command",
-                        e);
-                throw new CommandException(MyWarp.inst().getLanguageManager()
-                        .getString("error.cmd.unknown"));
+                MyWarp.logger().log(Level.SEVERE, "Failed to execute command", e);
+                throw new CommandException(MyWarp.inst().getLanguageManager().getString("error.cmd.unknown"));
             }
         }
     }
@@ -516,8 +493,7 @@ public class CommandsManager {
             // Look for nested commands, they need to be cached too so we can
             // look them up quickly when processing commands.
             if (method.isAnnotationPresent(NestedCommand.class)) {
-                NestedCommand nestedCmd = method
-                        .getAnnotation(NestedCommand.class);
+                NestedCommand nestedCmd = method.getAnnotation(NestedCommand.class);
 
                 for (Class<?> nestedCls : nestedCmd.value()) {
                     registerMethods(nestedCls, method);

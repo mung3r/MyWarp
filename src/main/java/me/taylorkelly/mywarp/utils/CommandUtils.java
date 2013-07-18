@@ -31,8 +31,7 @@ public class CommandUtils {
      *             if not warp could be found (could either mean a warp does not
      *             exist in the network or the sender has no right to access it)
      */
-    public static Warp getWarpForUsage(CommandSender sender, String query)
-            throws CommandException {
+    public static Warp getWarpForUsage(CommandSender sender, String query) throws CommandException {
         Player player = sender instanceof Player ? (Player) sender : null;
         MatchList matches = MyWarp.inst().getWarpManager()
                 .getMatches(query, player, new PopularityWarpComparator());
@@ -46,15 +45,11 @@ public class CommandUtils {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString("error.noSuchWarp.suggestion",
-                                "%warp%", query, "%suggestion%",
+                        .getEffectiveString("error.noSuchWarp.suggestion", "%warp%", query, "%suggestion%",
                                 match.getName()));
             } else {
-                throw new CommandException(
-                        MyWarp.inst()
-                                .getLanguageManager()
-                                .getEffectiveString("error.noSuchWarp",
-                                        "%warp%", query));
+                throw new CommandException(MyWarp.inst().getLanguageManager()
+                        .getEffectiveString("error.noSuchWarp", "%warp%", query));
             }
         }
         return warp;
@@ -72,16 +67,12 @@ public class CommandUtils {
      * @throws CommandException
      *             if the given sender may not modify the warp
      */
-    public static Warp getWarpForModification(CommandSender sender, String query)
-            throws CommandException {
+    public static Warp getWarpForModification(CommandSender sender, String query) throws CommandException {
         Warp warp = getWarpForUsage(sender, query);
 
         if (sender instanceof Player && !warp.playerCanModify((Player) sender)) {
-            throw new CommandException(MyWarp
-                    .inst()
-                    .getLanguageManager()
-                    .getEffectiveString("error.noPermission.modify", "%warp%",
-                            warp.getName()));
+            throw new CommandException(MyWarp.inst().getLanguageManager()
+                    .getEffectiveString("error.noPermission.modify", "%warp%", warp.getName()));
         }
         return warp;
     }
@@ -95,10 +86,8 @@ public class CommandUtils {
      * @throws CommandException
      *             if the sender has reached his total limit
      */
-    public static void checkTotalLimit(CommandSender sender)
-            throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().useWarpLimits
-                || !(sender instanceof Player)) {
+    public static void checkTotalLimit(CommandSender sender) throws CommandException {
+        if (!MyWarp.inst().getWarpSettings().useWarpLimits || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;
@@ -107,12 +96,8 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString(
-                            "limit.total.reached",
-                            "%maxTotal%",
-                            Integer.toString(MyWarp.inst()
-                                    .getPermissionsManager()
-                                    .maxTotalWarps(player))));
+                    .getEffectiveString("limit.total.reached", "%maxTotal%",
+                            Integer.toString(MyWarp.inst().getPermissionsManager().maxTotalWarps(player))));
         }
     }
 
@@ -125,10 +110,8 @@ public class CommandUtils {
      * @throws CommandException
      *             if the sender has reached his public limit
      */
-    public static void checkPublicLimit(CommandSender sender)
-            throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().useWarpLimits
-                || !(sender instanceof Player)) {
+    public static void checkPublicLimit(CommandSender sender) throws CommandException {
+        if (!MyWarp.inst().getWarpSettings().useWarpLimits || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;
@@ -137,12 +120,8 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString(
-                            "limit.public.reached",
-                            "%maxPublic%",
-                            Integer.toString(MyWarp.inst()
-                                    .getPermissionsManager()
-                                    .maxPublicWarps(player))));
+                    .getEffectiveString("limit.public.reached", "%maxPublic%",
+                            Integer.toString(MyWarp.inst().getPermissionsManager().maxPublicWarps(player))));
         }
     }
 
@@ -155,10 +134,8 @@ public class CommandUtils {
      * @throws CommandException
      *             if the sender has reached his private limit
      */
-    public static void checkPrivateLimit(CommandSender sender)
-            throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().useWarpLimits
-                || !(sender instanceof Player)) {
+    public static void checkPrivateLimit(CommandSender sender) throws CommandException {
+        if (!MyWarp.inst().getWarpSettings().useWarpLimits || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;
@@ -167,12 +144,8 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString(
-                            "limit.private.reached",
-                            "%maxPrivate%",
-                            Integer.toString(MyWarp.inst()
-                                    .getPermissionsManager()
-                                    .maxPrivateWarps(player))));
+                    .getEffectiveString("limit.private.reached", "%maxPrivate%",
+                            Integer.toString(MyWarp.inst().getPermissionsManager().maxPrivateWarps(player))));
         }
     }
 
@@ -189,10 +162,8 @@ public class CommandUtils {
      * @throws CommandException
      *             if the command sender has reached one of his limits
      */
-    public static void checkPlayerLimits(CommandSender sender, boolean publicAll)
-            throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().useWarpLimits
-                || !(sender instanceof Player)) {
+    public static void checkPlayerLimits(CommandSender sender, boolean publicAll) throws CommandException {
+        if (!MyWarp.inst().getWarpSettings().useWarpLimits || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;
@@ -201,40 +172,28 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString(
-                            "limit.total.reached.player",
-                            "%maxTotal%",
-                            Integer.toString(MyWarp.inst()
-                                    .getPermissionsManager()
-                                    .maxTotalWarps(player)), "%player%",
-                            player.getName()));
+                    .getEffectiveString("limit.total.reached.player", "%maxTotal%",
+                            Integer.toString(MyWarp.inst().getPermissionsManager().maxTotalWarps(player)),
+                            "%player%", player.getName()));
         }
         if (publicAll) {
-            if (!MyWarp.inst().getWarpManager()
-                    .playerCanBuildPublicWarp(player)) {
-                throw new CommandException(MyWarp
-                        .inst()
-                        .getLanguageManager()
-                        .getEffectiveString(
-                                "limit.public.reached.player",
-                                "%maxPublic%",
-                                Integer.toString(MyWarp.inst()
-                                        .getPermissionsManager()
-                                        .maxPublicWarps(player)), "%player%",
-                                player.getName()));
+            if (!MyWarp.inst().getWarpManager().playerCanBuildPublicWarp(player)) {
+                throw new CommandException(
+                        MyWarp.inst()
+                                .getLanguageManager()
+                                .getEffectiveString(
+                                        "limit.public.reached.player",
+                                        "%maxPublic%",
+                                        Integer.toString(MyWarp.inst().getPermissionsManager()
+                                                .maxPublicWarps(player)), "%player%", player.getName()));
             }
-        } else if (!MyWarp.inst().getWarpManager()
-                .playerCanBuildPrivateWarp(player)) {
+        } else if (!MyWarp.inst().getWarpManager().playerCanBuildPrivateWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString(
-                            "limit.private.reached.player",
-                            "%maxPrivate%",
-                            Integer.toString(MyWarp.inst()
-                                    .getPermissionsManager()
-                                    .maxPrivateWarps(player)), "%player%",
-                            player.getName()));
+                    .getEffectiveString("limit.private.reached.player", "%maxPrivate%",
+                            Integer.toString(MyWarp.inst().getPermissionsManager().maxPrivateWarps(player)),
+                            "%player%", player.getName()));
         }
     }
 
@@ -250,11 +209,8 @@ public class CommandUtils {
     public static Player matchPlayer(String name) throws CommandException {
         Player actuallPlayer = MyWarp.inst().getServer().getPlayer(name);
         if (actuallPlayer == null) {
-            throw new CommandException(MyWarp
-                    .inst()
-                    .getLanguageManager()
-                    .getEffectiveString("error.player.offline", "%player%",
-                            name));
+            throw new CommandException(MyWarp.inst().getLanguageManager()
+                    .getEffectiveString("error.player.offline", "%player%", name));
         }
         return actuallPlayer;
     }
@@ -268,8 +224,7 @@ public class CommandUtils {
      * @throws CommandException
      *             if the given sender is not a Player
      */
-    public static Player checkPlayer(CommandSender sender)
-            throws CommandException {
+    public static Player checkPlayer(CommandSender sender) throws CommandException {
         if (sender instanceof Player) {
             return (Player) sender;
         } else {
@@ -289,8 +244,7 @@ public class CommandUtils {
      * @throws CommandPermissionsException
      *             if the sender does NOT have the given permission
      */
-    public static void checkPermissions(CommandSender sender, String perm)
-            throws CommandPermissionsException {
+    public static void checkPermissions(CommandSender sender, String perm) throws CommandPermissionsException {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(sender, perm)) {
             throw new CommandPermissionsException();
         }

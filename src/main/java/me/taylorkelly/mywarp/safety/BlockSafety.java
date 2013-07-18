@@ -4,7 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 /**
- * This class provides and manages methods to determine if a certain location is safe
+ * This class provides and manages methods to determine if a certain location is
+ * safe
  */
 public class BlockSafety {
 
@@ -21,12 +22,10 @@ public class BlockSafety {
         upOne.setY(upOne.getY() + 1);
         downOne.setY(downOne.getY() - 1);
 
-        if (l.getBlock().getType().isSolid()
-                || upOne.getBlock().getType().isSolid()) {
+        if (l.getBlock().getType().isSolid() || upOne.getBlock().getType().isSolid()) {
             return false;
         }
-        if (isUnsafeBlock(l.getBlock().getType())
-                || isUnsafeBlock(upOne.getBlock().getType())) {
+        if (isUnsafeBlock(l.getBlock().getType()) || isUnsafeBlock(upOne.getBlock().getType())) {
             return false;
         }
         if (isUnsafeBlock(downOne.getBlock().getType())) {

@@ -26,8 +26,7 @@ public class WarpSignUtils {
      */
     public static void warpFromSign(Sign sign, Player player) {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.warp.sign.use")) {
-            player.sendMessage(MyWarp.inst().getLanguageManager()
-                    .getString("sign.noPermission.use"));
+            player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.noPermission.use"));
             return;
         }
 
@@ -35,33 +34,28 @@ public class WarpSignUtils {
 
         if (!MyWarp.inst().getWarpManager().warpExists(name)) {
             player.sendMessage(ChatColor.RED
-                    + MyWarp.inst()
-                            .getLanguageManager()
-                            .getEffectiveString("error.noSuchWarp", "%warp%",
-                                    name));
+                    + MyWarp.inst().getLanguageManager()
+                            .getEffectiveString("error.noSuchWarp", "%warp%", name));
             return;
         }
         Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
 
         if (!warp.playerCanWarp(player)) {
             player.sendMessage(ChatColor.RED
-                    + MyWarp.inst()
-                            .getLanguageManager()
-                            .getEffectiveString("sign.noPermission.warpto",
-                                    "%warp%", name));
+                    + MyWarp.inst().getLanguageManager()
+                            .getEffectiveString("sign.noPermission.warpto", "%warp%", name));
             return;
         }
 
         if (MyWarp.inst().getWarpSettings().useEconomy) {
-            double fee = MyWarp.inst().getPermissionsManager()
-                    .getEconomyPrices(player).getFee(Fee.WARP_SIGN_USE);
+            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(player)
+                    .getFee(Fee.WARP_SIGN_USE);
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst()
                                 .getLanguageManager()
-                                .getEffectiveString(
-                                        "error.economy.cannotAfford",
-                                        "%amount%", Double.toString(fee)));
+                                .getEffectiveString("error.economy.cannotAfford", "%amount%",
+                                        Double.toString(fee)));
                 return;
             }
             MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
@@ -81,8 +75,7 @@ public class WarpSignUtils {
      */
     public static boolean validateWarpSign(SignChangeEvent sign, Player player) {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.warp.sign.create")) {
-            player.sendMessage(MyWarp.inst().getLanguageManager()
-                    .getString("sign.noPermission.create"));
+            player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.noPermission.create"));
             return false;
         }
         String name = sign.getLine(2);
@@ -97,32 +90,27 @@ public class WarpSignUtils {
         if (!warp.playerCanModify(player)
                 && !MyWarp.inst().getPermissionsManager()
                         .hasPermission(player, "mywarp.warp.sign.create.all")) {
-            player.sendMessage(MyWarp
-                    .inst()
-                    .getLanguageManager()
-                    .getEffectiveString("sign.noPermission.create", "%warp%",
-                            name));
+            player.sendMessage(MyWarp.inst().getLanguageManager()
+                    .getEffectiveString("sign.noPermission.create", "%warp%", name));
             return false;
         }
 
         if (MyWarp.inst().getWarpSettings().useEconomy) {
-            double fee = MyWarp.inst().getPermissionsManager()
-                    .getEconomyPrices(player).getFee(Fee.WARP_SIGN_CREATE);
+            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(player)
+                    .getFee(Fee.WARP_SIGN_CREATE);
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst()
                                 .getLanguageManager()
-                                .getEffectiveString(
-                                        "error.economy.cannotAfford",
-                                        "%amount%", Double.toString(fee)));
+                                .getEffectiveString("error.economy.cannotAfford", "%amount%",
+                                        Double.toString(fee)));
                 return false;
             }
             MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
         }
 
         sign.setLine(1, SIGN_TEXT);
-        player.sendMessage(MyWarp.inst().getLanguageManager()
-                .getString("sign.created"));
+        player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.created"));
         return true;
     }
 

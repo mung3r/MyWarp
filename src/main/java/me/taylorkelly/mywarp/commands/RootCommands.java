@@ -21,62 +21,44 @@ import org.bukkit.entity.Player;
  */
 public class RootCommands {
 
-    @NestedCommand({ AdminCommands.class, BasicCommands.class,
-            SocialCommands.class })
+    @NestedCommand({ AdminCommands.class, BasicCommands.class, SocialCommands.class })
     @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "cmd.description.warpTo", min = 1, permissions = { "mywarp.warp.basic.warp" })
-    public void warpTo(CommandContext args, Player sender)
-            throws CommandException {
+    public void warpTo(CommandContext args, Player sender) throws CommandException {
         // first check the economy
         if (MyWarp.inst().getWarpSettings().useEconomy) {
-            double fee = MyWarp.inst().getPermissionsManager()
-                    .getEconomyPrices(sender).getFee(Fee.WARP_TO);
+            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(Fee.WARP_TO);
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
-                throw new CommandException(MyWarp
-                        .inst()
-                        .getLanguageManager()
-                        .getEffectiveString("error.economy.cannotAfford",
-                                "%amount%", Double.toString(fee)));
+                throw new CommandException(MyWarp.inst().getLanguageManager()
+                        .getEffectiveString("error.economy.cannotAfford", "%amount%", Double.toString(fee)));
             }
         }
 
-        Warp warp = CommandUtils.getWarpForUsage(sender,
-                args.getJoinedStrings(0));
+        Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(0));
         if (MyWarp.inst().getWarpSettings().useTimers) {
-            Time cooldown = MyWarp.inst().getPermissionsManager()
-                    .getCooldown(sender);
-            Time warmup = MyWarp.inst().getPermissionsManager()
-                    .getWarmup(sender);
+            Time cooldown = MyWarp.inst().getPermissionsManager().getCooldown(sender);
+            Time warmup = MyWarp.inst().getPermissionsManager().getWarmup(sender);
 
             if (PlayerCooldown.isActive(sender.getName())) {
-                throw new CommandException(
-                        MyWarp.inst()
-                                .getLanguageManager()
-                                .getEffectiveString(
-                                        "timer.cooldown.cooling",
-                                        "%seconds%",
-                                        Integer.toString(PlayerCooldown
-                                                .getRemainingCooldown(sender
-                                                        .getName()))));
+                throw new CommandException(MyWarp
+                        .inst()
+                        .getLanguageManager()
+                        .getEffectiveString("timer.cooldown.cooling", "%seconds%",
+                                Integer.toString(PlayerCooldown.getRemainingCooldown(sender.getName()))));
             }
 
             if (PlayerWarmup.isActive(sender.getName())) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString(
-                                "timer.warmup.warming",
-                                "%seconds%",
-                                Integer.toString(PlayerWarmup
-                                        .getRemainingWarmup(sender.getName()))));
+                        .getEffectiveString("timer.warmup.warming", "%seconds%",
+                                Integer.toString(PlayerWarmup.getRemainingWarmup(sender.getName()))));
             }
 
-            if (MyWarp.inst().getPermissionsManager()
-                    .hasPermission(sender, "mywarp.warmup.disobey")) {
+            if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.warmup.disobey")) {
                 warp.warp(sender, true);
 
-                if (!MyWarp.inst().getPermissionsManager()
-                        .hasPermission(sender, "mywarp.cooldown.disobey")) {
+                if (!MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.cooldown.disobey")) {
                     new PlayerCooldown(sender, cooldown);
                 }
                 return;
@@ -88,8 +70,7 @@ public class RootCommands {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString("timer.warmup.warming", "%warp%",
-                                warp.getName(), "%seconds%",
+                        .getEffectiveString("timer.warmup.warming", "%warp%", warp.getName(), "%seconds%",
                                 Integer.toString(warmup.getInt())));
             }
 

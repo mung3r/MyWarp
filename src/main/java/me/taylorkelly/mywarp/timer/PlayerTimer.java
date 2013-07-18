@@ -79,8 +79,7 @@ public abstract class PlayerTimer extends BukkitRunnable {
      * @return the remaining time in seconds
      */
     public Integer getRemainingTime() {
-        int time = (int) (duration.getTicks() - (startTime - System
-                .currentTimeMillis()));
+        int time = (int) (duration.getTicks() - (startTime - System.currentTimeMillis()));
         return duration.getInt() - (time / 1000);
     }
 }

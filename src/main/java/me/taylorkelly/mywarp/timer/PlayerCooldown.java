@@ -33,8 +33,7 @@ public class PlayerCooldown extends PlayerTimer {
             return;
         }
         if (MyWarp.inst().getWarpSettings().coolDownNotify) {
-            player.sendMessage(MyWarp.inst().getLanguageManager()
-                    .getString("timer.cooldown.ended"));
+            player.sendMessage(MyWarp.inst().getLanguageManager().getString("timer.cooldown.ended"));
         }
     }
 

@@ -46,23 +46,20 @@ public class PlayerWarmup extends PlayerTimer {
         }
 
         if (MyWarp.inst().getWarpSettings().useEconomy) {
-            double fee = MyWarp.inst().getPermissionsManager()
-                    .getEconomyPrices(player).getFee(Fee.WARP_TO);
+            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(player).getFee(Fee.WARP_TO);
 
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst()
                                 .getLanguageManager()
-                                .getEffectiveString(
-                                        "error.economy.cannotAfford",
-                                        "%amount%", Double.toString(fee)));
+                                .getEffectiveString("error.economy.cannotAfford", "%amount%",
+                                        Double.toString(fee)));
                 return;
             }
         }
 
         warp.warp(player, true);
-        if (!MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.cooldown.disobey")) {
+        if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.cooldown.disobey")) {
             new PlayerCooldown(player, cooldown);
         }
     }

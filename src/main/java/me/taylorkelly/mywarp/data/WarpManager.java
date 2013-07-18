@@ -113,8 +113,7 @@ public class WarpManager {
      *            the comparator or null for default sorting
      * @return a match list with warps matching the given criteria
      */
-    public MatchList getMatches(String name, Player player,
-            Comparator<Warp> comperator) {
+    public MatchList getMatches(String name, Player player, Comparator<Warp> comperator) {
         TreeSet<Warp> exactMatches = new TreeSet<Warp>(comperator);
         TreeSet<Warp> matches = new TreeSet<Warp>(comperator);
 
@@ -124,8 +123,7 @@ public class WarpManager {
             }
             if (warp.getName().equalsIgnoreCase(name)) {
                 exactMatches.add(warp);
-            } else if (warp.getName().toLowerCase()
-                    .contains(name.toLowerCase())) {
+            } else if (warp.getName().toLowerCase().contains(name.toLowerCase())) {
                 matches.add(warp);
             }
         }
@@ -187,8 +185,7 @@ public class WarpManager {
         TreeSet<Warp> ret = new TreeSet<Warp>();
 
         for (Warp warp : warpMap.values()) {
-            if (warp.isPublicAll() == publicAll && creator != null
-                    && warp.playerIsCreator(creator)) {
+            if (warp.isPublicAll() == publicAll && creator != null && warp.playerIsCreator(creator)) {
                 ret.add(warp);
             }
         }
@@ -297,12 +294,10 @@ public class WarpManager {
      *         not
      */
     public boolean playerCanBuildPrivateWarp(Player player) {
-        if (MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.limit.private.unlimited")) {
+        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.private.unlimited")) {
             return true;
         }
-        return numPrivateWarpsPlayer(player) < MyWarp.inst()
-                .getPermissionsManager().maxPrivateWarps(player);
+        return numPrivateWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().maxPrivateWarps(player);
     }
 
     /**
@@ -316,12 +311,10 @@ public class WarpManager {
      *         not
      */
     public boolean playerCanBuildPublicWarp(Player player) {
-        if (MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.limit.public.unlimited")) {
+        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.public.unlimited")) {
             return true;
         }
-        return numPublicWarpsPlayer(player) < MyWarp.inst()
-                .getPermissionsManager().maxPublicWarps(player);
+        return numPublicWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().maxPublicWarps(player);
     }
 
     /**
@@ -334,12 +327,10 @@ public class WarpManager {
      * @return true if the player can build additional warps, false if not
      */
     public boolean playerCanBuildWarp(Player player) {
-        if (MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.limit.total.unlimited")) {
+        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.total.unlimited")) {
             return true;
         }
-        return numWarpsPlayer(player) < MyWarp.inst().getPermissionsManager()
-                .maxTotalWarps(player);
+        return numWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().maxTotalWarps(player);
     }
 
     /**
@@ -375,11 +366,8 @@ public class WarpManager {
             }
 
             // sendMessage is threadsafe
-            player.sendMessage(MyWarp
-                    .inst()
-                    .getLanguageManager()
-                    .getEffectiveString("warp.welcome.received", "%warp%",
-                            warp.getName()));
+            player.sendMessage(MyWarp.inst().getLanguageManager()
+                    .getEffectiveString("warp.welcome.received", "%warp%", warp.getName()));
             player.sendMessage(ChatColor.AQUA + message);
         }
     }
@@ -424,8 +412,8 @@ public class WarpManager {
      *            the comperator or null for the default sorting
      * @return a sorted list with all warps matching the given criteria
      */
-    public TreeSet<Warp> warpsInvitedTo(Player player, String creator,
-            String world, Comparator<Warp> comperator) {
+    public TreeSet<Warp> warpsInvitedTo(Player player, String creator, String world,
+            Comparator<Warp> comperator) {
         TreeSet<Warp> results = new TreeSet<Warp>(comperator);
 
         if (creator != null) {

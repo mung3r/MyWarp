@@ -55,11 +55,9 @@ public class JDBCUtil {
      * @throws SQLException
      *             if an exception is encountered while accessing the database
      */
-    public static boolean tableExists(DatabaseMetaData dbMetaData,
-            String tableName) throws SQLException {
+    public static boolean tableExists(DatabaseMetaData dbMetaData, String tableName) throws SQLException {
         return (tableExistsCaseSensitive(dbMetaData, tableName)
-                || tableExistsCaseSensitive(dbMetaData,
-                        tableName.toUpperCase(Locale.US)) || tableExistsCaseSensitive(
+                || tableExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US)) || tableExistsCaseSensitive(
                     dbMetaData, tableName.toLowerCase(Locale.US)));
     }
 
@@ -75,8 +73,8 @@ public class JDBCUtil {
      * @throws SQLException
      *             if an exception is encountered while accessing the database
      */
-    public static boolean tableExistsCaseSensitive(DatabaseMetaData dbMetaData,
-            String tableName) throws SQLException {
+    public static boolean tableExistsCaseSensitive(DatabaseMetaData dbMetaData, String tableName)
+            throws SQLException {
         ResultSet rsTables = dbMetaData.getTables(null, null, tableName, null);
         try {
             boolean found = rsTables.next();
@@ -101,28 +99,20 @@ public class JDBCUtil {
      * @throws SQLException
      *             if an exception is encountered while accessing the database
      */
-    public static boolean columnExists(DatabaseMetaData dbMetaData,
-            String tableName, String columnName) throws SQLException {
+    public static boolean columnExists(DatabaseMetaData dbMetaData, String tableName, String columnName)
+            throws SQLException {
         return (columnExistsCaseSensitive(dbMetaData, tableName, columnName)
-                || columnExistsCaseSensitive(dbMetaData, tableName,
+                || columnExistsCaseSensitive(dbMetaData, tableName, columnName.toUpperCase(Locale.US))
+                || columnExistsCaseSensitive(dbMetaData, tableName, columnName.toLowerCase(Locale.US))
+                || columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US), columnName)
+                || columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US),
                         columnName.toUpperCase(Locale.US))
-                || columnExistsCaseSensitive(dbMetaData, tableName,
+                || columnExistsCaseSensitive(dbMetaData, tableName.toUpperCase(Locale.US),
                         columnName.toLowerCase(Locale.US))
-                || columnExistsCaseSensitive(dbMetaData,
-                        tableName.toUpperCase(Locale.US), columnName)
-                || columnExistsCaseSensitive(dbMetaData,
-                        tableName.toUpperCase(Locale.US),
-                        columnName.toUpperCase(Locale.US))
-                || columnExistsCaseSensitive(dbMetaData,
-                        tableName.toUpperCase(Locale.US),
-                        columnName.toLowerCase(Locale.US))
-                || columnExistsCaseSensitive(dbMetaData,
-                        tableName.toLowerCase(Locale.US), columnName)
-                || columnExistsCaseSensitive(dbMetaData,
-                        tableName.toLowerCase(Locale.US),
-                        columnName.toUpperCase(Locale.US)) || columnExistsCaseSensitive(
-                    dbMetaData, tableName.toLowerCase(Locale.US),
-                    columnName.toLowerCase(Locale.US)));
+                || columnExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US), columnName)
+                || columnExistsCaseSensitive(dbMetaData, tableName.toLowerCase(Locale.US),
+                        columnName.toUpperCase(Locale.US)) || columnExistsCaseSensitive(dbMetaData,
+                    tableName.toLowerCase(Locale.US), columnName.toLowerCase(Locale.US)));
     }
 
     /**
@@ -140,11 +130,9 @@ public class JDBCUtil {
      * @throws SQLException
      *             if an exception is encountered while accessing the database
      */
-    public static boolean columnExistsCaseSensitive(
-            DatabaseMetaData dbMetaData, String tableName, String columnName)
-            throws SQLException {
-        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName,
-                columnName);
+    public static boolean columnExistsCaseSensitive(DatabaseMetaData dbMetaData, String tableName,
+            String columnName) throws SQLException {
+        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName, columnName);
         try {
             boolean found = rsTables.next();
             return found;
@@ -170,14 +158,11 @@ public class JDBCUtil {
      * @throws SQLException
      *             if an exception is encountered while accessing the database
      */
-    public static boolean columnIsDataType(DatabaseMetaData dbMetaData,
-            String tableName, String columnName, String dataType)
-            throws SQLException {
-        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName,
-                columnName);
+    public static boolean columnIsDataType(DatabaseMetaData dbMetaData, String tableName, String columnName,
+            String dataType) throws SQLException {
+        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName, columnName);
         try {
-            return (rsTables.next()
-                    && rsTables.getString("COLUMN_NAME").equals(columnName) && rsTables
+            return (rsTables.next() && rsTables.getString("COLUMN_NAME").equals(columnName) && rsTables
                     .getString("TYPE_NAME").equalsIgnoreCase(dataType));
         } finally {
             closeJDBCResultSet(rsTables);
@@ -197,8 +182,7 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            MyWarp.logger().severe(
-                    "Unexpected exception while closing database connection.");
+            MyWarp.logger().severe("Unexpected exception while closing database connection.");
         }
     }
 
@@ -215,8 +199,7 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            MyWarp.logger().severe(
-                    "Unexpected exception while closing database statement.");
+            MyWarp.logger().severe("Unexpected exception while closing database statement.");
         }
     }
 
@@ -233,8 +216,7 @@ public class JDBCUtil {
             }
         } catch (SQLException sqle) {
             // Log exception and continue
-            MyWarp.logger().severe(
-                    "Unexpected exception while closing database result set.");
+            MyWarp.logger().severe("Unexpected exception while closing database result set.");
         }
     }
 }

@@ -68,13 +68,11 @@ public class WarpFees extends ValuePermissionContainer {
      * @param welcomeFee
      *            used when the welcome message is changed
      */
-    public WarpFees(String name, double acceptFee, double assetsFee,
-            double createFee, double createPrivateFee, double deleteFee,
-            double giveFee, double helpFee, double infoFee, double inviteFee,
-            double listFee, double pointFee, double privatizeFee,
-            double publicizeFee, double searchFee, double uninviteFee,
-            double updateFee, double warpPlayerFee, double warpSignCreateFee,
-            double warpSignUseFee, double warpFee, double welcomeFee) {
+    public WarpFees(String name, double acceptFee, double assetsFee, double createFee,
+            double createPrivateFee, double deleteFee, double giveFee, double helpFee, double infoFee,
+            double inviteFee, double listFee, double pointFee, double privatizeFee, double publicizeFee,
+            double searchFee, double uninviteFee, double updateFee, double warpPlayerFee,
+            double warpSignCreateFee, double warpSignUseFee, double warpFee, double welcomeFee) {
         super(name);
 
         prices.put(Fee.ACCEPT, acceptFee);

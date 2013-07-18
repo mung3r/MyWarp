@@ -24,17 +24,14 @@ public class MinecraftFontWidthCalculator {
     /**
      * Stores the character widths in pixels relative to the characters
      */
-    private final static int[] charWidths = { 4, 2, 5, 6, 6, 6, 6, 3, 5, 5, 5,
-            6, 2, 6, 2, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 5, 6, 5, 6, 7,
-            6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-            6, 6, 6, 6, 4, 6, 4, 6, 6, 3, 6, 6, 6, 6, 6, 5, 6, 6, 2, 6, 5, 3,
-            6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 6, 6, 6, 6, 5, 2, 5, 7, 6, 6, 6, 6,
-            6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-            6, 6, 6, 6, 6, 4, 6, 6, 3, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 2, 6,
-            6, 8, 9, 9, 6, 6, 6, 8, 8, 6, 8, 8, 8, 8, 8, 6, 6, 9, 9, 9, 9, 9,
-            9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 6, 9,
-            9, 9, 5, 9, 9, 8, 7, 7, 8, 7, 8, 8, 8, 7, 8, 8, 7, 9, 9, 6, 7, 7,
-            7, 7, 7, 9, 6, 7, 8, 7, 6, 6, 9, 7, 6, 7, 1 };
+    private final static int[] charWidths = { 4, 2, 5, 6, 6, 6, 6, 3, 5, 5, 5, 6, 2, 6, 2, 6, 6, 6, 6, 6, 6,
+            6, 6, 6, 6, 6, 2, 2, 5, 6, 5, 6, 7, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+            6, 6, 6, 6, 6, 6, 4, 6, 4, 6, 6, 3, 6, 6, 6, 6, 6, 5, 6, 6, 2, 6, 5, 3, 6, 6, 6, 6, 6, 6, 6, 4,
+            6, 6, 6, 6, 6, 6, 5, 2, 5, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 3, 6, 6, 6, 6, 6, 6, 6,
+            6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 6, 3, 6, 6, 6, 6, 6, 6, 6, 7, 6, 6, 6, 2, 6, 6, 8, 9, 9, 6, 6,
+            6, 8, 8, 6, 8, 8, 8, 8, 8, 6, 6, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+            9, 9, 9, 9, 6, 9, 9, 9, 5, 9, 9, 8, 7, 7, 8, 7, 8, 8, 8, 7, 8, 8, 7, 9, 9, 6, 7, 7, 7, 7, 7, 9,
+            6, 7, 8, 7, 6, 6, 9, 7, 6, 7, 1 };
 
     /**
      * Returns the width of the given string in pixels. Color codes are ignored.
@@ -110,9 +107,7 @@ public class MinecraftFontWidthCalculator {
      */
     public static String paddingRight(String str, char pad, int finalLength) {
         finalLength -= getStringWidth(str);
-        return str
-                + StringUtils.repeat(Character.toString(pad), finalLength
-                        / getCharWidth(pad));
+        return str + StringUtils.repeat(Character.toString(pad), finalLength / getCharWidth(pad));
     }
 
     /**
@@ -154,8 +149,7 @@ public class MinecraftFontWidthCalculator {
      */
     public static String paddingLeft(String str, char pad, int finalLength) {
         finalLength -= finalLength - getStringWidth(str);
-        return StringUtils.repeat(Character.toString(pad),
-                finalLength / getCharWidth(pad)).concat(str);
+        return StringUtils.repeat(Character.toString(pad), finalLength / getCharWidth(pad)).concat(str);
     }
 
     /**
@@ -198,8 +192,7 @@ public class MinecraftFontWidthCalculator {
      */
     public static String centralize(String str, char pad, int finalLength) {
         finalLength -= getStringWidth(str);
-        String pading = StringUtils.repeat(Character.toString(pad), finalLength
-                / getCharWidth(pad) / 2);
+        String pading = StringUtils.repeat(Character.toString(pad), finalLength / getCharWidth(pad) / 2);
         return pading + str + pading;
     }
 
@@ -290,8 +283,7 @@ public class MinecraftFontWidthCalculator {
      *            the length
      * @return a string that contains the left and right aligned strings
      */
-    public static String rightLeftAlign(String left, String right, char pad,
-            int length) {
+    public static String rightLeftAlign(String left, String right, char pad, int length) {
         length -= (getStringWidth(left) + getStringWidth(right));
         // the length is negative if both strings are larger than the required
         // length. If this happens we trim the left string.
@@ -299,8 +291,6 @@ public class MinecraftFontWidthCalculator {
             // TODO check if right is bigger?
             left = trim(left, getStringWidth(left) + length);
         }
-        return left
-                + StringUtils.repeat(Character.toString(pad), length
-                        / getCharWidth(pad)) + right;
+        return left + StringUtils.repeat(Character.toString(pad), length / getCharWidth(pad)) + right;
     }
 }

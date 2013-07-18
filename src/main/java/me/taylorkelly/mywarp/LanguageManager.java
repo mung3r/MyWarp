@@ -38,25 +38,18 @@ public class LanguageManager {
         createLanguageFile("de_DE");
         try {
             loadLanguage(MyWarp.inst().getWarpSettings().locale);
-            MyWarp.logger().info(
-                    "Using localization: "
-                            + MyWarp.inst().getWarpSettings().locale);
+            MyWarp.logger().info("Using localization: " + MyWarp.inst().getWarpSettings().locale);
         } catch (IOException e) {
             MyWarp.logger().severe(
-                    "Could not load file: ." + File.separator
-                            + MyWarp.inst().getDataFolder().getName()
-                            + File.separator
-                            + MyWarp.inst().getWarpSettings().locale
+                    "Could not load file: ." + File.separator + MyWarp.inst().getDataFolder().getName()
+                            + File.separator + MyWarp.inst().getWarpSettings().locale
                             + ".txt, defaulting to en_US");
             try {
                 loadLanguage("en_US");
             } catch (IOException e1) {
                 MyWarp.logger().severe(
-                        "Could not load file: ." + File.separator
-                                + MyWarp.inst().getDataFolder().getName()
-                                + File.separator
-                                + MyWarp.inst().getWarpSettings().locale
-                                + ".txt");
+                        "Could not load file: ." + File.separator + MyWarp.inst().getDataFolder().getName()
+                                + File.separator + MyWarp.inst().getWarpSettings().locale + ".txt");
             }
         }
     }
@@ -82,15 +75,14 @@ public class LanguageManager {
                 FileOutputStream output = null;
 
                 try {
-                    output = new FileOutputStream(MyWarp.inst().getDataFolder()
-                            + File.separator + name + ".txt");
+                    output = new FileOutputStream(MyWarp.inst().getDataFolder() + File.separator + name
+                            + ".txt");
                     byte[] buf = new byte[8192];
                     int length = 0;
                     while ((length = input.read(buf)) > 0) {
                         output.write(buf, 0, length);
                     }
-                    MyWarp.logger().info(
-                            "Default language file written: " + name + ".txt");
+                    MyWarp.logger().info("Default language file written: " + name + ".txt");
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -142,13 +134,10 @@ public class LanguageManager {
         Scanner scan = null;
         try {
             // forcing UTF-8 BOM default since we provide the file
-            scan = new Scanner(
-                    new UnicodeBOMInputStream(MyWarp.inst().getResource(
-                            "lang/" + original + ".txt"), BOM.UTF_8).skipBOM(),
-                    "UTF-8");
+            scan = new Scanner(new UnicodeBOMInputStream(MyWarp.inst().getResource(
+                    "lang/" + original + ".txt"), BOM.UTF_8).skipBOM(), "UTF-8");
         } catch (IOException e) {
-            scan = new Scanner(MyWarp.inst().getResource(
-                    "lang/" + original + ".txt"), "UTF-8");
+            scan = new Scanner(MyWarp.inst().getResource("lang/" + original + ".txt"), "UTF-8");
         }
 
         while (scan.hasNextLine()) {
@@ -158,8 +147,7 @@ public class LanguageManager {
             }
             if (line.split(":", 2).length != 2) {
                 MyWarp.logger().severe(
-                        "Error reading default language file " + original
-                                + ".txt, line " + line
+                        "Error reading default language file " + original + ".txt, line " + line
                                 + " - Please inform the developer.");
                 continue;
             }
@@ -171,16 +159,14 @@ public class LanguageManager {
         }
 
         // Read the given file and determine if it contains all keys
-        File f = new File(MyWarp.inst().getDataFolder() + File.separator + name
-                + ".txt");
+        File f = new File(MyWarp.inst().getDataFolder() + File.separator + name + ".txt");
         if (f.exists()) {
             UnicodeBOMInputStream uis = null;
             BufferedReader br = null;
 
             try {
                 uis = new UnicodeBOMInputStream(new FileInputStream(f));
-                br = new BufferedReader(new InputStreamReader(uis.skipBOM(),
-                        "UTF-8"));
+                br = new BufferedReader(new InputStreamReader(uis.skipBOM(), "UTF-8"));
 
                 String line = "";
                 while ((line = br.readLine()) != null) {
@@ -193,13 +179,10 @@ public class LanguageManager {
                     }
                 }
             } catch (FileNotFoundException e) {
-                MyWarp.logger().severe(
-                        "Could not find file: " + f.getPath() + File.separator
-                                + f.getName());
+                MyWarp.logger().severe("Could not find file: " + f.getPath() + File.separator + f.getName());
             } catch (IOException e) {
                 MyWarp.logger().severe(
-                        "Failed to read file: " + f.getPath() + File.separator
-                                + f.getName() + ": " + e);
+                        "Failed to read file: " + f.getPath() + File.separator + f.getName() + ": " + e);
             } finally {
                 if (br != null) {
                     try {
@@ -219,14 +202,13 @@ public class LanguageManager {
             if (!map.isEmpty()) {
                 BufferedWriter output = null;
                 try {
-                    output = new BufferedWriter(new OutputStreamWriter(
-                            new FileOutputStream(f, true), "UTF-8"));
+                    output = new BufferedWriter(
+                            new OutputStreamWriter(new FileOutputStream(f, true), "UTF-8"));
                     for (Map.Entry<String, String> entry : map.entrySet()) {
                         output.newLine();
                         output.write(entry.getKey() + ":" + entry.getValue());
                     }
-                    MyWarp.logger().info(
-                            "Updated language file: " + name + ".txt");
+                    MyWarp.logger().info("Updated language file: " + name + ".txt");
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -262,8 +244,7 @@ public class LanguageManager {
             File f = new File(MyWarp.inst().getDataFolder(), locale + ".txt");
 
             uis = new UnicodeBOMInputStream(new FileInputStream(f));
-            br = new BufferedReader(new InputStreamReader(uis.skipBOM(),
-                    "UTF-8"));
+            br = new BufferedReader(new InputStreamReader(uis.skipBOM(), "UTF-8"));
             String line = "";
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#") || line.split(":", 2).length != 2) {
@@ -291,10 +272,8 @@ public class LanguageManager {
      * @return the corresponding string out of the language map
      */
     public String getString(String key) {
-        return languageMap.get(key) != null ? ChatColor
-                .translateAlternateColorCodes('§',
-                        StringUtils.replace(languageMap.get(key), "%n", "\n"))
-                : key;
+        return languageMap.get(key) != null ? ChatColor.translateAlternateColorCodes('§',
+                StringUtils.replace(languageMap.get(key), "%n", "\n")) : key;
     }
 
     /**
@@ -323,14 +302,12 @@ public class LanguageManager {
      */
     public String getEffectiveString(String key, String... replacements) {
         if (replacements.length % 2 != 0) {
-            throw new IllegalArgumentException(
-                    "The given arguments length must be equal");
+            throw new IllegalArgumentException("The given arguments length must be equal");
         }
         String trans = getString(key);
 
         for (int i = 0; i < replacements.length; i = i + 2) {
-            trans = StringUtils.replace(trans, replacements[i],
-                    replacements[i + 1]);
+            trans = StringUtils.replace(trans, replacements[i], replacements[i + 1]);
         }
         return trans;
     }

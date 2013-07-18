@@ -12,13 +12,13 @@ public class MWBlockListener implements Listener {
     /**
      * Called whenever a sign is changed
      * 
-     * @param event the event
+     * @param event
+     *            the event
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onSignChange(SignChangeEvent event) {
         if (WarpSignUtils.isSignWarp(event.getLines())) {
-            if (!WarpSignUtils
-                    .validateWarpSign(event, event.getPlayer())) {
+            if (!WarpSignUtils.validateWarpSign(event, event.getPlayer())) {
                 event.getBlock().breakNaturally();
                 event.setCancelled(true);
             }

@@ -41,20 +41,14 @@ public class SQLiteConnection implements DataConnection {
         this.dsn = dsn;
         this.table = table;
 
-        WARP_TABLE = "CREATE TABLE `" + table + "` ("
-                + "`id` INTEGER PRIMARY KEY,"
+        WARP_TABLE = "CREATE TABLE `" + table + "` (" + "`id` INTEGER PRIMARY KEY,"
                 + "`name` varchar(32) NOT NULL DEFAULT 'warp',"
                 + "`creator` varchar(32) NOT NULL DEFAULT 'Player',"
-                + "`world` varchar(32) NOT NULL DEFAULT '0',"
-                + "`x` DOUBLE NOT NULL DEFAULT '0',"
-                + "`y` smallint NOT NULL DEFAULT '0',"
-                + "`z` DOUBLE NOT NULL DEFAULT '0',"
-                + "`yaw` smallint NOT NULL DEFAULT '0',"
-                + "`pitch` smallint NOT NULL DEFAULT '0',"
-                + "`publicAll` boolean NOT NULL DEFAULT '1',"
-                + "`permissions` text NOT NULL,"
-                + "`groupPermissions` text NOT NULL,"
-                + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
+                + "`world` varchar(32) NOT NULL DEFAULT '0'," + "`x` DOUBLE NOT NULL DEFAULT '0',"
+                + "`y` smallint NOT NULL DEFAULT '0'," + "`z` DOUBLE NOT NULL DEFAULT '0',"
+                + "`yaw` smallint NOT NULL DEFAULT '0'," + "`pitch` smallint NOT NULL DEFAULT '0',"
+                + "`publicAll` boolean NOT NULL DEFAULT '1'," + "`permissions` text NOT NULL,"
+                + "`groupPermissions` text NOT NULL," + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
                 + "`visits` int DEFAULT '0'" + ");";
     }
 
@@ -80,21 +74,17 @@ public class SQLiteConnection implements DataConnection {
                 conn.close();
             }
         } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE,
-                    "Unable to close SQL connection: " + ex);
+            MyWarp.logger().log(Level.SEVERE, "Unable to close SQL connection: " + ex);
         }
     }
 
     @Override
-    public void checkDB(boolean createIfNotExist)
-            throws DataConnectionException {
+    public void checkDB(boolean createIfNotExist) throws DataConnectionException {
         // Ugly way to prevent JDBC from creating an empty file upon connection.
         if (!createIfNotExist) {
-            File database = new File(MyWarp.inst().getDataFolder()
-                    .getAbsolutePath(), "warps.db");
+            File database = new File(MyWarp.inst().getDataFolder().getAbsolutePath(), "warps.db");
             if (!database.exists()) {
-                throw new DataConnectionException(
-                        "Database 'warps.db' does not exist.");
+                throw new DataConnectionException("Database 'warps.db' does not exist.");
             }
         }
         Statement stmnt = null;
@@ -108,8 +98,7 @@ public class SQLiteConnection implements DataConnection {
                 if (createIfNotExist) {
                     stmnt.execute(WARP_TABLE);
                 } else {
-                    throw new DataConnectionException("Table '" + table
-                            + "' does not exist.");
+                    throw new DataConnectionException("Table '" + table + "' does not exist.");
                 }
             }
 
@@ -125,15 +114,13 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Table Check Exception (on close): " + ex);
+                MyWarp.logger().log(Level.SEVERE, "Table Check Exception (on close): " + ex);
             }
         }
     }
 
     @Override
-    public void updateDB(boolean updateIfNecessary)
-            throws DataConnectionException {
+    public void updateDB(boolean updateIfNecessary) throws DataConnectionException {
         Statement stmnt = null;
 
         try {
@@ -143,25 +130,20 @@ public class SQLiteConnection implements DataConnection {
 
             // changing 'y' to smallint is not necessary in SQLite
             // groupPermissions, added with 2.4
-            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table,
-                    "groupPermissions")) {
+            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "groupPermissions")) {
                 if (updateIfNecessary) {
-                    stmnt.execute("ALTER TABLE "
-                            + table
+                    stmnt.execute("ALTER TABLE " + table
                             + " ADD COLUMN `groupPermissions` text NOT NULL DEFAULT ''");
                 } else {
-                    throw new DataConnectionException(
-                            "Column 'groupPermissions' does not exist.");
+                    throw new DataConnectionException("Column 'groupPermissions' does not exist.");
                 }
             }
             // visits, added with 2.4
             if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "visits")) {
                 if (updateIfNecessary) {
-                    stmnt.execute("ALTER TABLE " + table
-                            + " ADD COLUMN `visits` int DEFAULT '0'");
+                    stmnt.execute("ALTER TABLE " + table + " ADD COLUMN `visits` int DEFAULT '0'");
                 } else {
-                    throw new DataConnectionException(
-                            "Column 'visits' does not exist.");
+                    throw new DataConnectionException("Column 'visits' does not exist.");
                 }
             }
 
@@ -177,8 +159,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Table Update Exception (on close): " + ex);
+                MyWarp.logger().log(Level.SEVERE, "Table Update Exception (on close): " + ex);
             }
         }
     }
@@ -209,9 +190,8 @@ public class SQLiteConnection implements DataConnection {
                 String groupPermissions = rsWarps.getString("groupPermissions");
                 String welcomeMessage = rsWarps.getString("welcomeMessage");
                 int visits = rsWarps.getInt("visits");
-                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw,
-                        pitch, publicAll, permissions, groupPermissions,
-                        welcomeMessage, visits);
+                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll,
+                        permissions, groupPermissions, welcomeMessage, visits);
                 ret.put(name, warp);
             }
         } catch (SQLException ex) {
@@ -228,8 +208,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Load Exception (on close):" + ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Load Exception (on close):" + ex);
             }
         }
         return ret;
@@ -272,8 +251,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Insert Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Insert Exception (on close): ", ex);
             }
         }
 
@@ -285,8 +263,7 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("DELETE FROM " + table
-                    + " WHERE id = ?");
+            stmnt = conn.prepareStatement("DELETE FROM " + table + " WHERE id = ?");
             stmnt.setInt(1, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
@@ -300,8 +277,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Delete Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Delete Exception (on close): ", ex);
             }
         }
     }
@@ -313,8 +289,7 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table
-                    + " SET publicAll = ? WHERE id = ?");
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET publicAll = ? WHERE id = ?");
             stmnt.setBoolean(1, publicAll);
             stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
@@ -329,8 +304,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Publicize Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Publicize Exception (on close): ", ex);
             }
         }
 
@@ -343,8 +317,7 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table
-                    + " SET creator = ? WHERE id = ?");
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET creator = ? WHERE id = ?");
             stmnt.setString(1, warp.getCreator());
             stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
@@ -359,8 +332,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Creator Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception (on close): ", ex);
             }
         }
 
@@ -373,10 +345,8 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn
-                    .prepareStatement("UPDATE "
-                            + table
-                            + " SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE id = ?");
+            stmnt = conn.prepareStatement("UPDATE " + table
+                    + " SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE id = ?");
             stmnt.setString(1, warp.getWorld());
             stmnt.setDouble(2, warp.getX());
             stmnt.setInt(3, warp.getY());
@@ -396,8 +366,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Location Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Location Exception (on close): ", ex);
             }
         }
     }
@@ -409,14 +378,12 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table
-                    + " SET permissions = ? WHERE id = ?");
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET permissions = ? WHERE id = ?");
             stmnt.setString(1, warp.permissionsString());
             stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Permissions Exception: ",
-                    ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp Permissions Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -426,8 +393,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Permissions Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Permissions Exception (on close): ", ex);
             }
         }
 
@@ -440,14 +406,12 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table
-                    + " SET groupPermissions = ? WHERE id = ?");
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET groupPermissions = ? WHERE id = ?");
             stmnt.setString(1, warp.groupPermissionsString());
             stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE,
-                    "Warp GroupPermissions Exception: ", ex);
+            MyWarp.logger().log(Level.SEVERE, "Warp GroupPermissions Exception: ", ex);
         } finally {
             try {
                 if (stmnt != null) {
@@ -457,8 +421,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp GroupPermissions Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp GroupPermissions Exception (on close): ", ex);
             }
         }
 
@@ -471,8 +434,7 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table
-                    + " SET visits = ? WHERE id = ?");
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET visits = ? WHERE id = ?");
             stmnt.setInt(1, warp.getVisits());
             stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
@@ -487,8 +449,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Visits Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Visits Exception (on close): ", ex);
             }
         }
     }
@@ -500,8 +461,7 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table
-                    + " SET welcomeMessage = ? WHERE id = ?");
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET welcomeMessage = ? WHERE id = ?");
             stmnt.setString(1, warp.getRawWelcomeMessage());
             stmnt.setInt(2, warp.getIndex());
             stmnt.executeUpdate();
@@ -516,8 +476,7 @@ public class SQLiteConnection implements DataConnection {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE,
-                        "Warp Creator Exception (on close): ", ex);
+                MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception (on close): ", ex);
             }
         }
     }

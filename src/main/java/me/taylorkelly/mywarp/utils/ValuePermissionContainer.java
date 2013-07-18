@@ -5,15 +5,15 @@ package me.taylorkelly.mywarp.utils;
  * extend this class as it handles the sorting of the storage objects
  * (alphabetical).
  */
-public abstract class ValuePermissionContainer implements
-        Comparable<ValuePermissionContainer> {
+public abstract class ValuePermissionContainer implements Comparable<ValuePermissionContainer> {
 
     private final String name;
 
     /**
      * Constructs this instance and assigns the name
      * 
-     * @param name the name of this container, used on permission-lookup
+     * @param name
+     *            the name of this container, used on permission-lookup
      */
     public ValuePermissionContainer(String name) {
         this.name = name;

@@ -72,14 +72,11 @@ public class WarpSettings {
 
     public WarpSettings() {
         configFile = new File(MyWarp.inst().getDataFolder(), CONFIG_FILE);
-        config = getYAMLConfig(
-                configFile,
-                YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(
-                        CONFIG_FILE)));
+        config = getYAMLConfig(configFile,
+                YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(CONFIG_FILE)));
 
         // migrate the legacy configuration, if it exists
-        File legacyConfigFile = new File(MyWarp.inst().getDataFolder(),
-                LEGACY_CONFIG_FILE);
+        File legacyConfigFile = new File(MyWarp.inst().getDataFolder(), LEGACY_CONFIG_FILE);
         if (legacyConfigFile.exists()) {
             migrateLegacyConfig(legacyConfigFile);
         }
@@ -101,8 +98,7 @@ public class WarpSettings {
      * 
      * @return the FileConfiguraion of the given file
      */
-    private FileConfiguration getYAMLConfig(File configFile,
-            FileConfiguration defaultConfig) {
+    private FileConfiguration getYAMLConfig(File configFile, FileConfiguration defaultConfig) {
         FileConfiguration config = defaultConfig;
 
         try {
@@ -113,9 +109,7 @@ public class WarpSettings {
             // create the configuration file if it does not exist
             if (!configFile.exists()) {
                 configFile.createNewFile();
-                MyWarp.logger().info(
-                        "Default " + configFile.getName()
-                                + " created successfully!");
+                MyWarp.logger().info("Default " + configFile.getName() + " created successfully!");
             }
 
             // load the configuration-file
@@ -126,10 +120,8 @@ public class WarpSettings {
             config.options().copyDefaults(true);
             config.save(configFile);
         } catch (IOException e) {
-            MyWarp.logger().log(
-                    Level.SEVERE,
-                    "Failed to create default " + configFile.getName()
-                            + " , using build-in defaults: ", e);
+            MyWarp.logger().log(Level.SEVERE,
+                    "Failed to create default " + configFile.getName() + " , using build-in defaults: ", e);
         }
 
         return config;
@@ -162,23 +154,19 @@ public class WarpSettings {
 
         // limits
         useWarpLimits = config.getBoolean("limits.enabled");
-        ConfigurationSection configuredLimits = config
-                .getConfigurationSection("limits");
-        for (String key : config.getConfigurationSection("limits").getKeys(
-                false)) {
+        ConfigurationSection configuredLimits = config.getConfigurationSection("limits");
+        for (String key : config.getConfigurationSection("limits").getKeys(false)) {
             if (key.equals("enabled")) {
                 // ignore the enabled option
                 continue;
             } else if (key.equals("default")) {
-                defaultLimit = new WarpLimit(key, configuredLimits.getInt(key
-                        + ".maxTotal", 0), configuredLimits.getInt(key
-                        + ".maxPublic", 0), configuredLimits.getInt(key
-                        + ".maxPrivate", 0));
+                defaultLimit = new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
+                        configuredLimits.getInt(key + ".maxPublic", 0), configuredLimits.getInt(key
+                                + ".maxPrivate", 0));
             } else {
-                warpLimits.add(new WarpLimit(key, configuredLimits.getInt(key
-                        + ".maxTotal", 0), configuredLimits.getInt(key
-                        + ".maxPublic", 0), configuredLimits.getInt(key
-                        + ".maxPrivate", 0)));
+                warpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
+                        configuredLimits.getInt(key + ".maxPublic", 0), configuredLimits.getInt(key
+                                + ".maxPrivate", 0)));
             }
         }
         Collections.sort(warpLimits);
@@ -189,27 +177,22 @@ public class WarpSettings {
         warmUpNotify = config.getBoolean("timers.warmUpNotify");
         abortOnMove = config.getBoolean("timers.abortOnMove");
         abortOnDamage = config.getBoolean("timers.abortOnDamage");
-        ConfigurationSection configuredCooldowns = config
-                .getConfigurationSection("timers.cooldowns");
+        ConfigurationSection configuredCooldowns = config.getConfigurationSection("timers.cooldowns");
         for (String key : configuredCooldowns.getKeys(false)) {
             if (key.equals("default")) {
-                defaultCooldown = new Time(key,
-                        configuredCooldowns.getDouble(key));
+                defaultCooldown = new Time(key, configuredCooldowns.getDouble(key));
             } else {
-                warpCooldowns.add(new Time(key, configuredCooldowns
-                        .getDouble(key)));
+                warpCooldowns.add(new Time(key, configuredCooldowns.getDouble(key)));
             }
         }
         Collections.sort(warpCooldowns);
 
-        ConfigurationSection configuredWarmups = config
-                .getConfigurationSection("timers.warmups");
+        ConfigurationSection configuredWarmups = config.getConfigurationSection("timers.warmups");
         for (String key : configuredWarmups.getKeys(false)) {
             if (key.equals("default")) {
                 defaultWarmup = new Time(key, configuredWarmups.getDouble(key));
             } else {
-                warpWarmups
-                        .add(new Time(key, configuredWarmups.getDouble(key)));
+                warpWarmups.add(new Time(key, configuredWarmups.getDouble(key)));
             }
         }
         Collections.sort(warpWarmups);
@@ -225,33 +208,24 @@ public class WarpSettings {
 
         // economy
         useEconomy = config.getBoolean("economy.enabled");
-        informAfterTransaction = config
-                .getBoolean("economy.informAfterTransaction");
+        informAfterTransaction = config.getBoolean("economy.informAfterTransaction");
 
-        ConfigurationSection configuredFees = config
-                .getConfigurationSection("economy.fees");
+        ConfigurationSection configuredFees = config.getConfigurationSection("economy.fees");
         for (String key : configuredFees.getKeys(false)) {
-            WarpFees fees = new WarpFees(key, configuredFees.getDouble(key
-                    + ".accept", 0), configuredFees.getDouble(key + ".assets",
-                    0), configuredFees.getDouble(key + ".create", 0),
-                    configuredFees.getDouble(key + ".create-private", 0),
-                    configuredFees.getDouble(key + ".delete", 0),
-                    configuredFees.getDouble(key + ".give", 0),
-                    configuredFees.getDouble(key + ".help", 0),
-                    configuredFees.getDouble(key + ".info", 0),
-                    configuredFees.getDouble(key + ".invite", 0),
-                    configuredFees.getDouble(key + ".list", 0),
-                    configuredFees.getDouble(key + ".point", 0),
-                    configuredFees.getDouble(key + ".private", 0),
-                    configuredFees.getDouble(key + ".public", 0),
-                    configuredFees.getDouble(key + ".search", 0),
-                    configuredFees.getDouble(key + ".uninvite", 0),
-                    configuredFees.getDouble(key + ".update", 0),
-                    configuredFees.getDouble(key + ".warp-player", 0),
-                    configuredFees.getDouble(key + ".warp-sign-create", 0),
-                    configuredFees.getDouble(key + ".warp-sign-use", 0),
-                    configuredFees.getDouble(key + ".warp-to", 0),
-                    configuredFees.getDouble(key + ".welcome", 0));
+            WarpFees fees = new WarpFees(key, configuredFees.getDouble(key + ".accept", 0),
+                    configuredFees.getDouble(key + ".assets", 0),
+                    configuredFees.getDouble(key + ".create", 0), configuredFees.getDouble(key
+                            + ".create-private", 0), configuredFees.getDouble(key + ".delete", 0),
+                    configuredFees.getDouble(key + ".give", 0), configuredFees.getDouble(key + ".help", 0),
+                    configuredFees.getDouble(key + ".info", 0), configuredFees.getDouble(key + ".invite", 0),
+                    configuredFees.getDouble(key + ".list", 0), configuredFees.getDouble(key + ".point", 0),
+                    configuredFees.getDouble(key + ".private", 0), configuredFees.getDouble(key + ".public",
+                            0), configuredFees.getDouble(key + ".search", 0), configuredFees.getDouble(key
+                            + ".uninvite", 0), configuredFees.getDouble(key + ".update", 0),
+                    configuredFees.getDouble(key + ".warp-player", 0), configuredFees.getDouble(key
+                            + ".warp-sign-create", 0), configuredFees.getDouble(key + ".warp-sign-use", 0),
+                    configuredFees.getDouble(key + ".warp-to", 0), configuredFees.getDouble(key + ".welcome",
+                            0));
             if (key.equals("default")) {
                 defaultWarpFees = fees;
             } else {
@@ -280,57 +254,45 @@ public class WarpSettings {
     private void migrateLegacyConfig(File legacyConfig) {
         PropertiesFile file = new PropertiesFile(legacyConfig);
         // port settings
-        config.set("settings.adminPrivateWarps", file.getBoolean(
-                "adminPrivateWarps", true,
+        config.set("settings.adminPrivateWarps", file.getBoolean("adminPrivateWarps", true,
                 "Whether or not admins can see private warps in their list"));
-        config.set(
-                "settings.loadChunks",
-                file.getBoolean("loadChunks", false,
-                        "Force sending of the chunk which people teleport to - default: false"));
+        config.set("settings.loadChunks", file.getBoolean("loadChunks", false,
+                "Force sending of the chunk which people teleport to - default: false"));
 
         // port limits
         config.set(
                 "limits.default.maxTotal",
-                file.getInt("maxPublic", 5,
-                        "Maximum number of public warps any player can make")
-                        + file.getInt("maxPrivate", 10,
-                                "Maximum number of private warps any player can make"));
-        config.set("limits.default.maxPublic", file.getInt("maxPublic", 5,
-                "Maximum number of public warps any player can make"));
-        config.set("limits.default.maxPrivate", file.getInt("maxPrivate", 10,
-                "Maximum number of private warps any player can make"));
+                file.getInt("maxPublic", 5, "Maximum number of public warps any player can make")
+                        + file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
+        config.set("limits.default.maxPublic",
+                file.getInt("maxPublic", 5, "Maximum number of public warps any player can make"));
+        config.set("limits.default.maxPrivate",
+                file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
 
         // port database
-        String mySQLconn = file.getString("mySQLconn",
-                "jdbc:mysql://localhost:3306/minecraft",
+        String mySQLconn = file.getString("mySQLconn", "jdbc:mysql://localhost:3306/minecraft",
                 "MySQL Connection (only if using MySQL)");
         mySQLconn = mySQLconn.substring(mySQLconn.indexOf("//") + 2);
         String[] mySQLconnParts = mySQLconn.split("[\\W]");
-        config.set(
-                "mysql.enabled",
-                file.getBoolean("usemySQL", false,
-                        "MySQL usage --  true = use MySQL database / false = use SQLite"));
+        config.set("mysql.enabled", file.getBoolean("usemySQL", false,
+                "MySQL usage --  true = use MySQL database / false = use SQLite"));
         config.set("mysql.host", mySQLconnParts[0]);
         config.set("mysql.port", mySQLconnParts[1]);
         config.set("mysql.database", mySQLconnParts[2]);
-        config.set("mysql.username", file.getString("mySQLuname", "root",
-                "MySQL Username (only if using MySQL)"));
-        config.set("mysql.password", file.getString("mySQLpass", "password",
-                "MySQL Password (only if using MySQL)"));
+        config.set("mysql.username",
+                file.getString("mySQLuname", "root", "MySQL Username (only if using MySQL)"));
+        config.set("mysql.password",
+                file.getString("mySQLpass", "password", "MySQL Password (only if using MySQL)"));
 
         try {
             config.save(configFile);
-            if (!legacyConfig.renameTo(new File(legacyConfig.getAbsolutePath()
-                    + ".old"))) {
-                MyWarp.logger()
-                        .warning(
-                                "Could not rename old settings file, please remove it manually!");
+            if (!legacyConfig.renameTo(new File(legacyConfig.getAbsolutePath() + ".old"))) {
+                MyWarp.logger().warning("Could not rename old settings file, please remove it manually!");
             } else {
                 MyWarp.logger().info("Successfully ported old settings file");
             }
         } catch (IOException e) {
-            MyWarp.logger().log(Level.SEVERE,
-                    "Failed to port old settings file", e);
+            MyWarp.logger().log(Level.SEVERE, "Failed to port old settings file", e);
         }
     }
 
@@ -338,10 +300,8 @@ public class WarpSettings {
      * Reloads the configuration from the configuration-file
      */
     public void reload() {
-        config = getYAMLConfig(
-                configFile,
-                YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(
-                        CONFIG_FILE)));
+        config = getYAMLConfig(configFile,
+                YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(CONFIG_FILE)));
         loadValues(config);
     }
 

@@ -41,8 +41,7 @@ public class VaultLink implements EconomyLink {
      */
     private boolean canDisobeyFees(CommandSender sender, double amount) {
         return !(sender instanceof Player)
-                || MyWarp.inst().getPermissionsManager()
-                        .hasPermission(sender, "mywarp.economy.free")
+                || MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.economy.free")
                 || amount <= 0;
     }
 
@@ -53,8 +52,7 @@ public class VaultLink implements EconomyLink {
         if (canDisobeyFees(sender, amount)) {
             return true;
         }
-        return economy.has(sender.getName(), ((Player) sender).getWorld()
-                .getName(), amount);
+        return economy.has(sender.getName(), ((Player) sender).getWorld().getName(), amount);
     }
 
     @Override
@@ -63,22 +61,16 @@ public class VaultLink implements EconomyLink {
         if (canDisobeyFees(sender, amount)) {
             return;
         }
-        EconomyResponse response = economy.withdrawPlayer(sender.getName(),
-                ((Player) sender).getWorld().getName(), amount);
+        EconomyResponse response = economy.withdrawPlayer(sender.getName(), ((Player) sender).getWorld()
+                .getName(), amount);
 
         if (!response.transactionSuccess()) {
-            MyWarp.logger().severe(
-                    "Could not withdraw " + sender.getName() + ", "
-                            + response.errorMessage);
+            MyWarp.logger().severe("Could not withdraw " + sender.getName() + ", " + response.errorMessage);
             sender.sendMessage(ChatColor.RED
-                    + MyWarp.inst().getLanguageManager()
-                            .getString("error.economy.unknown"));
+                    + MyWarp.inst().getLanguageManager().getString("error.economy.unknown"));
         } else if (MyWarp.inst().getWarpSettings().informAfterTransaction) {
-            sender.sendMessage(MyWarp
-                    .inst()
-                    .getLanguageManager()
-                    .getEffectiveString("economy.transaction.complete",
-                            "%amount%", Double.toString(amount)));
+            sender.sendMessage(MyWarp.inst().getLanguageManager()
+                    .getEffectiveString("economy.transaction.complete", "%amount%", Double.toString(amount)));
         }
     }
 }

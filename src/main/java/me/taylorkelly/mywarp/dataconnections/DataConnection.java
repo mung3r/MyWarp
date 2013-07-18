@@ -26,8 +26,7 @@ public interface DataConnection {
      * @throws DataConnectionException
      *             if any circumstance prevents working with the database
      */
-    public void checkDB(boolean createIfNotExist)
-            throws DataConnectionException;
+    public void checkDB(boolean createIfNotExist) throws DataConnectionException;
 
     /**
      * Executes updates to the database. Depending on the implementation this
@@ -38,8 +37,7 @@ public interface DataConnection {
      * @throws DataConnectionException
      *             if any circumstance prevents working with the database
      */
-    public void updateDB(boolean updateIfNecessary)
-            throws DataConnectionException;
+    public void updateDB(boolean updateIfNecessary) throws DataConnectionException;
 
     /**
      * Loads all warps from the database and returns them as map. Each warp is

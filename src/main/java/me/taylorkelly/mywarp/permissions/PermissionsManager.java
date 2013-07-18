@@ -64,45 +64,33 @@ public class PermissionsManager implements PermissionsHandler {
      */
     private void registerPermissions() {
         // mywarp.limit permissions
-        for (ValuePermissionContainer container : MyWarp.inst()
-                .getWarpSettings().warpLimits) {
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().warpLimits) {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
-                            new org.bukkit.permissions.Permission(
-                                    "mywarp.limit." + container.getName(),
-                                    "Gives acess to the number of warps defined for '"
-                                            + container.getName()
-                                            + "' in the config",
-                                    PermissionDefault.FALSE));
+                            new org.bukkit.permissions.Permission("mywarp.limit." + container.getName(),
+                                    "Gives acess to the number of warps defined for '" + container.getName()
+                                            + "' in the config", PermissionDefault.FALSE));
         }
 
         // mywarp.cooldown permissions
-        for (ValuePermissionContainer container : MyWarp.inst()
-                .getWarpSettings().warpCooldowns) {
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().warpCooldowns) {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
-                            new org.bukkit.permissions.Permission(
-                                    "mywarp.cooldown." + container.getName(),
-                                    "User is affected by the cooldowns defined for '"
-                                            + container.getName()
-                                            + "' in the config",
-                                    PermissionDefault.FALSE));
+                            new org.bukkit.permissions.Permission("mywarp.cooldown." + container.getName(),
+                                    "User is affected by the cooldowns defined for '" + container.getName()
+                                            + "' in the config", PermissionDefault.FALSE));
         }
 
         // mywarp.warmup permissions
-        for (ValuePermissionContainer container : MyWarp.inst()
-                .getWarpSettings().warpWarmups) {
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().warpWarmups) {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
-                            new org.bukkit.permissions.Permission(
-                                    "mywarp.warmup." + container.getName(),
-                                    "User is affected by the warmups defined for '"
-                                            + container.getName()
-                                            + "' in the config",
-                                    PermissionDefault.FALSE));
+                            new org.bukkit.permissions.Permission("mywarp.warmup." + container.getName(),
+                                    "User is affected by the warmups defined for '" + container.getName()
+                                            + "' in the config", PermissionDefault.FALSE));
         }
 
         // mywarp.warp.world permissions
@@ -111,10 +99,8 @@ public class PermissionsManager implements PermissionsHandler {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
-                            new org.bukkit.permissions.Permission(
-                                    "mywarp.warp.world." + world.getName(),
-                                    "User may warp to worlds in world '"
-                                            + world.getName() + "'",
+                            new org.bukkit.permissions.Permission("mywarp.warp.world." + world.getName(),
+                                    "User may warp to worlds in world '" + world.getName() + "'",
                                     PermissionDefault.OP));
             worldMap.put("mywarp.warp.world." + world.getName(), true);
         }
@@ -123,23 +109,17 @@ public class PermissionsManager implements PermissionsHandler {
         MyWarp.server()
                 .getPluginManager()
                 .addPermission(
-                        new org.bukkit.permissions.Permission(
-                                "mywarp.warp.world.*",
-                                "User may warp to all worlds",
-                                PermissionDefault.OP, worldMap));
+                        new org.bukkit.permissions.Permission("mywarp.warp.world.*",
+                                "User may warp to all worlds", PermissionDefault.OP, worldMap));
 
         // mywarp.economy permissions
-        for (ValuePermissionContainer container : MyWarp.inst()
-                .getWarpSettings().warpFees) {
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().warpFees) {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
-                            new org.bukkit.permissions.Permission(
-                                    "mywarp.economy." + container.getName(),
-                                    "User is affected by the fees defined for '"
-                                            + container.getName()
-                                            + "' in the config",
-                                    PermissionDefault.FALSE));
+                            new org.bukkit.permissions.Permission("mywarp.economy." + container.getName(),
+                                    "User is affected by the fees defined for '" + container.getName()
+                                            + "' in the config", PermissionDefault.FALSE));
         }
     }
 
@@ -157,9 +137,8 @@ public class PermissionsManager implements PermissionsHandler {
 
         // check for Vault first!
         try {
-            RegisteredServiceProvider<Permission> permissionProvider = Bukkit
-                    .getServicesManager().getRegistration(
-                            net.milkbowl.vault.permission.Permission.class);
+            RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServicesManager()
+                    .getRegistration(net.milkbowl.vault.permission.Permission.class);
             if (permissionProvider != null) {
                 MyWarp.logger().info("Using Vault for group support");
                 handler = new VaultHandler(permissionProvider.getProvider());
@@ -171,46 +150,40 @@ public class PermissionsManager implements PermissionsHandler {
 
         Plugin checkPlugin;
 
-        checkPlugin = MyWarp.server().getPluginManager()
-                .getPlugin("bPermissions");
+        checkPlugin = MyWarp.server().getPluginManager().getPlugin("bPermissions");
         if (checkPlugin != null && checkPlugin.isEnabled()) {
             // we support bPermissions2 only
             if (checkPlugin.getDescription().getVersion().charAt(0) == '2') {
                 MyWarp.logger().info(
-                        "Using bPermissions v"
-                                + checkPlugin.getDescription().getVersion()
+                        "Using bPermissions v" + checkPlugin.getDescription().getVersion()
                                 + " for group support");
                 handler = new BPermissions2Handler();
                 return handler;
             }
         }
 
-        checkPlugin = MyWarp.server().getPluginManager()
-                .getPlugin("GroupManager");
+        checkPlugin = MyWarp.server().getPluginManager().getPlugin("GroupManager");
         if (checkPlugin != null && checkPlugin.isEnabled()) {
             handler = new GroupManagerHandler(checkPlugin);
 
-            MyWarp.logger().info(
-                    "Using GroupManager v"
-                            + checkPlugin.getDescription().getVersion()
+            MyWarp.logger()
+                    .info("Using GroupManager v" + checkPlugin.getDescription().getVersion()
                             + " for group support");
             return handler;
         }
 
-        checkPlugin = MyWarp.server().getPluginManager()
-                .getPlugin("PermissionsEx");
+        checkPlugin = MyWarp.server().getPluginManager().getPlugin("PermissionsEx");
         if (checkPlugin != null && checkPlugin.isEnabled()) {
             handler = new PermissionsExHandler();
 
             MyWarp.logger().info(
-                    "Using PermissionsEx v"
-                            + checkPlugin.getDescription().getVersion()
+                    "Using PermissionsEx v" + checkPlugin.getDescription().getVersion()
                             + " for group support");
             return handler;
         }
 
-        MyWarp.logger()
-                .info("No supported permissions plugin found, using Superperms fallback for group support");
+        MyWarp.logger().info(
+                "No supported permissions plugin found, using Superperms fallback for group support");
         return new SuperpermsHandler();
     }
 

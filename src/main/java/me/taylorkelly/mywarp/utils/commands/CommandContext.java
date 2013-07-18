@@ -29,8 +29,7 @@ public class CommandContext {
         this(args, 0, null);
     }
 
-    public CommandContext(String args, Set<Character> valueFlags)
-            throws CommandException {
+    public CommandContext(String args, Set<Character> valueFlags) throws CommandException {
         this(args.split(" "), 0, valueFlags);
     }
 
@@ -47,8 +46,7 @@ public class CommandContext {
      * @throws CommandException
      *             This is thrown if flag fails for some reason.
      */
-    public CommandContext(String[] args, int level, Set<Character> valueFlags)
-            throws CommandException {
+    public CommandContext(String[] args, int level, Set<Character> valueFlags) throws CommandException {
         if (valueFlags == null) {
             valueFlags = Collections.emptySet();
         }
@@ -77,12 +75,10 @@ public class CommandContext {
                 int endIndex;
                 for (endIndex = i; endIndex < args.length; ++endIndex) {
                     final String arg2 = args[endIndex];
-                    if (arg2.charAt(arg2.length() - 1) == quotedChar
-                            && arg2.length() > 1) {
+                    if (arg2.charAt(arg2.length() - 1) == quotedChar && arg2.length() > 1) {
                         if (endIndex != i)
                             build.append(' ');
-                        build.append(arg2.substring(endIndex == i ? 1 : 0,
-                                arg2.length() - 1));
+                        build.append(arg2.substring(endIndex == i ? 1 : 0, arg2.length() - 1));
                         break;
                     } else if (endIndex == i) {
                         build.append(arg2.substring(1));
@@ -115,8 +111,7 @@ public class CommandContext {
             String arg = argList.get(nextArg++);
 
             // Not a flag?
-            if (arg.charAt(0) != '-' || arg.length() == 1
-                    || !arg.matches("^-[a-zA-Z]+$")) {
+            if (arg.charAt(0) != '-' || arg.length() == 1 || !arg.matches("^-[a-zA-Z]+$")) {
                 originalArgIndices.add(argIndexList.get(nextArg - 1));
                 parsedArgs.add(arg);
                 continue;
@@ -140,16 +135,16 @@ public class CommandContext {
                         throw new CommandException(MyWarp
                                 .inst()
                                 .getLanguageManager()
-                                .getEffectiveString("error.cmd.flagGiven",
-                                        "%flag%", Character.toString(flagName)));
+                                .getEffectiveString("error.cmd.flagGiven", "%flag%",
+                                        Character.toString(flagName)));
                     }
 
                     if (nextArg >= argList.size()) {
                         throw new CommandException(MyWarp
                                 .inst()
                                 .getLanguageManager()
-                                .getEffectiveString("error.cmd.noValue",
-                                        "%flag%", Character.toString(flagName)));
+                                .getEffectiveString("error.cmd.noValue", "%flag%",
+                                        Character.toString(flagName)));
                     }
 
                     // If it is a value flag, read another argument and add it
@@ -191,8 +186,7 @@ public class CommandContext {
     }
 
     public int getInteger(int index, int def) throws NumberFormatException {
-        return index < parsedArgs.size() ? Integer.parseInt(parsedArgs
-                .get(index)) : def;
+        return index < parsedArgs.size() ? Integer.parseInt(parsedArgs.get(index)) : def;
     }
 
     public double getDouble(int index) throws NumberFormatException {
@@ -200,21 +194,18 @@ public class CommandContext {
     }
 
     public double getDouble(int index, double def) throws NumberFormatException {
-        return index < parsedArgs.size() ? Double.parseDouble(parsedArgs
-                .get(index)) : def;
+        return index < parsedArgs.size() ? Double.parseDouble(parsedArgs.get(index)) : def;
     }
 
     public String[] getSlice(int index) {
         String[] slice = new String[originalArgs.length - index];
-        System.arraycopy(originalArgs, index, slice, 0, originalArgs.length
-                - index);
+        System.arraycopy(originalArgs, index, slice, 0, originalArgs.length - index);
         return slice;
     }
 
     public String[] getPaddedSlice(int index, int padding) {
         String[] slice = new String[originalArgs.length - index + padding];
-        System.arraycopy(originalArgs, index, slice, padding,
-                originalArgs.length - index);
+        System.arraycopy(originalArgs, index, slice, padding, originalArgs.length - index);
         return slice;
     }
 
@@ -260,8 +251,7 @@ public class CommandContext {
         return Double.parseDouble(valueFlags.get(ch));
     }
 
-    public double getFlagDouble(char ch, double def)
-            throws NumberFormatException {
+    public double getFlagDouble(char ch, double def) throws NumberFormatException {
         final String value = valueFlags.get(ch);
         if (value == null) {
             return def;

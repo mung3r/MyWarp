@@ -18,7 +18,6 @@ public class PermissionsExHandler implements PermissionsHandler {
 
     @Override
     public boolean playerHasGroup(Player player, String group) {
-        return manager.getUser(player.getName()).inGroup(group,
-                player.getWorld().getName());
+        return manager.getUser(player.getName()).inGroup(group, player.getWorld().getName());
     }
 }

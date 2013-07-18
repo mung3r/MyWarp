@@ -19,9 +19,8 @@ public class SafeLocation {
      * @return a safe location or null if none could be found
      */
     public static Location getSafeLocation(Location l) {
-        return getSafeLocation(l,
-                MyWarp.inst().getWarpSettings().verticalTolerance, MyWarp
-                        .inst().getWarpSettings().searchRadius);
+        return getSafeLocation(l, MyWarp.inst().getWarpSettings().verticalTolerance, MyWarp.inst()
+                .getWarpSettings().searchRadius);
     }
 
     /**
@@ -39,8 +38,7 @@ public class SafeLocation {
      *            the maximal horizontal search radius
      * @return a safe location or null if none could be found
      */
-    private static Location getSafeLocation(Location l, int tolerance,
-            int radius) {
+    private static Location getSafeLocation(Location l, int tolerance, int radius) {
         if (BlockSafety.isLocationSafe(l)) {
             return l;
         }
@@ -69,8 +67,7 @@ public class SafeLocation {
      *            the maximal horizontal search radius
      * @return a safe location or null if none could be found
      */
-    private static Location checkAboveAndBelowLocation(Location l,
-            int verticalTolerance, int radius) {
+    private static Location checkAboveAndBelowLocation(Location l, int verticalTolerance, int radius) {
         Location locToCheck = l.clone();
         Location safe = checkHorizontalAroundLocation(locToCheck, radius);
 
@@ -114,8 +111,7 @@ public class SafeLocation {
     private static Location checkHorizontalAroundLocation(Location l, int radius) {
         int maxDiameter = radius * 2;
         for (int specDiameter = 3; specDiameter < maxDiameter; specDiameter += 2) {
-            Location safeLocation = checkHorizontalAroundDiameter(l,
-                    specDiameter);
+            Location safeLocation = checkHorizontalAroundDiameter(l, specDiameter);
             if (safeLocation != null) {
                 return safeLocation;
             }
@@ -137,8 +133,7 @@ public class SafeLocation {
      *            the diameter in which to search
      * @return a safe location or null if none could be found
      */
-    private static Location checkHorizontalAroundDiameter(Location l,
-            int diameter) {
+    private static Location checkHorizontalAroundDiameter(Location l, int diameter) {
         Location checkLoc = l.clone();
 
         int blockStep = (diameter - 1) / 2;

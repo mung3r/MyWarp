@@ -44,39 +44,32 @@ public class PropertiesFile {
                 String value = line.substring(equals + 1, commentIndex).trim();
                 String comment = "";
                 if (commentIndex < line.length() - 1) {
-                    comment = line.substring(commentIndex + 1, line.length())
-                            .trim();
+                    comment = line.substring(commentIndex + 1, line.length()).trim();
                 }
                 map.put(key, new PropertiesEntry(value, comment));
             }
         } catch (FileNotFoundException e) {
-            Logger.getLogger("Minecraft").log(Level.SEVERE,
-                    "Cannot read file " + file.getName());
+            Logger.getLogger("Minecraft").log(Level.SEVERE, "Cannot read file " + file.getName());
         } catch (IOException e) {
-            Logger.getLogger("Minecraft").log(Level.SEVERE,
-                    "Cannot create file " + file.getName());
+            Logger.getLogger("Minecraft").log(Level.SEVERE, "Cannot create file " + file.getName());
         }
     }
 
-    public boolean getBoolean(String key, Boolean defaultValue,
-            String defaultComment) {
+    public boolean getBoolean(String key, Boolean defaultValue, String defaultComment) {
         if (map.containsKey(key)) {
             return Boolean.parseBoolean(map.get(key).value);
         } else {
-            map.put(key, new PropertiesEntry(defaultValue.toString(),
-                    defaultComment));
+            map.put(key, new PropertiesEntry(defaultValue.toString(), defaultComment));
             modified = true;
             return defaultValue;
         }
     }
 
-    public String getString(String key, String defaultValue,
-            String defaultComment) {
+    public String getString(String key, String defaultValue, String defaultComment) {
         if (map.containsKey(key)) {
             return map.get(key).value;
         } else {
-            map.put(key, new PropertiesEntry(defaultValue.toString(),
-                    defaultComment));
+            map.put(key, new PropertiesEntry(defaultValue.toString(), defaultComment));
             modified = true;
             return defaultValue;
         }
@@ -87,15 +80,12 @@ public class PropertiesFile {
             try {
                 return Integer.parseInt(map.get(key).value);
             } catch (Exception e) {
-                Logger.getLogger("Minecraft").log(
-                        Level.WARNING,
-                        "Trying to get Integer from " + key + ": "
-                                + map.get(key).value);
+                Logger.getLogger("Minecraft").log(Level.WARNING,
+                        "Trying to get Integer from " + key + ": " + map.get(key).value);
                 return 0;
             }
         } else {
-            map.put(key, new PropertiesEntry(defaultValue.toString(),
-                    defaultComment));
+            map.put(key, new PropertiesEntry(defaultValue.toString(), defaultComment));
             modified = true;
             return defaultValue;
         }
@@ -106,35 +96,28 @@ public class PropertiesFile {
             try {
                 return Long.parseLong(map.get(key).value);
             } catch (Exception e) {
-                Logger.getLogger("Minecraft").log(
-                        Level.WARNING,
-                        "Trying to get Long from " + key + ": "
-                                + map.get(key).value);
+                Logger.getLogger("Minecraft").log(Level.WARNING,
+                        "Trying to get Long from " + key + ": " + map.get(key).value);
                 return 0;
             }
         } else {
-            map.put(key, new PropertiesEntry(defaultValue.toString(),
-                    defaultComment));
+            map.put(key, new PropertiesEntry(defaultValue.toString(), defaultComment));
             modified = true;
             return defaultValue;
         }
     }
 
-    public double getDouble(String key, Double defaultValue,
-            String defaultComment) {
+    public double getDouble(String key, Double defaultValue, String defaultComment) {
         if (map.containsKey(key)) {
             try {
                 return Double.parseDouble(map.get(key).value);
             } catch (Exception e) {
-                Logger.getLogger("Minecraft").log(
-                        Level.WARNING,
-                        "Trying to get Double from " + key + ": "
-                                + map.get(key).value);
+                Logger.getLogger("Minecraft").log(Level.WARNING,
+                        "Trying to get Double from " + key + ": " + map.get(key).value);
                 return 0;
             }
         } else {
-            map.put(key, new PropertiesEntry(defaultValue.toString(),
-                    defaultComment));
+            map.put(key, new PropertiesEntry(defaultValue.toString(), defaultComment));
             modified = true;
             return defaultValue;
         }
@@ -145,8 +128,7 @@ public class PropertiesFile {
             PropertiesEntry entry = map.get(key);
             entry.value = globalMemory.toString();
         } else {
-            map.put(key, new PropertiesEntry(globalMemory.toString(),
-                    defaultComment));
+            map.put(key, new PropertiesEntry(globalMemory.toString(), defaultComment));
         }
         modified = true;
     }
@@ -175,8 +157,7 @@ public class PropertiesFile {
             }
             bwriter.flush();
         } catch (IOException e) {
-            Logger.getLogger("Minecraft").log(Level.SEVERE,
-                    "IO Exception with file " + file.getName());
+            Logger.getLogger("Minecraft").log(Level.SEVERE, "IO Exception with file " + file.getName());
         } finally {
             try {
                 if (bwriter != null) {
@@ -187,10 +168,8 @@ public class PropertiesFile {
                     fwriter.close();
                 }
             } catch (IOException e) {
-                Logger.getLogger("Minecraft").log(
-                        Level.SEVERE,
-                        "IO Exception with file " + file.getName()
-                                + " (on close)");
+                Logger.getLogger("Minecraft").log(Level.SEVERE,
+                        "IO Exception with file " + file.getName() + " (on close)");
             }
         }
 

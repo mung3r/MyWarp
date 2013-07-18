@@ -23,23 +23,19 @@ public class Injector {
             ctr.setAccessible(true);
             return ctr.newInstance(args);
         } catch (NoSuchMethodException e) {
-            MyWarp.logger().severe(
-                    "Error initializing commands class " + clazz + ": ");
+            MyWarp.logger().severe("Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         } catch (InvocationTargetException e) {
-            MyWarp.logger().severe(
-                    "Error initializing commands class " + clazz + ": ");
+            MyWarp.logger().severe("Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         } catch (InstantiationException e) {
-            MyWarp.logger().severe(
-                    "Error initializing commands class " + clazz + ": ");
+            MyWarp.logger().severe("Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         } catch (IllegalAccessException e) {
-            MyWarp.logger().severe(
-                    "Error initializing commands class " + clazz + ": ");
+            MyWarp.logger().severe("Error initializing commands class " + clazz + ": ");
             e.printStackTrace();
             return null;
         }

@@ -100,8 +100,8 @@ public class SafeTeleport {
 
     /**
      * Teleports an entity to a location. Before teleporting, the entity is
-     * ejected if needed, the warp-effect is played (if enabled)
-     * and chunks are loaded (if enabled and not loaded before).
+     * ejected if needed, the warp-effect is played (if enabled) and chunks are
+     * loaded (if enabled and not loaded before).
      * 
      * @param entity
      *            the entity to teleport

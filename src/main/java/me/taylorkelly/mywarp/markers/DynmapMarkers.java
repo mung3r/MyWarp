@@ -23,35 +23,28 @@ public class DynmapMarkers implements Markers {
         markerAPI = dynmapPlugin.getMarkerAPI();
 
         // get Icon for all markers
-        markerIcon = markerAPI
-                .getMarkerIcon(MyWarp.inst().getWarpSettings().markerIconID);
-        if (markerIcon == null
-                && !MyWarp.inst().getWarpSettings().markerIconID
-                        .equals(ICON_ID)) {
+        markerIcon = markerAPI.getMarkerIcon(MyWarp.inst().getWarpSettings().markerIconID);
+        if (markerIcon == null && !MyWarp.inst().getWarpSettings().markerIconID.equals(ICON_ID)) {
             MyWarp.logger().warning(
-                    "MarkerIcon '"
-                            + MyWarp.inst().getWarpSettings().markerIconID
+                    "MarkerIcon '" + MyWarp.inst().getWarpSettings().markerIconID
                             + "' does not exist. Using the default one.");
             markerIcon = markerAPI.getMarkerIcon(ICON_ID);
         }
         if (markerIcon == null) {
-            markerIcon = markerAPI.createMarkerIcon(ICON_ID, "Warp", MyWarp
-                    .inst().getResource("mywarp_warp-32.png"));
+            markerIcon = markerAPI.createMarkerIcon(ICON_ID, "Warp",
+                    MyWarp.inst().getResource("mywarp_warp-32.png"));
         }
 
         // create the label
         markerSet = markerAPI.getMarkerSet(LABEL_ID);
         if (markerSet == null) {
-            markerSet = markerAPI.createMarkerSet(LABEL_ID, MyWarp.inst()
-                    .getWarpSettings().layerDisplayName, null, false);
+            markerSet = markerAPI.createMarkerSet(LABEL_ID, MyWarp.inst().getWarpSettings().layerDisplayName,
+                    null, false);
         } else {
-            markerSet
-                    .setMarkerSetLabel(MyWarp.inst().getWarpSettings().layerDisplayName);
+            markerSet.setMarkerSetLabel(MyWarp.inst().getWarpSettings().layerDisplayName);
         }
-        markerSet
-                .setLayerPriority(MyWarp.inst().getWarpSettings().layerPriority);
-        markerSet
-                .setHideByDefault(MyWarp.inst().getWarpSettings().hideLayerByDefault);
+        markerSet.setLayerPriority(MyWarp.inst().getWarpSettings().layerPriority);
+        markerSet.setHideByDefault(MyWarp.inst().getWarpSettings().hideLayerByDefault);
         markerSet.setLabelShow(MyWarp.inst().getWarpSettings().showMarkerLable);
         markerSet.setMinZoom(MyWarp.inst().getWarpSettings().markerMinZoom);
 
@@ -63,8 +56,8 @@ public class DynmapMarkers implements Markers {
 
     @Override
     public void addWarp(Warp warp) {
-        markerSet.createMarker(MARKER_ID + warp.getName(), warpLabel(warp), true,
-                warp.getWorld(), warp.getX(), warp.getY(), warp.getZ(), markerIcon, false);
+        markerSet.createMarker(MARKER_ID + warp.getName(), warpLabel(warp), true, warp.getWorld(),
+                warp.getX(), warp.getY(), warp.getZ(), markerIcon, false);
     }
 
     @Override
@@ -96,9 +89,7 @@ public class DynmapMarkers implements Markers {
     }
 
     private String warpLabel(Warp warp) {
-        return warp.replaceWarpMacros(MyWarp.inst()
-                        .getLanguageManager()
-                        .getString("dynmap.marker"));
+        return warp.replaceWarpMacros(MyWarp.inst().getLanguageManager().getString("dynmap.marker"));
 
     }
 }

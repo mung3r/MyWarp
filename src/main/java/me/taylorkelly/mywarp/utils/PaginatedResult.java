@@ -43,8 +43,8 @@ public abstract class PaginatedResult<T> {
      * @throws CommandException
      *             if the page does not exist or the given list is empty
      */
-    public void display(CommandSender sender, Collection<? extends T> results,
-            int page) throws CommandException {
+    public void display(CommandSender sender, Collection<? extends T> results, int page)
+            throws CommandException {
         display(sender, new ArrayList<T>(results), page);
     }
 
@@ -61,31 +61,23 @@ public abstract class PaginatedResult<T> {
      * @throws CommandException
      *             if the page does not exist or the given list is empty
      */
-    public void display(CommandSender sender, List<? extends T> results,
-            int page) throws CommandException {
+    public void display(CommandSender sender, List<? extends T> results, int page) throws CommandException {
         if (results.size() == 0) {
-            throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getString("lister.noResults"));
+            throw new CommandException(MyWarp.inst().getLanguageManager().getString("lister.noResults"));
         }
         --page;
 
         int maxPages = results.size() / PER_PAGE;
         if (page < 0 || page > maxPages) {
-            throw new CommandException(MyWarp
-                    .inst()
-                    .getLanguageManager()
-                    .getEffectiveString("lister.unknownPage", "%pages%",
-                            Integer.toString(maxPages - 1)));
+            throw new CommandException(MyWarp.inst().getLanguageManager()
+                    .getEffectiveString("lister.unknownPage", "%pages%", Integer.toString(maxPages - 1)));
         }
 
         sender.sendMessage(ChatColor.GOLD
-                + MinecraftFontWidthCalculator.centralize(" "
-                        + header
-                        + MyWarp.inst().getLanguageManager()
-                                .getColorlessString("lister.page") + " "
+                + MinecraftFontWidthCalculator.centralize(" " + header
+                        + MyWarp.inst().getLanguageManager().getColorlessString("lister.page") + " "
                         + (page + 1) + "/" + (maxPages + 1) + " ", '-'));
-        for (int i = PER_PAGE * page; i < PER_PAGE * page + PER_PAGE
-                && i < results.size(); i++) {
+        for (int i = PER_PAGE * page; i < PER_PAGE * page + PER_PAGE && i < results.size(); i++) {
             sender.sendMessage(format(results.get(i), sender));
         }
     }

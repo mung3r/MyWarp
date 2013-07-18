@@ -196,10 +196,8 @@ public class MyWarp extends JavaPlugin {
      * Called on command-execution
      */
     @Override
-    public boolean onCommand(CommandSender sender, Command command,
-            String commandLabel, String[] args) {
-        return getCommandsManager().handleBukkitCommand(sender, command,
-                commandLabel, args);
+    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+        return getCommandsManager().handleBukkitCommand(sender, command, commandLabel, args);
     }
 
     /**
@@ -237,22 +235,18 @@ public class MyWarp extends JavaPlugin {
         if (!newDatabase.exists() && oldDatabase.exists()) {
             if (!FileUtil.copy(oldDatabase, newDatabase)) {
                 logger().severe(
-                        "Failed to copy " + oldDatabase.getName() + "to "
-                                + newDatabase.getName()
+                        "Failed to copy " + oldDatabase.getName() + "to " + newDatabase.getName()
                                 + ", the old databse will be ignored!");
             } else {
-                logger().info(
-                        "Your old SQlite database has been copied to the new format.");
+                logger().info("Your old SQlite database has been copied to the new format.");
             }
         }
 
         // initialize the database connection
         try {
-            connectionManager = new ConnectionManager(
-                    getWarpSettings().usemySQL, true, true);
+            connectionManager = new ConnectionManager(getWarpSettings().usemySQL, true, true);
         } catch (DataConnectionException e) {
-            logger().severe(
-                    "Could not establish database connection. Disabling MyWarp.");
+            logger().severe("Could not establish database connection. Disabling MyWarp.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -270,12 +264,9 @@ public class MyWarp extends JavaPlugin {
      * Registers all events used by MyWarp
      */
     private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new MWBlockListener(),
-                this);
-        getServer().getPluginManager().registerEvents(new MWEntityListener(),
-                this);
-        getServer().getPluginManager().registerEvents(new MWPlayerListener(),
-                this);
+        getServer().getPluginManager().registerEvents(new MWBlockListener(), this);
+        getServer().getPluginManager().registerEvents(new MWEntityListener(), this);
+        getServer().getPluginManager().registerEvents(new MWPlayerListener(), this);
     }
 
     /**
@@ -290,14 +281,12 @@ public class MyWarp extends JavaPlugin {
         // initialize EconomySupport
         if (getWarpSettings().useEconomy) {
             try {
-                RegisteredServiceProvider<Economy> economyProvider = getServer()
-                        .getServicesManager().getRegistration(
-                                net.milkbowl.vault.economy.Economy.class);
+                RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
+                        .getRegistration(net.milkbowl.vault.economy.Economy.class);
                 economyLink = new VaultLink(economyProvider);
             } catch (NoClassDefFoundError e) {
                 // thrown if no economyProvider is found using this class
-                logger().severe(
-                        "Failed to hook into Vault. Disabling Economy support.");
+                logger().severe("Failed to hook into Vault. Disabling Economy support.");
                 getWarpSettings().useEconomy = false;
             }
         }
@@ -308,8 +297,7 @@ public class MyWarp extends JavaPlugin {
             if (dynmap != null && dynmap.isEnabled()) {
                 markers = new DynmapMarkers((DynmapCommonAPI) dynmap);
             } else {
-                logger().severe(
-                        "Failed to hook into Dynmap. Disabling Dynmap support.");
+                logger().severe("Failed to hook into Dynmap. Disabling Dynmap support.");
                 getWarpSettings().useDynmap = false;
             }
         }
