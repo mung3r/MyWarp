@@ -37,7 +37,7 @@
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public/</url>
         </repository>
-        <repository>
+        <repository> <!-- Used for Dynmap and various permission plugins -->
             <id>dynmap-repo</id>
             <url>http://repo.mikeprimm.com</url>
         </repository>
@@ -67,27 +67,21 @@
         </dependency>
 
         <dependency> <!-- Part of the permission support -->
-            <groupId>org.anjocaido.groupmanager.GroupManager</groupId>
-            <artifactId>GroupManager</artifactId>
-            <version>1.9.42</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/EssentialsGroupManager.jar</systemPath>
+            <groupId>org.anjocaido</groupId>
+            <artifactId>EssentialsGroupManager</artifactId>
+            <version>2.10.1</version>
         </dependency>
 
         <dependency> <!-- Part of the permission support -->
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
-            <version>1.19.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/PermissionsEx.jar</systemPath>
+            <version>1.19.1</version>
         </dependency>
 
         <dependency> <!-- Part of the permission support -->
-            <groupId>de.bananaco.permissions.Permissions</groupId>
-            <artifactId>bPermissions2</artifactId>
-            <version>2.9.18b</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/bpermissions.jar</systemPath>
+            <groupId>de.bananaco</groupId>
+            <artifactId>bPermissions</artifactId>
+            <version>2.9.1</version>
         </dependency>
     </dependencies>
 
