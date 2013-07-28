@@ -85,8 +85,8 @@ sign.noPermission.use:§cDir fehlen die Rechte um Warp-Schilder zu nutzen.
 sign.noPermission.warpto:§cDir fehlen die Rechte um '%warp%' zu nutzen.
 timer.cooldown.cooling:§cDu musst noch %seconds% Sekunden warten, bevor du dich wieder warpen kannst.
 timer.cooldown.ended:§bDu bist abgekühlt und kannst §f/warp §b wieder nutzen.
-timer.warmup.canceled.damage:§cDu darfst keinen Schaden nehmen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
-timer.warmup.canceled.move:§cDu darfst dich nicht bewegen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
+timer.warmup.cancelled.damage:§cDu darfst keinen Schaden nehmen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
+timer.warmup.cancelled.move:§cDu darfst dich nicht bewegen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
 timer.warmup.started:§bDu wirst in %seconds% Sekunden zu '%warp%' teleportiert.
 timer.warmup.warming:§cDu musst noch %seconds% Sekunden warten, bevor du teleportiert wirst.
 warp.assets.head:%player%s Warps

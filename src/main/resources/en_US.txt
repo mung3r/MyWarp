@@ -85,8 +85,8 @@ sign.noPermission.use:§cYou do not have permission to use warp signs.
 sign.noPermission.warpto:§cYou do not have permission to use '%warp%'.
 timer.cooldown.cooling:§cYou still need to wait %seconds% seconds before you can warp again.
 timer.cooldown.ended:§bYou have cooled down, feel free to use §f/warp §bagain.
-timer.warmup.canceled.damage:§cYou must not take damage while warming up. Your §f/warp §cwas canceled.
-timer.warmup.canceled.move:§cYou must not move while warming up. Your §f/warp §cwas canceled.
+timer.warmup.cancelled.damage:§cYou must not take damage while warming up. Your §f/warp §cwas cancelled.
+timer.warmup.cancelled.move:§cYou must not move while warming up. Your §f/warp §cwas cancelled.
 timer.warmup.started:§bYou will be teleported to '%warp%' in %seconds% seconds.
 timer.warmup.warming:§cYou still need to wait %seconds% seconds before you are teleported.
 warp.assets.head:%player%'s Warps

@@ -17,9 +17,9 @@ public class MWEntityListener implements Listener {
      * @param event
      *            the event
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.isCancelled() || !(event.getEntity() instanceof Player)
+        if (!(event.getEntity() instanceof Player)
                 || !MyWarp.inst().getWarpSettings().abortOnDamage) {
             return;
         }
@@ -29,7 +29,7 @@ public class MWEntityListener implements Listener {
                 && !MyWarp.inst().getPermissionsManager()
                         .hasPermission(victim, "mywarp.warmup.disobey.dmgabort")) {
             PlayerWarmup.endWarmup(victim.getName());
-            victim.sendMessage(MyWarp.inst().getLanguageManager().getString("timer.warmup.canceled.damage"));
+            victim.sendMessage(MyWarp.inst().getLanguageManager().getString("timer.warmup.cancelled.damage"));
         }
     }
 }

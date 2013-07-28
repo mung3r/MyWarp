@@ -97,9 +97,9 @@ public class MWPlayerListener implements Listener {
      * @param event
      *            the event
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (event.isCancelled() || !MyWarp.inst().getWarpSettings().abortOnMove) {
+        if (!MyWarp.inst().getWarpSettings().abortOnMove) {
             return;
         }
 
@@ -113,7 +113,7 @@ public class MWPlayerListener implements Listener {
                 && !MyWarp.inst().getPermissionsManager()
                         .hasPermission(player, "mywarp.warmup.disobey.moveabort")) {
             PlayerWarmup.endWarmup(player.getName());
-            player.sendMessage(MyWarp.inst().getLanguageManager().getString("timer.warmup.canceled.move"));
+            player.sendMessage(MyWarp.inst().getLanguageManager().getString("timer.warmup.cancelled.move"));
         }
     }
 }

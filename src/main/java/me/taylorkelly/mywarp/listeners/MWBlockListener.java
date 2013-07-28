@@ -15,7 +15,7 @@ public class MWBlockListener implements Listener {
      * @param event
      *            the event
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSignChange(SignChangeEvent event) {
         if (WarpSignUtils.isSignWarp(event.getLines())) {
             if (!WarpSignUtils.validateWarpSign(event, event.getPlayer())) {
