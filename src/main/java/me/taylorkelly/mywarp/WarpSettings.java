@@ -34,6 +34,7 @@ public class WarpSettings {
     public boolean useWarpSafety;
     public int searchRadius;
     public int verticalTolerance;
+    public boolean teleportHorses;
 
     public boolean useWarpLimits;
     public ArrayList<WarpLimit> warpLimits;
@@ -151,6 +152,7 @@ public class WarpSettings {
         useWarpSafety = config.getBoolean("warpSafety.enabled");
         searchRadius = config.getInt("warpSafety.searchRadius");
         verticalTolerance = config.getInt("warpSafety.verticalTolerance");
+        teleportHorses = config.getBoolean("warpSafety.teleportHorses");
 
         // limits
         useWarpLimits = config.getBoolean("limits.enabled");

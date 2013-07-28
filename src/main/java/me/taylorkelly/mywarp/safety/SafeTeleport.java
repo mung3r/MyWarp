@@ -6,6 +6,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Horse;
 
 /**
  * This class provides and manages several methods to teleport entity to safe
@@ -108,11 +109,15 @@ public class SafeTeleport {
      * @param to
      *            the location the entity should be teleported to
      */
-    private static void teleport(Entity entity, Location to) {
+    private static void teleport(final Entity entity, final Location to) {
         Location from = entity.getLocation();
-        if (entity.isInsideVehicle()) {
-            entity.getVehicle().eject();
+
+        Entity vehicle = null;
+        if (MyWarp.inst().getWarpSettings().teleportHorses && entity.getVehicle() instanceof Horse) {
+            vehicle = entity.getVehicle();
         }
+        entity.leaveVehicle();
+
         if (MyWarp.inst().getWarpSettings().warpEffect) {
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
@@ -123,5 +128,10 @@ public class SafeTeleport {
             to.getWorld().refreshChunk(to.getBlockX(), to.getBlockZ());
         }
         entity.teleport(to);
+
+        if (vehicle != null) {
+            teleport(vehicle, to);
+            vehicle.setPassenger(entity);
+        }
     }
 }

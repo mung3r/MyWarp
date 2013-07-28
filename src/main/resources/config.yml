@@ -10,6 +10,7 @@ warpSafety:
   enabled: true
   searchRadius: 5
   verticalTolerance: 5
+  teleportHorses: true
 limits:
   enabled: true
   default:
