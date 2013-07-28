@@ -4,6 +4,14 @@ settings:
   warpEffect: true
 dynamics:
   suggestWarps: true
+mysql:
+  enabled: false
+  host: 'localhost'
+  port: 3306
+  database: 'minecraft'
+  table: 'warpTable'
+  username: 'root'
+  password: 'password'
 locale:
   locale: en_US
 warpSafety:
@@ -11,6 +19,8 @@ warpSafety:
   searchRadius: 5
   verticalTolerance: 5
   teleportHorses: true
+warpSigns:
+  enabled: true
 limits:
   enabled: true
   default:
@@ -81,14 +91,6 @@ economy:
       warp-sign-use: 25
       warp-to: 50
       welcome: 25
-mysql:
-  enabled: false
-  host: 'localhost'
-  port: 3306
-  database: 'minecraft'
-  table: 'warpTable'
-  username: 'root'
-  password: 'password'
 dynmap:
   enabled: false
   layer:

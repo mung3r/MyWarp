@@ -1,5 +1,6 @@
 package me.taylorkelly.mywarp.listeners;
 
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.WarpSignUtils;
 
 import org.bukkit.event.EventHandler;
@@ -17,6 +18,9 @@ public class MWBlockListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSignChange(SignChangeEvent event) {
+        if (!MyWarp.inst().getWarpSettings().warpSignsEnabled) {
+            return;
+        }
         if (WarpSignUtils.isSignWarp(event.getLines())) {
             if (!WarpSignUtils.validateWarpSign(event, event.getPlayer())) {
                 event.getBlock().breakNaturally();

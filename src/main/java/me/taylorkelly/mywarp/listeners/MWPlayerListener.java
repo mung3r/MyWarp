@@ -28,6 +28,9 @@ public class MWPlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (!MyWarp.inst().getWarpSettings().warpSignsEnabled) {
+            return;
+        }
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             Block block = event.getClickedBlock();
 

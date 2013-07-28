@@ -44,8 +44,8 @@ public class DynmapMarkers implements Markers {
             markerSet.setMarkerSetLabel(MyWarp.inst().getWarpSettings().dynmapLayerDisplayName);
         }
         markerSet.setLayerPriority(MyWarp.inst().getWarpSettings().dynmapLayerPriority);
-        markerSet.setHideByDefault(MyWarp.inst().getWarpSettings().dynmapHideLayerByDefault);
-        markerSet.setLabelShow(MyWarp.inst().getWarpSettings().dynmapShowMarkerLable);
+        markerSet.setHideByDefault(MyWarp.inst().getWarpSettings().dynmapLayerHideByDefault);
+        markerSet.setLabelShow(MyWarp.inst().getWarpSettings().dynmapMarkerShowLable);
         markerSet.setMinZoom(MyWarp.inst().getWarpSettings().dynmapMarkerMinZoom);
 
         // add all warps

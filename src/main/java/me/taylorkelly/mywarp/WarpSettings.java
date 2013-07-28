@@ -24,12 +24,21 @@ public class WarpSettings {
     private final File configFile;
 
     // Settings
-    public boolean worldAccess;
+    public boolean controlWorldAccess;
     public boolean loadChunks;
     public boolean warpEffect;
 
     // Dynamics
     public boolean dynamicsSuggestWarps;
+
+    // MySQL
+    public boolean mysqlEnabled;
+    public String mysqlHost;
+    public int mysqlPort;
+    public String mysqlDatabase;
+    public String mysqlTable;
+    public String mysqlUsername;
+    public String mysqlPassword;
 
     // Locale
     public String locale;
@@ -39,6 +48,9 @@ public class WarpSettings {
     public int safetySearchRadius;
     public int safetyVerticalTolerance;
     public boolean safetyTeleportHorses;
+
+    // WarpSigns
+    public boolean warpSignsEnabled;
 
     // Limits
     public boolean limitsEnabled;
@@ -56,15 +68,6 @@ public class WarpSettings {
     public Time timersDefaultWarmup;
     public ArrayList<Time> timersWarmups;
 
-    // MySQL
-    public boolean mysqlEnabled;
-    public String mysqlHost;
-    public int mysqlPort;
-    public String mysqlDatabase;
-    public String mysqlTable;
-    public String mysqlUsername;
-    public String mysqlPassword;
-
     // Economy
     public boolean economyEnabled;
     public boolean economyInformAfterTransaction;
@@ -73,14 +76,14 @@ public class WarpSettings {
 
     // Dynmap
     public boolean dynmapEnabled;
-    public boolean dynmapHideLayerByDefault;
     // Dynmap - Layer
+    public boolean dynmapLayerHideByDefault;
     public String dynmapLayerDisplayName;
     public int dynmapLayerPriority;
     // Dynmap - Marker
     public String dynmapMarkerIconID;
     public int dynmapMarkerMinZoom;
-    public boolean dynmapShowMarkerLable;
+    public boolean dynmapMarkerShowLable;
 
     public WarpSettings() {
         configFile = new File(MyWarp.inst().getDataFolder(), CONFIG_FILE);
@@ -149,12 +152,21 @@ public class WarpSettings {
         economyFees = new ArrayList<WarpFees>();
 
         // Settings
-        worldAccess = config.getBoolean("settings.controlWorldAccess");
+        controlWorldAccess = config.getBoolean("settings.controlWorldAccess");
         loadChunks = config.getBoolean("settings.loadChunks");
         warpEffect = config.getBoolean("settings.warpEffect");
 
         // Dynamics
         dynamicsSuggestWarps = config.getBoolean("dynamics.suggestWarps");
+
+        // MySQL
+        mysqlEnabled = config.getBoolean("mysql.enabled");
+        mysqlHost = config.getString("mysql.host");
+        mysqlPort = config.getInt("mysql.port");
+        mysqlUsername = config.getString("mysql.username");
+        mysqlPassword = config.getString("mysql.password");
+        mysqlDatabase = config.getString("mysql.database");
+        mysqlTable = config.getString("mysql.table");
 
         // Locale
         locale = config.getString("locale.locale");
@@ -164,6 +176,9 @@ public class WarpSettings {
         safetySearchRadius = config.getInt("warpSafety.searchRadius");
         safetyVerticalTolerance = config.getInt("warpSafety.verticalTolerance");
         safetyTeleportHorses = config.getBoolean("warpSafety.teleportHorses");
+
+        // WarpSigns
+        warpSignsEnabled = config.getBoolean("warpSigns.enabled");
 
         // Limits
         limitsEnabled = config.getBoolean("limits.enabled");
@@ -210,15 +225,6 @@ public class WarpSettings {
         }
         Collections.sort(timersWarmups);
 
-        // MySQL
-        mysqlEnabled = config.getBoolean("mysql.enabled");
-        mysqlHost = config.getString("mysql.host");
-        mysqlPort = config.getInt("mysql.port");
-        mysqlUsername = config.getString("mysql.username");
-        mysqlPassword = config.getString("mysql.password");
-        mysqlDatabase = config.getString("mysql.database");
-        mysqlTable = config.getString("mysql.table");
-
         // Economy
         economyEnabled = config.getBoolean("economy.enabled");
         economyInformAfterTransaction = config.getBoolean("economy.informAfterTransaction");
@@ -249,12 +255,12 @@ public class WarpSettings {
 
         // Dynmap
         dynmapEnabled = config.getBoolean("dynmap.enabled");
-        dynmapHideLayerByDefault = config.getBoolean("dynmap.layer.hideByDefault");
+        dynmapLayerHideByDefault = config.getBoolean("dynmap.layer.hideByDefault");
         dynmapLayerDisplayName = config.getString("dynmap.layer.displayName");
         dynmapLayerPriority = config.getInt("dynmap.layer.priority");
         dynmapMarkerIconID = config.getString("dynmap.marker.iconID");
         dynmapMarkerMinZoom = config.getInt("dynmap.marker.minZoom");
-        dynmapShowMarkerLable = config.getBoolean("dynmap.marker.showLabel");
+        dynmapMarkerShowLable = config.getBoolean("dynmap.marker.showLabel");
     }
 
     /**
