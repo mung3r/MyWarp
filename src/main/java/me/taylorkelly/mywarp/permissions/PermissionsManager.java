@@ -64,7 +64,7 @@ public class PermissionsManager implements PermissionsHandler {
      */
     private void registerPermissions() {
         // mywarp.limit permissions
-        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().warpLimits) {
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
@@ -74,7 +74,7 @@ public class PermissionsManager implements PermissionsHandler {
         }
 
         // mywarp.cooldown permissions
-        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().warpCooldowns) {
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().timersCooldowns) {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
@@ -84,7 +84,7 @@ public class PermissionsManager implements PermissionsHandler {
         }
 
         // mywarp.warmup permissions
-        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().warpWarmups) {
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().timersWarmups) {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
@@ -113,7 +113,7 @@ public class PermissionsManager implements PermissionsHandler {
                                 "User may warp to all worlds", PermissionDefault.OP, worldMap));
 
         // mywarp.economy permissions
-        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().warpFees) {
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().economyFees) {
             MyWarp.server()
                     .getPluginManager()
                     .addPermission(
@@ -218,12 +218,12 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the cooldown affective from this player
      */
     public Time getCooldown(Player player) {
-        for (Time cooldown : MyWarp.inst().getWarpSettings().warpCooldowns) {
+        for (Time cooldown : MyWarp.inst().getWarpSettings().timersCooldowns) {
             if (hasPermission(player, "mywarp.cooldown." + cooldown.getName())) {
                 return cooldown;
             }
         }
-        return MyWarp.inst().getWarpSettings().defaultCooldown;
+        return MyWarp.inst().getWarpSettings().timersDefaultCooldown;
     }
 
     /**
@@ -236,12 +236,12 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the warmup affective for this player
      */
     public Time getWarmup(Player player) {
-        for (Time warmup : MyWarp.inst().getWarpSettings().warpWarmups) {
+        for (Time warmup : MyWarp.inst().getWarpSettings().timersWarmups) {
             if (hasPermission(player, "mywarp.warmup." + warmup.getName())) {
                 return warmup;
             }
         }
-        return MyWarp.inst().getWarpSettings().defaultWarmup;
+        return MyWarp.inst().getWarpSettings().timersDefaultWarmup;
     }
 
     /**
@@ -253,12 +253,12 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the private-limit affective for this player
      */
     public int maxPrivateWarps(Player player) {
-        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().warpLimits) {
+        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
             if (hasPermission(player, "mywarp.limit." + warpLimit.getName())) {
                 return warpLimit.getMaxPrivate();
             }
         }
-        return MyWarp.inst().getWarpSettings().defaultLimit.getMaxPrivate();
+        return MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit.getMaxPrivate();
     }
 
     /**
@@ -270,12 +270,12 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the public-limit affective for this player
      */
     public int maxPublicWarps(Player player) {
-        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().warpLimits) {
+        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
             if (hasPermission(player, "mywarp.limit." + warpLimit.getName())) {
                 return warpLimit.getMaxPublic();
             }
         }
-        return MyWarp.inst().getWarpSettings().defaultLimit.getMaxPublic();
+        return MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit.getMaxPublic();
     }
 
     /**
@@ -287,12 +287,12 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the total-limit affective for this player
      */
     public int maxTotalWarps(Player player) {
-        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().warpLimits) {
+        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
             if (hasPermission(player, "mywarp.limit." + warpLimit.getName())) {
                 return warpLimit.getMaxTotal();
             }
         }
-        return MyWarp.inst().getWarpSettings().defaultLimit.getMaxTotal();
+        return MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit.getMaxTotal();
     }
 
     /**
@@ -304,11 +304,11 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the fees affective for this sender
      */
     public WarpFees getEconomyPrices(CommandSender sender) {
-        for (WarpFees warpFees : MyWarp.inst().getWarpSettings().warpFees) {
+        for (WarpFees warpFees : MyWarp.inst().getWarpSettings().economyFees) {
             if (hasPermission(sender, "mywarp.economy." + warpFees.getName())) {
                 return warpFees;
             }
         }
-        return MyWarp.inst().getWarpSettings().defaultWarpFees;
+        return MyWarp.inst().getWarpSettings().economyDefaultFees;
     }
 }

@@ -99,7 +99,7 @@ public class MWPlayerListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (!MyWarp.inst().getWarpSettings().abortOnMove) {
+        if (!MyWarp.inst().getWarpSettings().timersAbortOnMove) {
             return;
         }
 

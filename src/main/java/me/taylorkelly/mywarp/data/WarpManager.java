@@ -50,7 +50,7 @@ public class WarpManager {
         warpMap.put(name, warp);
         MyWarp.inst().getConnectionManager().addWarp(warp);
 
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
             MyWarp.inst().getMarkers().addWarp(warp);
         }
     }
@@ -94,7 +94,7 @@ public class WarpManager {
         warpMap.remove(warp.getName());
         MyWarp.inst().getConnectionManager().deleteWarp(warp);
 
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
             MyWarp.inst().getMarkers().deleteWarp(warp);
         }
     }

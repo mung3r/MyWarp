@@ -45,7 +45,7 @@ public class PlayerWarmup extends PlayerTimer {
             return;
         }
 
-        if (MyWarp.inst().getWarpSettings().useEconomy) {
+        if (MyWarp.inst().getWarpSettings().economyEnabled) {
             double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(player).getFee(Fee.WARP_TO);
 
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {

@@ -25,7 +25,7 @@ public class RootCommands {
     @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "cmd.description.warpTo", min = 1, permissions = { "mywarp.warp.basic.warp" })
     public void warpTo(CommandContext args, Player sender) throws CommandException {
         // first check the economy
-        if (MyWarp.inst().getWarpSettings().useEconomy) {
+        if (MyWarp.inst().getWarpSettings().economyEnabled) {
             double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(Fee.WARP_TO);
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
@@ -35,7 +35,7 @@ public class RootCommands {
         }
 
         Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(0));
-        if (MyWarp.inst().getWarpSettings().useTimers) {
+        if (MyWarp.inst().getWarpSettings().timersEnabled) {
             Time cooldown = MyWarp.inst().getPermissionsManager().getCooldown(sender);
             Time warmup = MyWarp.inst().getPermissionsManager().getWarmup(sender);
 
@@ -66,7 +66,7 @@ public class RootCommands {
 
             new PlayerWarmup(sender, warmup, warp, cooldown);
 
-            if (MyWarp.inst().getWarpSettings().warmUpNotify) {
+            if (MyWarp.inst().getWarpSettings().timersWarmupNotify) {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLanguageManager()

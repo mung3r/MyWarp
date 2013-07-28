@@ -244,7 +244,7 @@ public class MyWarp extends JavaPlugin {
 
         // initialize the database connection
         try {
-            connectionManager = new ConnectionManager(getWarpSettings().usemySQL, true, true);
+            connectionManager = new ConnectionManager(getWarpSettings().mysqlEnabled, true, true);
         } catch (DataConnectionException e) {
             logger().severe("Could not establish database connection. Disabling MyWarp.");
             getServer().getPluginManager().disablePlugin(this);
@@ -279,7 +279,7 @@ public class MyWarp extends JavaPlugin {
         languageManager = new LanguageManager();
 
         // initialize EconomySupport
-        if (getWarpSettings().useEconomy) {
+        if (getWarpSettings().economyEnabled) {
             try {
                 RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
                         .getRegistration(net.milkbowl.vault.economy.Economy.class);
@@ -287,18 +287,18 @@ public class MyWarp extends JavaPlugin {
             } catch (NoClassDefFoundError e) {
                 // thrown if no economyProvider is found using this class
                 logger().severe("Failed to hook into Vault. Disabling Economy support.");
-                getWarpSettings().useEconomy = false;
+                getWarpSettings().economyEnabled = false;
             }
         }
 
         // initialize Dynmap support
-        if (getWarpSettings().useDynmap) {
+        if (getWarpSettings().dynmapEnabled) {
             Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
             if (dynmap != null && dynmap.isEnabled()) {
                 markers = new DynmapMarkers((DynmapCommonAPI) dynmap);
             } else {
                 logger().severe("Failed to hook into Dynmap. Disabling Dynmap support.");
-                getWarpSettings().useDynmap = false;
+                getWarpSettings().dynmapEnabled = false;
             }
         }
     }

@@ -20,7 +20,7 @@ public class MWEntityListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player)
-                || !MyWarp.inst().getWarpSettings().abortOnDamage) {
+                || !MyWarp.inst().getWarpSettings().timersAbortOnDamage) {
             return;
         }
         Player victim = (Player) event.getEntity();

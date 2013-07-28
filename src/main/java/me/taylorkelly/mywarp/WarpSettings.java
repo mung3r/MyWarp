@@ -23,53 +23,64 @@ public class WarpSettings {
     private FileConfiguration config;
     private final File configFile;
 
+    // Settings
     public boolean worldAccess;
     public boolean loadChunks;
     public boolean warpEffect;
 
-    public boolean suggestWarps;
+    // Dynamics
+    public boolean dynamicsSuggestWarps;
 
+    // Locale
     public String locale;
 
-    public boolean useWarpSafety;
-    public int searchRadius;
-    public int verticalTolerance;
-    public boolean teleportHorses;
+    // WarpSafety
+    public boolean safetyEnabled;
+    public int safetySearchRadius;
+    public int safetyVerticalTolerance;
+    public boolean safetyTeleportHorses;
 
-    public boolean useWarpLimits;
-    public ArrayList<WarpLimit> warpLimits;
-    public WarpLimit defaultLimit;
+    // Limits
+    public boolean limitsEnabled;
+    public WarpLimit limitsDefaultWarpLimit;
+    public ArrayList<WarpLimit> limitsWarpLimits;
 
-    public boolean useTimers;
-    public boolean coolDownNotify;
-    public boolean warmUpNotify;
-    public boolean abortOnMove;
-    public boolean abortOnDamage;
-    public ArrayList<Time> warpCooldowns;
-    public Time defaultCooldown;
-    public ArrayList<Time> warpWarmups;
-    public Time defaultWarmup;
+    // Timers
+    public boolean timersEnabled;
+    public boolean timersCooldownNotify;
+    public boolean timersWarmupNotify;
+    public boolean timersAbortOnMove;
+    public boolean timersAbortOnDamage;
+    public Time timersDefaultCooldown;
+    public ArrayList<Time> timersCooldowns;
+    public Time timersDefaultWarmup;
+    public ArrayList<Time> timersWarmups;
 
-    public boolean usemySQL;
-    public String mySQLhost;
-    public int mySQLport;
-    public String mySQLuname;
-    public String mySQLpass;
-    public String mySQLdb;
-    public String mySQLtable;
+    // MySQL
+    public boolean mysqlEnabled;
+    public String mysqlHost;
+    public int mysqlPort;
+    public String mysqlDatabase;
+    public String mysqlTable;
+    public String mysqlUsername;
+    public String mysqlPassword;
 
-    public boolean useEconomy;
-    public boolean informAfterTransaction;
-    public ArrayList<WarpFees> warpFees;
-    public WarpFees defaultWarpFees;
+    // Economy
+    public boolean economyEnabled;
+    public boolean economyInformAfterTransaction;
+    public WarpFees economyDefaultFees;
+    public ArrayList<WarpFees> economyFees;
 
-    public boolean useDynmap;
-    public boolean hideLayerByDefault;
-    public String layerDisplayName;
-    public int layerPriority;
-    public String markerIconID;
-    public int markerMinZoom;
-    public boolean showMarkerLable;
+    // Dynmap
+    public boolean dynmapEnabled;
+    public boolean dynmapHideLayerByDefault;
+    // Dynmap - Layer
+    public String dynmapLayerDisplayName;
+    public int dynmapLayerPriority;
+    // Dynmap - Marker
+    public String dynmapMarkerIconID;
+    public int dynmapMarkerMinZoom;
+    public boolean dynmapShowMarkerLable;
 
     public WarpSettings() {
         configFile = new File(MyWarp.inst().getDataFolder(), CONFIG_FILE);
@@ -132,85 +143,85 @@ public class WarpSettings {
      * Loads all values out of the FileConfiguration into the intern-logic
      */
     private void loadValues(FileConfiguration config) {
-        warpLimits = new ArrayList<WarpLimit>();
-        warpCooldowns = new ArrayList<Time>();
-        warpWarmups = new ArrayList<Time>();
-        warpFees = new ArrayList<WarpFees>();
+        limitsWarpLimits = new ArrayList<WarpLimit>();
+        timersCooldowns = new ArrayList<Time>();
+        timersWarmups = new ArrayList<Time>();
+        economyFees = new ArrayList<WarpFees>();
 
-        // settings
+        // Settings
         worldAccess = config.getBoolean("settings.controlWorldAccess");
         loadChunks = config.getBoolean("settings.loadChunks");
         warpEffect = config.getBoolean("settings.warpEffect");
 
-        // dynamics
-        suggestWarps = config.getBoolean("dynamics.suggestWarps");
+        // Dynamics
+        dynamicsSuggestWarps = config.getBoolean("dynamics.suggestWarps");
 
-        // language
+        // Locale
         locale = config.getString("locale.locale");
 
-        // saftey
-        useWarpSafety = config.getBoolean("warpSafety.enabled");
-        searchRadius = config.getInt("warpSafety.searchRadius");
-        verticalTolerance = config.getInt("warpSafety.verticalTolerance");
-        teleportHorses = config.getBoolean("warpSafety.teleportHorses");
+        // Safety
+        safetyEnabled = config.getBoolean("warpSafety.enabled");
+        safetySearchRadius = config.getInt("warpSafety.searchRadius");
+        safetyVerticalTolerance = config.getInt("warpSafety.verticalTolerance");
+        safetyTeleportHorses = config.getBoolean("warpSafety.teleportHorses");
 
-        // limits
-        useWarpLimits = config.getBoolean("limits.enabled");
+        // Limits
+        limitsEnabled = config.getBoolean("limits.enabled");
         ConfigurationSection configuredLimits = config.getConfigurationSection("limits");
         for (String key : config.getConfigurationSection("limits").getKeys(false)) {
             if (key.equals("enabled")) {
                 // ignore the enabled option
                 continue;
             } else if (key.equals("default")) {
-                defaultLimit = new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
+                limitsDefaultWarpLimit = new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
                         configuredLimits.getInt(key + ".maxPublic", 0), configuredLimits.getInt(key
                                 + ".maxPrivate", 0));
             } else {
-                warpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
+                limitsWarpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
                         configuredLimits.getInt(key + ".maxPublic", 0), configuredLimits.getInt(key
                                 + ".maxPrivate", 0)));
             }
         }
-        Collections.sort(warpLimits);
+        Collections.sort(limitsWarpLimits);
 
-        // timers
-        useTimers = config.getBoolean("timers.enabled");
-        coolDownNotify = config.getBoolean("timers.coolDownNotify");
-        warmUpNotify = config.getBoolean("timers.warmUpNotify");
-        abortOnMove = config.getBoolean("timers.abortOnMove");
-        abortOnDamage = config.getBoolean("timers.abortOnDamage");
+        // Timers
+        timersEnabled = config.getBoolean("timers.enabled");
+        timersCooldownNotify = config.getBoolean("timers.coolDownNotify");
+        timersWarmupNotify = config.getBoolean("timers.warmUpNotify");
+        timersAbortOnMove = config.getBoolean("timers.abortOnMove");
+        timersAbortOnDamage = config.getBoolean("timers.abortOnDamage");
         ConfigurationSection configuredCooldowns = config.getConfigurationSection("timers.cooldowns");
         for (String key : configuredCooldowns.getKeys(false)) {
             if (key.equals("default")) {
-                defaultCooldown = new Time(key, configuredCooldowns.getDouble(key));
+                timersDefaultCooldown = new Time(key, configuredCooldowns.getDouble(key));
             } else {
-                warpCooldowns.add(new Time(key, configuredCooldowns.getDouble(key)));
+                timersCooldowns.add(new Time(key, configuredCooldowns.getDouble(key)));
             }
         }
-        Collections.sort(warpCooldowns);
+        Collections.sort(timersCooldowns);
 
         ConfigurationSection configuredWarmups = config.getConfigurationSection("timers.warmups");
         for (String key : configuredWarmups.getKeys(false)) {
             if (key.equals("default")) {
-                defaultWarmup = new Time(key, configuredWarmups.getDouble(key));
+                timersDefaultWarmup = new Time(key, configuredWarmups.getDouble(key));
             } else {
-                warpWarmups.add(new Time(key, configuredWarmups.getDouble(key)));
+                timersWarmups.add(new Time(key, configuredWarmups.getDouble(key)));
             }
         }
-        Collections.sort(warpWarmups);
+        Collections.sort(timersWarmups);
 
-        // database
-        usemySQL = config.getBoolean("mysql.enabled");
-        mySQLhost = config.getString("mysql.host");
-        mySQLport = config.getInt("mysql.port");
-        mySQLuname = config.getString("mysql.username");
-        mySQLpass = config.getString("mysql.password");
-        mySQLdb = config.getString("mysql.database");
-        mySQLtable = config.getString("mysql.table");
+        // MySQL
+        mysqlEnabled = config.getBoolean("mysql.enabled");
+        mysqlHost = config.getString("mysql.host");
+        mysqlPort = config.getInt("mysql.port");
+        mysqlUsername = config.getString("mysql.username");
+        mysqlPassword = config.getString("mysql.password");
+        mysqlDatabase = config.getString("mysql.database");
+        mysqlTable = config.getString("mysql.table");
 
-        // economy
-        useEconomy = config.getBoolean("economy.enabled");
-        informAfterTransaction = config.getBoolean("economy.informAfterTransaction");
+        // Economy
+        economyEnabled = config.getBoolean("economy.enabled");
+        economyInformAfterTransaction = config.getBoolean("economy.informAfterTransaction");
 
         ConfigurationSection configuredFees = config.getConfigurationSection("economy.fees");
         for (String key : configuredFees.getKeys(false)) {
@@ -229,21 +240,21 @@ public class WarpSettings {
                     configuredFees.getDouble(key + ".warp-to", 0), configuredFees.getDouble(key + ".welcome",
                             0));
             if (key.equals("default")) {
-                defaultWarpFees = fees;
+                economyDefaultFees = fees;
             } else {
-                warpFees.add(fees);
+                economyFees.add(fees);
             }
-            Collections.sort(warpFees);
+            Collections.sort(economyFees);
         }
 
-        // dynmap
-        useDynmap = config.getBoolean("dynmap.enabled");
-        hideLayerByDefault = config.getBoolean("dynmap.layer.hideByDefault");
-        layerDisplayName = config.getString("dynmap.layer.displayName");
-        layerPriority = config.getInt("dynmap.layer.priority");
-        markerIconID = config.getString("dynmap.marker.iconID");
-        markerMinZoom = config.getInt("dynmap.marker.minZoom");
-        showMarkerLable = config.getBoolean("dynmap.marker.showLabel");
+        // Dynmap
+        dynmapEnabled = config.getBoolean("dynmap.enabled");
+        dynmapHideLayerByDefault = config.getBoolean("dynmap.layer.hideByDefault");
+        dynmapLayerDisplayName = config.getString("dynmap.layer.displayName");
+        dynmapLayerPriority = config.getInt("dynmap.layer.priority");
+        dynmapMarkerIconID = config.getString("dynmap.marker.iconID");
+        dynmapMarkerMinZoom = config.getInt("dynmap.marker.minZoom");
+        dynmapShowMarkerLable = config.getBoolean("dynmap.marker.showLabel");
     }
 
     /**

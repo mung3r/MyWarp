@@ -89,7 +89,7 @@ public class BasicCommands {
         String publicHeader = MyWarp.inst().getLanguageManager().getString("warp.assets.public");
         String privateHeader = MyWarp.inst().getLanguageManager().getString("warp.assets.private");
 
-        if (MyWarp.inst().getWarpSettings().useWarpLimits) {
+        if (MyWarp.inst().getWarpSettings().limitsEnabled) {
             header = header
                     + " ("
                     + (publicWarps.size() + privateWarps.size())

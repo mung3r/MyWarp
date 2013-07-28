@@ -19,8 +19,8 @@ public class SafeLocation {
      * @return a safe location or null if none could be found
      */
     public static Location getSafeLocation(Location l) {
-        return getSafeLocation(l, MyWarp.inst().getWarpSettings().verticalTolerance, MyWarp.inst()
-                .getWarpSettings().searchRadius);
+        return getSafeLocation(l, MyWarp.inst().getWarpSettings().safetyVerticalTolerance, MyWarp.inst()
+                .getWarpSettings().safetySearchRadius);
     }
 
     /**
@@ -32,7 +32,7 @@ public class SafeLocation {
      * 
      * @param l
      *            the location that is used as center
-     * @param verticalTolerance
+     * @param safetyVerticalTolerance
      *            the maximal vertical tolerance
      * @param radius
      *            the maximal horizontal search radius

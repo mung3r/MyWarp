@@ -161,7 +161,7 @@ public class CommandsManager {
 
         // if economy support is enabled we need to check if the sender can
         // afford using the command
-        if (MyWarp.inst().getWarpSettings().useEconomy && cmd.fee() != Fee.NONE) {
+        if (MyWarp.inst().getWarpSettings().economyEnabled && cmd.fee() != Fee.NONE) {
             double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(cmd.fee());
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
@@ -181,7 +181,7 @@ public class CommandsManager {
         // if economy support is enabled whitdraw the sender - at this point the
         // command should have been executed without any errors
         // (see CommandException)
-        if (MyWarp.inst().getWarpSettings().useEconomy && cmd.fee() != Fee.NONE) {
+        if (MyWarp.inst().getWarpSettings().economyEnabled && cmd.fee() != Fee.NONE) {
 
             MyWarp.inst()
                     .getEconomyLink()

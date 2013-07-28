@@ -37,10 +37,10 @@ public class ConnectionManager implements DataConnection {
 
         if (useMySQL) {
             // Use MySQL
-            handler = new MySQLConnection("jdbc:mysql://" + MyWarp.inst().getWarpSettings().mySQLhost + ":"
-                    + MyWarp.inst().getWarpSettings().mySQLport + "/"
-                    + MyWarp.inst().getWarpSettings().mySQLdb, MyWarp.inst().getWarpSettings().mySQLuname,
-                    MyWarp.inst().getWarpSettings().mySQLpass, MyWarp.inst().getWarpSettings().mySQLtable);
+            handler = new MySQLConnection("jdbc:mysql://" + MyWarp.inst().getWarpSettings().mysqlHost + ":"
+                    + MyWarp.inst().getWarpSettings().mysqlPort + "/"
+                    + MyWarp.inst().getWarpSettings().mysqlDatabase, MyWarp.inst().getWarpSettings().mysqlUsername,
+                    MyWarp.inst().getWarpSettings().mysqlPassword, MyWarp.inst().getWarpSettings().mysqlTable);
         } else {
             // Use SQLite
             try {

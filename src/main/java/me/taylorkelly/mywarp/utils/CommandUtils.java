@@ -41,7 +41,7 @@ public class CommandUtils {
         if (warp == null) {
             Warp match = matches.getLikliestMatch();
 
-            if (MyWarp.inst().getWarpSettings().suggestWarps && match != null) {
+            if (MyWarp.inst().getWarpSettings().dynamicsSuggestWarps && match != null) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLanguageManager()
@@ -87,7 +87,7 @@ public class CommandUtils {
      *             if the sender has reached his total limit
      */
     public static void checkTotalLimit(CommandSender sender) throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().useWarpLimits || !(sender instanceof Player)) {
+        if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;
@@ -111,7 +111,7 @@ public class CommandUtils {
      *             if the sender has reached his public limit
      */
     public static void checkPublicLimit(CommandSender sender) throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().useWarpLimits || !(sender instanceof Player)) {
+        if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;
@@ -135,7 +135,7 @@ public class CommandUtils {
      *             if the sender has reached his private limit
      */
     public static void checkPrivateLimit(CommandSender sender) throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().useWarpLimits || !(sender instanceof Player)) {
+        if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;
@@ -163,7 +163,7 @@ public class CommandUtils {
      *             if the command sender has reached one of his limits
      */
     public static void checkPlayerLimits(CommandSender sender, boolean publicAll) throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().useWarpLimits || !(sender instanceof Player)) {
+        if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;

@@ -38,7 +38,7 @@ public class SafeTeleport {
         if (isNotFullHeight(l.getBlock().getType())) {
             l.add(0, 1, 0);
         }
-        if (MyWarp.inst().getWarpSettings().useWarpSafety) {
+        if (MyWarp.inst().getWarpSettings().safetyEnabled) {
             Location safe = SafeLocation.getSafeLocation(l);
             if (safe == null) {
                 return TeleportStatus.NONE;
@@ -113,7 +113,7 @@ public class SafeTeleport {
         Location from = entity.getLocation();
 
         Entity vehicle = null;
-        if (MyWarp.inst().getWarpSettings().teleportHorses && entity.getVehicle() instanceof Horse) {
+        if (MyWarp.inst().getWarpSettings().safetyTeleportHorses && entity.getVehicle() instanceof Horse) {
             vehicle = entity.getVehicle();
         }
         entity.leaveVehicle();

@@ -424,7 +424,7 @@ public class Warp implements Comparable<Warp> {
         this.creator = giveeName;
 
         MyWarp.inst().getConnectionManager().updateCreator(this);
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
             MyWarp.inst().getMarkers().updateWarp(this);
         }
     }
@@ -445,7 +445,7 @@ public class Warp implements Comparable<Warp> {
 
         MyWarp.inst().getConnectionManager().updateLocation(this);
 
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
             MyWarp.inst().getMarkers().updateWarp(this);
         }
     }
@@ -461,7 +461,7 @@ public class Warp implements Comparable<Warp> {
 
         MyWarp.inst().getConnectionManager().publicizeWarp(this, publicAll);
 
-        if (MyWarp.inst().getWarpSettings().useDynmap) {
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
             if (publicAll) {
                 MyWarp.inst().getMarkers().addWarp(this);
             } else {
@@ -546,7 +546,7 @@ public class Warp implements Comparable<Warp> {
                 player.sendMessage(ChatColor.AQUA + getSpecificWelcomeMessage(player));
                 visit();
 
-                if (MyWarp.inst().getWarpSettings().useEconomy && charge) {
+                if (MyWarp.inst().getWarpSettings().economyEnabled && charge) {
                     MyWarp.inst()
                             .getEconomyLink()
                             .withdrawSender(
@@ -560,7 +560,7 @@ public class Warp implements Comparable<Warp> {
                         .getEffectiveString("safety.found", "%warp%", getName()));
                 visit();
 
-                if (MyWarp.inst().getWarpSettings().useEconomy && charge) {
+                if (MyWarp.inst().getWarpSettings().economyEnabled && charge) {
                     MyWarp.inst()
                             .getEconomyLink()
                             .withdrawSender(
