@@ -13,8 +13,6 @@ import org.bukkit.event.block.SignChangeEvent;
  */
 public class WarpSignUtils {
 
-    private static final String SIGN_TEXT = "[MyWarp]";
-
     /**
      * Warps the given player to the warp noted on the given sign. This method
      * expects that the given sign is a valid warp sign!
@@ -109,7 +107,11 @@ public class WarpSignUtils {
             MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
         }
 
-        sign.setLine(1, SIGN_TEXT);
+        // get the right spelling (case) out of the config
+        String line = sign.getLine(1);
+        line = line.substring(1, line.length() - 1);
+        sign.setLine(1, "[" + MyWarp.inst().getWarpSettings().warpSignsIdentifiers.ceiling(line) + "]");
+
         player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.created"));
         return true;
     }
@@ -134,6 +136,9 @@ public class WarpSignUtils {
      * @return true if the sign is a warp sign, false if not
      */
     public static boolean isSignWarp(String[] lines) {
-        return lines[1].equalsIgnoreCase(SIGN_TEXT);
+        return lines[1].startsWith("[")
+                && lines[1].endsWith("]")
+                && MyWarp.inst().getWarpSettings().warpSignsIdentifiers.contains(lines[1].substring(1,
+                        lines[1].length() - 1));
     }
 }

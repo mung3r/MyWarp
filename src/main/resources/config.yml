@@ -21,6 +21,9 @@ warpSafety:
   teleportHorses: true
 warpSigns:
   enabled: true
+  identifiers:
+  - MyWarp
+  - Warp
 limits:
   enabled: true
   default:

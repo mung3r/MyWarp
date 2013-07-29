@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 import me.taylorkelly.mywarp.data.WarpLimit;
@@ -51,11 +53,12 @@ public class WarpSettings {
 
     // WarpSigns
     public boolean warpSignsEnabled;
+    public TreeSet<String> warpSignsIdentifiers;
 
     // Limits
     public boolean limitsEnabled;
     public WarpLimit limitsDefaultWarpLimit;
-    public ArrayList<WarpLimit> limitsWarpLimits;
+    public List<WarpLimit> limitsWarpLimits;
 
     // Timers
     public boolean timersEnabled;
@@ -64,15 +67,15 @@ public class WarpSettings {
     public boolean timersAbortOnMove;
     public boolean timersAbortOnDamage;
     public Time timersDefaultCooldown;
-    public ArrayList<Time> timersCooldowns;
+    public List<Time> timersCooldowns;
     public Time timersDefaultWarmup;
-    public ArrayList<Time> timersWarmups;
+    public List<Time> timersWarmups;
 
     // Economy
     public boolean economyEnabled;
     public boolean economyInformAfterTransaction;
     public WarpFees economyDefaultFees;
-    public ArrayList<WarpFees> economyFees;
+    public List<WarpFees> economyFees;
 
     // Dynmap
     public boolean dynmapEnabled;
@@ -150,6 +153,7 @@ public class WarpSettings {
         timersCooldowns = new ArrayList<Time>();
         timersWarmups = new ArrayList<Time>();
         economyFees = new ArrayList<WarpFees>();
+        warpSignsIdentifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
 
         // Settings
         controlWorldAccess = config.getBoolean("settings.controlWorldAccess");
@@ -179,6 +183,7 @@ public class WarpSettings {
 
         // WarpSigns
         warpSignsEnabled = config.getBoolean("warpSigns.enabled");
+        warpSignsIdentifiers.addAll(config.getStringList("warpSigns.identifiers"));
 
         // Limits
         limitsEnabled = config.getBoolean("limits.enabled");
