@@ -50,6 +50,7 @@ public class WarpSettings {
     public int safetySearchRadius;
     public int safetyVerticalTolerance;
     public boolean safetyTeleportHorses;
+    public boolean safetyTeleportLeashed;
 
     // WarpSigns
     public boolean warpSignsEnabled;
@@ -180,6 +181,7 @@ public class WarpSettings {
         safetySearchRadius = config.getInt("warpSafety.searchRadius");
         safetyVerticalTolerance = config.getInt("warpSafety.verticalTolerance");
         safetyTeleportHorses = config.getBoolean("warpSafety.teleportHorses");
+        safetyTeleportLeashed = config.getBoolean("warpSafety.teleportLeashed");
 
         // WarpSigns
         warpSignsEnabled = config.getBoolean("warpSigns.enabled");

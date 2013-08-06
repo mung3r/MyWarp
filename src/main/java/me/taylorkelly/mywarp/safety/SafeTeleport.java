@@ -1,5 +1,8 @@
 package me.taylorkelly.mywarp.safety;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.Effect;
@@ -7,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
 
 /**
  * This class provides and manages several methods to teleport entity to safe
@@ -112,11 +116,28 @@ public class SafeTeleport {
     private static void teleport(final Entity entity, final Location to) {
         Location from = entity.getLocation();
 
+        // teleport horses if enabled
         Entity vehicle = null;
         if (MyWarp.inst().getWarpSettings().safetyTeleportHorses && entity.getVehicle() instanceof Horse) {
             vehicle = entity.getVehicle();
         }
         entity.leaveVehicle();
+
+        // teleport leashed entities if enabled
+        List<LivingEntity> leashedEntities = null;
+        if (MyWarp.inst().getWarpSettings().safetyTeleportLeashed) {
+            leashedEntities = new ArrayList<LivingEntity>();
+            for (Entity leashed : entity.getNearbyEntities(10, 7, 10)) {
+                if (!(leashed instanceof LivingEntity)) {
+                    continue;
+                }
+                LivingEntity leashedEntity = (LivingEntity) leashed;
+                if (!leashedEntity.isLeashed() || leashedEntity.getLeashHolder() != entity) {
+                    continue;
+                }
+                leashedEntities.add(leashedEntity);
+            }
+        }
 
         if (MyWarp.inst().getWarpSettings().warpEffect) {
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
@@ -132,6 +153,13 @@ public class SafeTeleport {
         if (vehicle != null) {
             teleport(vehicle, to);
             vehicle.setPassenger(entity);
+        }
+
+        if (leashedEntities != null && !leashedEntities.isEmpty()) {
+            for (LivingEntity leashedEntity : leashedEntities) {
+                teleport(leashedEntity, to);
+                leashedEntity.setLeashHolder(entity);
+            }
         }
     }
 }

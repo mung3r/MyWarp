@@ -19,6 +19,7 @@ warpSafety:
   searchRadius: 5
   verticalTolerance: 5
   teleportHorses: true
+  teleportLeashed: false
 warpSigns:
   enabled: true
   identifiers:
