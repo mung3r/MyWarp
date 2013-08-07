@@ -88,7 +88,7 @@ public class Warp implements Comparable<Warp> {
         this.publicAll = publicAll;
         this.permissions = processList(permissions);
         this.groupPermissions = processList(groupPermissions);
-        this.setWelcomeMessage(welcomeMessage);
+        this.welcomeMessage = welcomeMessage;
         this.visits = visits;
         if (index > nextIndex) {
             nextIndex = index;
