@@ -118,7 +118,8 @@ public class SafeTeleport {
 
         // teleport horses if enabled
         Entity vehicle = null;
-        if (MyWarp.inst().getWarpSettings().safetyTeleportHorses && entity.getVehicle() instanceof Horse) {
+        if (MyWarp.inst().getWarpSettings().safetyTeleportHorses && entity.getVehicle() instanceof Horse
+                && ((Horse) entity.getVehicle()).isTamed()) {
             vehicle = entity.getVehicle();
         }
         entity.leaveVehicle();
