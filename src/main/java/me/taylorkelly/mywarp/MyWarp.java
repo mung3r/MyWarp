@@ -18,6 +18,7 @@ import me.taylorkelly.mywarp.permissions.PermissionsManager;
 import me.taylorkelly.mywarp.utils.commands.CommandsManager;
 import net.milkbowl.vault.economy.Economy;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -256,7 +257,6 @@ public class MyWarp extends JavaPlugin {
         warpManager = new WarpManager();
 
         setupConfigurableFunctions();
-
         registerEvents();
     }
 
@@ -283,10 +283,17 @@ public class MyWarp extends JavaPlugin {
             try {
                 RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
                         .getRegistration(net.milkbowl.vault.economy.Economy.class);
+                Validate.notNull(economyProvider, "EconomyProvider cannnot be null.");
                 economyLink = new VaultLink(economyProvider);
             } catch (NoClassDefFoundError e) {
-                // thrown if no economyProvider is found using this class
-                logger().severe("Failed to hook into Vault. Disabling Economy support.");
+                // thrown if no economyProvider identified by the class is found
+                logger().severe(
+                        "Failed to hook into Vault (EconomyProvider is not registerd). Disabling Economy support.");
+                getWarpSettings().economyEnabled = false;
+            } catch (NullPointerException e) {
+                // thrown the economy provider is registered but null
+                logger().severe(
+                        "Failed to hook into Vault (" + e.getMessage() + "). Disabling Economy support.");
                 getWarpSettings().economyEnabled = false;
             }
         }
