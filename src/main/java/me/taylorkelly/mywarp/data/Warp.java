@@ -71,7 +71,7 @@ public class Warp implements Comparable<Warp> {
      * @param welcomeMessage
      *            the welcome message
      * @param visits
-     *            the vivists
+     *            the visits
      */
     public Warp(int index, String name, String creator, String world, double x, int y, double z, int yaw,
             int pitch, boolean publicAll, String permissions, String groupPermissions, String welcomeMessage,

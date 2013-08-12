@@ -3,9 +3,8 @@ package me.taylorkelly.mywarp.commands;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.economy.Fee;
-import me.taylorkelly.mywarp.timer.PlayerCooldown;
-import me.taylorkelly.mywarp.timer.PlayerWarmup;
-import me.taylorkelly.mywarp.timer.Time;
+import me.taylorkelly.mywarp.timer.WarpCooldown;
+import me.taylorkelly.mywarp.timer.WarpWarmup;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
@@ -17,7 +16,6 @@ import org.bukkit.entity.Player;
 /**
  * This class contains all root-level commands annotated by the
  * {@link NestedCommand} annotation
- * 
  */
 public class RootCommands {
 
@@ -36,43 +34,46 @@ public class RootCommands {
 
         Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(0));
         if (MyWarp.inst().getWarpSettings().timersEnabled) {
-            Time cooldown = MyWarp.inst().getPermissionsManager().getCooldown(sender);
-            Time warmup = MyWarp.inst().getPermissionsManager().getWarmup(sender);
-
-            if (PlayerCooldown.isActive(sender.getName())) {
+            if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getName(), WarpCooldown.class)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString("timer.cooldown.cooling", "%seconds%",
-                                Integer.toString(PlayerCooldown.getRemainingCooldown(sender.getName()))));
+                        .getEffectiveString(
+                                "timer.cooldown.cooling",
+                                "%seconds%",
+                                Integer.toString(MyWarp.inst().getTimerFactory()
+                                        .getRemainingSeconds(sender.getName(), WarpCooldown.class))));
             }
 
-            if (PlayerWarmup.isActive(sender.getName())) {
+            if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getName(), WarpWarmup.class)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString("timer.warmup.warming", "%seconds%",
-                                Integer.toString(PlayerWarmup.getRemainingWarmup(sender.getName()))));
+                        .getEffectiveString(
+                                "timer.warmup.warming",
+                                "%seconds%",
+                                Integer.toString(MyWarp.inst().getTimerFactory()
+                                        .getRemainingSeconds(sender.getName(), WarpWarmup.class))));
             }
 
             if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.warmup.disobey")) {
                 warp.warp(sender, true);
 
                 if (!MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.cooldown.disobey")) {
-                    new PlayerCooldown(sender, cooldown);
+                    MyWarp.inst()
+                            .getTimerFactory()
+                            .registerNewTimer(
+                                    new WarpCooldown(MyWarp.inst().getTimerFactory(), sender, MyWarp.inst()
+                                            .getPermissionsManager().getCooldown(sender)));
                 }
                 return;
             }
 
-            new PlayerWarmup(sender, warmup, warp, cooldown);
-
-            if (MyWarp.inst().getWarpSettings().timersWarmupNotify) {
-                sender.sendMessage(MyWarp
-                        .inst()
-                        .getLanguageManager()
-                        .getEffectiveString("timer.warmup.warming", "%warp%", warp.getName(), "%seconds%",
-                                Integer.toString(warmup.getInt())));
-            }
+            MyWarp.inst()
+                    .getTimerFactory()
+                    .registerNewTimer(
+                            new WarpWarmup(MyWarp.inst().getTimerFactory(), sender, warp, MyWarp.inst()
+                                    .getPermissionsManager().getWarmup(sender)));
 
         } else {
             warp.warp(sender, true);

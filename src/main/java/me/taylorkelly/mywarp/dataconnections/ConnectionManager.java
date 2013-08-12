@@ -2,7 +2,6 @@ package me.taylorkelly.mywarp.dataconnections;
 
 import java.io.File;
 import java.util.Map;
-
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 

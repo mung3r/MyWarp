@@ -2,7 +2,6 @@ package me.taylorkelly.mywarp.listeners;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.WarpSignUtils;
-import me.taylorkelly.mywarp.timer.PlayerWarmup;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.material.Attachable;
 
 public class MWPlayerListener implements Listener {
@@ -91,32 +89,6 @@ public class MWPlayerListener implements Listener {
             MyWarp.inst().getWarpManager().setWelcomeMessage(player, event.getMessage());
             MyWarp.inst().getWarpManager().notWaiting(player);
             event.setCancelled(true);
-        }
-    }
-
-    /**
-     * Called when a player moves
-     * 
-     * @param event
-     *            the event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerMove(PlayerMoveEvent event) {
-        if (!MyWarp.inst().getWarpSettings().timersAbortOnMove) {
-            return;
-        }
-
-        if (event.getFrom().getX() == event.getTo().getX() && event.getFrom().getY() == event.getTo().getY()
-                && event.getFrom().getZ() == event.getTo().getZ()) {
-            return;
-        }
-
-        Player player = event.getPlayer();
-        if (PlayerWarmup.isActive(player.getName())
-                && !MyWarp.inst().getPermissionsManager()
-                        .hasPermission(player, "mywarp.warmup.disobey.moveabort")) {
-            PlayerWarmup.endWarmup(player.getName());
-            player.sendMessage(MyWarp.inst().getLanguageManager().getString("timer.warmup.cancelled.move"));
         }
     }
 }

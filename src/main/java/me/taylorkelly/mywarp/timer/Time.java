@@ -3,24 +3,23 @@ package me.taylorkelly.mywarp.timer;
 import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
 
 /**
- * This storage-object represents one time-configuration for warmups and
- * cooldowns
+ * This storage-object represents one time-configuration for timers
  */
 public class Time extends ValuePermissionContainer {
 
-    final private double time;
+    final private double seconds;
 
     /**
-     * Instantiates a new time.
+     * Instantiates a new time-instance
      * 
      * @param name
      *            the name used on permission lookup
-     * @param time
-     *            the time
+     * @param seconds
+     *            the time in seconds
      */
-    public Time(String name, Double time) {
+    public Time(String name, Double seconds) {
         super(name);
-        this.time = time;
+        this.seconds = seconds;
     }
 
     /**
@@ -30,33 +29,15 @@ public class Time extends ValuePermissionContainer {
      */
 
     public Long getTicks() {
-        return (long) (time * 20);
+        return (long) (seconds * 20);
     }
 
     /**
-     * Gets the real long.
+     * Gets the time in seconds.
      * 
-     * @return the real long
+     * @return the time in seconds
      */
-    public Long getRealLong() {
-        return (long) (time * 1000);
-    }
-
-    /**
-     * Gets the nano.
-     * 
-     * @return the nano
-     */
-    public Long getNano() {
-        return (long) (time * 1000000000);
-    }
-
-    /**
-     * Gets the int.
-     * 
-     * @return the int
-     */
-    public Integer getInt() {
-        return (int) time;
+    public double getSeconds() {
+        return seconds;
     }
 }

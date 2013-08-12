@@ -10,11 +10,11 @@ import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.economy.EconomyLink;
 import me.taylorkelly.mywarp.economy.VaultLink;
 import me.taylorkelly.mywarp.listeners.MWBlockListener;
-import me.taylorkelly.mywarp.listeners.MWEntityListener;
 import me.taylorkelly.mywarp.listeners.MWPlayerListener;
 import me.taylorkelly.mywarp.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.markers.Markers;
 import me.taylorkelly.mywarp.permissions.PermissionsManager;
+import me.taylorkelly.mywarp.timer.TimerFactory;
 import me.taylorkelly.mywarp.utils.commands.CommandsManager;
 import net.milkbowl.vault.economy.Economy;
 
@@ -60,6 +60,11 @@ public class MyWarp extends JavaPlugin {
      * Represents the marker API in use
      */
     private Markers markers;
+
+    /**
+     * The timer-factory
+     */
+    private TimerFactory timerFactory;
 
     /**
      * The primary warp-data object
@@ -165,15 +170,6 @@ public class MyWarp extends JavaPlugin {
     }
 
     /**
-     * Returns the warp-manager that holds all warps
-     * 
-     * @return the warp manager
-     */
-    public WarpManager getWarpManager() {
-        return warpManager;
-    }
-
-    /**
      * Gets MyWarp's {@link PermissionsManager}, this method should be used for
      * tasks involving direct permission-access
      * 
@@ -181,6 +177,25 @@ public class MyWarp extends JavaPlugin {
      */
     public PermissionsManager getPermissionsManager() {
         return permissionsManager;
+    }
+
+    /**
+     * Gets the timer-factory, necessary for all tasks involving per-object
+     * timers (warmups, cooldowns...)
+     * 
+     * @return the timer-factory
+     */
+    public TimerFactory getTimerFactory() {
+        return timerFactory;
+    }
+
+    /**
+     * Returns the warp-manager that holds all warps
+     * 
+     * @return the warp manager
+     */
+    public WarpManager getWarpManager() {
+        return warpManager;
     }
 
     /**
@@ -210,7 +225,6 @@ public class MyWarp extends JavaPlugin {
         if (getConnectionManager() != null) {
             getConnectionManager().close();
         }
-
         // cancel all pending tasks
         getServer().getScheduler().cancelTasks(this);
     }
@@ -229,15 +243,14 @@ public class MyWarp extends JavaPlugin {
         getCommandsManager().register(RootCommands.class);
 
         // rename extremely old sqlite-database file - this needs to be done
-        // before
-        // creating the database connection
+        // before creating the database connection
         File newDatabase = new File(getDataFolder(), "warps.db");
         File oldDatabase = new File("homes-warps.db");
         if (!newDatabase.exists() && oldDatabase.exists()) {
             if (!FileUtil.copy(oldDatabase, newDatabase)) {
                 logger().severe(
                         "Failed to copy " + oldDatabase.getName() + "to " + newDatabase.getName()
-                                + ", the old databse will be ignored!");
+                                + ", the old database will be ignored!");
             } else {
                 logger().info("Your old SQlite database has been copied to the new format.");
             }
@@ -256,6 +269,8 @@ public class MyWarp extends JavaPlugin {
         permissionsManager = new PermissionsManager();
         warpManager = new WarpManager();
 
+        timerFactory = new TimerFactory();
+
         setupConfigurableFunctions();
         registerEvents();
     }
@@ -265,7 +280,6 @@ public class MyWarp extends JavaPlugin {
      */
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(new MWBlockListener(), this);
-        getServer().getPluginManager().registerEvents(new MWEntityListener(), this);
         getServer().getPluginManager().registerEvents(new MWPlayerListener(), this);
     }
 
@@ -286,12 +300,12 @@ public class MyWarp extends JavaPlugin {
                 Validate.notNull(economyProvider, "EconomyProvider cannnot be null.");
                 economyLink = new VaultLink(economyProvider);
             } catch (NoClassDefFoundError e) {
-                // thrown if no economyProvider identified by the class is found
+                // economy provider class is not present
                 logger().severe(
                         "Failed to hook into Vault (EconomyProvider is not registerd). Disabling Economy support.");
                 getWarpSettings().economyEnabled = false;
             } catch (NullPointerException e) {
-                // thrown the economy provider is registered but null
+                // economy provider is not registered
                 logger().severe(
                         "Failed to hook into Vault (" + e.getMessage() + "). Disabling Economy support.");
                 getWarpSettings().economyEnabled = false;
