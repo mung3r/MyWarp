@@ -226,6 +226,9 @@ public class MyWarp extends JavaPlugin {
         if (getConnectionManager() != null) {
             getConnectionManager().close();
         }
+        // unregister dynamic permissions
+        permissionsManager.unregisterPermissions();
+
         // cancel all pending tasks
         getServer().getScheduler().cancelTasks(this);
     }
