@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import me.taylorkelly.mywarp.commands.RootCommands;
+import me.taylorkelly.mywarp.data.EventListener;
 import me.taylorkelly.mywarp.data.WarpManager;
+import me.taylorkelly.mywarp.data.WarpSignManager;
 import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.economy.EconomyLink;
 import me.taylorkelly.mywarp.economy.VaultLink;
-import me.taylorkelly.mywarp.listeners.MWBlockListener;
-import me.taylorkelly.mywarp.listeners.MWPlayerListener;
 import me.taylorkelly.mywarp.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.markers.Markers;
 import me.taylorkelly.mywarp.permissions.PermissionsManager;
@@ -22,6 +22,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -67,7 +68,7 @@ public class MyWarp extends JavaPlugin {
     private TimerFactory timerFactory;
 
     /**
-     * The primary warp-data object
+     * The warp-manager
      */
     private WarpManager warpManager;
 
@@ -269,28 +270,25 @@ public class MyWarp extends JavaPlugin {
         permissionsManager = new PermissionsManager();
         warpManager = new WarpManager();
 
-        timerFactory = new TimerFactory();
-
-        setupConfigurableFunctions();
-        registerEvents();
+        setupPlugin();
     }
 
     /**
-     * Registers all events used by MyWarp
+     * This method setups non-core functions of the plugin (put short, this
+     * functions can be enabled/disabled at runtime). Core functions MUST be
+     * setup correctly before executing this method.
      */
-    private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new MWBlockListener(), this);
-        getServer().getPluginManager().registerEvents(new MWPlayerListener(), this);
-    }
+    private void setupPlugin() {
+        // register dynamic permissions
+        permissionsManager.registerPermissions();
 
-    /**
-     * This method setups functions, whose instances rely itself upon
-     * configurable values such as the {@link LanguageManager} or the
-     * {@link Markers}. This method should be called whenever the configuration
-     * is edited.
-     */
-    public void setupConfigurableFunctions() {
+        // initialize language support
         languageManager = new LanguageManager();
+
+        // initialize timers
+        if (getWarpSettings().timersEnabled) {
+            timerFactory = new TimerFactory();
+        }
 
         // initialize EconomySupport
         if (getWarpSettings().economyEnabled) {
@@ -302,7 +300,7 @@ public class MyWarp extends JavaPlugin {
             } catch (NoClassDefFoundError e) {
                 // economy provider class is not present
                 logger().severe(
-                        "Failed to hook into Vault (EconomyProvider is not registerd). Disabling Economy support.");
+                        "Failed to hook into Vault (EconomyProviderClass not available). Disabling Economy support.");
                 getWarpSettings().economyEnabled = false;
             } catch (NullPointerException e) {
                 // economy provider is not registered
@@ -322,5 +320,24 @@ public class MyWarp extends JavaPlugin {
                 getWarpSettings().dynmapEnabled = false;
             }
         }
+
+        // register events
+        if (getWarpSettings().warpSignsEnabled) {
+            getServer().getPluginManager().registerEvents(new WarpSignManager(), this);
+        }
+        getServer().getPluginManager().registerEvents(new EventListener(), this);
+    }
+
+    /**
+     * Reloads the plugin
+     */
+    public void reloadPlugin() {
+        // unload old stuff from the server
+        HandlerList.unregisterAll(this);
+        permissionsManager.unregisterPermissions();
+
+        // load new stuff
+        getWarpSettings().reload();
+        setupPlugin();
     }
 }

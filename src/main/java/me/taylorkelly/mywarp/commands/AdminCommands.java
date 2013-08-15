@@ -67,9 +67,7 @@ public class AdminCommands {
 
     @Command(aliases = { "reload" }, usage = "", desc = "cmd.description.reload", max = 0, permissions = { "mywarp.admin.reload" })
     public void reload(CommandContext args, CommandSender sender) throws CommandException {
-        MyWarp.inst().getWarpSettings().reload();
-        MyWarp.inst().setupConfigurableFunctions();
-
+        MyWarp.inst().reloadPlugin();
         sender.sendMessage(MyWarp.inst().getLanguageManager().getString("reload.config"));
     }
 

@@ -67,6 +67,9 @@ public class LanguageManager {
      *            the name of the language file
      */
     private void createLanguageFile(String name) {
+        
+        
+        
         File actual = new File(MyWarp.inst().getDataFolder(), name + ".txt");
 
         InputStream input = MyWarp.inst().getResource("lang/" + name + ".txt");

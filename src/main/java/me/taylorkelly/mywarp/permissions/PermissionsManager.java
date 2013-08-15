@@ -34,9 +34,6 @@ public class PermissionsManager implements PermissionsHandler {
     public PermissionsManager() {
         // setup the permissions handler
         handler = setupHandler();
-
-        // register dynamic permissions
-        registerPermissions();
     }
 
     /**
@@ -62,7 +59,7 @@ public class PermissionsManager implements PermissionsHandler {
      * Registers permissions on the server. This method should only be used for
      * permissions that must be registered dynamically.
      */
-    private void registerPermissions() {
+    public void registerPermissions() {
         // mywarp.limit permissions
         for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
             MyWarp.server()
@@ -120,6 +117,40 @@ public class PermissionsManager implements PermissionsHandler {
                             new org.bukkit.permissions.Permission("mywarp.economy." + container.getName(),
                                     "User is affected by the fees defined for '" + container.getName()
                                             + "' in the config", PermissionDefault.FALSE));
+        }
+    }
+
+    /**
+     * Unregisters permissions from the server. This method mirrors
+     * {@link #registerPermissions()} and unregisters all permissions registered
+     * before.
+     */
+    public void unregisterPermissions() {
+        // mywarp.limit permissions
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
+            MyWarp.server().getPluginManager().removePermission("mywarp.limit." + container.getName());
+        }
+
+        // mywarp.cooldown permissions
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().timersCooldowns) {
+            MyWarp.server().getPluginManager().removePermission("mywarp.cooldown." + container.getName());
+        }
+
+        // mywarp.warmup permissions
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().timersWarmups) {
+            MyWarp.server().getPluginManager().removePermission("mywarp.warmup." + container.getName());
+        }
+
+        // mywarp.warp.world permissions
+        for (World world : MyWarp.server().getWorlds()) {
+            MyWarp.server().getPluginManager().removePermission("mywarp.warp.world." + world.getName());
+        }
+
+        MyWarp.server().getPluginManager().removePermission("mywarp.warp.world.*");
+
+        // mywarp.economy permissions
+        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().economyFees) {
+            MyWarp.server().getPluginManager().removePermission("mywarp.economy." + container.getName());
         }
     }
 

@@ -4,14 +4,92 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.Fee;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.Attachable;
 
 /**
- * Contains several help methods that allow dealing with warp signs
+ * Manages warp-signs
  */
-public class WarpSignUtils {
+public class WarpSignManager implements Listener {
+
+    /**
+     * Called whenever a sign is changed
+     * 
+     * @param event
+     *            the event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onSignChange(SignChangeEvent event) {
+        if (isSignWarp(event.getLines())) {
+            if (!validateWarpSign(event, event.getPlayer())) {
+                event.getBlock().breakNaturally();
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    /**
+     * Called whenever a player interacts with a block
+     * 
+     * @param event
+     *            the event
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            Block block = event.getClickedBlock();
+
+            if (block.getState() instanceof Sign && isSignWarp((Sign) block.getState())) {
+
+                warpFromSign((Sign) block.getState(), event.getPlayer());
+                event.setCancelled(true);
+
+            } else if (block.getType() == Material.STONE_BUTTON || block.getType() == Material.WOOD_BUTTON
+                    || block.getType() == Material.LEVER) {
+
+                Attachable attachable = (Attachable) block.getState().getData();
+                Block behind = block.getRelative(attachable.getAttachedFace(), 2);
+
+                if (!(behind.getState() instanceof Sign)) {
+                    return;
+                }
+
+                org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind.getState().getData();
+                Sign signBut = (Sign) behind.getState();
+
+                if (!(signMat.getFacing() == attachable.getAttachedFace() && isSignWarp(signBut))) {
+                    return;
+                }
+
+                warpFromSign(signBut, event.getPlayer());
+            }
+        } else if (event.getAction().equals(Action.PHYSICAL)) {
+            if (event.getClickedBlock().getType() == Material.WOOD_PLATE
+                    || event.getClickedBlock().getType() == Material.STONE_PLATE) {
+                Block twoBelow = event.getClickedBlock().getRelative(BlockFace.DOWN, 2);
+
+                if (!(twoBelow.getState() instanceof Sign)) {
+                    return;
+                }
+                Sign signBelow = (Sign) twoBelow.getState();
+
+                if (!(isSignWarp(signBelow))) {
+                    return;
+                }
+                warpFromSign(signBelow, event.getPlayer());
+            }
+        }
+    }
 
     /**
      * Warps the given player to the warp noted on the given sign. This method
@@ -22,7 +100,7 @@ public class WarpSignUtils {
      * @param player
      *            the player who should be teleported
      */
-    public static void warpFromSign(Sign sign, Player player) {
+    public void warpFromSign(Sign sign, Player player) {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.warp.sign.use")) {
             player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.noPermission.use"));
             return;
@@ -71,7 +149,7 @@ public class WarpSignUtils {
      *            the player who created the warp sign
      * @return true if the sign could be created, false if not.
      */
-    public static boolean validateWarpSign(SignChangeEvent sign, Player player) {
+    public boolean validateWarpSign(SignChangeEvent sign, Player player) {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.warp.sign.create")) {
             player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.noPermission.create"));
             return false;
@@ -124,7 +202,7 @@ public class WarpSignUtils {
      *            the sign to check
      * @return true if the sign is a warp sign, false if not
      */
-    public static boolean isSignWarp(Sign sign) {
+    public boolean isSignWarp(Sign sign) {
         return isSignWarp(sign.getLines());
     }
 
@@ -135,7 +213,7 @@ public class WarpSignUtils {
      *            an array with the lines of the sign
      * @return true if the sign is a warp sign, false if not
      */
-    public static boolean isSignWarp(String[] lines) {
+    public boolean isSignWarp(String[] lines) {
         return lines[1].startsWith("[")
                 && lines[1].endsWith("]")
                 && MyWarp.inst().getWarpSettings().warpSignsIdentifiers.contains(lines[1].substring(1,
