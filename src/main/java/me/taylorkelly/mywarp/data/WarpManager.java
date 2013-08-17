@@ -39,7 +39,7 @@ public class WarpManager {
     }
 
     /**
-     * Adds the given warp to the network and adds markers, if needed.
+     * Adds the given warp to the network
      * 
      * @param name
      *            the name of the warp
@@ -49,10 +49,6 @@ public class WarpManager {
     public void addWarp(String name, Warp warp) {
         warpMap.put(name, warp);
         MyWarp.inst().getConnectionManager().addWarp(warp);
-
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
-            MyWarp.inst().getMarkers().addWarp(warp);
-        }
     }
 
     /**
@@ -71,7 +67,8 @@ public class WarpManager {
 
     /**
      * Creates a public warp owned by the given player at the his position and
-     * calls {@link #addWarp(String, Warp)} to add it to the network
+     * calls {@link #addWarp(String, Warp)} to add it to the network. If Dynmap
+     * is used, a marker is added
      * 
      * @param name
      *            the name of the warp
@@ -81,6 +78,10 @@ public class WarpManager {
     public void addWarpPublic(String name, Player player) {
         Warp warp = new Warp(name, player);
         addWarp(name, warp);
+
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+            MyWarp.inst().getMarkers().addWarp(warp);
+        }
     }
 
     /**
