@@ -2,11 +2,14 @@ package me.taylorkelly.mywarp.dataconnections;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 
 /**
- * This class manages data connections and provides a centralized (and asyc)
+ * This class manages data connections and provides a centralized (and async)
  * access to their methods. Each ConnectionManager handles one data connection
  * only.
  */
@@ -16,6 +19,12 @@ public class ConnectionManager implements DataConnection {
      * The data connection that provides the database access
      */
     private final DataConnection handler;
+
+    /**
+     * The executor services bundles all database-tasks and runs them in an
+     * async-thread
+     */
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     /**
      * Initializes this connection-manager by initializing the
@@ -38,7 +47,8 @@ public class ConnectionManager implements DataConnection {
             // Use MySQL
             handler = new MySQLConnection("jdbc:mysql://" + MyWarp.inst().getWarpSettings().mysqlHost + ":"
                     + MyWarp.inst().getWarpSettings().mysqlPort + "/"
-                    + MyWarp.inst().getWarpSettings().mysqlDatabase, MyWarp.inst().getWarpSettings().mysqlUsername,
+                    + MyWarp.inst().getWarpSettings().mysqlDatabase,
+                    MyWarp.inst().getWarpSettings().mysqlUsername,
                     MyWarp.inst().getWarpSettings().mysqlPassword, MyWarp.inst().getWarpSettings().mysqlTable);
         } else {
             // Use SQLite
@@ -60,6 +70,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void close() {
+        executorService.shutdown();
         handler.close();
     }
 
@@ -80,7 +91,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void addWarp(final Warp warp) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.addWarp(warp);
@@ -90,7 +101,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void deleteWarp(final Warp warp) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.deleteWarp(warp);
@@ -100,7 +111,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void publicizeWarp(final Warp warp, final boolean publicAll) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.publicizeWarp(warp, publicAll);
@@ -110,7 +121,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void updateCreator(final Warp warp) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.updateCreator(warp);
@@ -120,7 +131,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void updateLocation(final Warp warp) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.updateLocation(warp);
@@ -130,7 +141,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void updatePermissions(final Warp warp) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.updatePermissions(warp);
@@ -140,7 +151,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void updateGroupPermissions(final Warp warp) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.updateGroupPermissions(warp);
@@ -150,7 +161,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void updateVisits(final Warp warp) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.updateVisits(warp);
@@ -160,7 +171,7 @@ public class ConnectionManager implements DataConnection {
 
     @Override
     public void updateWelcomeMessage(final Warp warp) {
-        MyWarp.server().getScheduler().runTaskAsynchronously(MyWarp.inst(), new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 handler.updateWelcomeMessage(warp);
