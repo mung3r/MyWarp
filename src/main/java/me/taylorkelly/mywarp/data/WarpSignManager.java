@@ -100,7 +100,7 @@ public class WarpSignManager implements Listener {
      * @param player
      *            the player who should be teleported
      */
-    public void warpFromSign(Sign sign, Player player) {
+    public void warpFromSign(Sign sign, final Player player) {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.warp.sign.use")) {
             player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.noPermission.use"));
             return;
@@ -114,7 +114,7 @@ public class WarpSignManager implements Listener {
                             .getEffectiveString("error.noSuchWarp", "%warp%", name));
             return;
         }
-        Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
+        final Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
 
         if (!warp.playerCanWarp(player)) {
             player.sendMessage(ChatColor.RED
@@ -136,7 +136,21 @@ public class WarpSignManager implements Listener {
             }
             MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
         }
-        warp.warp(player, false);
+
+        // workaround for BUKKIT-4365
+        if (!sign.getWorld().getName().equals(warp.getWorld())) {
+            MyWarp.server().getScheduler().scheduleSyncDelayedTask(MyWarp.inst(), new Runnable() {
+
+                @Override
+                public void run() {
+                    warp.warp(player, false);
+                }
+
+            }, 1L);
+        } else {
+            warp.warp(player, false);
+        }
+
     }
 
     /**
