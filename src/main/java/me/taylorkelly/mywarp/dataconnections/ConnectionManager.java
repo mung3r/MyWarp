@@ -10,8 +10,8 @@ import me.taylorkelly.mywarp.data.Warp;
 
 /**
  * This class manages data connections and provides a centralized (and async)
- * access to their methods. Each ConnectionManager handles one data connection
- * only.
+ * access to their methods. Methods that do not return any values are always
+ * handed to another thread for execution.
  */
 public class ConnectionManager implements DataConnection {
 
@@ -21,8 +21,8 @@ public class ConnectionManager implements DataConnection {
     private final DataConnection handler;
 
     /**
-     * The executor services bundles all database-tasks and runs them in an
-     * async-thread
+     * The executor services bundles all database-tasks and runs them in another
+     * thread
      */
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 

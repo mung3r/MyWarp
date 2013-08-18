@@ -6,8 +6,7 @@ import me.taylorkelly.mywarp.data.Warp;
 
 /**
  * This interface defines all usable methods for data-connections used by
- * MyWarp. It must be implemented by all database-connections. Implementations
- * are expected to be threadsafe!
+ * MyWarp. Implementations are expected to be threadsafe!
  */
 public interface DataConnection {
 

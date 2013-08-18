@@ -110,9 +110,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (conn != null) {
-                    conn.close();
-                }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Table Check Exception (on close): " + ex);
             }
@@ -155,9 +152,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (conn != null) {
-                    conn.close();
-                }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Table Update Exception (on close): " + ex);
             }
@@ -198,14 +192,11 @@ public class SQLiteConnection implements DataConnection {
             MyWarp.logger().log(Level.SEVERE, "Warp Load Exception: " + ex);
         } finally {
             try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
                 if (rsWarps != null) {
                     rsWarps.close();
                 }
-                if (conn != null) {
-                    conn.close();
+                if (stmnt != null) {
+                    stmnt.close();
                 }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Load Exception (on close):" + ex);
@@ -247,9 +238,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (conn != null) {
-                    conn.close();
-                }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Insert Exception (on close): ", ex);
             }
@@ -272,9 +260,6 @@ public class SQLiteConnection implements DataConnection {
             try {
                 if (stmnt != null) {
                     stmnt.close();
-                }
-                if (conn != null) {
-                    conn.close();
                 }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Delete Exception (on close): ", ex);
@@ -300,9 +285,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (conn != null) {
-                    conn.close();
-                }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Publicize Exception (on close): ", ex);
             }
@@ -327,9 +309,6 @@ public class SQLiteConnection implements DataConnection {
             try {
                 if (stmnt != null) {
                     stmnt.close();
-                }
-                if (conn != null) {
-                    conn.close();
                 }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception (on close): ", ex);
@@ -362,9 +341,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (conn != null) {
-                    conn.close();
-                }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Location Exception (on close): ", ex);
             }
@@ -388,9 +364,6 @@ public class SQLiteConnection implements DataConnection {
             try {
                 if (stmnt != null) {
                     stmnt.close();
-                }
-                if (conn != null) {
-                    conn.close();
                 }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Permissions Exception (on close): ", ex);
@@ -417,9 +390,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (conn != null) {
-                    conn.close();
-                }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp GroupPermissions Exception (on close): ", ex);
             }
@@ -445,9 +415,6 @@ public class SQLiteConnection implements DataConnection {
                 if (stmnt != null) {
                     stmnt.close();
                 }
-                if (conn != null) {
-                    conn.close();
-                }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Visits Exception (on close): ", ex);
             }
@@ -471,9 +438,6 @@ public class SQLiteConnection implements DataConnection {
             try {
                 if (stmnt != null) {
                     stmnt.close();
-                }
-                if (conn != null) {
-                    conn.close();
                 }
             } catch (SQLException ex) {
                 MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception (on close): ", ex);
