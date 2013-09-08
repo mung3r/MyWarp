@@ -186,7 +186,7 @@ public class WarpManager {
         TreeSet<Warp> ret = new TreeSet<Warp>();
 
         for (Warp warp : warpMap.values()) {
-            if (warp.isPublicAll() == publicAll && creator != null && warp.playerIsCreator(creator)) {
+            if (warp.isPublicAll() == publicAll && (creator == null || warp.playerIsCreator(creator))) {
                 ret.add(warp);
             }
         }
