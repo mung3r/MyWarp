@@ -254,7 +254,7 @@ public class SocialCommands {
         }
 
         if (invitee != null) {
-            invitee.sendMessage(MyWarp.inst().getLanguageManager().getString("warp.uninvite.uninvited"));
+            invitee.sendMessage(MyWarp.inst().getLanguageManager().getEffectiveString("warp.uninvite.uninvited", "%warp%", warp.getName()));
         }
     }
 }
