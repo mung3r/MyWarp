@@ -57,7 +57,7 @@
         <dependency><!-- Dynmap API -->
             <groupId>org.dynmap</groupId>
             <artifactId>DynmapCoreAPI</artifactId>
-            <version>1.3</version>
+            <version>1.9</version>
         </dependency>
 
         <dependency> <!-- Part of the permission support -->
