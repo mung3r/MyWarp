@@ -39,7 +39,7 @@ public class WarpWarmup extends TimerAction<String> {
         if (MyWarp.inst().getWarpSettings().timersWarmupNotify) {
             player.sendMessage(MyWarp
                     .inst()
-                    .getLanguageManager()
+                    .getLocalizationManager()
                     .getEffectiveString("timer.warmup.warming", player, "%warp%", warp.getName(), "%seconds%",
                             Double.toString(duration.getSeconds())));
         }
@@ -65,7 +65,7 @@ public class WarpWarmup extends TimerAction<String> {
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst()
-                                .getLanguageManager()
+                                .getLocalizationManager()
                                 .getEffectiveString("error.economy.cannotAfford", player, "%amount%",
                                         Double.toString(fee)));
                 return;
@@ -104,7 +104,7 @@ public class WarpWarmup extends TimerAction<String> {
                 if (!MyWarp.inst().getPermissionsManager()
                         .hasPermission(player, "mywarp.warmup.disobey.moveabort")) {
                     WarpWarmup.this.cancel();
-                    player.sendMessage(MyWarp.inst().getLanguageManager()
+                    player.sendMessage(MyWarp.inst().getLocalizationManager()
                             .getString("timer.warmup.cancelled.move", player));
                     cancel();
                 }
@@ -134,7 +134,7 @@ public class WarpWarmup extends TimerAction<String> {
                 if (!MyWarp.inst().getPermissionsManager()
                         .hasPermission(player, "mywarp.warmup.disobey.dmgabort")) {
                     WarpWarmup.this.cancel();
-                    player.sendMessage(MyWarp.inst().getLanguageManager()
+                    player.sendMessage(MyWarp.inst().getLocalizationManager()
                             .getString("timer.warmup.cancelled.damage", player));
                     cancel();
                 }

@@ -32,7 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.FileUtil;
 import org.dynmap.DynmapCommonAPI;
 
-public class MyWarp extends JavaPlugin {
+public class MyWarp extends JavaPlugin implements Reloadable{
 
     /**
      * The plugin instance for MyWarp
@@ -157,7 +157,7 @@ public class MyWarp extends JavaPlugin {
      * 
      * @return the language manager
      */
-    public LocalizationManager getLanguageManager() {
+    public LocalizationManager getLocalizationManager() {
         return localizationManager;
     }
 
@@ -340,23 +340,17 @@ public class MyWarp extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new WarpSignManager(), this);
         }
         getServer().getPluginManager().registerEvents(new EventListener(), this);
-
-        // TODO test-stuff
-        // lm = new me.taylorkelly.mywarp. localization.LocalizationManager();
-        // getLogger().info("TestString: " + lm.getString("my.test",
-        // getServer().getConsoleSender()));
     }
 
-    /**
-     * Reloads the plugin
-     */
-    public void reloadPlugin() {
+    @Override
+    public void reload() {
         // unload old stuff from the server
         HandlerList.unregisterAll(this);
         permissionsManager.unregisterPermissions();
 
         // load new stuff
         getWarpSettings().reload();
+        getLocalizationManager().reload();
         setupPlugin();
     }
 }

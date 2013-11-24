@@ -102,7 +102,7 @@ public class WarpSignManager implements Listener {
      */
     public void warpFromSign(Sign sign, final Player player) {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.warp.sign.use")) {
-            player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.noPermission.use", player));
+            player.sendMessage(MyWarp.inst().getLocalizationManager().getString("sign.noPermission.use", player));
             return;
         }
 
@@ -110,7 +110,7 @@ public class WarpSignManager implements Listener {
 
         if (!MyWarp.inst().getWarpManager().warpExists(name)) {
             player.sendMessage(ChatColor.RED
-                    + MyWarp.inst().getLanguageManager()
+                    + MyWarp.inst().getLocalizationManager()
                             .getEffectiveString("error.noSuchWarp", player, "%warp%", name));
             return;
         }
@@ -118,7 +118,7 @@ public class WarpSignManager implements Listener {
 
         if (!warp.playerCanWarp(player)) {
             player.sendMessage(ChatColor.RED
-                    + MyWarp.inst().getLanguageManager()
+                    + MyWarp.inst().getLocalizationManager()
                             .getEffectiveString("sign.noPermission.warpto", player, "%warp%", name));
             return;
         }
@@ -129,7 +129,7 @@ public class WarpSignManager implements Listener {
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst()
-                                .getLanguageManager()
+                                .getLocalizationManager()
                                 .getEffectiveString("error.economy.cannotAfford", player, "%amount%",
                                         Double.toString(fee)));
                 return;
@@ -165,13 +165,13 @@ public class WarpSignManager implements Listener {
      */
     public boolean validateWarpSign(SignChangeEvent sign, Player player) {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.warp.sign.create")) {
-            player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.noPermission.create", player));
+            player.sendMessage(MyWarp.inst().getLocalizationManager().getString("sign.noPermission.create", player));
             return false;
         }
         String name = sign.getLine(2);
 
         if (!MyWarp.inst().getWarpManager().warpExists(name)) {
-            player.sendMessage(MyWarp.inst().getLanguageManager()
+            player.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("error.noSuchWarp", player, "%warp%", name));
             return false;
         }
@@ -180,7 +180,7 @@ public class WarpSignManager implements Listener {
         if (!warp.playerCanModify(player)
                 && !MyWarp.inst().getPermissionsManager()
                         .hasPermission(player, "mywarp.warp.sign.create.all")) {
-            player.sendMessage(MyWarp.inst().getLanguageManager()
+            player.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("sign.noPermission.create", player, "%warp%", name));
             return false;
         }
@@ -191,7 +191,7 @@ public class WarpSignManager implements Listener {
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst()
-                                .getLanguageManager()
+                                .getLocalizationManager()
                                 .getEffectiveString("error.economy.cannotAfford", player, "%amount%",
                                         Double.toString(fee)));
                 return false;
@@ -204,7 +204,7 @@ public class WarpSignManager implements Listener {
         line = line.substring(1, line.length() - 1);
         sign.setLine(1, "[" + MyWarp.inst().getWarpSettings().warpSignsIdentifiers.ceiling(line) + "]");
 
-        player.sendMessage(MyWarp.inst().getLanguageManager().getString("sign.created", player));
+        player.sendMessage(MyWarp.inst().getLocalizationManager().getString("sign.created", player));
         return true;
     }
 

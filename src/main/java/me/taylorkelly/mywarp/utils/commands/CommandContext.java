@@ -135,7 +135,7 @@ public class CommandContext {
                     if (this.valueFlags.containsKey(flagName)) {
                         throw new CommandException(MyWarp
                                 .inst()
-                                .getLanguageManager()
+                                .getLocalizationManager()
                                 .getEffectiveString("error.cmd.flagGiven", sender, "%flag%",
                                         Character.toString(flagName)));
                     }
@@ -143,7 +143,7 @@ public class CommandContext {
                     if (nextArg >= argList.size()) {
                         throw new CommandException(MyWarp
                                 .inst()
-                                .getLanguageManager()
+                                .getLocalizationManager()
                                 .getEffectiveString("error.cmd.noValue", sender, "%flag%",
                                         Character.toString(flagName)));
                     }

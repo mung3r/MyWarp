@@ -44,11 +44,11 @@ public class CommandUtils {
             if (MyWarp.inst().getWarpSettings().dynamicsSuggestWarps && match != null) {
                 throw new CommandException(MyWarp
                         .inst()
-                        .getLanguageManager()
+                        .getLocalizationManager()
                         .getEffectiveString("error.noSuchWarp.suggestion", sender, "%warp%", query,
                                 "%suggestion%", match.getName()));
             } else {
-                throw new CommandException(MyWarp.inst().getLanguageManager()
+                throw new CommandException(MyWarp.inst().getLocalizationManager()
                         .getEffectiveString("error.noSuchWarp", sender, "%warp%", query));
             }
         }
@@ -71,7 +71,7 @@ public class CommandUtils {
         Warp warp = getWarpForUsage(sender, query);
 
         if (sender instanceof Player && !warp.playerCanModify((Player) sender)) {
-            throw new CommandException(MyWarp.inst().getLanguageManager()
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("error.noPermission.modify", sender, "%warp%", warp.getName()));
         }
         return warp;
@@ -95,7 +95,7 @@ public class CommandUtils {
         if (!MyWarp.inst().getWarpManager().playerCanBuildWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
-                    .getLanguageManager()
+                    .getLocalizationManager()
                     .getEffectiveString("limit.total.reached", sender, "%maxTotal%",
                             Integer.toString(MyWarp.inst().getPermissionsManager().maxTotalWarps(player))));
         }
@@ -119,7 +119,7 @@ public class CommandUtils {
         if (!MyWarp.inst().getWarpManager().playerCanBuildPublicWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
-                    .getLanguageManager()
+                    .getLocalizationManager()
                     .getEffectiveString("limit.public.reached", sender, "%maxPublic%",
                             Integer.toString(MyWarp.inst().getPermissionsManager().maxPublicWarps(player))));
         }
@@ -143,7 +143,7 @@ public class CommandUtils {
         if (!MyWarp.inst().getWarpManager().playerCanBuildPrivateWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
-                    .getLanguageManager()
+                    .getLocalizationManager()
                     .getEffectiveString("limit.private.reached", sender, "%maxPrivate%",
                             Integer.toString(MyWarp.inst().getPermissionsManager().maxPrivateWarps(player))));
         }
@@ -171,7 +171,7 @@ public class CommandUtils {
         if (!MyWarp.inst().getWarpManager().playerCanBuildWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
-                    .getLanguageManager()
+                    .getLocalizationManager()
                     .getEffectiveString("limit.total.reached.player", sender, "%maxTotal%",
                             Integer.toString(MyWarp.inst().getPermissionsManager().maxTotalWarps(player)),
                             "%player%", player.getName()));
@@ -180,7 +180,7 @@ public class CommandUtils {
             if (!MyWarp.inst().getWarpManager().playerCanBuildPublicWarp(player)) {
                 throw new CommandException(
                         MyWarp.inst()
-                                .getLanguageManager()
+                                .getLocalizationManager()
                                 .getEffectiveString(
                                         "limit.public.reached.player",
                                         sender,
@@ -191,7 +191,7 @@ public class CommandUtils {
         } else if (!MyWarp.inst().getWarpManager().playerCanBuildPrivateWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
-                    .getLanguageManager()
+                    .getLocalizationManager()
                     .getEffectiveString("limit.private.reached.player", sender, "%maxPrivate%",
                             Integer.toString(MyWarp.inst().getPermissionsManager().maxPrivateWarps(player)),
                             "%player%", player.getName()));
@@ -212,7 +212,7 @@ public class CommandUtils {
     public static Player matchPlayer(CommandSender sender, String name) throws CommandException {
         Player actuallPlayer = MyWarp.inst().getServer().getPlayer(name);
         if (actuallPlayer == null) {
-            throw new CommandException(MyWarp.inst().getLanguageManager()
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("error.player.offline", sender, "%player%", name));
         }
         return actuallPlayer;
@@ -231,7 +231,7 @@ public class CommandUtils {
         if (sender instanceof Player) {
             return (Player) sender;
         } else {
-            throw new CommandException(MyWarp.inst().getLanguageManager()
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getString("error.cmd.invalidSender", sender));
         }
     }

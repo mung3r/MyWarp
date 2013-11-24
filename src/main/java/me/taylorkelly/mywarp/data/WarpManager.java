@@ -367,7 +367,7 @@ public class WarpManager {
             }
 
             // sendMessage is threadsafe
-            player.sendMessage(MyWarp.inst().getLanguageManager()
+            player.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("warp.welcome.received", player, "%warp%", warp.getName()));
             player.sendMessage(ChatColor.AQUA + message);
         }

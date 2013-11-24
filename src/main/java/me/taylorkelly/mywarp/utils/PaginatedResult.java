@@ -63,19 +63,19 @@ public abstract class PaginatedResult<T> {
      */
     public void display(CommandSender sender, List<? extends T> results, int page) throws CommandException {
         if (results.size() == 0) {
-            throw new CommandException(MyWarp.inst().getLanguageManager().getString("lister.noResults", sender));
+            throw new CommandException(MyWarp.inst().getLocalizationManager().getString("lister.noResults", sender));
         }
         --page;
 
         int maxPages = results.size() / PER_PAGE;
         if (page < 0 || page > maxPages) {
-            throw new CommandException(MyWarp.inst().getLanguageManager()
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("lister.unknownPage", sender, "%pages%", Integer.toString(maxPages - 1)));
         }
 
         sender.sendMessage(ChatColor.GOLD
                 + MinecraftFontWidthCalculator.centralize(" " + header
-                        + MyWarp.inst().getLanguageManager().getColorlessString("lister.page", sender) + " "
+                        + MyWarp.inst().getLocalizationManager().getColorlessString("lister.page", sender) + " "
                         + (page + 1) + "/" + (maxPages + 1) + " ", '-'));
         for (int i = PER_PAGE * page; i < PER_PAGE * page + PER_PAGE && i < results.size(); i++) {
             sender.sendMessage(format(results.get(i), sender));

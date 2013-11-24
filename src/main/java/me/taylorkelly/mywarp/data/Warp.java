@@ -133,7 +133,7 @@ public class Warp implements Comparable<Warp> {
         this.setPublicAll(publicAll);
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = MyWarp.inst().getLanguageManager().getString("warp.default.welcomeMessage", MyWarp.inst().getWarpSettings().localizationDefLocale);
+        this.welcomeMessage = MyWarp.inst().getLocalizationManager().getString("warp.default.welcomeMessage", MyWarp.inst().getWarpSettings().localizationDefLocale);
         this.visits = 0;
     }
 
@@ -533,13 +533,13 @@ public class Warp implements Comparable<Warp> {
     public void warp(Player player, boolean charge) {
         Location location = getLocation();
         if (location == null) {
-            player.sendMessage(MyWarp.inst().getLanguageManager()
+            player.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("error.warpto.noSuchWorld", player, "%world%", getWorld()));
         } else {
 
             switch (SafeTeleport.safeTeleport(player, location)) {
             case NONE:
-                player.sendMessage(MyWarp.inst().getLanguageManager()
+                player.sendMessage(MyWarp.inst().getLocalizationManager()
                         .getEffectiveString("safety.notFound", player, "%warp%", getName()));
                 break;
             case ORIGINAL_LOC:
@@ -556,7 +556,7 @@ public class Warp implements Comparable<Warp> {
                 }
                 break;
             case SAFE_LOC:
-                player.sendMessage(MyWarp.inst().getLanguageManager()
+                player.sendMessage(MyWarp.inst().getLocalizationManager()
                         .getEffectiveString("safety.found", player, "%warp%", getName()));
                 visit();
 

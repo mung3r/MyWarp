@@ -9,7 +9,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
+
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Reloadable;
 import me.taylorkelly.mywarp.utils.ConfigUtils;
 
 import org.apache.commons.lang.LocaleUtils;
@@ -23,7 +26,7 @@ import org.bukkit.entity.Player;
 /**
  * The central manager for all localizations uses through the plugin
  */
-public class LocalizationManager {
+public class LocalizationManager implements Reloadable {
 
     /**
      * Stored used Locales under their string-reference used by Minecraft
@@ -44,7 +47,8 @@ public class LocalizationManager {
      */
     public LocalizationManager() throws LocalizationException {
         // create all language files that we provide
-        for (String bundleName : Arrays.asList("localization.yml", "localization_en.yml", "localization_de.yml")) {
+        for (String bundleName : Arrays.asList("localization.yml", "localization_en.yml",
+                "localization_de.yml")) {
             InputStream bundled = MyWarp.inst().getResource("lang/" + bundleName);
             FileConfiguration bundledConfig;
             try {
@@ -60,7 +64,8 @@ public class LocalizationManager {
                 } catch (IOException e) {
                 }
             }
-            ConfigUtils.getYamlConfig(new File(MyWarp.inst().getDataFolder(), bundleName), bundledConfig, true);
+            ConfigUtils.getYamlConfig(new File(MyWarp.inst().getDataFolder(), bundleName), bundledConfig,
+                    true);
         }
     }
 
@@ -220,5 +225,10 @@ public class LocalizationManager {
         String value = YamlResourceBundle.getBundle("localization", locale, resourceBundleControl).getString(
                 key);
         return ChatColor.translateAlternateColorCodes('§', value);
+    }
+
+    @Override
+    public void reload() {
+        ResourceBundle.clearCache();
     }
 }

@@ -67,9 +67,9 @@ public class VaultLink implements EconomyLink {
         if (!response.transactionSuccess()) {
             MyWarp.logger().severe("Could not withdraw " + sender.getName() + ", " + response.errorMessage);
             sender.sendMessage(ChatColor.RED
-                    + MyWarp.inst().getLanguageManager().getString("error.economy.unknown", sender));
+                    + MyWarp.inst().getLocalizationManager().getString("error.economy.unknown", sender));
         } else if (MyWarp.inst().getWarpSettings().economyInformAfterTransaction) {
-            sender.sendMessage(MyWarp.inst().getLanguageManager()
+            sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("economy.transaction.complete", sender, "%amount%", Double.toString(amount)));
         }
     }

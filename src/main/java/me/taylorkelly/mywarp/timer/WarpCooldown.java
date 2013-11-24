@@ -27,7 +27,7 @@ public class WarpCooldown extends TimerAction<String> {
             Player player = MyWarp.server().getPlayerExact(type);
 
             if (player != null) {
-                player.sendMessage(MyWarp.inst().getLanguageManager().getString("timer.cooldown.ended", player));
+                player.sendMessage(MyWarp.inst().getLocalizationManager().getString("timer.cooldown.ended", player));
             }
         }
 

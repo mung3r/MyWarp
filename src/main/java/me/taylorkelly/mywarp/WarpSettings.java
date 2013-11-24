@@ -20,7 +20,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class WarpSettings {
+public class WarpSettings implements Reloadable{
 
     private static final String CONFIG_FILE = "config.yml";
     private static final String LEGACY_CONFIG_FILE = "MyWarp.settings";
@@ -285,9 +285,7 @@ public class WarpSettings {
         }
     }
 
-    /**
-     * Reloads the configuration from the configuration-file
-     */
+    @Override
     public void reload() {
         config = ConfigUtils.getYamlConfig(configFile,
                 YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(CONFIG_FILE)), true);

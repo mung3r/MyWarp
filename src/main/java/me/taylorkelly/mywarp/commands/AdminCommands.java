@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 /**
  * This class contains all commands that cover admin tasks. They should be
  * included in the <code>mywarp.admin.*</code> permission container.
- * 
  */
 public class AdminCommands {
 
@@ -32,7 +31,7 @@ public class AdminCommands {
         } else if (args.getString(0).equalsIgnoreCase("sqlite")) {
             importMySQL = false;
         } else {
-            throw new CommandException(MyWarp.inst().getLanguageManager()
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("error.import.invalid", sender, "%query%", args.getString(0)));
         }
 
@@ -47,7 +46,7 @@ public class AdminCommands {
 
                 if (MyWarp.inst().getWarpManager().warpExists(name)) {
                     if (!args.hasFlag('f')) {
-                        sender.sendMessage(MyWarp.inst().getLanguageManager()
+                        sender.sendMessage(MyWarp.inst().getLocalizationManager()
                                 .getEffectiveString("error.import.exists", sender, "%warp%", name));
                         continue;
                     }
@@ -60,15 +59,15 @@ public class AdminCommands {
             }
             sender.sendMessage(counter + " warps were imported sucessfully.");
         } catch (DataConnectionException ex) {
-            sender.sendMessage(MyWarp.inst().getLanguageManager().getString("error.import.noConnection", sender)
+            sender.sendMessage(MyWarp.inst().getLocalizationManager().getString("error.import.noConnection", sender)
                     + ex.getMessage());
         }
     }
 
     @Command(aliases = { "reload" }, usage = "", desc = "cmd.description.reload", max = 0, permissions = { "mywarp.admin.reload" })
     public void reload(CommandContext args, CommandSender sender) throws CommandException {
-        MyWarp.inst().reloadPlugin();
-        sender.sendMessage(MyWarp.inst().getLanguageManager().getString("reload.config", sender));
+        MyWarp.inst().reload();
+        sender.sendMessage(MyWarp.inst().getLocalizationManager().getString("reload.config", sender));
     }
 
     @Command(aliases = { "player" }, usage = "<player> <name>", desc = "cmd.description.adminWarpTo", fee = Fee.WARP_PLAYER, min = 2, permissions = { "mywarp.admin.warpto" })
@@ -77,7 +76,7 @@ public class AdminCommands {
         Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(1));
 
         warp.warp(invitee, false);
-        sender.sendMessage(MyWarp.inst().getLanguageManager()
+        sender.sendMessage(MyWarp.inst().getLocalizationManager()
                 .getEffectiveString("warp.warpto.player", sender, "%player%", invitee.getName()));
     }
 }
