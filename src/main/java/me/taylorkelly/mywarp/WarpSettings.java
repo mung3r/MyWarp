@@ -15,6 +15,7 @@ import me.taylorkelly.mywarp.timer.Time;
 import me.taylorkelly.mywarp.utils.ConfigUtils;
 import me.taylorkelly.mywarp.utils.PropertiesFile;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -135,7 +136,7 @@ public class WarpSettings {
         mysqlTable = config.getString("mysql.table");
 
         // Localization
-        localizationDefLocale = ConfigUtils.stringToLocale(config.getString("localization.defaultLocale"));
+        localizationDefLocale = LocaleUtils.toLocale(config.getString("localization.defaultLocale"));
         localizationPerPlayer = config.getBoolean("localization.perPlayer");
 
         // Safety

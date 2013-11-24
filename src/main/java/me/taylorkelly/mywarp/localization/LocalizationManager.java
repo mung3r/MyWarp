@@ -11,6 +11,8 @@ import java.util.Locale;
 import java.util.Map;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.utils.ConfigUtils;
+
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -42,7 +44,7 @@ public class LocalizationManager {
      */
     public LocalizationManager() throws LocalizationException {
         // create all language files that we provide
-        for (String bundleName : Arrays.asList("localization.yml", "localization_de.yml")) {
+        for (String bundleName : Arrays.asList("localization.yml", "localization_en.yml", "localization_de.yml")) {
             InputStream bundled = MyWarp.inst().getResource("lang/" + bundleName);
             FileConfiguration bundledConfig;
             try {
@@ -59,22 +61,6 @@ public class LocalizationManager {
                 }
             }
             ConfigUtils.getYamlConfig(new File(MyWarp.inst().getDataFolder(), bundleName), bundledConfig, true);
-        }
-        ls(Locale.GERMANY);
-        ls(Locale.GERMAN);
-        
-        ls(Locale.US);
-        ls(Locale.ENGLISH);
-        
-        ls(Locale.FRANCE);
-        ls(Locale.FRENCH);
-
-    }
-    
-    private void ls(Locale l) {
-        MyWarp.logger().info("Candidate Locales for: " + l);
-        for (Locale s : resourceBundleControl.getCandidateLocales("localization", l)) {
-            MyWarp.logger().info("" + s);
         }
     }
 
@@ -123,7 +109,7 @@ public class LocalizationManager {
                 if (localeCache.containsKey(mcLocale)) {
                     locale = localeCache.get(mcLocale);
                 } else {
-                    locale = ConfigUtils.stringToLocale(mcLocale);
+                    locale = LocaleUtils.toLocale(mcLocale);
                     localeCache.put(mcLocale, locale);
                 }
             } catch (Exception e) {

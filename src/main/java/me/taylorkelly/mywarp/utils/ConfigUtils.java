@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Locale;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -119,25 +117,4 @@ public class ConfigUtils {
         }
         return config;
     }
-
-    /**
-     * Converts the given string into a Locale.
-     * 
-     * @param str
-     *            the string
-     * @return the corresponding locale
-     */
-    public static Locale stringToLocale(String str) {
-        StringTokenizer tempStringTokenizer = new StringTokenizer(str, ",");
-        String l = "";
-        String c = "";
-        if (tempStringTokenizer.hasMoreTokens()) {
-            l = (String) tempStringTokenizer.nextElement();
-        }
-        if (tempStringTokenizer.hasMoreTokens()) {
-            c = (String) tempStringTokenizer.nextElement();
-        }
-        return new Locale(l, c);
-    }
-
 }
