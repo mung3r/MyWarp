@@ -31,7 +31,7 @@ public class YamlResourceBundle extends ResourceBundle {
      */
     public YamlResourceBundle(InputStream stream) {
         try {
-            lookup = ConfigUtils.getYamlConfig(stream).getValues(true);
+            lookup = ConfigUtils.getYamlConfig(stream, true).getValues(true);
         } catch (IOException e) {
             lookup = new HashMap<String, Object>();
         } catch (InvalidConfigurationException e) {

@@ -22,26 +22,28 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class ConfigUtils {
 
     /**
-     * Gets the FileConfiguration from the given InputStream. The stream is
-     * expected to be UTF-8 encoded.
+     * Gets the FileConfiguration from the given InputStream.
      * 
      * @param stream
      *            the stream
+     * @param forceEncoding
+     *            if set, the stream will be read using <code>UTF-8</code>,
+     *            instead of the default char-set
      * @return the FileConfiguration created from the stream
      * @throws IOException
      *             if the given stream is unreadable
      * @throws InvalidConfigurationException
      *             if the input stream is not a proper YamlConfiguration
      */
-    public static FileConfiguration getYamlConfig(InputStream stream) throws IOException,
-            InvalidConfigurationException {
+    public static FileConfiguration getYamlConfig(InputStream stream, boolean forceEncoding)
+            throws IOException, InvalidConfigurationException {
         YamlConfiguration yamlConfig = new YamlConfiguration();
 
         InputStreamReader reader = null;
         BufferedReader bufferedReader = null;
 
         try {
-            reader = new InputStreamReader(stream, "UTF-8");
+            reader = forceEncoding ? new InputStreamReader(stream, "UTF-8") : new InputStreamReader(stream);
             bufferedReader = new BufferedReader(reader);
             StringBuilder builder = new StringBuilder();
             String line = null;
@@ -71,10 +73,13 @@ public class ConfigUtils {
      * 
      * @param defaultConfig
      *            a FileConfiguration that contains all default values
-     * 
+     * @param forceEncoding
+     *            if set, the stream will be read using <code>UTF-8</code>,
+     *            instead of the default char-set
      * @return the FileConfiguraion of the given file
      */
-    public static FileConfiguration getYamlConfig(File configFile, FileConfiguration defaultConfig) {
+    public static FileConfiguration getYamlConfig(File configFile, FileConfiguration defaultConfig,
+            boolean forceEncoding) {
         FileConfiguration config = defaultConfig;
 
         try {
@@ -92,7 +97,7 @@ public class ConfigUtils {
             FileInputStream stream = null;
             try {
                 stream = new FileInputStream(configFile);
-                config = getYamlConfig(stream);
+                config = getYamlConfig(stream, forceEncoding);
             } finally {
                 if (stream != null) {
                     stream.close();

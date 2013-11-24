@@ -46,7 +46,7 @@ public class LocalizationManager {
             InputStream bundled = MyWarp.inst().getResource("lang/" + bundleName);
             FileConfiguration bundledConfig;
             try {
-                bundledConfig = ConfigUtils.getYamlConfig(bundled);
+                bundledConfig = ConfigUtils.getYamlConfig(bundled, true);
             } catch (IOException e1) {
                 throw new LocalizationException("Failed to read bundled localization-file: " + bundleName, e1);
             } catch (InvalidConfigurationException e1) {
@@ -58,7 +58,7 @@ public class LocalizationManager {
                 } catch (IOException e) {
                 }
             }
-            ConfigUtils.getYamlConfig(new File(MyWarp.inst().getDataFolder(), bundleName), bundledConfig);
+            ConfigUtils.getYamlConfig(new File(MyWarp.inst().getDataFolder(), bundleName), bundledConfig, true);
         }
     }
 

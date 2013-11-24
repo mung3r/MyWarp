@@ -93,8 +93,8 @@ public class WarpSettings {
 
     public WarpSettings() {
         configFile = new File(MyWarp.inst().getDataFolder(), CONFIG_FILE);
-        config = getYAMLConfig(configFile,
-                YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(CONFIG_FILE)));
+        config = ConfigUtils.getYamlConfig(configFile,
+                YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(CONFIG_FILE)), false);
 
         // migrate the legacy configuration, if it exists
         File legacyConfigFile = new File(MyWarp.inst().getDataFolder(), LEGACY_CONFIG_FILE);
@@ -104,48 +104,6 @@ public class WarpSettings {
 
         // finally load all values
         loadValues(config);
-    }
-
-    /**
-     * Returns the FileConfiguration that belongs to the given file. If the file
-     * does not exist, it will be created. In both cases, missing values are
-     * added from the provided default-Configuration.
-     * 
-     * If the configuration-file is unreadable, this method will return the
-     * provided default-configuration.
-     * 
-     * @param defaultConfig
-     *            a FileConfiguration that contains all default values
-     * 
-     * @return the FileConfiguraion of the given file
-     */
-    private FileConfiguration getYAMLConfig(File configFile, FileConfiguration defaultConfig) {
-        FileConfiguration config = defaultConfig;
-
-        try {
-            // create the configuration path if it does not exist
-            if (!configFile.getParentFile().exists()) {
-                configFile.getParentFile().mkdirs();
-            }
-            // create the configuration file if it does not exist
-            if (!configFile.exists()) {
-                configFile.createNewFile();
-                MyWarp.logger().info("Default " + configFile.getName() + " created successfully!");
-            }
-
-            // load the configuration-file
-            config = YamlConfiguration.loadConfiguration(configFile);
-
-            // copy defaults for missing values
-            config.setDefaults(defaultConfig);
-            config.options().copyDefaults(true);
-            config.save(configFile);
-        } catch (IOException e) {
-            MyWarp.logger().log(Level.SEVERE,
-                    "Failed to create default " + configFile.getName() + " , using build-in defaults: ", e);
-        }
-
-        return config;
     }
 
     /**
@@ -328,8 +286,8 @@ public class WarpSettings {
      * Reloads the configuration from the configuration-file
      */
     public void reload() {
-        config = getYAMLConfig(configFile,
-                YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(CONFIG_FILE)));
+        config = ConfigUtils.getYamlConfig(configFile,
+                YamlConfiguration.loadConfiguration(MyWarp.inst().getResource(CONFIG_FILE)), true);
         loadValues(config);
     }
 
