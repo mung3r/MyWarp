@@ -14,6 +14,7 @@ mysql:
   password: 'password'
 localization:
   defaultLocale: en_US
+  perPlayer: true
 warpSafety:
   enabled: true
   searchRadius: 5

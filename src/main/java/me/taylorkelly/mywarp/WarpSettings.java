@@ -46,6 +46,7 @@ public class WarpSettings {
 
     // Localization
     public Locale localizationDefLocale;
+    public boolean localizationPerPlayer;
 
     // WarpSafety
     public boolean safetyEnabled;
@@ -135,6 +136,7 @@ public class WarpSettings {
 
         // Localization
         localizationDefLocale = ConfigUtils.stringToLocale(config.getString("localization.defaultLocale"));
+        localizationPerPlayer = config.getBoolean("localization.perPlayer");
 
         // Safety
         safetyEnabled = config.getBoolean("warpSafety.enabled");

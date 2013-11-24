@@ -60,6 +60,22 @@ public class LocalizationManager {
             }
             ConfigUtils.getYamlConfig(new File(MyWarp.inst().getDataFolder(), bundleName), bundledConfig, true);
         }
+        ls(Locale.GERMANY);
+        ls(Locale.GERMAN);
+        
+        ls(Locale.US);
+        ls(Locale.ENGLISH);
+        
+        ls(Locale.FRANCE);
+        ls(Locale.FRENCH);
+
+    }
+    
+    private void ls(Locale l) {
+        MyWarp.logger().info("Candidate Locales for: " + l);
+        for (Locale s : resourceBundleControl.getCandidateLocales("localization", l)) {
+            MyWarp.logger().info("" + s);
+        }
     }
 
     /**
@@ -101,7 +117,7 @@ public class LocalizationManager {
      */
     private Locale getCommandSenderLocale(CommandSender sender) {
         Locale locale = MyWarp.inst().getWarpSettings().localizationDefLocale;
-        if (sender instanceof Player) {
+        if (MyWarp.inst().getWarpSettings().localizationPerPlayer && sender instanceof Player) {
             try {
                 String mcLocale = getLanguage((Player) sender);
                 if (localeCache.containsKey(mcLocale)) {
@@ -217,6 +233,6 @@ public class LocalizationManager {
     public String getString(String key, Locale locale) {
         String value = YamlResourceBundle.getBundle("localization", locale, resourceBundleControl).getString(
                 key);
-        return value != null ? ChatColor.translateAlternateColorCodes('§', value) : key;
+        return ChatColor.translateAlternateColorCodes('§', value);
     }
 }
