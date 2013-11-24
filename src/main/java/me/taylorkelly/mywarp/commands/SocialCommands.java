@@ -34,7 +34,7 @@ public class SocialCommands {
             // givee needs to be online unless the warp is given directly
             if (!args.hasFlag('d')) {
                 throw new CommandException(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("error.player.offline", "%player%", args.getString(0)));
+                        .getEffectiveString("error.player.offline", sender, "%player%", args.getString(0)));
             }
             giveeName = args.getString(0);
         } else {
@@ -45,7 +45,7 @@ public class SocialCommands {
 
         if (warp.playerIsCreator(giveeName)) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.give.isOwner", "%player%", giveeName));
+                    .getEffectiveString("error.give.isOwner", sender, "%player%", giveeName));
         }
 
         if (!args.hasFlag('f')) {
@@ -65,32 +65,32 @@ public class SocialCommands {
 
             if (givee != null) {
                 givee.sendMessage(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("warp.give.accept", "%warp%", warp.getName()));
+                        .getEffectiveString("warp.give.accept", sender, "%warp%", warp.getName()));
             }
         } else {
             givenWarps.put(giveeName, warp);
             givee.sendMessage(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("warp.give.asked", "%warp%", warp.getName(), "%player%",
+                    .getEffectiveString("warp.give.asked", sender, "%warp%", warp.getName(), "%player%",
                             sender.getName()));
         }
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.give.given", "%warp%", warp.getName(), "%player%", giveeName));
+                .getEffectiveString("warp.give.given", sender, "%warp%", warp.getName(), "%player%", giveeName));
     }
 
     @Command(aliases = { "accept" }, usage = "", desc = "cmd.description.accept", fee = Fee.ACCEPT, max = 0, permissions = { "mywarp.warp.soc.accept" })
     public void acceptGivenWarp(CommandContext args, CommandSender sender) throws CommandException {
         if (!givenWarps.containsKey(sender.getName())) {
             // TODO translate
-            throw new CommandException(MyWarp.inst().getLanguageManager().getString("error.accept.noWarp"));
+            throw new CommandException(MyWarp.inst().getLanguageManager().getString("error.accept.noWarp", sender));
         }
         Warp warp = givenWarps.get(sender.getName());
         warp.setCreator(sender.getName());
         givenWarps.remove(sender.getName());
 
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.give.accept", "%warp%", warp.getName()));
+                .getEffectiveString("warp.give.accept", sender, "%warp%", warp.getName()));
     }
 
     @Command(aliases = { "invite" }, usage = "<player> <name>", desc = "cmd.description.invite", fee = Fee.INVITE, min = 2, permissions = { "mywarp.warp.soc.invite" })
@@ -105,7 +105,7 @@ public class SocialCommands {
 
             if (warp.groupIsInvited(inviteeName)) {
                 throw new CommandException(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("error.invite.invited.group", "%group%", inviteeName));
+                        .getEffectiveString("error.invite.invited.group", sender, "%group%", inviteeName));
             }
 
             warp.inviteGroup(inviteeName);
@@ -114,13 +114,13 @@ public class SocialCommands {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString("warp.invite.group.public", "%warp%", warp.getName(), "%group%",
+                        .getEffectiveString("warp.invite.group.public", sender, "%warp%", warp.getName(), "%group%",
                                 inviteeName));
             } else {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString("warp.invite.group.private", "%warp%", warp.getName(), "%group%",
+                        .getEffectiveString("warp.invite.group.private", sender, "%warp%", warp.getName(), "%group%",
                                 inviteeName));
             }
             return;
@@ -131,12 +131,12 @@ public class SocialCommands {
 
         if (warp.playerIsInvited(inviteeName)) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.invite.invited.player", "%player%", inviteeName));
+                    .getEffectiveString("error.invite.invited.player", sender, "%player%", inviteeName));
         }
 
         if (warp.playerIsCreator(inviteeName)) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.invite.creator", "%player%", inviteeName));
+                    .getEffectiveString("error.invite.creator", sender, "%player%", inviteeName));
         }
 
         warp.invite(inviteeName);
@@ -144,13 +144,13 @@ public class SocialCommands {
             sender.sendMessage(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("warp.invite.player.public", "%warp%", warp.getName(), "%player%",
+                    .getEffectiveString("warp.invite.player.public", sender, "%warp%", warp.getName(), "%player%",
                             inviteeName));
         } else {
             sender.sendMessage(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("warp.invite.player.private", "%warp%", warp.getName(), "%player%",
+                    .getEffectiveString("warp.invite.player.private", sender, "%warp%", warp.getName(), "%player%",
                             inviteeName));
         }
 
@@ -158,7 +158,7 @@ public class SocialCommands {
             invitee.sendMessage(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("warp.invite.invited", "%warp%", warp.getName(), "%player%",
+                    .getEffectiveString("warp.invite.invited", sender, "%warp%", warp.getName(), "%player%",
                             sender.getName()));
         }
 
@@ -169,13 +169,13 @@ public class SocialCommands {
         Warp warp = CommandUtils.getWarpForModification(sender, args.getJoinedStrings(0));
         if (!warp.isPublicAll()) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.private.isPrivate", "%warp%", warp.getName()));
+                    .getEffectiveString("error.private.isPrivate", sender, "%warp%", warp.getName()));
         }
         CommandUtils.checkPrivateLimit(sender);
 
         warp.setPublicAll(false);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.private", "%warp%", warp.getName()));
+                .getEffectiveString("warp.private", sender, "%warp%", warp.getName()));
     }
 
     @Command(aliases = { "public" }, usage = "<name>", desc = "cmd.description.public", fee = Fee.PUBLIC, min = 1, permissions = { "mywarp.warp.soc.public" })
@@ -183,13 +183,13 @@ public class SocialCommands {
         Warp warp = CommandUtils.getWarpForModification(sender, args.getJoinedStrings(0));
         if (warp.isPublicAll()) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.public.isPublic", "%warp%", warp.getName()));
+                    .getEffectiveString("error.public.isPublic", sender, "%warp%", warp.getName()));
         }
         CommandUtils.checkPublicLimit(sender);
 
         warp.setPublicAll(true);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.public", "%warp%", warp.getName()));
+                .getEffectiveString("warp.public", sender, "%warp%", warp.getName()));
     }
 
     @Command(aliases = { "uninvite" }, usage = "<player> <name>", desc = "cmd.description.uninvite", fee = Fee.UNINVITE, min = 2, permissions = { "mywarp.warp.soc.uninvite" })
@@ -203,7 +203,7 @@ public class SocialCommands {
 
             if (!warp.groupIsInvited(inviteeName)) {
                 throw new CommandException(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("error.uninvite.notInvited.group", "%group%", inviteeName));
+                        .getEffectiveString("error.uninvite.notInvited.group", sender, "%group%", inviteeName));
             }
 
             warp.uninviteGroup(inviteeName);
@@ -212,13 +212,13 @@ public class SocialCommands {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString("warp.uninvite.group.public", "%warp%", warp.getName(),
+                        .getEffectiveString("warp.uninvite.group.public", sender, "%warp%", warp.getName(),
                                 "%group%", inviteeName));
             } else {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLanguageManager()
-                        .getEffectiveString("warp.uninvite.group.private", "%warp%", warp.getName(),
+                        .getEffectiveString("warp.uninvite.group.private", sender, "%warp%", warp.getName(),
                                 "%group%", inviteeName));
             }
             return;
@@ -229,12 +229,12 @@ public class SocialCommands {
 
         if (!warp.playerIsInvited(inviteeName)) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.uninvite.notInvited.player", "%player%", inviteeName));
+                    .getEffectiveString("error.uninvite.notInvited.player", sender, "%player%", inviteeName));
         }
 
         if (warp.playerIsCreator(inviteeName)) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.uninvite.creator", "%player%", inviteeName));
+                    .getEffectiveString("error.uninvite.creator", sender, "%player%", inviteeName));
         }
 
         warp.uninvite(inviteeName);
@@ -243,18 +243,18 @@ public class SocialCommands {
             sender.sendMessage(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("warp.uninvite.player.public", "%warp%", warp.getName(), "%player%",
+                    .getEffectiveString("warp.uninvite.player.public", sender, "%warp%", warp.getName(), "%player%",
                             inviteeName));
         } else {
             sender.sendMessage(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("warp.uninvite.player.private", "%warp%", warp.getName(), "%player%",
+                    .getEffectiveString("warp.uninvite.player.private", sender, "%warp%", warp.getName(), "%player%",
                             inviteeName));
         }
 
         if (invitee != null) {
-            invitee.sendMessage(MyWarp.inst().getLanguageManager().getEffectiveString("warp.uninvite.uninvited", "%warp%", warp.getName()));
+            invitee.sendMessage(MyWarp.inst().getLanguageManager().getEffectiveString("warp.uninvite.uninvited", sender, "%warp%", warp.getName()));
         }
     }
 }

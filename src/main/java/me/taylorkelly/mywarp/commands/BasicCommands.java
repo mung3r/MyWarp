@@ -37,12 +37,12 @@ public class BasicCommands {
 
         if (MyWarp.inst().getWarpManager().warpExists(name)) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.create.warpExists", "%warp%", name));
+                    .getEffectiveString("error.create.warpExists", sender, "%warp%", name));
         }
 
         MyWarp.inst().getWarpManager().addWarpPrivate(name, sender);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.create.private", "%warp%", name));
+                .getEffectiveString("warp.create.private", sender, "%warp%", name));
     }
 
     @Command(aliases = { "create", "set" }, usage = "<name>", desc = "cmd.description.create", fee = Fee.CREATE, min = 1, permissions = { "mywarp.warp.basic.createpublic" })
@@ -54,12 +54,12 @@ public class BasicCommands {
 
         if (MyWarp.inst().getWarpManager().warpExists(name)) {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.create.warpExists", "%warp%", name));
+                    .getEffectiveString("error.create.warpExists", sender, "%warp%", name));
         }
 
         MyWarp.inst().getWarpManager().addWarpPublic(name, sender);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.create.public", "%warp%", name));
+                .getEffectiveString("warp.create.public", sender, "%warp%", name));
     }
 
     @Command(aliases = { "delete", "remove" }, usage = "<name>", desc = "cmd.description.delete", fee = Fee.DELETE, min = 1, permissions = { "mywarp.warp.basic.delete" })
@@ -68,7 +68,7 @@ public class BasicCommands {
 
         MyWarp.inst().getWarpManager().deleteWarp(warp);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.delete", "%warp%", warp.getName()));
+                .getEffectiveString("warp.delete", sender, "%warp%", warp.getName()));
     }
 
     @Command(aliases = { "assets", "pstats", "pinfo", "limits" }, usage = "[player]", desc = "cmd.description.assets", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
@@ -78,16 +78,16 @@ public class BasicCommands {
             player = CommandUtils.checkPlayer(sender);
         } else {
             CommandUtils.checkPermissions(sender, "mywarp.warp.basic.assets.other");
-            player = CommandUtils.matchPlayer(args.getString(0));
+            player = CommandUtils.matchPlayer(sender, args.getString(0));
         }
 
         TreeSet<Warp> publicWarps = MyWarp.inst().getWarpManager().getWarps(true, player.getName());
         TreeSet<Warp> privateWarps = MyWarp.inst().getWarpManager().getWarps(false, player.getName());
 
         String header = MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.assets.head", "%player%", player.getName());
-        String publicHeader = MyWarp.inst().getLanguageManager().getString("warp.assets.public");
-        String privateHeader = MyWarp.inst().getLanguageManager().getString("warp.assets.private");
+                .getEffectiveString("warp.assets.head", sender, "%player%", player.getName());
+        String publicHeader = MyWarp.inst().getLanguageManager().getString("warp.assets.public", sender);
+        String privateHeader = MyWarp.inst().getLanguageManager().getString("warp.assets.private", sender);
 
         if (MyWarp.inst().getWarpSettings().limitsEnabled) {
             header = header
@@ -132,7 +132,7 @@ public class BasicCommands {
                         args.hasFlag('p') ? new PopularityWarpComparator() : null);
 
         PaginatedResult<Warp> cmdList = new PaginatedResult<Warp>(MyWarp.inst().getLanguageManager()
-                .getColorlessString("lister.warp.head")
+                .getColorlessString("lister.warp.head", sender)
                 + ", ") {
 
             @Override
@@ -154,12 +154,12 @@ public class BasicCommands {
                 first.append(" (");
                 first.append(warp.isPublicAll() ? "+" : "-");
                 first.append(") ");
-                first.append(MyWarp.inst().getLanguageManager().getColorlessString("lister.warp.by"));
+                first.append(MyWarp.inst().getLanguageManager().getColorlessString("lister.warp.by", sender));
                 first.append(" ");
                 first.append(ChatColor.ITALIC);
 
                 if (sender instanceof Player && warp.getCreator().equals(sender.getName())) {
-                    first.append(MyWarp.inst().getLanguageManager().getColorlessString("lister.warp.you"));
+                    first.append(MyWarp.inst().getLanguageManager().getColorlessString("lister.warp.you", sender));
                 } else {
                     first.append(warp.getCreator());
                 }
@@ -183,7 +183,7 @@ public class BasicCommands {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("error.cmd.invalidNumber", "%command%",
+                    .getEffectiveString("error.cmd.invalidNumber", sender, "%command%",
                             StringUtils.join(args.getCommand(), ' ')));
         }
     }
@@ -192,13 +192,13 @@ public class BasicCommands {
     public void pointToWarp(CommandContext args, Player sender) throws CommandException {
         if (args.argsLength() == 0) {
             sender.setCompassTarget(sender.getWorld().getSpawnLocation());
-            sender.sendMessage(MyWarp.inst().getLanguageManager().getString("warp.point.reset"));
+            sender.sendMessage(MyWarp.inst().getLanguageManager().getString("warp.point.reset", sender));
         } else {
             Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(0));
 
             MyWarp.inst().getWarpManager().point(warp, sender);
             sender.sendMessage(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("warp.point", "%warp%", warp.getName()));
+                    .getEffectiveString("warp.point", sender, "%warp%", warp.getName()));
         }
     }
 
@@ -212,16 +212,16 @@ public class BasicCommands {
 
         if (matches.exactMatches.size() == 0 && matches.matches.size() == 0) {
             sender.sendMessage(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("search.noMatches", "%query%", args.getJoinedStrings(0)));
+                    .getEffectiveString("search.noMatches", sender, "%query%", args.getJoinedStrings(0)));
         } else {
             if (matches.exactMatches.size() > 0) {
                 sender.sendMessage(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("search.exactMatches", "%query%", args.getJoinedStrings(0)));
+                        .getEffectiveString("search.exactMatches", sender, "%query%", args.getJoinedStrings(0)));
                 sendWarpMatches(matches.exactMatches, sender);
             }
             if (matches.matches.size() > 0) {
                 sender.sendMessage(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("search.partitalMatches", "%query%", args.getJoinedStrings(0)));
+                        .getEffectiveString("search.partitalMatches", sender, "%query%", args.getJoinedStrings(0)));
                 sendWarpMatches(matches.matches, sender);
             }
         }
@@ -234,13 +234,13 @@ public class BasicCommands {
 
         MyWarp.inst().getWarpManager().welcomeMessage(warp, sender);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.welcome.enter", "%warp%", warp.getName()));
+                .getEffectiveString("warp.welcome.enter", sender, "%warp%", warp.getName()));
     }
 
     @Command(aliases = { "help" }, usage = "#", desc = "cmd.description.help", fee = Fee.HELP, max = 1, permissions = { "mywarp.warp.basic.help" })
     public void showHelp(final CommandContext args, CommandSender sender) throws CommandException {
         PaginatedResult<Command> cmdList = new PaginatedResult<Command>(MyWarp.inst().getLanguageManager()
-                .getColorlessString("lister.help.head")
+                .getColorlessString("lister.help.head", sender)
                 + ", ") {
 
             @Override
@@ -254,7 +254,7 @@ public class BasicCommands {
                 ret.append(StringUtils.join(cmd.aliases(), '|'));
                 ret.append(" ");
                 ret.append(ChatColor.GRAY);
-                ret.append(MyWarp.inst().getCommandsManager().getArguments(cmd));
+                ret.append(MyWarp.inst().getCommandsManager().getArguments(cmd, sender));
                 return (ret.toString());
             }
         };
@@ -266,7 +266,7 @@ public class BasicCommands {
             throw new CommandException(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("error.cmd.invalidNumber", "%command%",
+                    .getEffectiveString("error.cmd.invalidNumber", sender, "%command%",
                             StringUtils.join(args.getCommand(), ' ')));
         }
     }
@@ -277,7 +277,7 @@ public class BasicCommands {
 
         warp.setLocation(sender.getLocation());
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.update", "%warp%", warp.getName()));
+                .getEffectiveString("warp.update", sender, "%warp%", warp.getName()));
     }
 
     @Command(aliases = { "info", "stats" }, usage = "<name>", desc = "cmd.description.info", fee = Fee.INFO, min = 1, permissions = { "mywarp.warp.basic.info" })
@@ -291,25 +291,25 @@ public class BasicCommands {
                 .inst()
                 .getLanguageManager()
                 .getEffectiveString(
-                        "warp.info.about",
+                        "warp.info.about", sender,
                         "%warp%",
                         (warp.isPublicAll() ? ChatColor.GREEN : ChatColor.RED) + warp.getName()
                                 + ChatColor.GOLD));
         infos.append("\n");
 
         infos.append(ChatColor.GRAY);
-        infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.created"));
+        infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.created", sender));
         infos.append(" ");
         infos.append(ChatColor.WHITE);
         infos.append(warp.getCreator());
         if (warp.getCreator().equals(sender.getName())) {
             infos.append(" ");
-            infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.created.you"));
+            infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.created.you", sender));
         }
         infos.append("\n");
 
         infos.append(ChatColor.GRAY);
-        infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.location"));
+        infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.location", sender));
         infos.append(" ");
         infos.append(ChatColor.WHITE);
         infos.append(Math.round(warp.getX()));
@@ -319,12 +319,12 @@ public class BasicCommands {
         infos.append(Math.round(warp.getZ()));
         infos.append(" ");
         infos.append(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.info.location.world", "%world%", warp.getWorld()));
+                .getEffectiveString("warp.info.location.world", sender, "%world%", warp.getWorld()));
         infos.append("\n");
 
         if (warp.playerCanModify(sender instanceof Player ? (Player) sender : null)) {
             infos.append(ChatColor.GRAY);
-            infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.invitedPlayers"));
+            infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.invitedPlayers", sender));
             infos.append(" ");
             infos.append(ChatColor.WHITE);
             infos.append(warp.getAllInvitedPlayers().isEmpty() ? "-" : StringUtils.join(
@@ -332,7 +332,7 @@ public class BasicCommands {
             infos.append("\n");
 
             infos.append(ChatColor.GRAY);
-            infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.invitedGroups"));
+            infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.invitedGroups", sender));
             infos.append(" ");
             infos.append(ChatColor.WHITE);
             infos.append(warp.getAllInvitedGroups().isEmpty() ? "-" : StringUtils.join(
@@ -341,7 +341,7 @@ public class BasicCommands {
         }
 
         infos.append(ChatColor.GRAY);
-        infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.visits"));
+        infos.append(MyWarp.inst().getLanguageManager().getString("warp.info.visits", sender));
         infos.append(" ");
         infos.append(ChatColor.WHITE);
         infos.append(warp.getVisits());
@@ -364,12 +364,12 @@ public class BasicCommands {
             ret.append("'");
             ret.append(ChatColor.WHITE);
             ret.append(" ");
-            ret.append(MyWarp.inst().getLanguageManager().getColorlessString("lister.warp.by"));
+            ret.append(MyWarp.inst().getLanguageManager().getColorlessString("lister.warp.by", sender));
             ret.append(" ");
             ret.append(ChatColor.ITALIC);
 
             if (sender instanceof Player && warp.getCreator().equals(sender.getName())) {
-                ret.append(MyWarp.inst().getLanguageManager().getColorlessString("lister.warp.you"));
+                ret.append(MyWarp.inst().getLanguageManager().getColorlessString("lister.warp.you", sender));
             } else {
                 ret.append(warp.getCreator());
             }

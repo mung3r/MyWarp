@@ -1,0 +1,176 @@
+cmd:
+  description:
+    delete: Löscht den Warp namens §7<Name>
+    point: Richtet den Kompass auf §7[Name]§f aus. Um den Kompass wieder zurückzusetzten, nutze diesen befehl einfach ohne einen Warp anzugeben.
+    search: Sucht nach Warps unter dem angegebenen §7<Namen>§f. Mit [-p] werden die Warps nach Beliebtheit sortiert.
+    adminWarpTo: Teleportiert §7<Spieler>§f zu §7<Name>§f, wenn du den Warp besuchen kannst.
+    private: Wandelt §7<name>§f in einen privaten Warp um
+    uninvite: Lädt §7<Spieler|Gruppe>§f vom Warp namens §7<name>§f aus
+    import: Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt.
+    update: Aktualisiert §7<Name>§f mit deiner aktuellen Position
+    reload: Lädt die Konfiguration neu
+    warpTo: Teleportiert dich zu §7<Name>§f, wenn du den Warp besuchen kannst.
+    info: Zeigt alle verfügbaren Informationen zu §7<Name>§f an
+    invite: Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein
+    welcome: Ändert die Willkommensnachricht von §7<Name>§f. Anschließend wird seperat nach der Willkommensnachricht gefragt.
+    accept: Akzeptiert einen Warp, den ein anderer Spieler an dich abgeben möchte.
+    list: Listet alle Warps die besucht werden können auf. Mit [-c Besitzer] werden nur Warps, die von diesem Spieler erstellt wurden und mit [-w Welt] nur Warps in dieser Welt aufgelistet. Mit [-p] werden die Warps nach Beliebtheit soriert.
+    public: Wandelt §7<name>§f in einen öffentlichen Warp um
+    help: Zeigt das Hilfemenü an.
+    create: Erstellt einen neuen öffentlichen Warp namens §7<Name>§f auf der aktuellen Position
+    give: Gibt §7<Name>§f an §7<Spieler>§f ab. Nutze [-d] um den Warp direkt abzugeben und [-f] um Limits zu ignorieren.
+    createPrivate: Erstellt einen neuen privaten Warp namens §7<Name>§f auf der aktuellen Position
+    assets: Listet alle Warps des angegebenen [Spielers] zusammen mit dem entsprechenden Limit auf.
+  usage:
+    creator: Besitzer
+    world: Welt
+    player: Spieler
+    group: Gruppe
+    name: Name
+search:
+  partitalMatches: '§eTeilweise Treffer für die Suche nach: §o§7%query%'
+  noMatches: '§cKein Treffer für die Suche nach: $o§7%query%'
+  exactMatches: '§Exakte Treffer für die Suche nach: §o§7%query%'
+timer:
+  warmup:
+    started: §bDu wirst in %seconds% Sekunden zu '%warp%' teleportiert.
+    warming: §cDu musst noch %seconds% Sekunden warten, bevor du teleportiert wirst.
+    cancelled:
+      move: §cDu darfst dich nicht bewegen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
+      damage: §cDu darfst keinen Schaden nehmen, währen du aufgewährmst wirst. Dein §f/warp §cwurde abgebrochen.
+  cooldown:
+    cooling: §cDu musst noch %seconds% Sekunden warten, bevor du dich wieder warpen kannst.
+    ended: §bDu bist abgekühlt und kannst §f/warp §b wieder nutzen.
+warp:
+  uninvite:
+    player:
+      public: §bDu hast %player% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+      private: §bDu hast %player% von '%warp%' ausgeladen.
+    uninvited: §bDu wurdest von '%warp%' ausgeladen. Entschuldige.
+    group:
+      public: §bDu hast die Gruppe %group% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+      private: §bDu hast die Gruppe %group% von '%warp%' ausgeladen.
+  private: '§bDu hast ''%warp%'' privatisiert.%n§fWenn du andere Spieler einladen
+    möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%'
+  update: §bDu hast %warp%s Position aktualisiert.
+  point:
+    reset: §bDein Kompass zeigt jetzt wieder auf den ursprünglichen Spawnpunkt.
+  public: §bDu hast '%warp%' veröffentlicht.
+  welcome:
+    enter: §bGib' die neue Willkommensnachricht für '%warp%' ein.
+    received: '§bDie neue Willkommensnachricht für ''%warp%'' lautet:'
+  give:
+    given: §bDu hast '%warp%' an %player% abgegeben.
+    asked: §b%player% möchte '%warp%' an dich abgeben. Nutze '§f/warp accept§b' um ihn zu akzeptieren.
+    accept: §b'%warp%' gehört nun dir.
+  warpto:
+    player: §b%player% wurde erfolgreich teleportiert.
+  default:
+    welcomeMessage: Willkommen am Warp '%warp%', %player%.
+  invite:
+    player:
+      private: §bDu hast %player% zu '%warp%' eingeladen.
+      public: §bDu hast %player% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+    group:
+      private: §bDu hast die Gruppe %group% zu '%warp%' eingeladen.
+      public: §bDu hast die Gruppe %group% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+    invited: '§b%player% hat dich zum Warp ''%warp%'' eingeladen.%n§fNutze: §c/warp
+      %warp% §fum dich zu ihm zu teleportieren.'
+  info:
+    about: 'Informationen über ''%warp%'':'
+    location:
+      world: (in '%world%')
+    invitedPlayers: 'Eingeladene Spieler:'
+    created: 'Erstellt von:'
+    visits: 'Besuche:'
+    invitedGroups: 'Eingeladene Gruppen:'
+  create:
+    public: '§bWarp ''%warp%'' wurde erfolgreich erstellt%n§fWenn du ihn Privatisieren
+      möchtest,%n§fNutze: §c/warp private %warp%'
+    private: '§bWarp ''%warp%'' wurde erfolgreich erstellt%n§fWenn du andere Spieler
+      einladen möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%'
+  delete: §bDu hast '%warp%' gelöscht.
+  assets:
+    public: Öffentliche Warps
+    head: '%player%s Warps'
+    private: Private Warps
+limit:
+  private:
+    reached: §cDu hast dein Maximum an privaten Warps erreicht §e(%maxPrivate%)%n§fLösche einige deiner Warps, um neue zu erstellen.
+  total:
+    reached:
+      player: §c%player% hat sein Maximum an Warps erreicht §e(%maxTotal%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
+  public:
+    reached: §cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)%n§fLösche einige deiner Warps, um neue zu erstellen.
+error:
+  noSuchWarp: Der Warp '%warp%' existiert nicht.
+  invite:
+    creator: '%player% hat diesen Warp erstellt, natürlich ist er eingeladen.'
+    invited:
+      player: '%player% ist bereits zu diesem Warp eingeladen.'
+      group: Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
+  noPermission:
+    modify: Dir fehlen die Rechte um '%warp%' zu modifizieren.
+  cmd:
+    invalidSender: 'Das Kommando konnte nicht ausgeführt werden: ungültiger Sender.'
+    noValue: Für die '%flag%' Flag wurde kein Wert angegeben.
+    toFewArgs: Zu wenige Argumente.
+    unknownFlag: 'Unbekannte Flag:'
+    invalidNumber: Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.
+    toManyArgs: Zu viele Argumente.
+    unknown: Während dem Ausführen des Befehls trat ein Fehler auf.
+    flagGiven: Die Flag '%flag%' existiert bereits!
+  warpto:
+    noSuchWorld: Die Welt '%world%' exisitiert nicht.
+  player:
+    offline: Konnte den Spieler '%player%' nicht finden. Ist er vielleicht offline?
+  playerOnly: Dieses Kommando kann nur von Spielern genutzt werden.
+  uninvite:
+    notInvited:
+      player: '%player% ist nicht zu diesem Warp eingeladen.'
+      group: Die Gruppe '%group%' ist nicht zu diesem Warp eingeladen.
+    creator: Du kannst dich nicht selbst ausladen. Du bist der Ersteller!
+  import:
+    exists: Warp '%warp%' existiert bereits. Überspringe ihn...
+    invalid: '%query% ist keine gültige Import-Option.'
+    noConnection: 'Es konnte keine Verbindung zum Import aufgebaut werden:'
+  private:
+    isPrivate: Warp '%warp%' ist bereits privat.
+  give:
+    isOwner: Dieser Warp gehört bereits %player%.
+  accept:
+    noWarp: Es gibt keine Warps, die akzeptiert werden könnten.
+  economy:
+    cannotAfford: 'Du kannst es dir das nicht leisten. Du brauchst mindestens: %amount%$.'
+    unknown: Die Transaktion konnte nicht abgeschlossen werden.
+  public:
+    isPublic: Der Warp '%warp%' ist bereits öffentlich.
+  create:
+    warpExists: Ein Warp namens '%warp%' existiert bereits.
+lister:
+  warp:
+    you: dir
+    by: von
+    head: Warps
+  unknownPage: Diese Seite existiert nicht, es gibt insgesammt nur %pages% Seiten!
+  noResults: Keine zutreffenden Resultate!
+  help:
+    head: Hilfe
+  page: Seite
+sign:
+  noPermission:
+    use: §cDir fehlen die Rechte um Warp-Schilder zu nutzen.
+    warpto: §cDir fehlen die Rechte um '%warp%' zu nutzen.
+    create: §cDir fehlen die Rechte um ein Warp-Schild zu erstellen.
+    createToWarp: §cDir fehlen die Rechte um ein Warp-Schild nach '%warp%' zu erstellen.
+  created: §bDas Warp-Schild wurde erfolgreich erstellt.
+safety:
+  notFound: §cDer Warp '%warp% ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden.
+  found: §cDer Warp '%warp% ist nicht sicher. Du wurdest zum sichersten Ort in seiner Nähe teleportiert.
+reload:
+  config: §bDie Konfiguration wurde erfolgreich neu geladen!
+economy:
+  transaction:
+    complete: §bDir wurden %amount%$ berechnet.
+dynmap:
+  marker: <b>%warp%</b></br><i>Erstellt von %creator%</i>

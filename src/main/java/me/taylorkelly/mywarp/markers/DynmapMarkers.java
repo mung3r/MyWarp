@@ -38,8 +38,8 @@ public class DynmapMarkers implements Markers {
         // create the label
         markerSet = markerAPI.getMarkerSet(LABEL_ID);
         if (markerSet == null) {
-            markerSet = markerAPI.createMarkerSet(LABEL_ID, MyWarp.inst().getWarpSettings().dynmapLayerDisplayName,
-                    null, false);
+            markerSet = markerAPI.createMarkerSet(LABEL_ID,
+                    MyWarp.inst().getWarpSettings().dynmapLayerDisplayName, null, false);
         } else {
             markerSet.setMarkerSetLabel(MyWarp.inst().getWarpSettings().dynmapLayerDisplayName);
         }
@@ -89,7 +89,8 @@ public class DynmapMarkers implements Markers {
     }
 
     private String warpLabel(Warp warp) {
-        return warp.replaceWarpMacros(MyWarp.inst().getLanguageManager().getString("dynmap.marker"));
+        return warp.replaceWarpMacros(MyWarp.inst().getLanguageManager()
+                .getString("dynmap.marker", MyWarp.inst().getWarpSettings().localizationDefLocale));
 
     }
 }

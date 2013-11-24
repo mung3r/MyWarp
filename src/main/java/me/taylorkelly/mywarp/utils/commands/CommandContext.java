@@ -12,6 +12,7 @@ import java.util.Set;
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.command.CommandSender;
 
 public class CommandContext {
     protected final String command[];
@@ -21,16 +22,16 @@ public class CommandContext {
     protected final Set<Character> booleanFlags = new HashSet<Character>();
     protected final Map<Character, String> valueFlags = new HashMap<Character, String>();
 
-    public CommandContext(String args) throws CommandException {
-        this(args.split(" "), 0, null);
+    public CommandContext(String args, CommandSender sender) throws CommandException {
+        this(args.split(" "), 0, null, sender);
     }
 
-    public CommandContext(String[] args) throws CommandException {
-        this(args, 0, null);
+    public CommandContext(String[] args, CommandSender sender) throws CommandException {
+        this(args, 0, null, sender);
     }
 
-    public CommandContext(String args, Set<Character> valueFlags) throws CommandException {
-        this(args.split(" "), 0, valueFlags);
+    public CommandContext(String args, Set<Character> valueFlags, CommandSender sender) throws CommandException {
+        this(args.split(" "), 0, valueFlags, sender);
     }
 
     /**
@@ -46,7 +47,7 @@ public class CommandContext {
      * @throws CommandException
      *             This is thrown if flag fails for some reason.
      */
-    public CommandContext(String[] args, int level, Set<Character> valueFlags) throws CommandException {
+    public CommandContext(String[] args, int level, Set<Character> valueFlags, CommandSender sender) throws CommandException {
         if (valueFlags == null) {
             valueFlags = Collections.emptySet();
         }
@@ -135,7 +136,7 @@ public class CommandContext {
                         throw new CommandException(MyWarp
                                 .inst()
                                 .getLanguageManager()
-                                .getEffectiveString("error.cmd.flagGiven", "%flag%",
+                                .getEffectiveString("error.cmd.flagGiven", sender, "%flag%",
                                         Character.toString(flagName)));
                     }
 
@@ -143,7 +144,7 @@ public class CommandContext {
                         throw new CommandException(MyWarp
                                 .inst()
                                 .getLanguageManager()
-                                .getEffectiveString("error.cmd.noValue", "%flag%",
+                                .getEffectiveString("error.cmd.noValue", sender, "%flag%",
                                         Character.toString(flagName)));
                     }
 

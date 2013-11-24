@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
 import me.taylorkelly.mywarp.data.WarpLimit;
 import me.taylorkelly.mywarp.economy.WarpFees;
 import me.taylorkelly.mywarp.timer.Time;
+import me.taylorkelly.mywarp.utils.ConfigUtils;
 import me.taylorkelly.mywarp.utils.PropertiesFile;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -42,8 +44,8 @@ public class WarpSettings {
     public String mysqlUsername;
     public String mysqlPassword;
 
-    // Locale
-    public String locale;
+    // Localization
+    public Locale localizationDefLocale;
 
     // WarpSafety
     public boolean safetyEnabled;
@@ -173,8 +175,8 @@ public class WarpSettings {
         mysqlDatabase = config.getString("mysql.database");
         mysqlTable = config.getString("mysql.table");
 
-        // Locale
-        locale = config.getString("locale.locale");
+        // Localization
+        localizationDefLocale = ConfigUtils.stringToLocale(config.getString("localization.defaultLocale"));
 
         // Safety
         safetyEnabled = config.getBoolean("warpSafety.enabled");

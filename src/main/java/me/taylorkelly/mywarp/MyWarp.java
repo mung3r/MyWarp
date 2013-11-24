@@ -1,6 +1,7 @@
 package me.taylorkelly.mywarp;
 
 import java.io.File;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import me.taylorkelly.mywarp.commands.RootCommands;
@@ -11,6 +12,8 @@ import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.economy.EconomyLink;
 import me.taylorkelly.mywarp.economy.VaultLink;
+import me.taylorkelly.mywarp.localization.LocalizationManager;
+import me.taylorkelly.mywarp.localization.LocalizationException;
 import me.taylorkelly.mywarp.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.markers.Markers;
 import me.taylorkelly.mywarp.permissions.PermissionsManager;
@@ -55,7 +58,7 @@ public class MyWarp extends JavaPlugin {
     /**
      * The language-manger
      */
-    private LanguageManager languageManager;
+    private LocalizationManager localizationManager;
 
     /**
      * Represents the marker API in use
@@ -150,12 +153,12 @@ public class MyWarp extends JavaPlugin {
     }
 
     /**
-     * Gets MyWarp's {@link LanguageManager}, that handles all translations
+     * Gets MyWarp's {@link LocalizationManager}, that handles all translations
      * 
      * @return the language manager
      */
-    public LanguageManager getLanguageManager() {
-        return languageManager;
+    public LocalizationManager getLanguageManager() {
+        return localizationManager;
     }
 
     /**
@@ -271,6 +274,15 @@ public class MyWarp extends JavaPlugin {
             return;
         }
 
+        // initialize language support
+        try {
+            localizationManager = new LocalizationManager();
+        } catch (LocalizationException e) {
+            logger().log(Level.SEVERE, "Failed to acces bundled localization files. Disabling MyWarp.", e);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         // setup the core functions
         permissionsManager = new PermissionsManager();
         warpManager = new WarpManager();
@@ -286,9 +298,6 @@ public class MyWarp extends JavaPlugin {
     private void setupPlugin() {
         // register dynamic permissions
         permissionsManager.registerPermissions();
-
-        // initialize language support
-        languageManager = new LanguageManager();
 
         // initialize timers
         if (getWarpSettings().timersEnabled) {
@@ -331,6 +340,11 @@ public class MyWarp extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new WarpSignManager(), this);
         }
         getServer().getPluginManager().registerEvents(new EventListener(), this);
+
+        // TODO test-stuff
+        // lm = new me.taylorkelly.mywarp. localization.LocalizationManager();
+        // getLogger().info("TestString: " + lm.getString("my.test",
+        // getServer().getConsoleSender()));
     }
 
     /**

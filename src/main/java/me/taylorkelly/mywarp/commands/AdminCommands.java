@@ -33,7 +33,7 @@ public class AdminCommands {
             importMySQL = false;
         } else {
             throw new CommandException(MyWarp.inst().getLanguageManager()
-                    .getEffectiveString("error.import.invalid", "%query%", args.getString(0)));
+                    .getEffectiveString("error.import.invalid", sender, "%query%", args.getString(0)));
         }
 
         try {
@@ -48,7 +48,7 @@ public class AdminCommands {
                 if (MyWarp.inst().getWarpManager().warpExists(name)) {
                     if (!args.hasFlag('f')) {
                         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                                .getEffectiveString("error.import.exists", "%warp%", name));
+                                .getEffectiveString("error.import.exists", sender, "%warp%", name));
                         continue;
                     }
                     // remove the old warp before adding the new one
@@ -60,7 +60,7 @@ public class AdminCommands {
             }
             sender.sendMessage(counter + " warps were imported sucessfully.");
         } catch (DataConnectionException ex) {
-            sender.sendMessage(MyWarp.inst().getLanguageManager().getString("error.import.noConnection")
+            sender.sendMessage(MyWarp.inst().getLanguageManager().getString("error.import.noConnection", sender)
                     + ex.getMessage());
         }
     }
@@ -68,16 +68,16 @@ public class AdminCommands {
     @Command(aliases = { "reload" }, usage = "", desc = "cmd.description.reload", max = 0, permissions = { "mywarp.admin.reload" })
     public void reload(CommandContext args, CommandSender sender) throws CommandException {
         MyWarp.inst().reloadPlugin();
-        sender.sendMessage(MyWarp.inst().getLanguageManager().getString("reload.config"));
+        sender.sendMessage(MyWarp.inst().getLanguageManager().getString("reload.config", sender));
     }
 
     @Command(aliases = { "player" }, usage = "<player> <name>", desc = "cmd.description.adminWarpTo", fee = Fee.WARP_PLAYER, min = 2, permissions = { "mywarp.admin.warpto" })
     public void warpPlayer(CommandContext args, CommandSender sender) throws CommandException {
-        Player invitee = CommandUtils.matchPlayer(args.getString(0));
+        Player invitee = CommandUtils.matchPlayer(sender, args.getString(0));
         Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(1));
 
         warp.warp(invitee, false);
         sender.sendMessage(MyWarp.inst().getLanguageManager()
-                .getEffectiveString("warp.warpto.player", "%player%", invitee.getName()));
+                .getEffectiveString("warp.warpto.player", sender, "%player%", invitee.getName()));
     }
 }

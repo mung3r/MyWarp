@@ -28,7 +28,7 @@ public class RootCommands {
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
                 throw new CommandException(MyWarp.inst().getLanguageManager()
-                        .getEffectiveString("error.economy.cannotAfford", "%amount%", Double.toString(fee)));
+                        .getEffectiveString("error.economy.cannotAfford", sender, "%amount%", Double.toString(fee)));
             }
         }
 
@@ -39,7 +39,7 @@ public class RootCommands {
                         .inst()
                         .getLanguageManager()
                         .getEffectiveString(
-                                "timer.cooldown.cooling",
+                                "timer.cooldown.cooling", sender,
                                 "%seconds%",
                                 Integer.toString(MyWarp.inst().getTimerFactory()
                                         .getRemainingSeconds(sender.getName(), WarpCooldown.class))));
@@ -50,7 +50,7 @@ public class RootCommands {
                         .inst()
                         .getLanguageManager()
                         .getEffectiveString(
-                                "timer.warmup.warming",
+                                "timer.warmup.warming", sender,
                                 "%seconds%",
                                 Integer.toString(MyWarp.inst().getTimerFactory()
                                         .getRemainingSeconds(sender.getName(), WarpWarmup.class))));
@@ -79,5 +79,4 @@ public class RootCommands {
             warp.warp(sender, true);
         }
     }
-
 }

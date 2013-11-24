@@ -40,7 +40,7 @@ public class WarpWarmup extends TimerAction<String> {
             player.sendMessage(MyWarp
                     .inst()
                     .getLanguageManager()
-                    .getEffectiveString("timer.warmup.warming", "%warp%", warp.getName(), "%seconds%",
+                    .getEffectiveString("timer.warmup.warming", player, "%warp%", warp.getName(), "%seconds%",
                             Double.toString(duration.getSeconds())));
         }
 
@@ -66,7 +66,7 @@ public class WarpWarmup extends TimerAction<String> {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst()
                                 .getLanguageManager()
-                                .getEffectiveString("error.economy.cannotAfford", "%amount%",
+                                .getEffectiveString("error.economy.cannotAfford", player, "%amount%",
                                         Double.toString(fee)));
                 return;
             }
@@ -105,7 +105,7 @@ public class WarpWarmup extends TimerAction<String> {
                         .hasPermission(player, "mywarp.warmup.disobey.moveabort")) {
                     WarpWarmup.this.cancel();
                     player.sendMessage(MyWarp.inst().getLanguageManager()
-                            .getString("timer.warmup.cancelled.move"));
+                            .getString("timer.warmup.cancelled.move", player));
                     cancel();
                 }
             }
@@ -135,7 +135,7 @@ public class WarpWarmup extends TimerAction<String> {
                         .hasPermission(player, "mywarp.warmup.disobey.dmgabort")) {
                     WarpWarmup.this.cancel();
                     player.sendMessage(MyWarp.inst().getLanguageManager()
-                            .getString("timer.warmup.cancelled.damage"));
+                            .getString("timer.warmup.cancelled.damage", player));
                     cancel();
                 }
             }

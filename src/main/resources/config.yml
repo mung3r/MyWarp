@@ -12,8 +12,8 @@ mysql:
   table: 'warpTable'
   username: 'root'
   password: 'password'
-locale:
-  locale: en_US
+localization:
+  defaultLocale: en_US
 warpSafety:
   enabled: true
   searchRadius: 5

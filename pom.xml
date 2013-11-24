@@ -104,8 +104,7 @@
                 <filtering>true</filtering>
                 <directory>${basedir}/src/main/resources/</directory>
                 <includes>
-                    <include>en_US.txt</include>
-                    <include>de_DE.txt</include>
+                    <include>localization*.yml</include>
                 </includes>
             </resource>
         </resources>
