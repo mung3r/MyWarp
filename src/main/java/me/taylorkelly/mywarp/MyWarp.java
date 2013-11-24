@@ -32,7 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.FileUtil;
 import org.dynmap.DynmapCommonAPI;
 
-public class MyWarp extends JavaPlugin implements Reloadable{
+public class MyWarp extends JavaPlugin implements Reloadable {
 
     /**
      * The plugin instance for MyWarp
@@ -236,6 +236,9 @@ public class MyWarp extends JavaPlugin implements Reloadable{
 
         // cancel all pending tasks
         getServer().getScheduler().cancelTasks(this);
+
+        // null the static instance to prevent memory leaks
+        instance = null;
     }
 
     /**
