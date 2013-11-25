@@ -23,7 +23,7 @@ public class SafeLocation {
      * @return the first safe location found, or null if none could be found
      */
     public static Location getSafeLocation(final Location center, int halfEdgeLength) {
-        if (halfEdgeLength > 0) {
+        if (halfEdgeLength < 0) {
             throw new IllegalArgumentException("halfEdgeLength must be greater than 0.");
         }
         if (BlockSafety.isLocationSafe(center)) {
