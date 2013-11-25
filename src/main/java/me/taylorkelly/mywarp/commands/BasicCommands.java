@@ -6,7 +6,6 @@ import java.util.TreeSet;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.economy.Fee;
-import me.taylorkelly.mywarp.safety.SafeLocation;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.MatchList;
 import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
@@ -70,12 +69,6 @@ public class BasicCommands {
         MyWarp.inst().getWarpManager().deleteWarp(warp);
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
                 .getEffectiveString("warp.delete", sender, "%warp%", warp.getName()));
-    }
-    
-    @Command(aliases = { "debug" }, usage = "", desc = "cmd.description.delete", permissions = { "" })
-    public void debugWarp(CommandContext args, Player sender) throws CommandException {
-        SafeLocation.getSafeLocation(sender.getLocation(), args.getInteger(0, 5));
-        sender.sendMessage("done.");
     }
 
     @Command(aliases = { "assets", "pstats", "pinfo", "limits" }, usage = "[player]", desc = "cmd.description.assets", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
