@@ -1,91 +1,38 @@
 package me.taylorkelly.mywarp.safety;
 
-import me.taylorkelly.mywarp.MyWarp;
-
 import org.bukkit.Location;
 
 /**
- * This class provides and manages methods to search for a safe location
+ * Provides an algorithm to search for a safe-location.
  */
 public class SafeLocation {
 
     /**
-     * Searches for a safe location close to the given one.
+     * Gets the first safe location found in a cube of the given
+     * half-edge-length centered at the given location.
      * 
-     * Returns null if no safe location could be found.
+     * If the given location is not safe, the algorithm will loop through all
+     * blocks that directly surround it, than through all blocks surrounding
+     * these and so one.
      * 
-     * @param l
-     *            the location
-     * @return a safe location or null if none could be found
+     * @param center
+     *            the center
+     * @param halfEdgeLength
+     *            half of the effective edge length, including the block in the
+     *            center
+     * @return the first safe location found, or null if none could be found
      */
-    public static Location getSafeLocation(Location l) {
-        return getSafeLocation(l, MyWarp.inst().getWarpSettings().safetyVerticalTolerance, MyWarp.inst()
-                .getWarpSettings().safetySearchRadius);
-    }
-
-    /**
-     * Checks if the given location is safe. If not, it calls
-     * {@link #checkAboveAndBelowLocation(Location, int, int)} to search for a
-     * safe location using the provided margins.
-     * 
-     * Returns null if no safe location could be found.
-     * 
-     * @param l
-     *            the location that is used as center
-     * @param safetyVerticalTolerance
-     *            the maximal vertical tolerance
-     * @param radius
-     *            the maximal horizontal search radius
-     * @return a safe location or null if none could be found
-     */
-    private static Location getSafeLocation(Location l, int tolerance, int radius) {
-        if (BlockSafety.isLocationSafe(l)) {
-            return l;
+    public static Location getSafeLocation(final Location center, int halfEdgeLength) {
+        if (halfEdgeLength > 0) {
+            throw new IllegalArgumentException("halfEdgeLength must be greater than 0.");
         }
-        Location safe = checkAboveAndBelowLocation(l, tolerance, radius);
-        if (safe != null) {
-            safe.add(.5, 0, .5);
+        if (BlockSafety.isLocationSafe(center)) {
+            return center;
         }
-        return safe;
-    }
+        Location safe; // never modify the given location!
 
-    /**
-     * Searches above and below a given for a safe location. This method will
-     * call {@link #checkHorizontalAroundLocation(Location, int)} with the given
-     * radius using the same high as the center location. If no safe location
-     * can be found, it will call it again one level above and, afterwards below
-     * the center-location. This continues until a safe locatio is found or the
-     * max. vertical tolerance is met.
-     * 
-     * Returns null if no safe location could be found.
-     * 
-     * @param l
-     *            the location that is used as center
-     * @param verticalTolerance
-     *            the maximal vertical tolerance
-     * @param radius
-     *            the maximal horizontal search radius
-     * @return a safe location or null if none could be found
-     */
-    private static Location checkAboveAndBelowLocation(Location l, int verticalTolerance, int radius) {
-        Location locToCheck = l.clone();
-        Location safe = checkHorizontalAroundLocation(locToCheck, radius);
-
-        if (safe != null) {
-            return safe;
-        }
-
-        for (int specVerticalTolerance = 1; specVerticalTolerance < verticalTolerance; specVerticalTolerance++) {
-            locToCheck = l.clone();
-            locToCheck.add(0, specVerticalTolerance, 0);
-            safe = checkHorizontalAroundLocation(locToCheck, radius);
-
-            if (safe != null) {
-                return safe;
-            }
-            locToCheck = l.clone();
-            locToCheck.subtract(0, specVerticalTolerance, 0);
-            safe = checkHorizontalAroundLocation(locToCheck, radius);
+        for (int i = 2; i <= halfEdgeLength; i++) {
+            safe = checkCubeSurface(center, i);
             if (safe != null) {
                 return safe;
             }
@@ -94,81 +41,124 @@ public class SafeLocation {
     }
 
     /**
-     * Searches horizontal around a given location for a safe location within
-     * the search radius. This method will than call
-     * {@link #checkHorizontalAroundDiameter(Location, int)} with different
-     * diameters until the given max. search radius is met (for reference, the
-     * maximal diameter is always twice the radius).
+     * Gets the first safe location from the cube surface of the given
+     * half-edge-length centered at the given location.
      * 
-     * Returns null if no safe location could be found.
-     * 
-     * @param l
-     *            the location that is used as center
-     * @param radius
-     *            the maximal search radius
-     * @return a safe location or null if none could be found
+     * @param center
+     *            the center
+     * @param halfEdgeLength
+     *            half of the effective edge length, including the block in the
+     *            center
+     * @return the first safe location found, or null if none could be found
      */
-    private static Location checkHorizontalAroundLocation(Location l, int radius) {
-        int maxDiameter = radius * 2;
-        for (int specDiameter = 3; specDiameter < maxDiameter; specDiameter += 2) {
-            Location safeLocation = checkHorizontalAroundDiameter(l, specDiameter);
-            if (safeLocation != null) {
-                return safeLocation;
+    private static Location checkCubeSurface(final Location center, int halfEdgeLength) {
+        Location safe; // never modify the given location!
+
+        int diameter = getEdgeLength(halfEdgeLength);
+        for (int i = 0; i < diameter; i++) {
+            // makes the location 'swing' up/down (+1, -2, +3, -4...)
+            center.add(0, i % 2 == 0 ? -i : i, 0);
+            if (i < diameter - 2) {
+                // if we are more than 2 steps away from the ending, we are in
+                // the "middle" of the cube and only need to check the outline
+                safe = checkHorizontalSquareOutline(center, halfEdgeLength);
+            } else {
+                // check bottom and top areas
+                safe = checkHorizontalSquare(center, halfEdgeLength);
+            }
+            if (safe != null) {
+                return safe;
             }
         }
         return null;
     }
 
     /**
-     * Searches for a safe location around the given location. The given one is
-     * used as center, and the method loops through all blocks that surround
-     * this location. This method will only loop through the most distant blocks
-     * within the given diameter!
+     * Gets the first safe location from a horizontal square with the given
+     * half-edge-length centered at the given location.
      * 
-     * Returns null if no safe location could be found.
-     * 
-     * @param l
-     *            the location that is used as center
-     * @param diameter
-     *            the diameter in which to search
-     * @return a safe location or null if none could be found
+     * @param center
+     *            the center
+     * @param halfEdgeLength
+     *            half of the effective edge length, including the block in the
+     *            center
+     * @return the first safe location found, or null if none could be found
      */
-    private static Location checkHorizontalAroundDiameter(Location l, int diameter) {
-        Location checkLoc = l.clone();
-
-        int blockStep = (diameter - 1) / 2;
-        checkLoc.add(blockStep, 0, 0);
-        if (BlockSafety.isLocationSafe(checkLoc)) {
-            return checkLoc;
+    private static Location checkHorizontalSquare(final Location center, int halfEdgeLength) {
+        if (BlockSafety.isLocationSafe(center)) {
+            return center;
         }
+        Location safe; // never modify the given location!
 
-        for (int i = 0; i < diameter; i++) {
-            checkLoc.add(0, 0, 1);
-            if (BlockSafety.isLocationSafe(checkLoc)) {
-                return checkLoc;
+        // loop through surrounding blocks, starting with a half-edge-length of
+        // 2 (1 would just be the central block)
+        for (int i = 2; i <= halfEdgeLength; i++) {
+            safe = checkHorizontalSquareOutline(center, i);
+            if (safe != null) {
+                return safe;
             }
         }
+        return null;
+    }
 
-        for (int i = 0; i < diameter; i++) {
+    /**
+     * Gets the first safe location from the outline of horizontal square with
+     * the given half-edge-length centered at the given location.
+     * 
+     * @param center
+     *            the center
+     * @param halfEdgeLength
+     *            half of the effective edge length, including the block in the
+     *            center
+     * @return the first safe location found, or null if none could be found
+     */
+    private static Location checkHorizontalSquareOutline(final Location center, int halfEdgeLength) {
+        Location checkLoc = center.clone(); // never modify the given location!
+
+        int blockSteps = getEdgeLength(halfEdgeLength) - 1;
+        checkLoc.add(halfEdgeLength - 1, 0, halfEdgeLength - 1);
+
+        for (int i = 0; i < blockSteps; i++) {
             checkLoc.add(-1, 0, 0);
             if (BlockSafety.isLocationSafe(checkLoc)) {
                 return checkLoc;
             }
         }
 
-        for (int i = 0; i < diameter; i++) {
+        for (int i = 0; i < blockSteps; i++) {
             checkLoc.add(0, 0, -1);
             if (BlockSafety.isLocationSafe(checkLoc)) {
                 return checkLoc;
             }
         }
 
-        for (int i = 0; i < diameter; i++) {
-            checkLoc.add(1, 0, -0);
+        for (int i = 0; i < blockSteps; i++) {
+            checkLoc.add(1, 0, 0);
+            if (BlockSafety.isLocationSafe(checkLoc)) {
+                return checkLoc;
+            }
+        }
+        for (int i = 0; i < blockSteps; i++) {
+            checkLoc.add(0, 0, 1);
             if (BlockSafety.isLocationSafe(checkLoc)) {
                 return checkLoc;
             }
         }
         return null;
     }
+
+    /**
+     * Gets the edge length of a square with the given half-edge-length. The
+     * later is expected to include the block at the center, e.g. the
+     * half-edge-length '2' would result in a edge-length of '3'.
+     * 
+     * @param halfEdgeLength
+     *            half of the effective edge length, including the block in the
+     *            center
+     * @return the edge length
+     */
+    private static int getEdgeLength(int halfEdgeLength) {
+        return (halfEdgeLength - 1) * 2 + 1;
+    }
+
 }

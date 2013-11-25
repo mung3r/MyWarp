@@ -52,7 +52,6 @@ public class WarpSettings implements Reloadable{
     // WarpSafety
     public boolean safetyEnabled;
     public int safetySearchRadius;
-    public int safetyVerticalTolerance;
     public boolean safetyTeleportHorses;
     public boolean safetyTeleportLeashed;
 
@@ -142,7 +141,6 @@ public class WarpSettings implements Reloadable{
         // Safety
         safetyEnabled = config.getBoolean("warpSafety.enabled");
         safetySearchRadius = config.getInt("warpSafety.searchRadius");
-        safetyVerticalTolerance = config.getInt("warpSafety.verticalTolerance");
         safetyTeleportHorses = config.getBoolean("warpSafety.teleportHorses");
         safetyTeleportLeashed = config.getBoolean("warpSafety.teleportLeashed");
 

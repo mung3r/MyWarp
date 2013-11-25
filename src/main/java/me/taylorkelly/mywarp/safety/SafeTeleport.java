@@ -13,8 +13,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 
 /**
- * This class provides and manages several methods to teleport entity to safe
- * locations
+ * Provides and manages several methods to teleport entity to safe locations
  */
 public class SafeTeleport {
 
@@ -43,7 +42,8 @@ public class SafeTeleport {
             l.add(0, 1, 0);
         }
         if (MyWarp.inst().getWarpSettings().safetyEnabled) {
-            Location safe = SafeLocation.getSafeLocation(l);
+            Location safe = SafeLocation.getSafeLocation(l,
+                    MyWarp.inst().getWarpSettings().safetySearchRadius);
             if (safe == null) {
                 return TeleportStatus.NONE;
             }
@@ -70,7 +70,7 @@ public class SafeTeleport {
      * 
      * @param type
      *            the Material to check
-     * @return true if this Material is solid and is not one full block height
+     * @return true if this Material is solid and lower than one block
      */
     private static boolean isNotFullHeight(Material type) {
         switch (type) {
@@ -105,8 +105,9 @@ public class SafeTeleport {
 
     /**
      * Teleports an entity to a location. Before teleporting, the entity is
-     * ejected if needed, the warp-effect is played (if enabled) and chunks are
-     * loaded (if enabled and not loaded before).
+     * ejected if needed, the warp-effect is played (if enabled), chunks are
+     * loaded (if enabled and not loaded before) and leashed or ridden entities
+     * are teleported (if enabled).
      * 
      * @param entity
      *            the entity to teleport

@@ -2,9 +2,6 @@ package me.taylorkelly.mywarp.localization;
 
 public class LocalizationException extends Exception {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 7145096788413242658L;
 
     public LocalizationException() {

@@ -43,7 +43,7 @@ public class LocalizationManager implements Reloadable {
      * Creates this language-manager instance. This will create all
      * language-files provided by the plugin and update them, if needed.
      * 
-     * @throws LocalizationException
+     * @throws LocalizationException if one of the bundled localization files is not readable
      */
     public LocalizationManager() throws LocalizationException {
         // create all language files that we provide
