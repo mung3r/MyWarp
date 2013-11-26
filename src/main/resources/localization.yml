@@ -159,6 +159,7 @@ lister:
   noResults: No results match!
   help:
     head: Help
+    note: Use '/<command> -?' to get more informations about it.
   page: Page
 sign:
   noPermission:

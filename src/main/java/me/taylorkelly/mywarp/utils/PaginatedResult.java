@@ -19,6 +19,7 @@ public abstract class PaginatedResult<T> {
     protected static final int PER_PAGE = 8;
 
     private final String header;
+    private final String note;
 
     /**
      * Initializes this object
@@ -27,7 +28,20 @@ public abstract class PaginatedResult<T> {
      *            the header that is send ontop the formatted list
      */
     public PaginatedResult(String header) {
+        this(header, null);
+    }
+
+    /**
+     * Initializes this object
+     * 
+     * @param header
+     *            the header that is send ontop the formatted list
+     * @param note
+     *            the note will be displayed italic right underneath the header
+     */
+    public PaginatedResult(String header, String note) {
         this.header = header;
+        this.note = note;
     }
 
     /**
@@ -63,27 +77,36 @@ public abstract class PaginatedResult<T> {
      */
     public void display(CommandSender sender, List<? extends T> results, int page) throws CommandException {
         if (results.size() == 0) {
-            throw new CommandException(MyWarp.inst().getLocalizationManager().getString("lister.noResults", sender));
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
+                    .getString("lister.noResults", sender));
         }
         --page;
 
-        int maxPages = results.size() / PER_PAGE;
+        int resultsPerPage = note != null ? PER_PAGE - 1 : PER_PAGE;
+
+        int maxPages = results.size() / resultsPerPage;
         if (page < 0 || page > maxPages) {
-            throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("lister.unknownPage", sender, "%pages%", Integer.toString(maxPages - 1)));
+            throw new CommandException(MyWarp
+                    .inst()
+                    .getLocalizationManager()
+                    .getEffectiveString("lister.unknownPage", sender, "%pages%",
+                            Integer.toString(maxPages - 1)));
         }
 
         sender.sendMessage(ChatColor.GOLD
                 + MinecraftFontWidthCalculator.centralize(" " + header
-                        + MyWarp.inst().getLocalizationManager().getColorlessString("lister.page", sender) + " "
-                        + (page + 1) + "/" + (maxPages + 1) + " ", '-'));
-        for (int i = PER_PAGE * page; i < PER_PAGE * page + PER_PAGE && i < results.size(); i++) {
+                        + MyWarp.inst().getLocalizationManager().getColorlessString("lister.page", sender)
+                        + " " + (page + 1) + "/" + (maxPages + 1) + " ", '-'));
+        if (note != null) {
+            sender.sendMessage(ChatColor.ITALIC + note);
+        }
+        for (int i = resultsPerPage * page; i < resultsPerPage * page + resultsPerPage && i < results.size(); i++) {
             sender.sendMessage(format(results.get(i), sender));
         }
     }
 
     /**
-     * This method is used to format entrys of the given objects that are send
+     * This method is used to format entries of the given objects that are send
      * to the given sender. usage of {@link StringBuilder} is advised.
      * 
      * @param entry

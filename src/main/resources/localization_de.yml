@@ -156,6 +156,7 @@ lister:
   noResults: Keine zutreffenden Resultate!
   help:
     head: Hilfe
+    note: Nutze '/<Befehl> -?' um mehr über ihn zu erfahren.
   page: Seite
 sign:
   noPermission:
