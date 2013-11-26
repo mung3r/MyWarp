@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import me.taylorkelly.mywarp.MyWarp;
 
@@ -21,6 +22,11 @@ public class CommandContext {
     protected final String[] originalArgs;
     protected final Set<Character> booleanFlags = new HashSet<Character>();
     protected final Map<Character, String> valueFlags = new HashMap<Character, String>();
+    
+    /**
+     * Matches flags
+     */
+    private static final Pattern flagPattern = Pattern.compile("^-[a-zA-Z\\?]+$");
 
     public CommandContext(String args, CommandSender sender) throws CommandException {
         this(args.split(" "), 0, null, sender);
@@ -112,7 +118,7 @@ public class CommandContext {
             String arg = argList.get(nextArg++);
 
             // Not a flag?
-            if (arg.charAt(0) != '-' || arg.length() == 1 || !arg.matches("^-[a-zA-Z]+$")) {
+            if (arg.charAt(0) != '-' || arg.length() == 1 || !flagPattern.matcher(arg).matches()) {
                 originalArgIndices.add(argIndexList.get(nextArg - 1));
                 parsedArgs.add(arg);
                 continue;
@@ -130,6 +136,7 @@ public class CommandContext {
             // Go through the flag characters
             for (int i = 1; i < arg.length(); ++i) {
                 char flagName = arg.charAt(i);
+                MyWarp.logger().info("flag: " + flagName);
 
                 if (valueFlags.contains(flagName)) {
                     if (this.valueFlags.containsKey(flagName)) {

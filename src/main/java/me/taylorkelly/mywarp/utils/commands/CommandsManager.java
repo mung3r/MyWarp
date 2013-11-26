@@ -132,8 +132,8 @@ public class CommandsManager {
 
         CommandContext context = new CommandContext(fullArgs, level, valueFlags, sender);
 
-        // show the command-help if the only argument is a '?'
-        if (context.argsLength() == 1 && context.getString(0).equals("?")) {
+        // show the command-help and ignore everything else if the '?'-flag has been set
+        if (context.hasFlag('?')) {
             sender.sendMessage(getUsage(fullArgs, 1, sender, cmd));
             return;
         }

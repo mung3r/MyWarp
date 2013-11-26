@@ -119,7 +119,7 @@ error:
     noValue: No value specified for the '%flag%' flag.
     toFewArgs: Too few arguments.
     unknownFlag: 'Unknown flag:'
-    invalidNumber: You need to enter a valid number. Check §f/%command% ?§c for more informations.
+    invalidNumber: You need to enter a valid number. Check §f/%command% -?§c for more informations.
     toManyArgs: Too many arguments.
     unknown: An error has occurred while performing this command.
     flagGiven: Value flag is '%flag%' already given!

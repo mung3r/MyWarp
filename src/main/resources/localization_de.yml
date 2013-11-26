@@ -116,7 +116,7 @@ error:
     noValue: Für die '%flag%' Flag wurde kein Wert angegeben.
     toFewArgs: Zu wenige Argumente.
     unknownFlag: 'Unbekannte Flag:'
-    invalidNumber: Du musst eine gültige Zahl eingeben. Nutze §f/%command% ?§c für mehr Informationen.
+    invalidNumber: Du musst eine gültige Zahl eingeben. Nutze §f/%command% -?§c für mehr Informationen.
     toManyArgs: Zu viele Argumente.
     unknown: Während dem Ausführen des Befehls trat ein Fehler auf.
     flagGiven: Die Flag '%flag%' existiert bereits!
