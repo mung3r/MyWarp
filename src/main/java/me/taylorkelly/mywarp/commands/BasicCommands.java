@@ -142,7 +142,11 @@ public class BasicCommands {
                 StringBuilder first = new StringBuilder();
 
                 if (sender instanceof Player && warp.getCreator().equals(sender.getName())) {
-                    first.append(ChatColor.AQUA);
+                    if (warp.isPublicAll()) {
+                        first.append(ChatColor.AQUA);
+                    } else {
+                        first.append(ChatColor.DARK_AQUA);
+                    }
                 } else if (warp.isPublicAll()) {
                     first.append(ChatColor.GREEN);
                 } else {

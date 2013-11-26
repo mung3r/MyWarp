@@ -136,7 +136,6 @@ public class CommandContext {
             // Go through the flag characters
             for (int i = 1; i < arg.length(); ++i) {
                 char flagName = arg.charAt(i);
-                MyWarp.logger().info("flag: " + flagName);
 
                 if (valueFlags.contains(flagName)) {
                     if (this.valueFlags.containsKey(flagName)) {
