@@ -44,14 +44,20 @@ timer:
 warp:
   uninvite:
     player:
-      public: §bDu hast %player% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+      public: |
+        §bDu hast %player% von '%warp%' ausgeladen.
+        §cAber '%warp%' ist immernoch öffentlich.
       private: §bDu hast %player% von '%warp%' ausgeladen.
     uninvited: §bDu wurdest von '%warp%' ausgeladen. Entschuldige.
     group:
-      public: §bDu hast die Gruppe %group% von '%warp%' ausgeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+      public: |
+        §bDu hast die Gruppe %group% von '%warp%' ausgeladen.
+        §cAber '%warp%' ist immernoch öffentlich.
       private: §bDu hast die Gruppe %group% von '%warp%' ausgeladen.
-  private: '§bDu hast ''%warp%'' privatisiert.%n§fWenn du andere Spieler einladen
-    möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%'
+  private: |
+    §bDu hast '%warp%' privatisiert.
+    §fWenn du andere Spieler einladen möchtest,
+    §fNutze: §c/warp invite <Spieler> %warp%
   update: §bDu hast %warp%s Position aktualisiert.
   point:
     reset: §bDein Kompass zeigt jetzt wieder auf den ursprünglichen Spawnpunkt.
@@ -70,12 +76,18 @@ warp:
   invite:
     player:
       private: §bDu hast %player% zu '%warp%' eingeladen.
-      public: §bDu hast %player% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
+      public: |
+        §bDu hast %player% zu '%warp%' eingeladen.
+        §cAber '%warp%' ist immernoch öffentlich.
     group:
       private: §bDu hast die Gruppe %group% zu '%warp%' eingeladen.
-      public: §bDu hast die Gruppe %group% zu '%warp%' eingeladen.%n§cAber '%warp%' ist immernoch öffentlich.
-    invited: '§b%player% hat dich zum Warp ''%warp%'' eingeladen.%n§fNutze: §c/warp
-      %warp% §fum dich zu ihm zu teleportieren.'
+      public: |
+        §bDu hast die Gruppe %group% zu '%warp%' eingeladen.
+        §cAber '%warp%' ist immernoch öffentlich.
+    invited: |
+      §b%player% hat dich zum Warp '%warp%' eingeladen.
+      §fNutze: §c/warp
+      %warp% §fum dich zu ihm zu teleportieren.
   info:
     about: 'Informationen über ''%warp%'':'
     location:
@@ -85,10 +97,14 @@ warp:
     visits: 'Besuche:'
     invitedGroups: 'Eingeladene Gruppen:'
   create:
-    public: '§bWarp ''%warp%'' wurde erfolgreich erstellt%n§fWenn du ihn Privatisieren
-      möchtest,%n§fNutze: §c/warp private %warp%'
-    private: '§bWarp ''%warp%'' wurde erfolgreich erstellt%n§fWenn du andere Spieler
-      einladen möchtest,%n§fNutze: §c/warp invite <Spieler> %warp%'
+    public: |
+      §bWarp '%warp%' wurde erfolgreich erstellt
+      §fWenn du ihn Privatisieren möchtest,
+      §fNutze: §c/warp private %warp%
+    private: |
+      §bWarp '%warp%' wurde erfolgreich erstellt
+      §fWenn du andere Spieler einladen möchtest,
+      §fNutze: §c/warp invite <Spieler> %warp%'
   delete: §bDu hast '%warp%' gelöscht.
   assets:
     public: Öffentliche Warps
@@ -96,12 +112,18 @@ warp:
     private: Private Warps
 limit:
   private:
-    reached: §cDu hast dein Maximum an privaten Warps erreicht §e(%maxPrivate%)%n§fLösche einige deiner Warps, um neue zu erstellen.
+    reached: |
+      §cDu hast dein Maximum an privaten Warps erreicht §e(%maxPrivate%)
+      §fLösche einige deiner Warps, um neue zu erstellen.
   total:
     reached:
-      player: §c%player% hat sein Maximum an Warps erreicht §e(%maxTotal%)%n§fSag' ihm, er muss einige löschen um diesen zu erhalten.
+      player: |
+        §c%player% hat sein Maximum an Warps erreicht §e(%maxTotal%)
+        §fSag' ihm, er muss einige löschen um diesen zu erhalten.
   public:
-    reached: §cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)%n§fLösche einige deiner Warps, um neue zu erstellen.
+    reached: |
+      §cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)
+      §fLösche einige deiner Warps, um neue zu erstellen.
 error:
   noSuchWarp: Der Warp '%warp%' existiert nicht.
   invite:

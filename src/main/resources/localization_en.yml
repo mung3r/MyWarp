@@ -44,14 +44,20 @@ timer:
 warp:
   uninvite:
     player:
-      public: §bYou have uninvited %player% from '%warp%'.%n§cBut '%warp%' is still public.
+      public: |
+        §bYou have uninvited %player% from '%warp%'.
+        §cBut '%warp%' is still public.
       private: §bYou have uninvited %player% from '%warp%'.
     uninvited: §bYou have been uninvited from '%warp%'. Sorry.
     group:
-      public: §bYou have uninvited group %group% from '%warp%'.%n§cBut '%warp%' is still public.
+      public: |
+        §bYou have uninvited group %group% from '%warp%'.
+        §cBut '%warp%' is still public.
       private: §bYou have uninvited group %group% from '%warp%'.
-  private: '§bYou have privatized ''%warp%''%n§fIf you''d like to invite others to
-    it,%n§fUse: §c/warp invite <player> %warp%'
+  private:  |
+    §bYou have privatized '%warp%'
+    §fIf you'd like to invite others to it,
+    §fUse: §c/warp invite <player> %warp%
   update: §bYou have updated %warp%'s position.
   point:
     reset: §bYour compass now points back to the spawn point.
@@ -70,12 +76,17 @@ warp:
   invite:
     player:
       private: §bYou have invited %player% to '%warp%'.
-      public: §bYou have invited %player% to '%warp%'.%n§cBut '%warp%' is still public.
+      public: |
+        §bYou have invited %player% to '%warp%'.
+        §cBut '%warp%' is still public.
     group:
       private: §bYou have invited group %group% to '%warp%'.
-      public: §bYou have invited group %group% to '%warp%'.%n§cBut '%warp%' is still public.
-    invited: '§b%player% has invited you to to warp ''%warp%''.%n§fUse: §c/warp %warp%
-      §fto warp to it.'
+      public: |
+        §bYou have invited group %group% to '%warp%'.
+        §cBut '%warp%' is still public.
+    invited: |
+      §b%player% has invited you to to warp '%warp%'.
+      §fUse: §c/warp %warp% §fto warp to it.
   info:
     about: 'Informations about ''%warp%'':'
     location:
@@ -85,10 +96,14 @@ warp:
     visits: 'Visits:'
     invitedGroups: 'Invited group(s):'
   create:
-    public: '§bSuccessfully created ''%warp%''%n§fIf you''d like to privatize it,%n§fUse:
-      §c/warp private %warp%'
-    private: '§bSuccessfully created ''%warp%''%n§fIf you''d like to invite others
-      to it,%n§fUse: §c/warp invite <player> %warp%'
+    public: | 
+      §bSuccessfully created '%warp%'
+      §fIf you'd like to privatize it,
+      §fUse: §c/warp private %warp%
+    private: | 
+      §bSuccessfully created '%warp%'
+      §fIf you'd like to invite others to it,
+      §fUse: §c/warp invite <player> %warp%
   delete: §bYou have deleted '%warp%'.
   assets:
     public: Public Warps
@@ -96,15 +111,18 @@ warp:
     private: Private Warps
 limit:
   private:
-    reached: '§cYou have reached your max # of private warps §e(%maxPrivate%)%n§fDelete
-      some of your warps to create more.'
+    reached: |
+      '§cYou have reached your max # of private warps §e(%maxPrivate%)
+      §fDelete some of your warps to create more.'
   total:
     reached:
-      player: '§c%player% has reached his max # of warps §e(%maxTotal%)%n§fTell him
-        to delete some of his warps to receive this one.'
+      player: | 
+        '§c%player% has reached his max # of warps §e(%maxTotal%)
+        §fTell him  to delete some of his warps to receive this one.'
   public:
-    reached: '§cYou have reached your max # of public warps §e(%maxPublic%)%n§fDelete
-      some of your warps to create more.'
+    reached: | 
+      '§cYou have reached your max # of public warps §e(%maxPublic%)
+      §fDelete some of your warps to create more.'
 error:
   noSuchWarp: No such warp '%warp%'.
   invite:

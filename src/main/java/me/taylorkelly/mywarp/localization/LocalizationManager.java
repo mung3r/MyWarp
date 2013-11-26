@@ -43,7 +43,8 @@ public class LocalizationManager implements Reloadable {
      * Creates this language-manager instance. This will create all
      * language-files provided by the plugin and update them, if needed.
      * 
-     * @throws LocalizationException if one of the bundled localization files is not readable
+     * @throws LocalizationException
+     *             if one of the bundled localization files is not readable
      */
     public LocalizationManager() throws LocalizationException {
         // create all language files that we provide
@@ -222,8 +223,8 @@ public class LocalizationManager implements Reloadable {
      * @return the corresponding string out of the language map
      */
     public String getString(String key, Locale locale) {
-        String value = YamlResourceBundle.getBundle("localization", locale, resourceBundleControl).getString(
-                key);
+        String value = YamlResourceBundle.getBundle("localization", locale, resourceBundleControl)
+                .getString(key).trim();
         return ChatColor.translateAlternateColorCodes('§', value);
     }
 
