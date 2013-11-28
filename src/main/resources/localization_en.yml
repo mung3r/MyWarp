@@ -60,6 +60,7 @@ warp:
     §fUse: §c/warp invite <player> %warp%
   update: §bYou have updated %warp%'s position.
   point:
+    set: §bYour compass now guides you to '%warp%'.
     reset: §bYour compass now points back to the spawn point.
   public: §bYou have publicized '%warp%'.
   welcome:
@@ -90,9 +91,11 @@ warp:
   info:
     about: 'Informations about ''%warp%'':'
     location:
+      loc: 'Location:'
       world: (in '%world%')
     invitedPlayers: 'Invited player(s):'
     created: 'Created by:'
+    createdByYou: (that is you!)
     visits: 'Visits:'
     invitedGroups: 'Invited group(s):'
   create:
@@ -110,21 +113,34 @@ warp:
     head: '%player%''s Warps'
     private: Private Warps
 limit:
-  private:
-    reached: |
-      '§cYou have reached your max # of private warps §e(%maxPrivate%)
-      §fDelete some of your warps to create more.'
+  private: 
+    reached:
+      self: |
+        §cYou have reached your max # of private warps §e(%maxPrivate%)
+        §fDelete some of your warps to create more.
+      player: |
+        §c%player% has reached his max # of private warps §e(%maxPrivate%)
+        §fTell him to delete some of his warps to receive this one.
   total:
     reached:
+      self: |
+        §cYou have reached your max # of warps §e(%maxTotal%)
+        §fDelete some of your warps to create more.
       player: | 
-        '§c%player% has reached his max # of warps §e(%maxTotal%)
-        §fTell him  to delete some of his warps to receive this one.'
+        §c%player% has reached his max # of warps §e(%maxTotal%)
+        §fTell him  to delete some of his warps to receive this one.
   public:
-    reached: | 
-      '§cYou have reached your max # of public warps §e(%maxPublic%)
-      §fDelete some of your warps to create more.'
+    reached:
+      self: | 
+        §cYou have reached your max # of public warps §e(%maxPublic%)
+        §fDelete some of your warps to create more.
+      player: |
+        §c%player% has reached his max # of public warps §e(%maxPublic%)
+        §fTell him to delete some of his warps to receive this one.
 error:
-  noSuchWarp: No such warp '%warp%'.
+  noSuchWarp: 
+    noSuggestion: No such warp '%warp%'.
+    suggestion: No such warp '%warp%'. Did you mean '§f%suggestion%§c'?
   invite:
     creator: '%player% is the creator, of course he is invited.'
     invited:
@@ -132,6 +148,7 @@ error:
       group: Group '%group%' is already invited to this warp.
   noPermission:
     modify: You do not have permission to modify '%warp%'.
+    useCmd: You do not have permission to do this.
   cmd:
     invalidSender: 'Could not execute command: invalid sender.'
     noValue: No value specified for the '%flag%' flag.

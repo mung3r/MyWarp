@@ -49,7 +49,7 @@ public class CommandUtils {
                                 "%suggestion%", match.getName()));
             } else {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("error.noSuchWarp", sender, "%warp%", query));
+                        .getEffectiveString("error.noSuchWarp.noSuggestion", sender, "%warp%", query));
             }
         }
         return warp;
@@ -96,7 +96,7 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("limit.total.reached", sender, "%maxTotal%",
+                    .getEffectiveString("limit.total.reached.self", sender, "%maxTotal%",
                             Integer.toString(MyWarp.inst().getPermissionsManager().maxTotalWarps(player))));
         }
     }
@@ -120,7 +120,7 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("limit.public.reached", sender, "%maxPublic%",
+                    .getEffectiveString("limit.public.reached.self", sender, "%maxPublic%",
                             Integer.toString(MyWarp.inst().getPermissionsManager().maxPublicWarps(player))));
         }
     }
@@ -144,7 +144,7 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("limit.private.reached", sender, "%maxPrivate%",
+                    .getEffectiveString("limit.private.reached.self", sender, "%maxPrivate%",
                             Integer.toString(MyWarp.inst().getPermissionsManager().maxPrivateWarps(player))));
         }
     }

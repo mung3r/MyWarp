@@ -111,7 +111,7 @@ public class WarpSignManager implements Listener {
         if (!MyWarp.inst().getWarpManager().warpExists(name)) {
             player.sendMessage(ChatColor.RED
                     + MyWarp.inst().getLocalizationManager()
-                            .getEffectiveString("error.noSuchWarp", player, "%warp%", name));
+                            .getEffectiveString("error.noSuchWarp.noSuggestion", player, "%warp%", name));
             return;
         }
         final Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
@@ -172,7 +172,7 @@ public class WarpSignManager implements Listener {
 
         if (!MyWarp.inst().getWarpManager().warpExists(name)) {
             player.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("error.noSuchWarp", player, "%warp%", name));
+                    .getEffectiveString("error.noSuchWarp.noSuggestion", player, "%warp%", name));
             return false;
         }
         Warp warp = MyWarp.inst().getWarpManager().getWarp(name);

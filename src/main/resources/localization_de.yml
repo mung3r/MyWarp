@@ -60,6 +60,7 @@ warp:
     §fNutze: §c/warp invite <Spieler> %warp%
   update: §bDu hast %warp%s Position aktualisiert.
   point:
+    set: §bDein Kompass zeigt jetzt auf '%warp%'.
     reset: §bDein Kompass zeigt jetzt wieder auf den ursprünglichen Spawnpunkt.
   public: §bDu hast '%warp%' veröffentlicht.
   welcome:
@@ -91,9 +92,11 @@ warp:
   info:
     about: 'Informationen über ''%warp%'':'
     location:
+      loc: 'Lage:'
       world: (in '%world%')
     invitedPlayers: 'Eingeladene Spieler:'
     created: 'Erstellt von:'
+    createdByYou: (das bist du!)
     visits: 'Besuche:'
     invitedGroups: 'Eingeladene Gruppen:'
   create:
@@ -112,20 +115,33 @@ warp:
     private: Private Warps
 limit:
   private:
-    reached: |
-      §cDu hast dein Maximum an privaten Warps erreicht §e(%maxPrivate%)
-      §fLösche einige deiner Warps, um neue zu erstellen.
+    reached: 
+      self: |
+        §cDu hast dein Maximum an privaten Warps erreicht §e(%maxPrivate%)
+        §fLösche einige deiner Warps, um neue zu erstellen.
+      player: |
+        §c%player% hat sein Maximum an privaten Warps erreicht §e(%maxPrivate%)
+        §fSag' ihm, er muss einige löschen um diesen zu erhalten.
   total:
     reached:
+      self: |
+        §cDu hast dein Maximum an Warps erreicht §e(%maxTotal%)
+        §fLösche einige deiner Warps, um neue zu erstellen.
       player: |
         §c%player% hat sein Maximum an Warps erreicht §e(%maxTotal%)
         §fSag' ihm, er muss einige löschen um diesen zu erhalten.
   public:
-    reached: |
-      §cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)
-      §fLösche einige deiner Warps, um neue zu erstellen.
+    reached:
+      self: |
+        §cDu hast dein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)
+        §fLösche einige deiner Warps, um neue zu erstellen.
+      player: |
+        §c%player% hat sein Maximum an öffentlichen Warps erreicht §e(%maxPublic%)
+        §fSag' ihm, er muss einige löschen um diesen zu erhalten.
 error:
-  noSuchWarp: Der Warp '%warp%' existiert nicht.
+  noSuchWarp:
+    noSuggestion: Der Warp '%warp%' existiert nicht.
+    suggestion: Der Warp '%warp%' existiert nicht. Meintest du vielleicht '§f%suggestion%§c'?
   invite:
     creator: '%player% hat diesen Warp erstellt, natürlich ist er eingeladen.'
     invited:
@@ -133,6 +149,7 @@ error:
       group: Die Gruppe '%group%' ist bereits zu diesem Warp eingeladen.
   noPermission:
     modify: Dir fehlen die Rechte um '%warp%' zu modifizieren.
+    useCmd: Unzureichende Rechte.
   cmd:
     invalidSender: 'Das Kommando konnte nicht ausgeführt werden: ungültiger Sender.'
     noValue: Für die '%flag%' Flag wurde kein Wert angegeben.

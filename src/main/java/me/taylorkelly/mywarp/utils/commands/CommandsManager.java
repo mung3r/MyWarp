@@ -353,7 +353,7 @@ public class CommandsManager {
             execute(sender, command.getName(), args);
         } catch (CommandPermissionsException e) {
             sender.sendMessage(ChatColor.RED
-                    + MyWarp.inst().getLocalizationManager().getString("error.noPermission", sender));
+                    + MyWarp.inst().getLocalizationManager().getString("error.noPermission.useCmd", sender));
         } catch (CommandUsageException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
             sender.sendMessage(e.getUsage());

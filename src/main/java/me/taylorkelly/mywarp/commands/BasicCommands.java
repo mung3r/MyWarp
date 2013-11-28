@@ -205,7 +205,7 @@ public class BasicCommands {
 
             MyWarp.inst().getWarpManager().point(warp, sender);
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("warp.point", sender, "%warp%", warp.getName()));
+                    .getEffectiveString("warp.point.set", sender, "%warp%", warp.getName()));
         }
     }
 
@@ -318,12 +318,12 @@ public class BasicCommands {
         infos.append(warp.getCreator());
         if (warp.getCreator().equals(sender.getName())) {
             infos.append(" ");
-            infos.append(MyWarp.inst().getLocalizationManager().getString("warp.info.created.you", sender));
+            infos.append(MyWarp.inst().getLocalizationManager().getString("warp.info.createdByYou", sender));
         }
         infos.append("\n");
 
         infos.append(ChatColor.GRAY);
-        infos.append(MyWarp.inst().getLocalizationManager().getString("warp.info.location", sender));
+        infos.append(MyWarp.inst().getLocalizationManager().getString("warp.info.location.loc", sender));
         infos.append(" ");
         infos.append(ChatColor.WHITE);
         infos.append(Math.round(warp.getX()));
