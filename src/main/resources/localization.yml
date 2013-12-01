@@ -1,215 +1,161 @@
-cmd:
-  description:
-    delete: Deletes the warp §7<name>
-    point: Point your compass to §7[name]§f. If you want to reset the compass, simply use this command without specifying a warp.
-    search: Searches for warps under the given §7<name>§f. Use [-p] if the warps should be listed by popularity.
-    adminWarpTo: Warp §7<player>§f to §7<name>§f if you have the rights to visit it.
-    private: Make §7<name>§f a private warp
-    uninvite: Uninvite §7<player|group>§f from §7<name>
-    import: Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used.
-    update: Updates §7<name>§f to your current position
-    reload: Reload the configuration
-    warpTo: Warp to §7<name>§f if you have the rights to visit it.
-    info: Gives you all available informations about §7<name>
-    invite: Invite §7<player|group>§f to §7<name>
-    welcome: Change the welcome message of §7<name>§f. You will be ask to enter the welcome message afterwards.
-    accept: Accepts a warp that has been given to you by another player
-    list: List the warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p].
-    public: Make §7<name>§f a public warp
-    help: Displays the help menu
-    create: Create a new public warp called §7<name>§f at your current position
-    give: Give your warp §7<name>§f to §7<player>§f. Use [-d] to give the warp directly and [-f] to ignore warp limits (if enabled).
-    createPrivate: Create a new private warp called §7<name>§f at your current position
-    assets: Lists all warps owned by the [player] together with the corresponding warp-limit.
-  usage:
-    creator: creator
-    world: world
-    player: player
-    group: group
-    name: name
-search:
-  partitalMatches: '§ePartial matches for search: §o§7%query%'
-  noMatches: '§cNo matches for search: §o§7%query%'
-  exactMatches: '§eExact matches for search: §o§7%query%'
-timer:
-  warmup:
-    started: §bYou will be teleported to '%warp%' in %seconds% seconds.
-    warming: §cYou still need to wait %seconds% seconds before you are teleported.
-    cancelled:
-      move: §cYou must not move while warming up. Your §f/warp §cwas cancelled.
-      damage: §cYou must not take damage while warming up. Your §f/warp §cwas cancelled.
-  cooldown:
-    cooling: §cYou still need to wait %seconds% seconds before you can warp again.
-    ended: §bYou have cooled down, feel free to use §f/warp §bagain.
-warp:
-  uninvite:
-    player:
-      public: |
-        §bYou have uninvited %player% from '%warp%'.
-        §cBut '%warp%' is still public.
-      private: §bYou have uninvited %player% from '%warp%'.
-    uninvited: §bYou have been uninvited from '%warp%'. Sorry.
-    group:
-      public: |
-        §bYou have uninvited group %group% from '%warp%'.
-        §cBut '%warp%' is still public.
-      private: §bYou have uninvited group %group% from '%warp%'.
-  private:  |
-    §bYou have privatized '%warp%'
-    §fIf you'd like to invite others to it,
-    §fUse: §c/warp invite <player> %warp%
-  update: §bYou have updated %warp%'s position.
-  point:
-    set: §bYour compass now guides you to '%warp%'.
-    reset: §bYour compass now points back to the spawn point.
-  public: §bYou have publicized '%warp%'.
-  welcome:
-    enter: '§bEnter the welcome message for ''%warp%'':'
-    received: '§bChanged welcome message for ''%warp%'' to:'
-  give:
-    given: §bYou have given '%warp%' to %player%.
-    asked: §b%player% wants to give you '%warp%'. Use '§f/warp accept§b' to accept it.
-    accept: §b'%warp%' is now owned by you.
-  warpto:
-    player: §bSuccessfully warped %player%.
-  default:
-    welcomeMessage: Welcome to '%warp%', %player%.
-  invite:
-    player:
-      private: §bYou have invited %player% to '%warp%'.
-      public: |
-        §bYou have invited %player% to '%warp%'.
-        §cBut '%warp%' is still public.
-    group:
-      private: §bYou have invited group %group% to '%warp%'.
-      public: |
-        §bYou have invited group %group% to '%warp%'.
-        §cBut '%warp%' is still public.
-    invited: |
-      §b%player% has invited you to to warp '%warp%'.
-      §fUse: §c/warp %warp% §fto warp to it.
-  info:
-    about: 'Informations about ''%warp%'':'
-    location:
-      loc: 'Location:'
-      world: (in '%world%')
-    invitedPlayers: 'Invited player(s):'
-    created: 'Created by:'
-    createdByYou: (that is you!)
-    visits: 'Visits:'
-    invitedGroups: 'Invited group(s):'
-  create:
-    public: | 
-      §bSuccessfully created '%warp%'
-      §fIf you'd like to privatize it,
-      §fUse: §c/warp private %warp%
-    private: | 
-      §bSuccessfully created '%warp%'
-      §fIf you'd like to invite others to it,
-      §fUse: §c/warp invite <player> %warp%
-  delete: §bYou have deleted '%warp%'.
-  assets:
-    public: Public Warps
-    head: '%player%''s Warps'
-    private: Private Warps
-limit:
-  private: 
-    reached:
-      self: |
-        §cYou have reached your max # of private warps §e(%maxPrivate%)
-        §fDelete some of your warps to create more.
-      player: |
-        §c%player% has reached his max # of private warps §e(%maxPrivate%)
-        §fTell him to delete some of his warps to receive this one.
-  total:
-    reached:
-      self: |
-        §cYou have reached your max # of warps §e(%maxTotal%)
-        §fDelete some of your warps to create more.
-      player: | 
-        §c%player% has reached his max # of warps §e(%maxTotal%)
-        §fTell him  to delete some of his warps to receive this one.
-  public:
-    reached:
-      self: | 
-        §cYou have reached your max # of public warps §e(%maxPublic%)
-        §fDelete some of your warps to create more.
-      player: |
-        §c%player% has reached his max # of public warps §e(%maxPublic%)
-        §fTell him to delete some of his warps to receive this one.
-error:
-  noSuchWarp: 
-    noSuggestion: No such warp '%warp%'.
-    suggestion: No such warp '%warp%'. Did you mean '§f%suggestion%§c'?
-  invite:
-    creator: '%player% is the creator, of course he is invited.'
-    invited:
-      player: '%player% is already invited to this warp.'
-      group: Group '%group%' is already invited to this warp.
-  noPermission:
-    modify: You do not have permission to modify '%warp%'.
-    useCmd: You do not have permission to do this.
-  cmd:
-    invalidSender: 'Could not execute command: invalid sender.'
-    noValue: No value specified for the '%flag%' flag.
-    toFewArgs: Too few arguments.
-    unknownFlag: 'Unknown flag:'
-    invalidNumber: You need to enter a valid number. Check §f/%command% -?§c for more informations.
-    toManyArgs: Too many arguments.
-    unknown: An error has occurred while performing this command.
-    flagGiven: Value flag is '%flag%' already given!
-  warpto:
-    noSuchWorld: World '%world%' does not exist.
-  player:
-    offline: Could not find player '%player%'. Maybe he is offline?
-  playerOnly: This command can only be used by players.
-  uninvite:
-    notInvited:
-      player: '%player% is not invited to this warp.'
-      group: Group '%group%' is not invited to this warp.
-    creator: You cannot uninvite yourself. You're the creator!
-  import:
-    exists: Warp '%warp%' already exists. Skipping...
-    invalid: '%query% is not a valid import option.'
-    noConnection: 'Could not establish database connection to import warps:'
-  private:
-    isPrivate: Warp '%warp%' is already private.
-  give:
-    isOwner: '%player% is already the owner.'
+commands:
   accept:
-    noWarp: There are no warps to accept.
-  economy:
-    cannotAfford: You cannot afford this. You need at least %amount%$.
-    unknown: The transaction could not completed.
-  public:
-    isPublic: Warp '%warp%' is already public.
+    accepted-succesfull: "§b''{0}'' is now owned by you."
+    description: "Accepts a warp that has been given to you by another player."
+    nothing-to-accept: "There is no warp to accept."
+  assets:
+    description: "Lists all warps owned by the [player] together with the corresponding warp-limit."
+    heading: "{0}'s Warps"
+    public-heading: "Public Warps"
+    private-heading: "Private Warps"
   create:
-    warpExists: Warp called '§f%warp%§r' already exists.
-lister:
-  warp:
-    you: you
-    by: by
-    head: Warps
-  unknownPage: This page does not exist, there are only %pages% pages in total!
-  noResults: No results match!
+    created-succesfull: "§bSuccessfully created ''{0}'', §fIf you'd like to privatize it, §fUse: §c/warp private {0}"
+    description: "Creates a new public warp called §7<name>§f at your current position."
+  create-private:
+    created-succesfull: "§bSuccessfully created ''{0}'' §fIf you'd like to invite others to it, §fUse: §c/warp invite <player> {0}"
+    description: "Creates a new private warp called §7<name>§f at your current position."
+  delete:
+    deleted-succesfull: "§bYou have deleted ''{0}''."
+    description: "Deletes the warp §7<name>."
+  give:
+    asked-player: "§b{0} wants to give you ''{1}''. Use '§f/warp accept§b' to accept it."
+    description: "Gives your warp §7<name>§f to §7<player>§f. Use [-d] to give the warp directly and [-f] to ignore warp limits (if enabled)."
+    givee-limits: "{0} already has as much warps as possible. He will need to delete some to receive this one."
+    given-succesfull: "§bYou have given ''{0}'' to {1}."
+    is-owner: "{0} is already the owner."
   help:
-    head: Help
-    note: Use '/<command> -?' to get more informations about it.
-  page: Page
-sign:
-  noPermission:
-    use: §cYou do not have permission to use warp signs.
-    warpto: §cYou do not have permission to use '%warp%'.
-    create: §cYou do not have permission to create warp signs.
-    createToWarp: §cYou do not have permission to create a warp sign to '%warp%'.
-  created: §bSuccessfully created a warp sign.
-safety:
-  notFound: §cWarp '%warp%' is not safe. Also no safe loaction could be found close to it.
-  found: §cWarp '%warp%' is not safe. You were teleported to the closest safe location.
-reload:
-  config: §bConfig has been reloaded successfully!
-economy:
-  transaction:
-    complete: §bYou have been charged %amount%$.
+    description: "Displays the help menu."
+    heading: "Help"
+    note: "Use '/<command> -?' to get more informations about it."
+  import:
+    description: "Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used."
+    import-succesfull: "{0,choice,0#No warps were|1# One warp was|1< {0,number,integer} warps were} imported sucessfully."
+    ivalid-option: "{0} is not a valid import option."
+    no-connection: "Could not establish database connection to import warps:"
+    warp-exists: "Warp ''{0}'' already exists. Skipping..."
+  invalid-number: "You need to enter a valid number. Check §f/{0} -?§c for more informations."
+  invite:
+    description: "Invites §7<player|group>§f to §7<name>."
+    group:
+      already-invited: "Group ''{0}'' is already invited to this warp."
+      private: "§bYou have invited group {0} to ''{1}''."
+      public: "§bYou have invited group {0} to ''{1}''. §cBut ''{0}'' is still public."
+    player:
+      already-invited: "{0} is already invited to this warp."
+      is-creator: "{0} is the creator, of course he is invited."
+      player-invited: "§b{0} has invited you to to warp ''{1}''. §fUse: §c/warp {0} §fto warp to it."
+      private: "§bYou have invited {0} to ''{1}''."
+      public: "§bYou have invited {0} to ''{1}''. §cBut ''{1}'' is still public."
+  info:
+    created-by: "Created by:"
+    created-by-you: "(that is you!)"
+    description: "Gives you all available informations about §7<name>."
+    heading: "Informations about ''{0}'':"
+    invited-groups: "Invited groups:"
+    invited-players: "Invited players:"
+    location: "Location:"
+    world: "Visits:"
+  library:
+    flag-already-set: "Value flag ''{0}'' already given."
+    flag-no-value: "No value specified for the ''{0}'' flag."
+    invalid-sender: "Could not execute command: invalid sender."
+    too-few-args: "Too few arguments."
+    too-many-args: "Too many arguments."
+    unknown-exception: "An internal error has occurred while performing this command."
+    unknown-flag: "Unknown flag:"
+  list:
+    by: "by"
+    description: "Lists all warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list only warps in the given world. If the warps should be listed by popularity, use [-p]."
+    heading: "Warps"
+    you: "you"
+  modify-permission: "You do not have permission to modify ''{0}''."
+  point:
+    description: "Points your compass to §7[name]§f. If you want to reset the compass, simply use this command without specifying a warp."
+    reset: "§bYour compass now points back to the spawn point."
+    set: "§bYour compass now guides you to ''{0}''."
+  private:
+    already-private: "Warp ''{0}'' is already private."
+    description: "Makes §7<name>§f private."
+    privatized: "§bYou have privatized ''{0}'' §fIf you'd like to invite others to it, §fUse: §c/warp invite <player> {0}"    
+  public:
+    already-public: "Warp ''{0}'' is already public."
+    description: "Makes §7<name>§f public."
+    publicized: "§bYou have publicized ''{0}''."
+  reload:
+    description: "Reloads the configuration from disk."
+    reload-message: "§bThe configuration has been reloaded successfully!"
+  search:
+    description: "Searches for warps under the given §7<name>§f. Use [-p] if the warps should be listed by popularity."
+    exact-matches: "§eExact matches for search: §o§7{0}"
+    no-matches: "§cNo matches for search: §o§7{0}"
+    partital-matches: "§ePartial matches for search: §o§7{0}"
+  uninvite:
+    description: "Uninvites §7<player|group>§f from §7<name>."
+    group:
+      not-invited: "Group ''{0}'' is not invited to this warp."
+      private: "§bYou have uninvited group {0} from ''{1}''."
+      public: "§bYou have uninvited group {0} from ''{1}''. §cBut ''{0}'' is still public."
+    player:
+      is-creator: "You cannot uninvite the creator."
+      not-invited: "{0} is not invited to this warp."
+      player-uninvited: "§bYou have been uninvited from ''{0}''. Sorry."
+      private: "§bYou have uninvited {0} from ''{1}''."
+      public: "§bYou have uninvited {0} from ''{1}''. §cBut ''{0}'' is still public."
+  update:
+    description: "Updates §7<name>§f to your current position"
+    update-succesfull: "§bYou have updated {0}'s position."
+  usage:
+    creator: "creator"
+    group: "group"
+    name: "name"
+    player: "player"
+    world: "world"
+  utils:
+    player-offline: "Could not find player ''{0}''. Is he online?"
+    limit-reached:
+      private: "§cYou have reached your max # of private warps §e({0, number, integer}) §fDelete some of your warps to create more."
+      public: "§cYou have reached your max # of public warps §e({0, number, integer}) §fDelete some of your warps to create more. "
+      total: "§cYou have reached your max # of warps §e({0, number, integer}) §fDelete some of your warps to create more."
+    warp-exists: "A warp called '§f{0}§r' already exists."
+    warp-non-existent: "No such warp ''{0}''."
+    warp-suggestion: "No such warp ''{0}''. Did you mean '§f{1}§c'?"
+  use-permission: "You do not have permission to use this command."
+  warp-to:
+    cooldown:
+      active: "§cYou still need to wait {0,number} seconds before you can warp again."
+      ended: "§bYou have cooled down, feel free to use §f/warp §bagain."
+    description: "Warps you to §7<name>§f, if you have the rights to visit it."
+    warmup:
+      active: "§cYou still need to wait {0,number} seconds before you are teleported."
+      cancelled-damage: "§cYou must not take damage while warming up. Your §f/warp §cwas cancelled."
+      cancelled-move: "§cYou must not move while warming up. Your §f/warp §cwas cancelled."
+      started: "§bYou will be teleported to ''{0}'' in {1,number} seconds."
+  warp-player:
+    description: "Warps §7<player>§f to §7<name>§f if you have the rights to visit it."
+    teleport-succesfull: "§bYou have teleported {0} to ''{1}''."
+  welcome:
+    changed: "§bChanged welcome message for ''{0}'' to:"
+    description: "Changes the welcome message of §7<name>§f. You will be ask to enter the welcome message afterwards."
+    enter: "§bEnter the welcome message for ''{0}'':"
 dynmap:
-  marker: <b>%warp%</b></br><i>Created by %creator%</i>
+  marker: "<b>%warp%</b></br><i>Created by %creator%</i>"
+economy:
+  cannot-afford: "You cannot afford this. You need at least {0, number, integer}$."
+  transaction-complete: "§bYou have been charged {0, number, integer}$."
+  unknown-exception: "The transaction could not completed."
+lister:
+  page: "Page"
+  unknown-page: "There are only {0, number, integer} pages in total."
+  no-results: "No results match!"
+warp:
+  default-welcome-message: "Welcome to '%warp%', %player%."
+  unsafe-loc:
+    closest-location: "§cWarp ''{0}'' is not safe. You were teleported to the closest safe location."
+    no-teleport: "§cWarp ''{0}'' is not safe. Also no safe location could be found close to it."
+  world-non-existing: "World ''{0}'' does not exist."
+warp-signs:
+  created: "§bSuccessfully created a warp sign."
+  created-permission: "§cYou do not have permission to create warp signs."
+  create-warp-permission: "§cYou do not have permission to create a warp sign to ''{0}''."
+  use-permission: "§cYou do not have permission to use warp signs."
+  use-warp-permission: "§cYou do not have permission to use ''{0}''."

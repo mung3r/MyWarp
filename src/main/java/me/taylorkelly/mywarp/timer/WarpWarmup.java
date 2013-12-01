@@ -24,10 +24,14 @@ public class WarpWarmup extends TimerAction<String> {
     /**
      * Initializes the warp-warmup.
      * 
-     * @param timerFactory the {@link TimerFactory} instance this action is registered on
-     * @param player the player who is cooling down
-     * @param warp the warp that the player wants to use
-     * @param duration the duration of the warmup
+     * @param timerFactory
+     *            the {@link TimerFactory} instance this action is registered on
+     * @param player
+     *            the player who is cooling down
+     * @param warp
+     *            the warp that the player wants to use
+     * @param duration
+     *            the duration of the warmup
      */
     public WarpWarmup(TimerFactory timerFactory, Player player, Warp warp, Time duration) {
         timerFactory.super(player.getName(), duration.getTicks());
@@ -35,13 +39,13 @@ public class WarpWarmup extends TimerAction<String> {
 
         originalLoc = player.getLocation().clone();
         originalHealth = player.getHealth();
-        
+
         if (MyWarp.inst().getWarpSettings().timersWarmupNotify) {
             player.sendMessage(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("timer.warmup.warming", player, "%warp%", warp.getName(), "%seconds%",
-                            Double.toString(duration.getSeconds())));
+                    .getEffectiveString("commands.warp-to.warmup.started", player, warp.getName(),
+                            duration.getSeconds()));
         }
 
         if (MyWarp.inst().getWarpSettings().timersAbortOnDamage) {
@@ -64,10 +68,8 @@ public class WarpWarmup extends TimerAction<String> {
 
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
-                        + MyWarp.inst()
-                                .getLocalizationManager()
-                                .getEffectiveString("error.economy.cannotAfford", player, "%amount%",
-                                        Double.toString(fee)));
+                        + MyWarp.inst().getLocalizationManager()
+                                .getEffectiveString("economy.cannot-afford", player, fee));
                 return;
             }
         }
@@ -76,7 +78,8 @@ public class WarpWarmup extends TimerAction<String> {
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.cooldown.disobey")) {
             MyWarp.inst()
                     .getTimerFactory()
-                    .registerNewTimer(new WarpCooldown(MyWarp.inst().getTimerFactory(), player, MyWarp.inst()
+                    .registerNewTimer(
+                            new WarpCooldown(MyWarp.inst().getTimerFactory(), player, MyWarp.inst()
                                     .getPermissionsManager().getCooldown(player)));
         }
     }
@@ -105,7 +108,7 @@ public class WarpWarmup extends TimerAction<String> {
                         .hasPermission(player, "mywarp.warmup.disobey.moveabort")) {
                     WarpWarmup.this.cancel();
                     player.sendMessage(MyWarp.inst().getLocalizationManager()
-                            .getString("timer.warmup.cancelled.move", player));
+                            .getString("commands.warp-to.warmup.cancelled-move", player));
                     cancel();
                 }
             }
@@ -135,7 +138,7 @@ public class WarpWarmup extends TimerAction<String> {
                         .hasPermission(player, "mywarp.warmup.disobey.dmgabort")) {
                     WarpWarmup.this.cancel();
                     player.sendMessage(MyWarp.inst().getLocalizationManager()
-                            .getString("timer.warmup.cancelled.damage", player));
+                            .getString("commands.warp-to.warmup.cancelled-damage", player));
                     cancel();
                 }
             }

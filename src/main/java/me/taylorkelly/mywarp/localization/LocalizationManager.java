@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -16,7 +17,6 @@ import me.taylorkelly.mywarp.Reloadable;
 import me.taylorkelly.mywarp.utils.ConfigUtils;
 
 import org.apache.commons.lang.LocaleUtils;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -48,8 +48,7 @@ public class LocalizationManager implements Reloadable {
      */
     public LocalizationManager() throws LocalizationException {
         // create all language files that we provide
-        for (String bundleName : Arrays.asList("localization.yml", "localization_en.yml",
-                "localization_de.yml")) {
+        for (String bundleName : Arrays.asList("localization.yml", "localization_en.yml")) {
             InputStream bundled = MyWarp.inst().getResource("lang/" + bundleName);
             FileConfiguration bundledConfig;
             try {
@@ -142,7 +141,7 @@ public class LocalizationManager implements Reloadable {
      * @return the corresponding string out of the language map with replaced
      *         values
      */
-    public String getEffectiveString(String key, CommandSender sender, String... replacements) {
+    public String getEffectiveString(String key, CommandSender sender, Object... replacements) {
         return getEffectiveString(key, getCommandSenderLocale(sender), replacements);
     }
 
@@ -159,16 +158,10 @@ public class LocalizationManager implements Reloadable {
      * @return the corresponding string out of the language map with replaced
      *         values
      */
-    public String getEffectiveString(String key, Locale locale, String... replacements) {
-        if (replacements.length % 2 != 0) {
-            throw new IllegalArgumentException("The given arguments length must be equal");
-        }
-        String trans = getString(key, locale);
-
-        for (int i = 0; i < replacements.length; i = i + 2) {
-            trans = StringUtils.replace(trans, replacements[i], replacements[i + 1]);
-        }
-        return trans;
+    public String getEffectiveString(String key, Locale locale, Object... replacements) {
+        MessageFormat msgFormat = new MessageFormat(getString(key, locale));
+        msgFormat.setLocale(locale);
+        return msgFormat.format(replacements);
     }
 
     /**

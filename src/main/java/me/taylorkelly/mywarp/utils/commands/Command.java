@@ -31,8 +31,8 @@ public @interface Command {
 
     /**
      * A description for the command. The given string is parsed on to the
-     * {@Link LocalizationManager} that will try to load the corresponding
-     * string from the language file.
+     * {@Link LocalizationManager} that will try to load the
+     * corresponding string from the language file.
      * 
      * @return A description for the command.
      */

@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 public class RootCommands {
 
     @NestedCommand({ AdminCommands.class, BasicCommands.class, SocialCommands.class })
-    @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "cmd.description.warpTo", min = 1, permissions = { "mywarp.warp.basic.warp" })
+    @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "commands.warp-to.description", min = 1, permissions = { "mywarp.warp.basic.warp" })
     public void warpTo(CommandContext args, Player sender) throws CommandException {
         // first check the economy
         if (MyWarp.inst().getWarpSettings().economyEnabled) {
@@ -28,7 +28,7 @@ public class RootCommands {
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("error.economy.cannotAfford", sender, "%amount%", Double.toString(fee)));
+                        .getEffectiveString("economy.cannot-afford", sender, fee));
             }
         }
 
@@ -39,10 +39,10 @@ public class RootCommands {
                         .inst()
                         .getLocalizationManager()
                         .getEffectiveString(
-                                "timer.cooldown.cooling", sender,
-                                "%seconds%",
-                                Integer.toString(MyWarp.inst().getTimerFactory()
-                                        .getRemainingSeconds(sender.getName(), WarpCooldown.class))));
+                                "commands.warp-to.cooldown.active",
+                                sender,
+                                MyWarp.inst().getTimerFactory()
+                                        .getRemainingSeconds(sender.getName(), WarpCooldown.class)));
             }
 
             if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getName(), WarpWarmup.class)) {
@@ -50,10 +50,10 @@ public class RootCommands {
                         .inst()
                         .getLocalizationManager()
                         .getEffectiveString(
-                                "timer.warmup.warming", sender,
-                                "%seconds%",
-                                Integer.toString(MyWarp.inst().getTimerFactory()
-                                        .getRemainingSeconds(sender.getName(), WarpWarmup.class))));
+                                "commands.warp-to.warmup.active",
+                                sender,
+                                MyWarp.inst().getTimerFactory()
+                                        .getRemainingSeconds(sender.getName(), WarpWarmup.class)));
             }
 
             if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.warmup.disobey")) {

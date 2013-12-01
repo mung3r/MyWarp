@@ -133,7 +133,11 @@ public class Warp implements Comparable<Warp> {
         this.setPublicAll(publicAll);
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
-        this.welcomeMessage = MyWarp.inst().getLocalizationManager().getString("warp.default.welcomeMessage", MyWarp.inst().getWarpSettings().localizationDefLocale);
+        this.welcomeMessage = MyWarp
+                .inst()
+                .getLocalizationManager()
+                .getString("warp.default-welcome-message",
+                        MyWarp.inst().getWarpSettings().localizationDefLocale);
         this.visits = 0;
     }
 
@@ -534,13 +538,13 @@ public class Warp implements Comparable<Warp> {
         Location location = getLocation();
         if (location == null) {
             player.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("error.warpto.noSuchWorld", player, "%world%", getWorld()));
+                    .getEffectiveString("warp.world-non-existing", player, getWorld()));
         } else {
 
             switch (SafeTeleport.safeTeleport(player, location)) {
             case NONE:
                 player.sendMessage(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("safety.notFound", player, "%warp%", getName()));
+                        .getEffectiveString("warp.unsafe-loc.no-teleport", player, getName()));
                 break;
             case ORIGINAL_LOC:
                 player.sendMessage(ChatColor.AQUA + getSpecificWelcomeMessage(player));
@@ -557,7 +561,7 @@ public class Warp implements Comparable<Warp> {
                 break;
             case SAFE_LOC:
                 player.sendMessage(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("safety.found", player, "%warp%", getName()));
+                        .getEffectiveString("warp.unsafe-loc.closest-location", player, getName()));
                 visit();
 
                 if (MyWarp.inst().getWarpSettings().economyEnabled && charge) {

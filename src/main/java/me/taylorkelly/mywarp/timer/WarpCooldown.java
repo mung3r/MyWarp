@@ -13,9 +13,12 @@ public class WarpCooldown extends TimerAction<String> {
     /**
      * Initializes the warp-cooldown.
      * 
-     * @param timerFactory the {@link TimerFactory} instance this action is registered on
-     * @param player the player who is cooling down
-     * @param duration the duration of the cooldown
+     * @param timerFactory
+     *            the {@link TimerFactory} instance this action is registered on
+     * @param player
+     *            the player who is cooling down
+     * @param duration
+     *            the duration of the cooldown
      */
     public WarpCooldown(TimerFactory timerFactory, Player player, Time duration) {
         timerFactory.super(player.getName(), duration.getTicks());
@@ -27,7 +30,8 @@ public class WarpCooldown extends TimerAction<String> {
             Player player = MyWarp.server().getPlayerExact(type);
 
             if (player != null) {
-                player.sendMessage(MyWarp.inst().getLocalizationManager().getString("timer.cooldown.ended", player));
+                player.sendMessage(MyWarp.inst().getLocalizationManager()
+                        .getString("commands.warp-to.cooldown.ended", player));
             }
         }
 

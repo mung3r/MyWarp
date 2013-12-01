@@ -64,7 +64,6 @@ public class ResourceBundleControl extends ResourceBundle.Control {
                     is = loader.getResourceAsStream("lang/" + resourceName);
                 }
             }
-            // TODO support for other file types?
             bundle = new YamlResourceBundle(is);
 
         } finally {

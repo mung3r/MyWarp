@@ -4,8 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 /**
- * Provides and manages methods to determine if a certain location is
- * safe
+ * Provides and manages methods to determine if a certain location is safe
  */
 public class BlockSafety {
 

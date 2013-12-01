@@ -20,7 +20,8 @@ public class TimerFactory {
      * @param timer
      *            the timer
      */
-    @SuppressWarnings("unchecked") //uncheck situation cannot happen, TimerAction is abstract!
+    @SuppressWarnings("unchecked")
+    // uncheck situation cannot happen, TimerAction is abstract!
     public void registerNewTimer(TimerAction<?> timer) {
         Map<Class<? extends TimerAction<?>>, TimerAction<?>> timerMap = timers.get(timer.type);
         if (timerMap == null) {

@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
  */
 public class AdminCommands {
 
-    @Command(aliases = { "import" }, usage = "<sqlite/mysql>", desc = "cmd.description.import", min = 1, max = 1, flags = "f", permissions = { "mywarp.admin.import" })
+    @Command(aliases = { "import" }, usage = "<sqlite/mysql>", desc = "commands.import.description", min = 1, max = 1, flags = "f", permissions = { "mywarp.admin.import" })
     public void importWarps(CommandContext args, CommandSender sender) throws CommandException {
         boolean importMySQL;
 
@@ -32,7 +32,7 @@ public class AdminCommands {
             importMySQL = false;
         } else {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("error.import.invalid", sender, "%query%", args.getString(0)));
+                    .getEffectiveString("error.import.invalid", sender, args.getString(0)));
         }
 
         try {
@@ -47,7 +47,7 @@ public class AdminCommands {
                 if (MyWarp.inst().getWarpManager().warpExists(name)) {
                     if (!args.hasFlag('f')) {
                         sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                                .getEffectiveString("error.import.exists", sender, "%warp%", name));
+                                .getEffectiveString("commands.import.warp-exists", sender, name));
                         continue;
                     }
                     // remove the old warp before adding the new one
@@ -57,26 +57,32 @@ public class AdminCommands {
                     counter++;
                 }
             }
-            sender.sendMessage(counter + " warps were imported sucessfully.");
+            sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                    .getEffectiveString("commands.import.import-succesfull", sender, counter));
         } catch (DataConnectionException ex) {
-            sender.sendMessage(MyWarp.inst().getLocalizationManager().getString("error.import.noConnection", sender)
+            sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                    .getString("commands.import.no-connection", sender)
                     + ex.getMessage());
         }
     }
 
-    @Command(aliases = { "reload" }, usage = "", desc = "cmd.description.reload", max = 0, permissions = { "mywarp.admin.reload" })
+    @Command(aliases = { "reload" }, usage = "", desc = "commands.reload.description", max = 0, permissions = { "mywarp.admin.reload" })
     public void reload(CommandContext args, CommandSender sender) throws CommandException {
         MyWarp.inst().reload();
-        sender.sendMessage(MyWarp.inst().getLocalizationManager().getString("reload.config", sender));
+        sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                .getString("commands.reload.reload-message", sender));
     }
 
-    @Command(aliases = { "player" }, usage = "<player> <name>", desc = "cmd.description.adminWarpTo", fee = Fee.WARP_PLAYER, min = 2, permissions = { "mywarp.admin.warpto" })
+    @Command(aliases = { "player" }, usage = "<player> <name>", desc = "commands.warp-player.description", fee = Fee.WARP_PLAYER, min = 2, permissions = { "mywarp.admin.warpto" })
     public void warpPlayer(CommandContext args, CommandSender sender) throws CommandException {
         Player invitee = CommandUtils.matchPlayer(sender, args.getString(0));
         Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(1));
 
         warp.warp(invitee, false);
-        sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("warp.warpto.player", sender, "%player%", invitee.getName()));
+        sender.sendMessage(MyWarp
+                .inst()
+                .getLocalizationManager()
+                .getEffectiveString("commands.warp-player.teleport-succesfull", sender, invitee.getName(),
+                        warp.getName()));
     }
 }

@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import me.taylorkelly.mywarp.utils.ConfigUtils;
 
@@ -20,7 +19,7 @@ public class YamlResourceBundle extends ResourceBundle {
     /**
      * The map that contains the key/value pairs
      */
-    private Map<String, Object> lookup;
+    private FileConfiguration lookup;
 
     /**
      * Creates this instance from the given stream. Will return an empty map if
@@ -31,21 +30,21 @@ public class YamlResourceBundle extends ResourceBundle {
      */
     public YamlResourceBundle(InputStream stream) {
         try {
-            lookup = ConfigUtils.getYamlConfig(stream, true).getValues(true);
+            lookup = ConfigUtils.getYamlConfig(stream, true);
         } catch (IOException e) {
-            lookup = new HashMap<String, Object>();
+            lookup = null;
         } catch (InvalidConfigurationException e) {
-            lookup = new HashMap<String, Object>();
+            lookup = null;
         }
     }
 
     @Override
     public Enumeration<String> getKeys() {
-        return Collections.enumeration(lookup.keySet());
+        return Collections.enumeration(lookup.getKeys(true));
     }
 
     @Override
     protected Object handleGetObject(String key) {
-        return lookup.get(key);
+        return lookup != null ? lookup.get(key) : null;
     }
 }

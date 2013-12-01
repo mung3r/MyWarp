@@ -63,7 +63,7 @@ public class CommandsManager {
 
         if (params[1] != CommandSender.class && !params[1].isAssignableFrom(sender.getClass())) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("error.cmd.invalidSender", sender));
+                    .getString("commands.library.invalid-sender", sender));
         }
     }
 
@@ -132,7 +132,8 @@ public class CommandsManager {
 
         CommandContext context = new CommandContext(fullArgs, level, valueFlags, sender);
 
-        // show the command-help and ignore everything else if the '?'-flag has been set
+        // show the command-help and ignore everything else if the '?'-flag has
+        // been set
         if (context.hasFlag('?')) {
             sender.sendMessage(getUsage(fullArgs, 1, sender, cmd));
             return;
@@ -141,20 +142,22 @@ public class CommandsManager {
         // test if the command has too few arguments
         if (context.argsLength() < cmd.min()) {
             throw new CommandUsageException(MyWarp.inst().getLocalizationManager()
-                    .getString("error.cmd.toFewArgs", sender), getUsage(fullArgs, level, sender, cmd));
+                    .getString("commands.library.too-few-args", sender), getUsage(fullArgs, level, sender,
+                    cmd));
         }
 
         // test if the command has too many arguments
         if (cmd.max() != -1 && context.argsLength() > cmd.max()) {
             throw new CommandUsageException(MyWarp.inst().getLocalizationManager()
-                    .getString("error.cmd.toManyArgs", sender), getUsage(fullArgs, level, sender, cmd));
+                    .getString("commands.library.too-many-args", sender), getUsage(fullArgs, level, sender,
+                    cmd));
         }
 
         // loop through all flags and catch unsupported ones
         for (char flag : context.getFlags()) {
             if (!newFlags.contains(flag)) {
                 throw new CommandUsageException(MyWarp.inst().getLocalizationManager()
-                        .getString("error.cmd.unknownFlag", sender)
+                        .getString("commands.library.unknown-flag", sender)
                         + " " + flag, getUsage(fullArgs, level, sender, cmd));
             }
         }
@@ -165,11 +168,8 @@ public class CommandsManager {
             double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(cmd.fee());
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
-                throw new CommandException(MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getEffectiveString("error.economy.cannotAfford", sender, "%amount%",
-                                Double.toString(fee)));
+                throw new CommandException(MyWarp.inst().getLocalizationManager()
+                        .getEffectiveString("economy.cannot-afford", sender, fee));
             }
         }
         Object instance = instances.get(method);
@@ -234,16 +234,16 @@ public class CommandsManager {
      * @return the translated command usage
      */
     public String parseCmdUsage(Command cmd, CommandSender sender) {
-        String ret = StringUtils.replace(cmd.usage(), "player",
-                MyWarp.inst().getLocalizationManager().getString("cmd.usage.player", sender));
+        String ret = StringUtils.replace(cmd.usage(), "player", MyWarp.inst().getLocalizationManager()
+                .getString("commands.usage.player", sender));
         ret = StringUtils.replace(ret, "name",
-                MyWarp.inst().getLocalizationManager().getString("cmd.usage.name", sender));
+                MyWarp.inst().getLocalizationManager().getString("commands.usage.name", sender));
         ret = StringUtils.replace(ret, "group",
-                MyWarp.inst().getLocalizationManager().getString("cmd.usage.group", sender));
+                MyWarp.inst().getLocalizationManager().getString("commands.usage.group", sender));
         ret = StringUtils.replace(ret, "world",
-                MyWarp.inst().getLocalizationManager().getString("cmd.usage.world", sender));
+                MyWarp.inst().getLocalizationManager().getString("commands.usage.world", sender));
         ret = StringUtils.replace(ret, "creator",
-                MyWarp.inst().getLocalizationManager().getString("cmd.usage.creator", sender));
+                MyWarp.inst().getLocalizationManager().getString("commands.usage.creator", sender));
 
         return ret;
     }
@@ -353,7 +353,7 @@ public class CommandsManager {
             execute(sender, command.getName(), args);
         } catch (CommandPermissionsException e) {
             sender.sendMessage(ChatColor.RED
-                    + MyWarp.inst().getLocalizationManager().getString("error.noPermission.useCmd", sender));
+                    + MyWarp.inst().getLocalizationManager().getString("commands.use-permission", sender));
         } catch (CommandUsageException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
             sender.sendMessage(e.getUsage());
@@ -419,18 +419,18 @@ public class CommandsManager {
         } catch (IllegalArgumentException e) {
             MyWarp.logger().log(Level.SEVERE, "Failed to execute command", e);
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("error.cmd.unknown", sender));
+                    .getString("commands.library.unknown-exception", sender));
         } catch (IllegalAccessException e) {
             MyWarp.logger().log(Level.SEVERE, "Failed to execute command", e);
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("error.cmd.unknown", sender));
+                    .getString("commands.library.unknown-exception", sender));
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof CommandException) {
                 throw (CommandException) e.getCause();
             } else {
                 MyWarp.logger().log(Level.SEVERE, "Failed to execute command", e);
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getString("error.cmd.unknown", sender));
+                        .getString("commands.library.unknown-exception", sender));
             }
         }
     }

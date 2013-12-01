@@ -78,7 +78,7 @@ public abstract class PaginatedResult<T> {
     public void display(CommandSender sender, List<? extends T> results, int page) throws CommandException {
         if (results.size() == 0) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("lister.noResults", sender));
+                    .getString("lister.no-results", sender));
         }
         --page;
 
@@ -86,11 +86,8 @@ public abstract class PaginatedResult<T> {
 
         int maxPages = results.size() / resultsPerPage;
         if (page < 0 || page > maxPages) {
-            throw new CommandException(MyWarp
-                    .inst()
-                    .getLocalizationManager()
-                    .getEffectiveString("lister.unknownPage", sender, "%pages%",
-                            Integer.toString(maxPages - 1)));
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
+                    .getEffectiveString("lister.unknown-page", sender, maxPages - 1));
         }
 
         sender.sendMessage(ChatColor.GOLD

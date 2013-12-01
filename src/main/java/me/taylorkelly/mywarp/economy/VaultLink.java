@@ -47,8 +47,6 @@ public class VaultLink implements EconomyLink {
 
     @Override
     public boolean canAfford(CommandSender sender, double amount) {
-        // non players can always afford a transaction as we escape them when
-        // doing the transaction
         if (canDisobeyFees(sender, amount)) {
             return true;
         }
@@ -67,10 +65,10 @@ public class VaultLink implements EconomyLink {
         if (!response.transactionSuccess()) {
             MyWarp.logger().severe("Could not withdraw " + sender.getName() + ", " + response.errorMessage);
             sender.sendMessage(ChatColor.RED
-                    + MyWarp.inst().getLocalizationManager().getString("error.economy.unknown", sender));
+                    + MyWarp.inst().getLocalizationManager().getString("economy.unknown-exception", sender));
         } else if (MyWarp.inst().getWarpSettings().economyInformAfterTransaction) {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("economy.transaction.complete", sender, "%amount%", Double.toString(amount)));
+                    .getEffectiveString("economy.transaction-complete", sender, amount));
         }
     }
 }

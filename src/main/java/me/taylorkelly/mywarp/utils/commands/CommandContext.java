@@ -22,7 +22,7 @@ public class CommandContext {
     protected final String[] originalArgs;
     protected final Set<Character> booleanFlags = new HashSet<Character>();
     protected final Map<Character, String> valueFlags = new HashMap<Character, String>();
-    
+
     /**
      * Matches flags
      */
@@ -36,7 +36,8 @@ public class CommandContext {
         this(args, 0, null, sender);
     }
 
-    public CommandContext(String args, Set<Character> valueFlags, CommandSender sender) throws CommandException {
+    public CommandContext(String args, Set<Character> valueFlags, CommandSender sender)
+            throws CommandException {
         this(args.split(" "), 0, valueFlags, sender);
     }
 
@@ -53,7 +54,8 @@ public class CommandContext {
      * @throws CommandException
      *             This is thrown if flag fails for some reason.
      */
-    public CommandContext(String[] args, int level, Set<Character> valueFlags, CommandSender sender) throws CommandException {
+    public CommandContext(String[] args, int level, Set<Character> valueFlags, CommandSender sender)
+            throws CommandException {
         if (valueFlags == null) {
             valueFlags = Collections.emptySet();
         }
@@ -139,19 +141,13 @@ public class CommandContext {
 
                 if (valueFlags.contains(flagName)) {
                     if (this.valueFlags.containsKey(flagName)) {
-                        throw new CommandException(MyWarp
-                                .inst()
-                                .getLocalizationManager()
-                                .getEffectiveString("error.cmd.flagGiven", sender, "%flag%",
-                                        Character.toString(flagName)));
+                        throw new CommandException(MyWarp.inst().getLocalizationManager()
+                                .getEffectiveString("commands.library.flag-already-set", sender, flagName));
                     }
 
                     if (nextArg >= argList.size()) {
-                        throw new CommandException(MyWarp
-                                .inst()
-                                .getLocalizationManager()
-                                .getEffectiveString("error.cmd.noValue", sender, "%flag%",
-                                        Character.toString(flagName)));
+                        throw new CommandException(MyWarp.inst().getLocalizationManager()
+                                .getEffectiveString("commands.library.flag-no-value", sender, flagName));
                     }
 
                     // If it is a value flag, read another argument and add it
