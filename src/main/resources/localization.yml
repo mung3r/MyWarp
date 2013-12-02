@@ -9,10 +9,10 @@ commands:
     public-heading: "Public Warps"
     private-heading: "Private Warps"
   create:
-    created-succesfull: "§bSuccessfully created ''{0}'', §fIf you'd like to privatize it, §fUse: §c/warp private {0}"
+    created-succesfull: "§bSuccessfully created ''{0}''. §fIf you'd like to privatize it, §fUse: §c/warp private {0}"
     description: "Creates a new public warp called §7<name>§f at your current position."
   create-private:
-    created-succesfull: "§bSuccessfully created ''{0}'' §fIf you'd like to invite others to it, §fUse: §c/warp invite <player> {0}"
+    created-succesfull: "§bSuccessfully created ''{0}''. §fIf you'd like to invite others to it, §fUse: §c/warp invite <player> {0}"
     description: "Creates a new private warp called §7<name>§f at your current position."
   delete:
     deleted-succesfull: "§bYou have deleted ''{0}''."
@@ -30,7 +30,8 @@ commands:
     note: "Use '/<command> -?' to get more informations about it."
   import:
     description: "Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used."
-    import-succesfull: "{0,choice,0#No warps were|1# One warp was|1< {0,number,integer} warps were} imported sucessfully."
+    import-succesfull: "§b{0,choice,0#No warps were|1#One warp was|1<{0,number,integer} warps were} imported sucessfully."
+    import-with-skips: "§b{0,choice,0#No warps were|1# One warp was|1< {0,number,integer} warps were} imported, but {1,choice,0#No warps were|1#One warp was|1<{1,number,integer} warps were} skipped:§f"
     ivalid-option: "{0} is not a valid import option."
     no-connection: "Could not establish database connection to import warps:"
     warp-exists: "Warp ''{0}'' already exists. Skipping..."

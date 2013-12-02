@@ -1,5 +1,7 @@
 package me.taylorkelly.mywarp.commands;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -13,6 +15,7 @@ import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -39,6 +42,7 @@ public class AdminCommands {
             int counter = 0;
             ConnectionManager importConnection = new ConnectionManager(importMySQL, false, true);
             Map<String, Warp> importedWarps = importConnection.getMap();
+            List<String> notImportedWarps = new ArrayList<String>();
 
             for (Entry<String, Warp> importedWarpEntry : importedWarps.entrySet()) {
                 String name = importedWarpEntry.getKey();
@@ -46,8 +50,10 @@ public class AdminCommands {
 
                 if (MyWarp.inst().getWarpManager().warpExists(name)) {
                     if (!args.hasFlag('f')) {
-                        sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                                .getEffectiveString("commands.import.warp-exists", sender, name));
+                        notImportedWarps.add(name);
+                        // sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                        // .getEffectiveString("commands.import.warp-exists",
+                        // sender, name));
                         continue;
                     }
                     // remove the old warp before adding the new one
@@ -57,8 +63,17 @@ public class AdminCommands {
                     counter++;
                 }
             }
-            sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.import.import-succesfull", sender, counter));
+            if (notImportedWarps.isEmpty()) {
+                sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                        .getEffectiveString("commands.import.import-succesfull", sender, counter));
+            } else {
+                sender.sendMessage(MyWarp
+                        .inst()
+                        .getLocalizationManager()
+                        .getEffectiveString("commands.import.import-with-skips", sender, counter,
+                                notImportedWarps.size())
+                        + " " + StringUtils.join(notImportedWarps, ", "));
+            }
         } catch (DataConnectionException ex) {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("commands.import.no-connection", sender)
