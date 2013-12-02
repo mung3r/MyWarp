@@ -18,9 +18,10 @@ commands:
     deleted-succesfull: "§bYou have deleted ''{0}''."
     description: "Deletes the warp §7<name>."
   give:
-    asked-player: "§b{0} wants to give you ''{1}''. Use '§f/warp accept§b' to accept it."
+    asked-succesfull: "§bYou have asked {0} to accept ''{1}'' as his own."
     description: "Gives your warp §7<name>§f to §7<player>§f. Use [-d] to give the warp directly and [-f] to ignore warp limits (if enabled)."
     givee-limits: "{0} already has as much warps as possible. He will need to delete some to receive this one."
+    givee-message: "§b{0} wants to give you ''{1}''. Use '§f/warp accept§b' to accept."
     given-succesfull: "§bYou have given ''{0}'' to {1}."
     is-owner: "{0} is already the owner."
   help:
@@ -94,13 +95,13 @@ commands:
     group:
       not-invited: "Group ''{0}'' is not invited to this warp."
       private: "§bYou have uninvited group {0} from ''{1}''."
-      public: "§bYou have uninvited group {0} from ''{1}''. §cBut ''{0}'' is still public."
+      public: "§bYou have uninvited group {0} from ''{1}''. §cBut ''{1}'' is still public."
     player:
       is-creator: "You cannot uninvite the creator."
       not-invited: "{0} is not invited to this warp."
       player-uninvited: "§bYou have been uninvited from ''{0}''. Sorry."
       private: "§bYou have uninvited {0} from ''{1}''."
-      public: "§bYou have uninvited {0} from ''{1}''. §cBut ''{0}'' is still public."
+      public: "§bYou have uninvited {0} from ''{1}''. §cBut ''{1}'' is still public."
   update:
     description: "Updates §7<name>§f to your current position"
     update-succesfull: "§bYou have updated {0}'s position."
@@ -140,8 +141,8 @@ commands:
 dynmap:
   marker: "<b>%warp%</b></br><i>Created by %creator%</i>"
 economy:
-  cannot-afford: "You cannot afford this. You need at least {0, number, integer}$."
-  transaction-complete: "§bYou have been charged {0, number, integer}$."
+  cannot-afford: "You cannot afford this. You need at least {0, number}$."
+  transaction-complete: "§bYou have been charged {0, number}$."
   unknown-exception: "The transaction could not completed."
 lister:
   page: "Page"
@@ -158,4 +159,4 @@ warp-signs:
   created-permission: "§cYou do not have permission to create warp signs."
   create-warp-permission: "§cYou do not have permission to create a warp sign to ''{0}''."
   use-permission: "§cYou do not have permission to use warp signs."
-  use-warp-permission: "§cYou do not have permission to use ''{0}''."
+  use-warp-permission: "§cYou do not have permission to warp to ''{0}''."

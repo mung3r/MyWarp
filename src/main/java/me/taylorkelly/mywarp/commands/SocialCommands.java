@@ -22,58 +22,58 @@ public class SocialCommands {
 
     @Command(aliases = { "give" }, usage = "<player> <name>", desc = "commands.given.description", fee = Fee.GIVE, min = 2, flags = "df", permissions = { "mywarp.warp.soc.give" })
     public void giveWarp(CommandContext args, CommandSender sender) throws CommandException {
-        // 'd' - give the warp directly without asking for acception
-        // 'f' - ignore limits if enabled
-
-        Player givee = MyWarp.inst().getServer().getPlayer(args.getString(0));
-        String giveeName;
+        // check flag permissions first because anything else depends on them
+        if (args.hasFlag('d')) {
+            CommandUtils.checkPermissions(sender, "mywarp.warp.soc.give.direct");
+        }
+        if (args.hasFlag('f')) {
+            CommandUtils.checkPermissions(sender, "mywarp.warp.soc.give.force");
+        }
+        String giveeName = args.getString(0);
+        Player givee = MyWarp.server().getPlayer(giveeName);
 
         if (givee == null) {
-            // givee needs to be online unless the warp is given directly
-            if (!args.hasFlag('d')) {
+            if (!(args.hasFlag('d') && args.hasFlag('f'))) {
+                // if the user does not want to give the warp directly while
+                // ignoring limits, givee must be online.
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("commands.utils.player-offline", sender, args.getString(0)));
+                        .getEffectiveString("commands.utils.player-offline", sender, giveeName));
             }
-            giveeName = args.getString(0);
         } else {
             giveeName = givee.getName();
         }
 
         Warp warp = CommandUtils.getWarpForModification(sender, args.getJoinedStrings(1));
+        if (!args.hasFlag('f') && givee != null && !CommandUtils.checkPlayerLimits(givee, warp.isPublicAll())) {
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
+                    .getEffectiveString("commands.give.givee-limits", sender, givee.getName()));
+        }
 
         if (warp.playerIsCreator(giveeName)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.give.is-owner", sender, giveeName));
         }
 
-        if (!args.hasFlag('f')) {
-            if (CommandUtils.checkPlayerLimits(givee, warp.isPublicAll())) {
-                throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("commands.give.givve-limits", sender, giveeName));
-            }
-        } else {
-            CommandUtils.checkPermissions(sender, "mywarp.warp.soc.give.force");
-        }
-
-        // if 'd' is present the warp is given directly
         if (args.hasFlag('d')) {
-            CommandUtils.checkPermissions(sender, "mywarp.warp.soc.give.direct");
             warp.setCreator(giveeName);
+            sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                    .getEffectiveString("commands.give.given-succesfull", sender, warp.getName(), giveeName));
 
             if (givee != null) {
                 givee.sendMessage(MyWarp.inst().getLocalizationManager()
                         .getEffectiveString("commands.accept.accepted-succesfull", sender, warp.getName()));
             }
         } else {
+            // ask givee if he wants to accept the warp
             givenWarps.put(giveeName, warp);
             givee.sendMessage(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.give.asked-player", sender, warp.getName(),
-                            sender.getName()));
+                    .getEffectiveString("commands.give.givee-message", sender, warp.getName(),
+                            sender.getName(), warp.getName()));
+            sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                    .getEffectiveString("commands.give.asked-succesfull", sender, giveeName, warp.getName()));
         }
-        sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.give.given-succesfull", sender, warp.getName(), giveeName));
     }
 
     @Command(aliases = { "accept" }, usage = "", desc = "commands.accept.description", fee = Fee.ACCEPT, max = 0, permissions = { "mywarp.warp.soc.accept" })
@@ -162,7 +162,7 @@ public class SocialCommands {
         Warp warp = CommandUtils.getWarpForModification(sender, args.getJoinedStrings(0));
         if (!warp.isPublicAll()) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("error.private.already-private", sender, warp.getName()));
+                    .getEffectiveString("commands.private.already-private", sender, warp.getName()));
         }
         CommandUtils.checkPrivateLimit(sender);
 

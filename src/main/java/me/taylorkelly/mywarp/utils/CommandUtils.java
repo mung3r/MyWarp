@@ -147,9 +147,9 @@ public class CommandUtils {
     }
 
     /**
-     * Checks all warp-limits of the given command-sender. This method will show
-     * the player's name in error messages, rather than the pronoun ('you'). If
-     * limits are disabled, this method will do nothing.
+     * Checks all warp-limits of the given command-sender, returns true if the
+     * player can build an additional warp, false if not. If limits are
+     * disabled, this method will do nothing.
      * 
      * @param sender
      *            the command-sender

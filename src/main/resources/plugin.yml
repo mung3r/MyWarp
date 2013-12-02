@@ -172,6 +172,7 @@ permissions:
   mywarp.warp.soc.*:
     description: Social /warp commands
     children:
+      mywarp.warp.soc.accept: true
       mywarp.warp.soc.give: true
       mywarp.warp.soc.give.direct: true
       mywarp.warp.soc.give.force: true

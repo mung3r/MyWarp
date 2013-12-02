@@ -2,7 +2,6 @@ package me.taylorkelly.mywarp.timer;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.scheduler.BukkitRunnable;
@@ -90,7 +89,7 @@ public class TimerFactory {
     }
 
     /**
-     * Gets the seconds remaining until the timer for the given object,
+     * Gets the seconds remaining seconds until the timer for the given object,
      * identified by the given class-type is executed. Will return 0 if not
      * timer is running.
      * 
