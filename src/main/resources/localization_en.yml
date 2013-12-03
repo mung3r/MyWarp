@@ -9,10 +9,14 @@ commands:
     public-heading: "Public Warps"
     private-heading: "Private Warps"
   create:
-    created-succesfull: "§bSuccessfully created ''{0}''. §fIf you'd like to privatize it, §fUse: §c/warp private {0}"
+    created-succesfull: > 
+      §bSuccessfully created ''{0}''.
+      §fIf you'd like to privatize it, use: §c/warp private {0}
     description: "Creates a new public warp called §7<name>§f at your current position."
   create-private:
-    created-succesfull: "§bSuccessfully created ''{0}''. §fIf you'd like to invite others to it, §fUse: §c/warp invite <player> {0}"
+    created-succesfull: >
+      §bSuccessfully created ''{0}''.
+      §fIf you'd like to invite others to it, use: §c/warp invite <player> {0}
     description: "Creates a new private warp called §7<name>§f at your current position."
   delete:
     deleted-succesfull: "§bYou have deleted ''{0}''."
@@ -31,23 +35,22 @@ commands:
   import:
     description: "Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used."
     import-succesfull: "§b{0,choice,0#No warps were|1#One warp was|1<{0,number,integer} warps were} imported sucessfully."
-    import-with-skips: "§b{0,choice,0#No warps were|1# One warp was|1< {0,number,integer} warps were} imported, but {1,choice,0#No warps were|1#One warp was|1<{1,number,integer} warps were} skipped:§f"
+    import-with-skips: "§b{0,choice,0#No warps were|1# One warp was|1< {0,number,integer} warps were} imported, but {1,choice,0#No warps were|1#one warp was|1<{1,number,integer} warps were} skipped:§f"
     ivalid-option: "{0} is not a valid import option."
     no-connection: "Could not establish database connection to import warps:"
-    warp-exists: "Warp ''{0}'' already exists. Skipping..."
   invalid-number: "You need to enter a valid number. Check §f/{0} -?§c for more informations."
   invite:
     description: "Invites §7<player|group>§f to §7<name>."
     group:
       already-invited: "Group ''{0}'' is already invited to this warp."
       private: "§bYou have invited group {0} to ''{1}''."
-      public: "§bYou have invited group {0} to ''{1}''. §cBut ''{0}'' is still public."
+      public: "§bYou have invited group {0} to ''{1}''. But ''{0}'' is still public."
     player:
       already-invited: "{0} is already invited to this warp."
       is-creator: "{0} is the creator, of course he is invited."
-      player-invited: "§b{0} has invited you to to warp ''{1}''. §fUse: §c/warp {0} §fto warp to it."
+      player-invited: "§b{0} has invited you to to warp ''{1}''. Use §f'/warp {0}' §bto warp to it."
       private: "§bYou have invited {0} to ''{1}''."
-      public: "§bYou have invited {0} to ''{1}''. §cBut ''{1}'' is still public."
+      public: "§bYou have invited {0} to ''{1}''. But ''{1}'' is still public."
   info:
     created-by: "Created by:"
     created-by-you: "(that is you!)"
@@ -78,7 +81,9 @@ commands:
   private:
     already-private: "Warp ''{0}'' is already private."
     description: "Makes §7<name>§f private."
-    privatized: "§bYou have privatized ''{0}'' §fIf you'd like to invite others to it, §fUse: §c/warp invite <player> {0}"    
+    privatized: |
+      "§bYou have privatized ''{0}''.
+      §fIf you'd like to invite others to it, use: §c/warp invite <player> {0}"    
   public:
     already-public: "Warp ''{0}'' is already public."
     description: "Makes §7<name>§f public."
@@ -96,13 +101,13 @@ commands:
     group:
       not-invited: "Group ''{0}'' is not invited to this warp."
       private: "§bYou have uninvited group {0} from ''{1}''."
-      public: "§bYou have uninvited group {0} from ''{1}''. §cBut ''{1}'' is still public."
+      public: "§bYou have uninvited group {0} from ''{1}''. But ''{1}'' is still public."
     player:
       is-creator: "You cannot uninvite the creator."
       not-invited: "{0} is not invited to this warp."
       player-uninvited: "§bYou have been uninvited from ''{0}''. Sorry."
       private: "§bYou have uninvited {0} from ''{1}''."
-      public: "§bYou have uninvited {0} from ''{1}''. §cBut ''{1}'' is still public."
+      public: "§bYou have uninvited {0} from ''{1}''. But ''{1}'' is still public."
   update:
     description: "Updates §7<name>§f to your current position"
     update-succesfull: "§bYou have updated {0}'s position."
@@ -115,9 +120,15 @@ commands:
   utils:
     player-offline: "Could not find player ''{0}''. Is he online?"
     limit-reached:
-      private: "§cYou have reached your max # of private warps §e({0, number, integer}) §fDelete some of your warps to create more."
-      public: "§cYou have reached your max # of public warps §e({0, number, integer}) §fDelete some of your warps to create more. "
-      total: "§cYou have reached your max # of warps §e({0, number, integer}) §fDelete some of your warps to create more."
+      private: > 
+        "You have reached your maximum of private warps §e({0, number, integer})§c.
+        §fDelete some of your warps to create more."
+      public: >
+        "You have reached your maximum of public warps §e({0, number, integer})§c.
+        §fDelete some of your warps to create more. "
+      total: >
+        "You have reached your maximum of warps §e({0, number, integer})§c.
+        §fDelete some of your warps to create more."
     warp-exists: "A warp called '§f{0}§r' already exists."
     warp-non-existent: "No such warp ''{0}''."
     warp-suggestion: "No such warp ''{0}''. Did you mean '§f{1}§c'?"

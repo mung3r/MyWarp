@@ -51,9 +51,6 @@ public class AdminCommands {
                 if (MyWarp.inst().getWarpManager().warpExists(name)) {
                     if (!args.hasFlag('f')) {
                         notImportedWarps.add(name);
-                        // sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                        // .getEffectiveString("commands.import.warp-exists",
-                        // sender, name));
                         continue;
                     }
                     // remove the old warp before adding the new one

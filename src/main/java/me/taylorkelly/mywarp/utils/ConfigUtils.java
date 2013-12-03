@@ -12,7 +12,6 @@ import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * Bundles various utilities used when working with yaml configuration files
@@ -35,7 +34,7 @@ public class ConfigUtils {
      */
     public static FileConfiguration getYamlConfig(InputStream stream, boolean forceEncoding)
             throws IOException, InvalidConfigurationException {
-        YamlConfiguration yamlConfig = new YamlConfiguration();
+        FancyYamlConfiguration yamlConfig = new FancyYamlConfiguration();
 
         InputStreamReader reader = null;
         BufferedReader bufferedReader = null;
