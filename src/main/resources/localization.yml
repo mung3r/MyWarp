@@ -167,7 +167,7 @@ warp:
   unsafe-loc:
     closest-location: "§cWarp ''{0}'' is not safe. You were teleported to the closest safe location."
     no-teleport: "§cWarp ''{0}'' is not safe. Also no safe location could be found close to it."
-  world-non-existing: "The world ''{0}'' does not exist."
+  world-non-existing: "§cThe world ''§f{0}§c'' does not exist."
 warp-signs:
   created: "§bSuccessfully created a warp sign."
   created-permission: "§cYou do not have permission to create warp signs."
