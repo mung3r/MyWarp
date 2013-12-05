@@ -79,9 +79,9 @@ public class BasicCommands {
         String header = MyWarp.inst().getLocalizationManager()
                 .getEffectiveString("commands.assets.heading", sender, player.getName());
         String publicHeader = MyWarp.inst().getLocalizationManager()
-                .getString("commands.assets.private-heading", sender);
-        String privateHeader = MyWarp.inst().getLocalizationManager()
                 .getString("commands.assets.public-heading", sender);
+        String privateHeader = MyWarp.inst().getLocalizationManager()
+                .getString("commands.assets.private-heading", sender);
 
         if (MyWarp.inst().getWarpSettings().limitsEnabled) {
             header = header
