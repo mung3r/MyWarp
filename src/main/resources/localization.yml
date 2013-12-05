@@ -9,12 +9,12 @@ commands:
     public-heading: "Public Warps"
     private-heading: "Private Warps"
   create:
-    created-succesfull: > 
+    created-succesfull: | 
       §bSuccessfully created ''{0}''.
       §fIf you'd like to privatize it, use: §c/warp private {0}
     description: "Creates a new public warp called §7<name>§f at your current position."
   create-private:
-    created-succesfull: >
+    created-succesfull: |
       §bSuccessfully created ''{0}''.
       §fIf you'd like to invite others to it, use: §c/warp invite <player> {0}
     description: "Creates a new private warp called §7<name>§f at your current position."
@@ -34,21 +34,21 @@ commands:
     note: "Use '/<command> -?' to get more informations about it."
   import:
     description: "Imports warps from §7<SQLite|MySQL>§f into the current database. Existing warps are not overwritten unless [-f] is used."
-    import-succesfull: "§b{0,choice,0#No warps were|1#One warp was|1<{0,number,integer} warps were} imported sucessfully."
-    import-with-skips: "§b{0,choice,0#No warps were|1# One warp was|1< {0,number,integer} warps were} imported, but {1,choice,0#No warps were|1#one warp was|1<{1,number,integer} warps were} skipped:§f"
+    import-succesfull: "§b{0,choice,0#No warps were|1#One warp was|1<{0,number,integer} warps were} imported."
+    import-with-skips: "§b{0,choice,0#No warps were|1# One warp was|1< {0,number,integer} warps were} imported, but {1,choice,1#one warp was|1<{1,number,integer} warps were} skipped:§f"
     ivalid-option: "{0} is not a valid import option."
     no-connection: "Could not establish database connection to import warps:"
   invalid-number: "You need to enter a valid number. Check §f/{0} -?§c for more informations."
   invite:
     description: "Invites §7<player|group>§f to §7<name>."
     group:
-      already-invited: "Group ''{0}'' is already invited to this warp."
-      private: "§bYou have invited group {0} to ''{1}''."
-      public: "§bYou have invited group {0} to ''{1}''. But ''{0}'' is still public."
+      already-invited: "The group ''{0}'' is already invited to this warp."
+      private: "§bYou have invited the group {0} to ''{1}''."
+      public: "§bYou have invited the group {0} to ''{1}''. But ''{0}'' is still public."
     player:
       already-invited: "{0} is already invited to this warp."
       is-creator: "{0} is the creator, of course he is invited."
-      player-invited: "§b{0} has invited you to to warp ''{1}''. Use §f'/warp {0}' §bto warp to it."
+      player-invited: "§b{0} has invited you to to ''{1}''. Use §f'/warp {0}' §bto warp to it."
       private: "§bYou have invited {0} to ''{1}''."
       public: "§bYou have invited {0} to ''{1}''. But ''{1}'' is still public."
   info:
@@ -58,8 +58,9 @@ commands:
     heading: "Informations about ''{0}'':"
     invited-groups: "Invited groups:"
     invited-players: "Invited players:"
+    in-world: "(in ''{0}'')"
     location: "Location:"
-    world: "Visits:"
+    visits: "Visits:"
   library:
     flag-already-set: "Value flag ''{0}'' already given."
     flag-no-value: "No value specified for the ''{0}'' flag."
@@ -79,13 +80,13 @@ commands:
     reset: "§bYour compass now points back to the spawn point."
     set: "§bYour compass now guides you to ''{0}''."
   private:
-    already-private: "Warp ''{0}'' is already private."
+    already-private: "''{0}'' is already private."
     description: "Makes §7<name>§f private."
     privatized: |
       "§bYou have privatized ''{0}''.
       §fIf you'd like to invite others to it, use: §c/warp invite <player> {0}"    
   public:
-    already-public: "Warp ''{0}'' is already public."
+    already-public: "''{0}'' is already public."
     description: "Makes §7<name>§f public."
     publicized: "§bYou have publicized ''{0}''."
   reload:
@@ -99,13 +100,13 @@ commands:
   uninvite:
     description: "Uninvites §7<player|group>§f from §7<name>."
     group:
-      not-invited: "Group ''{0}'' is not invited to this warp."
-      private: "§bYou have uninvited group {0} from ''{1}''."
-      public: "§bYou have uninvited group {0} from ''{1}''. But ''{1}'' is still public."
+      not-invited: "The Group ''{0}'' is not invited to this warp."
+      private: "§bYou have uninvited the group {0} from ''{1}''."
+      public: "§bYou have uninvited the group {0} from ''{1}''. But ''{1}'' is still public."
     player:
       is-creator: "You cannot uninvite the creator."
       not-invited: "{0} is not invited to this warp."
-      player-uninvited: "§bYou have been uninvited from ''{0}''. Sorry."
+      player-uninvited: "§bYou are no longer invited to ''{0}''. Sorry."
       private: "§bYou have uninvited {0} from ''{1}''."
       public: "§bYou have uninvited {0} from ''{1}''. But ''{1}'' is still public."
   update:
@@ -118,38 +119,39 @@ commands:
     player: "player"
     world: "world"
   utils:
-    player-offline: "Could not find player ''{0}''. Is he online?"
+    player-offline: "Could not find a player namend ''{0}''. Is he online?"
     limit-reached:
-      private: > 
+      private: |
         "You have reached your maximum of private warps §e({0, number, integer})§c.
         §fDelete some of your warps to create more."
-      public: >
+      public:  |
         "You have reached your maximum of public warps §e({0, number, integer})§c.
         §fDelete some of your warps to create more. "
-      total: >
+      total: |
         "You have reached your maximum of warps §e({0, number, integer})§c.
         §fDelete some of your warps to create more."
-    warp-exists: "A warp called '§f{0}§r' already exists."
+    name-is-cmd: "''§f{0}§c'' is equivalent to a command and cannot be used as name."
+    warp-exists: "A warp called ''§f{0}§c'' already exists."
     warp-non-existent: "No such warp ''{0}''."
-    warp-suggestion: "No such warp ''{0}''. Did you mean '§f{1}§c'?"
+    warp-suggestion: "No such warp ''{0}''. Did you mean ''§f{1}§c''?"
   use-permission: "You do not have permission to use this command."
   warp-to:
     cooldown:
       active: "§cYou still need to wait {0,number} seconds before you can warp again."
       ended: "§bYou have cooled down, feel free to use §f/warp §bagain."
-    description: "Warps you to §7<name>§f, if you have the rights to visit it."
+    description: "Warps you to §7<name>§f, if you may visit it."
     warmup:
       active: "§cYou still need to wait {0,number} seconds before you are teleported."
-      cancelled-damage: "§cYou must not take damage while warming up. Your §f/warp §cwas cancelled."
-      cancelled-move: "§cYou must not move while warming up. Your §f/warp §cwas cancelled."
+      cancelled-damage: "§cYou must not take damage while warming up. Your warmup was cancelled."
+      cancelled-move: "§cYou must not move while warming up. Your warmup was cancelled."
       started: "§bYou will be teleported to ''{0}'' in {1,number} seconds."
   warp-player:
-    description: "Warps §7<player>§f to §7<name>§f if you have the rights to visit it."
+    description: "Warps §7<player>§f to §7<name>§f if you may visit it."
     teleport-succesfull: "§bYou have teleported {0} to ''{1}''."
   welcome:
     changed: "§bChanged welcome message for ''{0}'' to:"
     description: "Changes the welcome message of §7<name>§f. You will be ask to enter the welcome message afterwards."
-    enter: "§bEnter the welcome message for ''{0}'':"
+    enter: "§bEnter the new welcome message for ''{0}'':"
 dynmap:
   marker: "<b>%warp%</b></br><i>Created by %creator%</i>"
 economy:
@@ -158,14 +160,14 @@ economy:
   unknown-exception: "The transaction could not completed."
 lister:
   page: "Page"
-  unknown-page: "There are only {0, number, integer} pages in total."
+  unknown-page: "There {0,choise,1#is only one page|1<#are only {0, number, integer} pages} in total."
   no-results: "No results match!"
 warp:
   default-welcome-message: "Welcome to '%warp%', %player%."
   unsafe-loc:
     closest-location: "§cWarp ''{0}'' is not safe. You were teleported to the closest safe location."
     no-teleport: "§cWarp ''{0}'' is not safe. Also no safe location could be found close to it."
-  world-non-existing: "World ''{0}'' does not exist."
+  world-non-existing: "The world ''{0}'' does not exist."
 warp-signs:
   created: "§bSuccessfully created a warp sign."
   created-permission: "§cYou do not have permission to create warp signs."

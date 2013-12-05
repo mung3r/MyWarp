@@ -249,5 +249,9 @@ public class CommandUtils {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.utils.warp-exists", sender, name));
         }
+        if (MyWarp.inst().getCommandsManager().hasSubCommand("mywarp", name)) {
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
+                    .getEffectiveString("commands.utils.name-is-cmd", sender, name));
+        }
     }
 }

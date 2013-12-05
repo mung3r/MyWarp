@@ -393,8 +393,36 @@ public class CommandsManager {
         return commands.get(null).containsKey(identifier);
     }
 
+    /**
+     * Returns if the root-comand identified by the given method has a
+     * sub-command with the given identifier.
+     * 
+     * @param parent
+     *            the method of the root-command
+     * @param identifier
+     *            the sub-command's identifier
+     * @return true if such a command is registered, false if not
+     */
     public boolean hasSubComand(Method parent, String identifier) {
         return commands.get(parent).containsKey(identifier);
+    }
+
+    /**
+     * Returns if the root-comand identified by the given string has a
+     * sub-command with the given identifier.
+     * 
+     * @param parentidentifier
+     *            the identifier of the root-command
+     * @param identifier
+     *            the sub-command's identifier
+     * @return true if such a command is registered, false if not
+     */
+    public boolean hasSubCommand(String parentidentifier, String identifier) {
+        Method parent = commands.get(null).get(parentidentifier);
+        if (parent != null) {
+            return commands.get(parent).containsKey(identifier);
+        }
+        return false;
     }
 
     /**
