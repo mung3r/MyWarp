@@ -117,7 +117,7 @@ public class WarpSignManager implements Listener {
         }
         final Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
 
-        if (!warp.playerCanWarp(player)) {
+        if (!warp.isUsable(player)) {
             player.sendMessage(ChatColor.RED
                     + MyWarp.inst().getLocalizationManager()
                             .getEffectiveString("warp-signs.use-warp-permission", player, name));
@@ -177,7 +177,7 @@ public class WarpSignManager implements Listener {
         }
         Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
 
-        if (!warp.playerCanModify(player)
+        if (!warp.isModifiable(player)
                 && !MyWarp.inst().getPermissionsManager()
                         .hasPermission(player, "mywarp.warp.sign.create.all")) {
             player.sendMessage(MyWarp.inst().getLocalizationManager()

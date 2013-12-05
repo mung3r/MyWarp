@@ -12,6 +12,7 @@ import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -119,7 +120,7 @@ public class WarpManager {
         TreeSet<Warp> matches = new TreeSet<Warp>(comperator);
 
         for (Warp warp : warpMap.values()) {
-            if (player != null && !warp.playerCanWarp(player)) {
+            if (player != null && !warp.isUsable(player)) {
                 continue;
             }
             if (warp.getName().equalsIgnoreCase(name)) {
@@ -142,22 +143,23 @@ public class WarpManager {
     }
 
     /**
-     * Attempts to match the given creator string to a creator who owns warps in
-     * the network. This method will always return the full name of the searched
-     * creator or null if there either no or more than on match(es)
+     * Attempts to match the given creator string to a creator who owns warps
+     * usable by the given command-sender. This method will always return the
+     * full name of the searched creator or null if there either no or more than
+     * on match(es)
      * 
-     * @param player
-     *            the player
+     * @param sender
+     *            the command-sender
      * @param creator
      *            the (part of) the searched creator
      * @return the an exactly matching creator existing in the network or an
      *         null if not exact match exist
      */
-    public String getMatchingCreator(Player player, String creator) {
+    public String getMatchingCreator(CommandSender sender, String creator) {
         String match = null;
 
         for (Warp warp : warpMap.values()) {
-            if (player != null && !warp.playerCanWarp(player)) {
+            if (!warp.isUsable(sender)) {
                 continue;
             }
             String warpCreator = warp.getCreator();
@@ -186,7 +188,7 @@ public class WarpManager {
         TreeSet<Warp> ret = new TreeSet<Warp>();
 
         for (Warp warp : warpMap.values()) {
-            if (warp.isPublicAll() == publicAll && (creator == null || warp.playerIsCreator(creator))) {
+            if (warp.isPublicAll() == publicAll && (creator == null || warp.isCreator(creator))) {
                 ret.add(warp);
             }
         }
@@ -237,8 +239,7 @@ public class WarpManager {
         int size = 0;
         for (Warp warp : warpMap.values()) {
             boolean privateAll = !warp.isPublicAll();
-            String creator = warp.getCreator();
-            if (creator.equals(player.getName()) && privateAll) {
+            if (warp.isCreator(player) && privateAll) {
                 size++;
             }
         }
@@ -257,8 +258,7 @@ public class WarpManager {
         int size = 0;
         for (Warp warp : warpMap.values()) {
             boolean publicAll = warp.isPublicAll();
-            String creator = warp.getCreator();
-            if (creator.equals(player.getName()) && publicAll) {
+            if (warp.isCreator(player) && publicAll) {
                 size++;
             }
         }
@@ -276,8 +276,7 @@ public class WarpManager {
     private int numWarpsPlayer(Player player) {
         int size = 0;
         for (Warp warp : warpMap.values()) {
-            String creator = warp.getCreator();
-            if (creator.equals(player.getName())) {
+            if (warp.isCreator(player)) {
                 size++;
             }
         }
@@ -398,13 +397,13 @@ public class WarpManager {
     }
 
     /**
-     * Returns a sorted set with all warps, the given player has access to.
+     * gets a sorted set with all warps, the given command-sender has access to.
      * Optionally, this warps must be all created by the given creator or exist
      * in a world of the given name. The sorting of the warps can be controlled
      * by giving a custom comperator.
      * 
-     * @param player
-     *            the player
+     * @param sender
+     *            the command sender
      * @param creator
      *            the creator's name or null for all creators
      * @param world
@@ -413,12 +412,12 @@ public class WarpManager {
      *            the comperator or null for the default sorting
      * @return a sorted list with all warps matching the given criteria
      */
-    public TreeSet<Warp> warpsInvitedTo(Player player, String creator, String world,
+    public TreeSet<Warp> getUsableWarps(CommandSender sender, String creator, String world,
             Comparator<Warp> comperator) {
         TreeSet<Warp> results = new TreeSet<Warp>(comperator);
 
         if (creator != null) {
-            creator = getMatchingCreator(player, creator);
+            creator = getMatchingCreator(sender, creator);
 
             // unable to find a matching creator
             if (creator == null) {
@@ -427,10 +426,10 @@ public class WarpManager {
         }
 
         for (Warp warp : warpMap.values()) {
-            if (player != null && !warp.playerCanWarp(player)) {
+            if (!warp.isUsable(sender)) {
                 continue;
             }
-            if (creator != null && !warp.getCreator().equals(creator)) {
+            if (creator != null && !warp.isCreator(creator)) {
                 continue;
             }
             if (world != null && !warp.getWorld().equals(world)) {

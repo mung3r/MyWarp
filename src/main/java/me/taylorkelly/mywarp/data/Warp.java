@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -282,15 +283,6 @@ public class Warp implements Comparable<Warp> {
         return pitch;
     }
 
-    /**
-     * Gets all invited player, joined by a predefined character
-     * 
-     * @return all player invited
-     */
-    public boolean groupIsInvited(String group) {
-        return groupPermissions.contains(group);
-    }
-
     public String permissionsString() {
         return StringUtils.join(permissions, LIST_SEPERATOR);
     }
@@ -336,63 +328,99 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
-     * Checks if the given player can modify this warp
+     * Checks if the given command-sender can modify this warp
      * 
-     * @param player
-     *            the player
-     * @return true if the player can modify this warp, false if not
+     * @param sender
+     *            the command-sender
+     * @return true if the command-sender can modify this warp, false if not
      */
-    public boolean playerCanModify(Player player) {
-        if (creator.equals(player.getName())) {
+    public boolean isModifiable(CommandSender sender) {
+        if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.admin.modifyall")) {
             return true;
         }
-        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.admin.modifyall")) {
+        if (isCreator(sender)) {
             return true;
         }
         return false;
     }
 
     /**
-     * Checks if the given player can use this warp
+     * Checks if the given command-sender could use this warp. 'Usage' should be
+     * understood hypothetically: If the sender would be an entity, could he
+     * access this warp?
      * 
-     * @param player
-     *            the player
-     * @return true if the player can use this warp, false if not
+     * @param sender
+     *            the command-sender
+     * @return true if the command-sender can use this warp, false if not
      */
-    public boolean playerCanWarp(Player player) {
-        if (MyWarp.inst().getWarpSettings().controlWorldAccess
-                && !MyWarp.inst().getPermissionsManager().playerCanAccessWorld(player, world)) {
+    public boolean isUsable(CommandSender sender) {
+        if (sender instanceof Player && MyWarp.inst().getWarpSettings().controlWorldAccess
+                && !MyWarp.inst().getPermissionsManager().playerCanAccessWorld((Player) sender, world)) {
             return false;
         }
-
-        if (creator.equals(player.getName())) {
+        if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.admin.accessall")) {
             return true;
         }
-        if (permissions.contains(player.getName())) {
+        if (isCreator(sender)) {
             return true;
         }
-
-        for (String group : groupPermissions) {
-            if (MyWarp.inst().getPermissionsManager().playerHasGroup(player, group)) {
-                return true;
-            }
-        }
-        if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.admin.accessall")) {
+        if (isInvited(sender)) {
             return true;
         }
-
+        if (isGroupInvited(sender)) {
+            return true;
+        }
         return publicAll;
     }
 
     /**
-     * Checks if the given player is the creator of this warp
+     * Checks if the given command-sender is invited to the warp
      * 
-     * @param player
+     * @param sender
+     *            the command-sender
+     * @return true if the command-sender is this warp's creator, false if not
+     */
+    public boolean isCreator(CommandSender sender) {
+        return sender instanceof Player && isCreator(sender.getName());
+    }
+
+    /**
+     * Checks if the given player-name is the creator of this warp
+     * 
+     * @param name
      *            the player's name
      * @return true if the player is this warp's creator, false if not
      */
-    public boolean playerIsCreator(String player) {
-        return creator.equals(player);
+    public boolean isCreator(String name) {
+        return creator.equals(name);
+    }
+
+    /**
+     * Checks if the group of the given name is invited to this warp.
+     * 
+     * @return true if invited, false if not.
+     */
+    public boolean isGroupInvited(String group) {
+        return groupPermissions.contains(group);
+    }
+
+    /**
+     * Checks if the given command-sender is invited due to one of his
+     * permission-groups.
+     * 
+     * @return true if invited, false if not.
+     */
+    public boolean isGroupInvited(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            return false;
+        }
+        // can have multiple groups so we need to check this way
+        for (String group : groupPermissions) {
+            if (MyWarp.inst().getPermissionsManager().playerHasGroup((Player) sender, group)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -402,8 +430,19 @@ public class Warp implements Comparable<Warp> {
      *            the player's name
      * @return true if the player is invited, false if not
      */
-    public boolean playerIsInvited(String player) {
-        return permissions.contains(player);
+    public boolean isInvited(CommandSender sender) {
+        return sender instanceof Player && isInvited(sender.getName());
+    }
+
+    /**
+     * Checks if the given player is invited to this warp
+     * 
+     * @param player
+     *            the player's name
+     * @return true if the player is invited, false if not
+     */
+    public boolean isInvited(String name) {
+        return permissions.contains(name);
     }
 
     /**

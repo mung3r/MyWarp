@@ -67,7 +67,7 @@ public class CommandUtils {
     public static Warp getWarpForModification(CommandSender sender, String query) throws CommandException {
         Warp warp = getWarpForUsage(sender, query);
 
-        if (sender instanceof Player && !warp.playerCanModify((Player) sender)) {
+        if (warp.isModifiable(sender)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("error.noPermission.modify", sender, warp.getName()));
         }

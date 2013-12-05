@@ -118,11 +118,10 @@ public class BasicCommands {
 
     @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "commands.list.description", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
     public void listWarps(CommandContext args, CommandSender sender) throws CommandException {
-        Player player = sender instanceof Player ? (Player) sender : null;
         TreeSet<Warp> results = MyWarp
                 .inst()
                 .getWarpManager()
-                .warpsInvitedTo(player, args.getFlag('c'), args.getFlag('w'),
+                .getUsableWarps(sender, args.getFlag('c'), args.getFlag('w'),
                         args.hasFlag('p') ? new PopularityWarpComparator() : null);
 
         PaginatedResult<Warp> cmdList = new PaginatedResult<Warp>(MyWarp.inst().getLocalizationManager()
@@ -134,11 +133,11 @@ public class BasicCommands {
                 // 'name'(+) by player
                 StringBuilder first = new StringBuilder();
 
-                if (sender instanceof Player && warp.getCreator().equals(sender.getName())) {
+                if (warp.isCreator(sender)) {
                     if (warp.isPublicAll()) {
                         first.append(ChatColor.AQUA);
                     } else {
-                        first.append(ChatColor.DARK_AQUA);
+                        first.append(ChatColor.BLUE);
                     }
                 } else if (warp.isPublicAll()) {
                     first.append(ChatColor.GREEN);
@@ -157,7 +156,7 @@ public class BasicCommands {
                 first.append(" ");
                 first.append(ChatColor.ITALIC);
 
-                if (sender instanceof Player && warp.getCreator().equals(sender.getName())) {
+                if (warp.isCreator(sender)) {
                     first.append(MyWarp.inst().getLocalizationManager()
                             .getColorlessString("commands.list.you", sender));
                 } else {
@@ -309,7 +308,7 @@ public class BasicCommands {
         infos.append(" ");
         infos.append(ChatColor.WHITE);
         infos.append(warp.getCreator());
-        if (warp.getCreator().equals(sender.getName())) {
+        if (warp.isCreator(sender)) {
             infos.append(" ");
             infos.append(MyWarp.inst().getLocalizationManager()
                     .getString("commands.info.created-by-you", sender));
@@ -327,10 +326,10 @@ public class BasicCommands {
         infos.append(Math.round(warp.getZ()));
         infos.append(" ");
         infos.append(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.info.world", sender, warp.getWorld()));
+                .getEffectiveString("commands.info.in-world", sender, warp.getWorld()));
         infos.append("\n");
 
-        if (!(sender instanceof Player) || warp.playerCanModify((Player) sender)) {
+        if (warp.isModifiable(sender)) {
             infos.append(ChatColor.GRAY);
             infos.append(MyWarp.inst().getLocalizationManager()
                     .getString("commands.info.invited-players", sender));

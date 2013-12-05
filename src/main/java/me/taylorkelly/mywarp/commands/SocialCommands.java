@@ -49,7 +49,7 @@ public class SocialCommands {
                     .getEffectiveString("commands.give.givee-limits", sender, givee.getName()));
         }
 
-        if (warp.playerIsCreator(giveeName)) {
+        if (warp.isCreator(giveeName)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.give.is-owner", sender, giveeName));
         }
@@ -100,7 +100,7 @@ public class SocialCommands {
 
             String inviteeName = args.getString(0).substring(2);
 
-            if (warp.groupIsInvited(inviteeName)) {
+            if (warp.isGroupInvited(inviteeName)) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
                         .getEffectiveString("commands.invite.group.already-invited", sender, inviteeName));
             }
@@ -126,12 +126,12 @@ public class SocialCommands {
         Player invitee = MyWarp.inst().getServer().getPlayer(args.getString(0));
         String inviteeName = (invitee == null) ? args.getString(0) : invitee.getName();
 
-        if (warp.playerIsInvited(inviteeName)) {
+        if (warp.isInvited(inviteeName)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.invite.player.already-invited", sender, inviteeName));
         }
 
-        if (warp.playerIsCreator(inviteeName)) {
+        if (warp.isCreator(inviteeName)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.invite.player.is-creator", sender, inviteeName));
         }
@@ -194,7 +194,7 @@ public class SocialCommands {
             CommandUtils.checkPermissions(sender, "mywarp.warp.soc.uninvite.group");
             String inviteeName = args.getString(0).substring(2);
 
-            if (!warp.groupIsInvited(inviteeName)) {
+            if (!warp.isGroupInvited(inviteeName)) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
                         .getEffectiveString("commands.uninvite.group.not-invited", sender, inviteeName));
             }
@@ -220,12 +220,12 @@ public class SocialCommands {
         Player invitee = MyWarp.inst().getServer().getPlayer(args.getString(0));
         String inviteeName = (invitee == null) ? args.getString(0) : invitee.getName();
 
-        if (!warp.playerIsInvited(inviteeName)) {
+        if (!warp.isInvited(inviteeName)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.uninvite.player.not-invited", sender, inviteeName));
         }
 
-        if (warp.playerIsCreator(inviteeName)) {
+        if (warp.isCreator(inviteeName)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.uninvite.player.is-creator", sender, inviteeName));
         }
