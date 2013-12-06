@@ -11,20 +11,21 @@ public class BlockSafety {
     /**
      * Test if the given location is safe
      * 
-     * @param l
+     * @param loc
      *            the location
      * @return True if the location is safe
      */
-    public static boolean isLocationSafe(Location l) {
-        Location upOne = l.clone();
-        Location downOne = l.clone();
-        upOne.setY(upOne.getY() + 1);
-        downOne.setY(downOne.getY() - 1);
+    public static boolean isLocationSafe(Location loc) {
+        Location upOne = loc.clone().add(0, 1, 0);
+        Location downOne = loc.clone().add(0, -1, 0);
 
-        if (l.getBlock().getType().isSolid() || upOne.getBlock().getType().isSolid()) {
+        if (loc.getBlock().getType().isSolid() || upOne.getBlock().getType().isSolid()) {
             return false;
         }
-        if (isUnsafeBlock(l.getBlock().getType()) || isUnsafeBlock(upOne.getBlock().getType())) {
+        if (!(downOne.getBlock().getType().isSolid() || downOne.getBlock().getType() == Material.WATER)) {
+            return false;
+        }
+        if (isUnsafeBlock(loc.getBlock().getType()) || isUnsafeBlock(upOne.getBlock().getType())) {
             return false;
         }
         if (isUnsafeBlock(downOne.getBlock().getType())) {
