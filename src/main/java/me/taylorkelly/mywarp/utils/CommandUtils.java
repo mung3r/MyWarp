@@ -72,7 +72,7 @@ public class CommandUtils {
 
         if (warp.isModifiable(sender)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("error.noPermission.modify", sender, warp.getName()));
+                    .getEffectiveString("commands.modify-permissions", sender, warp.getName()));
         }
         return warp;
     }
