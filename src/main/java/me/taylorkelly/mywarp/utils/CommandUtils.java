@@ -70,9 +70,9 @@ public class CommandUtils {
     public static Warp getWarpForModification(CommandSender sender, String query) throws CommandException {
         Warp warp = getWarpForUsage(sender, query);
 
-        if (warp.isModifiable(sender)) {
+        if (!warp.isModifiable(sender)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.modify-permissions", sender, warp.getName()));
+                    .getEffectiveString("commands.modify-permission", sender, warp.getName()));
         }
         return warp;
     }
