@@ -94,9 +94,10 @@ commands:
     reload-message: "§bThe configuration has been reloaded successfully!"
   search:
     description: "Searches for warps under the given §7<name>§f. Use [-p] if the warps should be listed by popularity."
-    exact-matches: "§eExact matches for search: §o§7{0}"
-    no-matches: "§cNo matches for search: §o§7{0}"
-    partital-matches: "§ePartial matches for search: §o§7{0}"
+    exact-heading: "Exact match"
+    heading: "Matches for search ''§f{0}§6'':"
+    no-matches: "§cNo matches for ''§f{0}''§c."
+    partital-heading: "Partial {0,choice,1#match|1<matches ({0, number})}"
   uninvite:
     description: "Uninvites §7<player|group>§f from §7<name>."
     group:
@@ -160,7 +161,7 @@ economy:
   unknown-exception: "The transaction could not completed."
 lister:
   page: "Page"
-  unknown-page: "There {0,choise,1#is only one page|1<#are only {0, number, integer} pages} in total."
+  unknown-page: "There {0,choice,1#is only one page|1<are only {0, number, integer} pages} in total."
   no-results: "No results match!"
 warp:
   default-welcome-message: "Welcome to '%warp%', %player%."

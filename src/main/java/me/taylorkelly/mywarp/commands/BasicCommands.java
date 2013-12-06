@@ -1,6 +1,5 @@
 package me.taylorkelly.mywarp.commands;
 
-import java.util.Collection;
 import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -16,7 +15,6 @@ import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -111,9 +109,9 @@ public class BasicCommands {
 
         sender.sendMessage(ChatColor.GOLD + MinecraftFontWidthCalculator.centralize(" " + header + " ", '-'));
         sender.sendMessage(ChatColor.GRAY + publicHeader + ": " + ChatColor.WHITE
-                + joinWarps(publicWarps, ", "));
+                + CommandUtils.joinWarps(publicWarps));
         sender.sendMessage(ChatColor.GRAY + privateHeader + ": " + ChatColor.WHITE
-                + joinWarps(privateWarps, ", "));
+                + CommandUtils.joinWarps(privateWarps));
     }
 
     @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "commands.list.description", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
@@ -214,20 +212,23 @@ public class BasicCommands {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.search.no-matches", sender, args.getJoinedStrings(0)));
         } else {
-            if (matches.exactMatches.size() > 0) {
-                sender.sendMessage(MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getEffectiveString("commands.search.exact-matches", sender, args.getJoinedStrings(0)));
-                sendWarpMatches(matches.exactMatches, sender);
+            sender.sendMessage(ChatColor.GOLD
+                    + MyWarp.inst().getLocalizationManager()
+                            .getEffectiveString("commands.search.heading", sender, args.getJoinedStrings(0)));
+            if (!matches.exactMatches.isEmpty()) {
+                sender.sendMessage(ChatColor.GRAY
+                        + MyWarp.inst()
+                                .getLocalizationManager()
+                                .getString("commands.search.exact-heading", sender) + ": " + ChatColor.WHITE
+                        + CommandUtils.joinWarps(matches.exactMatches));
             }
-            if (matches.matches.size() > 0) {
-                sender.sendMessage(MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getEffectiveString("commands.search.partital-matches", sender,
-                                args.getJoinedStrings(0)));
-                sendWarpMatches(matches.matches, sender);
+            if (!matches.matches.isEmpty()) {
+                sender.sendMessage(ChatColor.GRAY
+                        + MyWarp.inst()
+                                .getLocalizationManager()
+                                .getEffectiveString("commands.search.partital-heading", sender,
+                                        matches.matches.size()) +  ": " + ChatColor.WHITE
+                        + CommandUtils.joinWarps(matches.matches));
             }
         }
     }
@@ -356,56 +357,5 @@ public class BasicCommands {
         infos.append(warp.getVisits());
 
         sender.sendMessage(infos.toString());
-    }
-
-    private void sendWarpMatches(TreeSet<Warp> warps, CommandSender sender) {
-        for (Warp warp : warps) {
-            StringBuilder ret = new StringBuilder();
-            if (sender instanceof Player && warp.getCreator().equals(sender.getName())) {
-                ret.append(ChatColor.AQUA);
-            } else if (warp.isPublicAll()) {
-                ret.append(ChatColor.GREEN);
-            } else {
-                ret.append(ChatColor.RED);
-            }
-            ret.append("'");
-            ret.append(warp.getName());
-            ret.append("'");
-            ret.append(ChatColor.WHITE);
-            ret.append(" ");
-            ret.append(MyWarp.inst().getLocalizationManager().getColorlessString("lister.warp.by", sender));
-            ret.append(" ");
-            ret.append(ChatColor.ITALIC);
-
-            if (sender instanceof Player && warp.getCreator().equals(sender.getName())) {
-                ret.append(MyWarp.inst().getLocalizationManager()
-                        .getColorlessString("lister.warp.you", sender));
-            } else {
-                ret.append(warp.getCreator());
-            }
-            ret.append(" ");
-            ret.append(ChatColor.RESET);
-            ret.append("@(");
-            ret.append((int) warp.getX());
-            ret.append(", ");
-            ret.append((int) warp.getY());
-            ret.append(", ");
-            ret.append((int) warp.getZ());
-            ret.append(")");
-            sender.sendMessage(ret.toString());
-        }
-    }
-
-    private String joinWarps(Collection<Warp> warps, String separator) {
-        if (warps.isEmpty()) {
-            return "-";
-        }
-
-        StrBuilder ret = new StrBuilder();
-        for (Warp warp : warps) {
-            ret.appendSeparator(separator);
-            ret.append(warp.getName());
-        }
-        return ret.toString();
     }
 }

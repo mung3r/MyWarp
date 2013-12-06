@@ -1,10 +1,13 @@
 package me.taylorkelly.mywarp.utils;
 
+import java.util.Collection;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 import me.taylorkelly.mywarp.utils.commands.CommandPermissionsException;
 
+import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -253,5 +256,26 @@ public class CommandUtils {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getEffectiveString("commands.utils.name-is-cmd", sender, name));
         }
+    }
+
+    /**
+     * Joins all warps in the given collection in one string, separated by
+     * <code>", "</code>.
+     * 
+     * @param warps
+     *            a collection of warps
+     * @return a string with all warp-names
+     */
+    public static String joinWarps(Collection<Warp> warps) {
+        if (warps.isEmpty()) {
+            return "-";
+        }
+
+        StrBuilder ret = new StrBuilder();
+        for (Warp warp : warps) {
+            ret.appendSeparator(", ");
+            ret.append(warp.getName());
+        }
+        return ret.toString();
     }
 }
