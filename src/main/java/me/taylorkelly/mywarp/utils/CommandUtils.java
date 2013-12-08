@@ -97,7 +97,7 @@ public class CommandUtils {
                     .inst()
                     .getLocalizationManager()
                     .getEffectiveString("commands.utils.limit-reached.total", sender,
-                            (MyWarp.inst().getPermissionsManager().maxTotalWarps(player))));
+                            (MyWarp.inst().getPermissionsManager().getWarpLimit(player).getMaxTotal())));
         }
     }
 
@@ -121,7 +121,7 @@ public class CommandUtils {
                     .inst()
                     .getLocalizationManager()
                     .getEffectiveString("commands.utils.limit-reached.public", sender,
-                            MyWarp.inst().getPermissionsManager().maxPublicWarps(player)));
+                            MyWarp.inst().getPermissionsManager().getWarpLimit(player).getMaxPublic()));
         }
     }
 
@@ -145,7 +145,7 @@ public class CommandUtils {
                     .inst()
                     .getLocalizationManager()
                     .getEffectiveString("commands.utils.limit-reached.private", sender,
-                            MyWarp.inst().getPermissionsManager().maxPrivateWarps(player)));
+                            MyWarp.inst().getPermissionsManager().getWarpLimit(player).getMaxPrivate()));
         }
     }
 

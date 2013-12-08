@@ -276,54 +276,20 @@ public class PermissionsManager implements PermissionsHandler {
     }
 
     /**
-     * Gets the private limit affective for this player. Returns the default
-     * private-limit if the player does not have any of the specific limits
+     * Gets the {@link WarpLimit} affective for this player. Returns the default
+     * limit if the player does not have any of the specific limits
      * 
      * @param player
      *            the player
-     * @return the private-limit affective for this player
+     * @return the limit affective for this player
      */
-    public int maxPrivateWarps(Player player) {
+    public WarpLimit getWarpLimit(Player player) {
         for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
             if (hasPermission(player, "mywarp.limit." + warpLimit.getName())) {
-                return warpLimit.getMaxPrivate();
+                return warpLimit;
             }
         }
-        return MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit.getMaxPrivate();
-    }
-
-    /**
-     * Gets the public limit affective for this player. Returns the default
-     * public-limit if the player does not have any of the specific limits
-     * 
-     * @param player
-     *            the player
-     * @return the public-limit affective for this player
-     */
-    public int maxPublicWarps(Player player) {
-        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
-            if (hasPermission(player, "mywarp.limit." + warpLimit.getName())) {
-                return warpLimit.getMaxPublic();
-            }
-        }
-        return MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit.getMaxPublic();
-    }
-
-    /**
-     * Gets the total limit affective for this player. Returns the default
-     * total-limit if the player does not have any of the specific limits
-     * 
-     * @param player
-     *            the player
-     * @return the total-limit affective for this player
-     */
-    public int maxTotalWarps(Player player) {
-        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
-            if (hasPermission(player, "mywarp.limit." + warpLimit.getName())) {
-                return warpLimit.getMaxTotal();
-            }
-        }
-        return MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit.getMaxTotal();
+        return MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit;
     }
 
     /**

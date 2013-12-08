@@ -88,7 +88,7 @@ public class BasicCommands {
                     + "/"
                     + (MyWarp.inst().getPermissionsManager()
                             .hasPermission(player, "mywarp.limit.total.unlimited") ? "-" : MyWarp.inst()
-                            .getPermissionsManager().maxTotalWarps(player)) + ")";
+                            .getPermissionsManager().getWarpLimit(player).getMaxTotal()) + ")";
 
             privateHeader = privateHeader
                     + " ("
@@ -96,7 +96,7 @@ public class BasicCommands {
                     + "/"
                     + (MyWarp.inst().getPermissionsManager()
                             .hasPermission(player, "mywarp.limit.private.unlimited") ? "-" : MyWarp.inst()
-                            .getPermissionsManager().maxPrivateWarps(player)) + ")";
+                            .getPermissionsManager().getWarpLimit(player).getMaxPrivate()) + ")";
 
             publicHeader = publicHeader
                     + " ("
@@ -104,7 +104,7 @@ public class BasicCommands {
                     + "/"
                     + (MyWarp.inst().getPermissionsManager()
                             .hasPermission(player, "mywarp.limit.public.unlimited") ? "-" : MyWarp.inst()
-                            .getPermissionsManager().maxPublicWarps(player)) + ")";
+                            .getPermissionsManager().getWarpLimit(player).getMaxPublic()) + ")";
         }
 
         sender.sendMessage(ChatColor.GOLD + MinecraftFontWidthCalculator.centralize(" " + header + " ", '-'));

@@ -297,7 +297,8 @@ public class WarpManager {
         if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.private.unlimited")) {
             return true;
         }
-        return numPrivateWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().maxPrivateWarps(player);
+        return numPrivateWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().getWarpLimit(player)
+                .getMaxPrivate();
     }
 
     /**
@@ -314,7 +315,8 @@ public class WarpManager {
         if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.public.unlimited")) {
             return true;
         }
-        return numPublicWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().maxPublicWarps(player);
+        return numPublicWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().getWarpLimit(player)
+                .getMaxPublic();
     }
 
     /**
@@ -330,7 +332,8 @@ public class WarpManager {
         if (MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.limit.total.unlimited")) {
             return true;
         }
-        return numWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().maxTotalWarps(player);
+        return numWarpsPlayer(player) < MyWarp.inst().getPermissionsManager().getWarpLimit(player)
+                .getMaxTotal();
     }
 
     /**
