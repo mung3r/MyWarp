@@ -159,8 +159,9 @@ public class LocalizationManager implements Reloadable {
      *         values
      */
     public String getEffectiveString(String key, Locale locale, Object... replacements) {
-        MessageFormat msgFormat = new MessageFormat(getString(key, locale));
-        msgFormat.setLocale(locale);
+        ResourceBundle resource = getResourceBundle(locale);
+        MessageFormat msgFormat = new MessageFormat(resource.getString(key));
+        msgFormat.setLocale(resource.getLocale());
         return msgFormat.format(replacements);
     }
 
@@ -190,6 +191,17 @@ public class LocalizationManager implements Reloadable {
     }
 
     /**
+     * Gets the resource-bundle that is used for the given locale.
+     * 
+     * @param locale
+     *            the locale
+     * @return the corresponding resource-bundle
+     */
+    private ResourceBundle getResourceBundle(Locale locale) {
+        return YamlResourceBundle.getBundle("localization", locale, resourceBundleControl);
+    }
+
+    /**
      * Gets the string associated with the given key in the corresponding
      * ResourceBundle. To determine the correct resource bundle, this method
      * tries to get the local used by the player. If the sender is not a Player
@@ -216,8 +228,7 @@ public class LocalizationManager implements Reloadable {
      * @return the corresponding string out of the language map
      */
     public String getString(String key, Locale locale) {
-        String value = YamlResourceBundle.getBundle("localization", locale, resourceBundleControl)
-                .getString(key).trim();
+        String value = getResourceBundle(locale).getString(key).trim();
         return ChatColor.translateAlternateColorCodes('§', value);
     }
 
