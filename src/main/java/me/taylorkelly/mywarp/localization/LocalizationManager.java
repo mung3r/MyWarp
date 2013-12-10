@@ -48,7 +48,7 @@ public class LocalizationManager implements Reloadable {
      */
     public LocalizationManager() throws LocalizationException {
         // create all language files that we provide
-        for (String bundleName : Arrays.asList("localization.yml", "localization_en.yml")) {
+        for (String bundleName : Arrays.asList("localization.yml", "localization_en.yml", "localization_de.yml")) {
             InputStream bundled = MyWarp.inst().getResource("lang/" + bundleName);
             FileConfiguration bundledConfig;
             try {

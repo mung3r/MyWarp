@@ -57,11 +57,11 @@ public class SocialCommands {
         if (args.hasFlag('d')) {
             warp.setCreator(giveeName);
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.give.given-succesfull", sender, warp.getName(), giveeName));
+                    .getEffectiveString("commands.give.given-successful", sender, warp.getName(), giveeName));
 
             if (givee != null) {
                 givee.sendMessage(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("commands.accept.accepted-succesfull", sender, warp.getName()));
+                        .getEffectiveString("commands.accept.accepted-successful", sender, warp.getName()));
             }
         } else {
             // ask givee if he wants to accept the warp
@@ -72,7 +72,7 @@ public class SocialCommands {
                     .getEffectiveString("commands.give.givee-message", sender, warp.getName(),
                             sender.getName(), warp.getName()));
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.give.asked-succesfull", sender, giveeName, warp.getName()));
+                    .getEffectiveString("commands.give.asked-successful", sender, giveeName, warp.getName()));
         }
     }
 
@@ -87,7 +87,7 @@ public class SocialCommands {
         givenWarps.remove(sender.getName());
 
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.accept.accepted-succesfull", sender, warp.getName()));
+                .getEffectiveString("commands.accept.accepted-successful", sender, warp.getName()));
     }
 
     @Command(aliases = { "invite" }, usage = "<player> <name>", desc = "commands.invite.description", fee = Fee.INVITE, min = 2, permissions = { "mywarp.warp.soc.invite" })

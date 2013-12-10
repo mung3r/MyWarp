@@ -35,7 +35,7 @@ public class AdminCommands {
             importMySQL = false;
         } else {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("error.import.invalid", sender, args.getString(0)));
+                    .getEffectiveString("commands.import.invalid-option", sender, args.getString(0)));
         }
 
         try {
@@ -62,7 +62,7 @@ public class AdminCommands {
             }
             if (notImportedWarps.isEmpty()) {
                 sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("commands.import.import-succesfull", sender, counter));
+                        .getEffectiveString("commands.import.import-successful", sender, counter));
             } else {
                 sender.sendMessage(MyWarp
                         .inst()
@@ -94,7 +94,7 @@ public class AdminCommands {
         sender.sendMessage(MyWarp
                 .inst()
                 .getLocalizationManager()
-                .getEffectiveString("commands.warp-player.teleport-succesfull", sender, invitee.getName(),
+                .getEffectiveString("commands.warp-player.teleport-successful", sender, invitee.getName(),
                         warp.getName()));
     }
 }

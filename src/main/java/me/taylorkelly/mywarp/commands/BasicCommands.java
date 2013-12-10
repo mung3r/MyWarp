@@ -36,7 +36,7 @@ public class BasicCommands {
 
         MyWarp.inst().getWarpManager().addWarpPrivate(name, sender);
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.create-private.created-succesfull", sender, name));
+                .getEffectiveString("commands.create-private.created-successful", sender, name));
     }
 
     @Command(aliases = { "create", "set" }, usage = "<name>", desc = "commands.create.description", fee = Fee.CREATE, min = 1, permissions = { "mywarp.warp.basic.createpublic" })
@@ -49,7 +49,7 @@ public class BasicCommands {
 
         MyWarp.inst().getWarpManager().addWarpPublic(name, sender);
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.create.created-succesfull", sender, name));
+                .getEffectiveString("commands.create.created-successful", sender, name));
     }
 
     @Command(aliases = { "delete", "remove" }, usage = "<name>", desc = "commands.delete.description", fee = Fee.DELETE, min = 1, permissions = { "mywarp.warp.basic.delete" })
@@ -58,7 +58,7 @@ public class BasicCommands {
 
         MyWarp.inst().getWarpManager().deleteWarp(warp);
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.delete.deleted-succesfull", sender, warp.getName()));
+                .getEffectiveString("commands.delete.deleted-successful", sender, warp.getName()));
     }
 
     @Command(aliases = { "assets", "pstats", "pinfo", "limits" }, usage = "[player]", desc = "commands.assets.description", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
@@ -284,7 +284,7 @@ public class BasicCommands {
 
         warp.setLocation(sender.getLocation());
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.update.update-succesfull", sender, warp.getName()));
+                .getEffectiveString("commands.update.update-successful", sender, warp.getName()));
     }
 
     @Command(aliases = { "info", "stats" }, usage = "<name>", desc = "commands.info.description", fee = Fee.INFO, min = 1, permissions = { "mywarp.warp.basic.info" })

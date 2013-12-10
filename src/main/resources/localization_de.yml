@@ -1,0 +1,177 @@
+commands:
+  accept:
+    accepted-successful: "§b''{0}'' gehört nun dir."
+    description: "Akzeptiert einen Warp, den ein anderer Spieler an dich abgeben möchte."
+    nothing-to-accept: "Es gibt keinen Warp, der akzeptiert werden könnte."
+  assets:
+    description: "Listet alle Warps des angegebenen [Spielers] zusammen mit dem entsprechenden Limit auf."
+    heading: "{0}s Warps"
+    public-heading: "Öffentliche Warps"
+    private-heading: "Private Warps"
+  create:
+    created-successful: | 
+      §b''{0}'' wurde erfolgreich erstellt.
+      §fWenn du den Warp privatisieren möchtest, nutze: §c/warp private {0}
+    description: "Erstellt einen neuen öffentlichen Warp namens §7<Name>§f in der aktuellen Position."
+  create-private:
+    created-successful: |
+      §b''{0}'' wurde erfolgreich erstellt.
+      §fWenn du andere Spieler einladen möchtest, nutze: §c/warp invite <Spieler> {0}
+    description: "Erstellt einen neuen privaten Warp namens §7<Name>§f in der aktuellen Position."
+  delete:
+    deleted-successful: "§b''{0}'' wurde gelöscht."
+    description: "Löscht den Warp §7<name>."
+  give:
+    asked-successful: "§bDu hast {0} gebeten, ''{1}'' als sein Eigen zu akzeptieren."
+    description: "Gibt §7<Name>§f an §7<Spieler>§f ab. Nutze [-d], um den Warp direkt abzugeben und [-f], um Limits zu ignorieren (falls aktiviert)."
+    givee-limits: "{0} besitzt bereits das mögliche Maximum an Warps. Der Spieler muss einen Warp löschen, um diesen erhalten zu können."
+    givee-message: "§b{0} möchte ''{1}'' an dich abgeben. Nutze '§f/warp accept§b', um den Warp zu akzeptieren."
+    given-successful: "§bYDu hast ''{0}'' an {1} abgegeben."
+    is-owner: "{0} ist bereits der Besitzer."
+  help:
+    description: "Zeigt das Hilfemenü an."
+    heading: "Hilfe"
+    note: "Nutze '/<Kommando> -?' um mehr Informationen zu erhalten."
+  import:
+    description: "Importiert alle Warps aus §7<SQLite|MySQL>§f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt."
+    import-successful: "§bEs {0,choice,0#wurden keine Warps|1#wurde ein Warp|1<wurden {0,number,integer} Warps} importiert."
+    import-with-skips: "§bEs {0,choice,0#wurden keine Warps|1#wurde ein Warp|1<wurden {0,number,integer} Warps} importiert, aber {1,choice,1#ein Warp wurde|1<{1,number,integer} Warps wurden} übersprungen:§f"
+    invalid-option: "{0} ist keine gültige Import-Option."
+    no-connection: "Es konnte keine Datenbankverbindung zum Import aufgebaut werden:"
+  invalid-number: "Du musst eine gültige Nummer eingeben. Mit §f/{0} -?§c erhältst du mehr Informationen dazu."
+  invite:
+    description: "Lädt §7<Spieler|Gruppe>§f zu §7<Name>§f ein."
+    group:
+      already-invited: "Die Gruppe ''{0}'' ist bereits zu diesem Warp eingeladen."
+      private: "§bDu hast die Gruppe {0} zu ''{1}'' eingeladen."
+      public: "§bDu hast die Gruppe {0} zu ''{1}'' eingeladen. Aber ''{0}'' ist immer noch öffentlich."
+    player:
+      already-invited: "{0} ist bereits zu diesem Warp eingeladen."
+      is-creator: "{0} hat diesen Warp erstellt, natürlich ist er eingeladen."
+      player-invited: "§b{0} hat dich zu ''{1}'' eingeladen. Nutze §f'/warp {0}' §bum dich dorthin zu warpen."
+      private: "§bDu hast {0} zu ''{1}'' eingeladen."
+      public: "§bDu hast {0} zu ''{1}'' eingeladen. Aber ''{0}'' ist immer noch öffentlich."
+  info:
+    created-by: "Erstellt von:"
+    created-by-you: "(das bist du!)"
+    description: "Zeigt alle verfügbaren Informationen über §7<Name>§f an."
+    heading: "Informationen über ''{0}'':"
+    invited-groups: "Eingeladene Gruppen:"
+    invited-players: "Eingeladene Spieler:"
+    in-world: "(in ''{0}''):"
+    location: "Lage:"
+    visits: "Besuche:"
+  library:
+    flag-already-set: "Die Flag ''{0}'' wurde bereits gesetzt."
+    flag-no-value: "Für die ''{0}'' Flag wurde kein Wert angegeben."
+    invalid-sender: "Das Kommando konnte nicht ausgeführt werden: Ungültiger Sender."
+    too-few-args: "Zu wenig Argumente."
+    too-many-args: "Zu viele Argumente."
+    unknown-exception: "Während des Ausführens des Kommandos trat ein interner Fehler auf."
+    unknown-flag: "Unbekannte Flag:"
+  list:
+    by: "von"
+    description: "Listet alle Warps auf, die besucht werden können. [-c Ersteller] listet alle Warps eines Spielers, [-w Welt] ausschließlich Warps in dieser Welt. Mit [-p] werden die Warps nach Beliebtheit sortiert."
+    heading: "Warps"
+    you: "dir"
+  modify-permission: "Dir fehlen die Rechte um ''{0}'' zu bearbeiten."
+  point:
+    description: "Richtet den Kompass auf §7[Name]§f aus. Um den Kompass wieder zurückzusetzen, nutze dieses Kommando schlicht ohne einen Warp anzugeben."
+    reset: "§bDein Kompass zeigt jetzt wieder auf den Spawnpunkt."
+    set: "§bDein Kompass zeigt jetzt auf ''{0}''."
+  private:
+    already-private: "''{0}'' ist bereits privat."
+    description: "Privatisiert §7<name>§f."
+    privatized: |
+      "§bDu hast ''{0}'' privatisiert.
+      §fMöchtest du andere Spieler einladen, nutze: §c/warp invite <player> {0}"    
+  public:
+    already-public: "''{0}'' ist bereits öffentlich."
+    description: "Veröffentlicht §7<name>§f."
+    publicized: "§bDu hast ''{0}'' veröffentlicht."
+  reload:
+    description: "Lädt die Konfiguration von der Festplatte neu."
+    reload-message: "§bDie Konfiguration wurde erfolgreich neu geladen."
+  search:
+    description: "Sucht nach Warps unter dem angegebenen §7<Namen>§f. Mit [-p] werden die Warps nach Beliebtheit sortiert."
+    exact-heading: "Exakter Treffer"
+    heading: "Treffer für ''§f{0}§6'':"
+    no-matches: "§cKeine Treffer für ''§f{0}''§c."
+    partital-heading: "{0,choice,1#Partieller Treffer|1<Partielle Treffer ({0, number})}"
+  uninvite:
+    description: "Lädt §7<Spieler|Gruppe>§f vom Warp namens §7<name>§f aus."
+    group:
+      not-invited: "Die Gruppe ''{0}'' ist nicht zu diesem Warp eingeladen."
+      private: "§bDu hast die Gruppe {0} von ''{1}'' ausgeladen."
+      public: "§bDu hast die Gruppe {0} von ''{1}'' ausgeladen. Aber ''{1}'' ist immer noch öffentlich."
+    player:
+      is-creator: "Der Ersteller kann nicht ausgeladen werden."
+      not-invited: "{0} ist nicht zu diesem Warp eingeladen."
+      player-uninvited: "§bDu bist nicht länger zu ''{0}'' eingeladen. Entschuldige."
+      private: "§bDu hast {0} von ''{1}'' ausgeladen."
+      public: "§bbDu hast {0} von ''{1}'' ausgeladen. Aber ''{1}'' ist immer noch öffentlich."
+  update:
+    description: "Aktualisiert §7<Name>§f mit deiner aktuellen Position."
+    update-successful: "§bDu hast {0}s Position aktualisiert."
+  usage:
+    creator: "Ersteller"
+    group: "Gruppe"
+    name: "Name"
+    player: "Spieler"
+    world: "Welt"
+  utils:
+    player-offline: "Konnte keinen Spieler namens ''{0}'' finden. Ist er online?"
+    limit-reached:
+      private: |
+        "Du hast dein Maximum an privaten Warps §e({0, number, integer})§c erreicht.
+        §fLösche einige deiner Warps um mehr zu erstellen."
+      public:  |
+        "Du hast dein Maximum an öffentlichen Warps §e({0, number, integer})§c erreicht.
+        §fLösche einige deiner Warps um mehr zu erstellen."
+      total: |
+        "Du hast dein Maximum an Warps §e({0, number, integer})§c erreicht.
+        §fLösche einige deiner Warps um mehr zu erstellen"
+    name-is-cmd: "''§f{0}§c'' ist äquivalent mit einem Kommando und kann nicht als Name benutzt werden."
+    warp-exists: "Ein Warp namens ''§f{0}§c'' existiert bereits."
+    warp-non-existent: "Es existiert kein Warp namens ''{0}''."
+    warp-suggestion: "Es existiert kein Warp namens ''{0}''. Meintest du ''§f{1}§c''?"
+  use-permission: "Dir fehlen die Rechte, um dieses Kommando zu nutzen."
+  warp-to:
+    cooldown:
+      active: "§cDu musst noch {0,number} Sekunden warten, bevor du dich wieder warpen kannst."
+      ended: "§bDu bist abgekühlt und kannst §f/warp §b erneut benutzen."
+    description: "Teleportiert dich zu §7<Name>§f, wenn du ihn besuchen kannst."
+    warmup:
+      active: "§cDu musst noch {0,number} Sekunden warten, bevor du teleportiert wirst."
+      cancelled-damage: "§cDu darfst keinen Schaden nehmen, während du aufgewärmt wirst. Die Aufwärmphase wurde abgebrochen."
+      cancelled-move: "§cDu darfst dich nicht bewegen, während du aufgewärmt wirst. Die Aufwärmphase wurde abgebrochen."
+      started: "§bDu wirst in {1,number} Sekunden zu ''{0}'' teleportiert."
+  warp-player:
+    description: "Teleportiert §7<Spieler>§f zu §7<Name>§f, wenn du den Warp besuchen kannst."
+    teleport-successful: "§bDu hast {0} zu ''{1}'' teleportiert."
+  welcome:
+    changed: "§Die neue Willkommensnachricht für ''{0}'' lautet:"
+    description: "Ändert die Willkommensnachricht von §7<Name>§f. Du wirst anschließend separat nach der neuen Willkommensnachricht gefragt."
+    enter: "§bGib' die neue Willkommensnachricht für ''{0}'' ein:"
+dynmap:
+  marker: "<b>%warp%</b></br><i>Erstellt von %creator%</i>"
+economy:
+  cannot-afford: "Das kannst du dir nicht leisten. Du benötigst mindestens {0, number}$."
+  transaction-complete: "§bDir wurden {0, number}$ berechnet."
+  unknown-exception: "Die Transaktion konnte nicht beendet werden."
+lister:
+  page: "Seite"
+  unknown-page: "Es gibt insgesamt nur {0,choice,1#eine Seite|1<{0, number, integer} Seiten}."
+  no-results: "Keine zutreffenden Resultate!"
+warp:
+  default-welcome-message: "Willkommen bei '%warp%', %player%."
+  unsafe-loc:
+    closest-location: "§cDer Warp ''{0}'' ist nicht sicher. Du wurdest zum nächsten, sicheren Ort teleportiert."
+    no-teleport: "§cDer Warp ''{0}'' ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden."
+  world-non-existing: "§cDie Welt ''§f{0}§c'' existiert nicht."
+warp-signs:
+  created: "§bDas Warp-Schild wurde erfolgreich erstellt."
+  created-permission: "§cDir fehlen die Rechte, um Warp-Schilder zu erstellen."
+  create-warp-permission: "§cDir fehlen die Rechte, um ein Warp-Schild zu ''{0}'' zu erstellen."
+  use-permission: "§cDir fehlen die Rechte, um Warp-Schilder zu nutzen."
+  use-warp-permission: "§cDir fehlen die Rechte, um dich zu ''{0}'' zu warpen."
