@@ -111,14 +111,14 @@ public class SocialCommands {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getEffectiveString("commands.invite.group.public", sender, warp.getName(),
-                                inviteeName));
+                        .getEffectiveString("commands.invite.group.public", sender, inviteeName,
+                                warp.getName()));
             } else {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getEffectiveString("commands.invite.group.private", sender, warp.getName(),
-                                inviteeName));
+                        .getEffectiveString("commands.invite.group.private", sender, inviteeName,
+                                warp.getName()));
             }
             return;
         }
@@ -139,20 +139,20 @@ public class SocialCommands {
         warp.invite(inviteeName);
         if (warp.isPublicAll()) {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.invite.player.public", sender, warp.getName(), inviteeName));
+                    .getEffectiveString("commands.invite.player.public", sender, inviteeName, warp.getName()));
         } else {
             sender.sendMessage(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.invite.player.private", sender, warp.getName(), inviteeName));
+                    .getEffectiveString("commands.invite.player.private", sender, inviteeName, warp.getName()));
         }
 
         if (invitee != null) {
             invitee.sendMessage(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.invite.player.player-invited", sender, warp.getName(),
-                            sender.getName()));
+                    .getEffectiveString("commands.invite.player.player-invited", sender, sender.getName(),
+                            warp.getName()));
         }
 
     }
@@ -205,14 +205,14 @@ public class SocialCommands {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getEffectiveString("commands.uninvite.group.public", sender, warp.getName(),
-                                inviteeName));
+                        .getEffectiveString("commands.uninvite.group.public", sender, inviteeName,
+                                warp.getName()));
             } else {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getEffectiveString("commands.uninvite.group.private", sender, warp.getName(),
-                                inviteeName));
+                        .getEffectiveString("commands.uninvite.group.private", sender, inviteeName,
+                                warp.getName()));
             }
             return;
         }
@@ -236,14 +236,14 @@ public class SocialCommands {
             sender.sendMessage(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.uninvite.player.public", sender, warp.getName(),
-                            inviteeName));
+                    .getEffectiveString("commands.uninvite.player.public", sender, inviteeName,
+                            warp.getName()));
         } else {
             sender.sendMessage(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.uninvite.player.private", sender, warp.getName(),
-                            inviteeName));
+                    .getEffectiveString("commands.uninvite.player.private", sender, inviteeName,
+                            warp.getName()));
         }
 
         if (invitee != null) {

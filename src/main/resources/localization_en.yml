@@ -44,11 +44,11 @@ commands:
     group:
       already-invited: "The group ''{0}'' is already invited to this warp."
       private: "§bYou have invited the group {0} to ''{1}''."
-      public: "§bYou have invited the group {0} to ''{1}''. But ''{0}'' is still a public warp."
+      public: "§bYou have invited the group {0} to ''{1}''. But ''{1}'' is still a public warp."
     player:
       already-invited: "{0} is already invited to this warp."
       is-creator: "{0} is the creator, of course he is invited."
-      player-invited: "§b{0} has invited you to to ''{1}''. Use §f'/warp {0}' §bto warp to it."
+      player-invited: "§b{0} has invited you to to ''{1}''. Use §f'/warp {1}' §bto warp to it."
       private: "§bYou have invited {0} to ''{1}''."
       public: "§bYou have invited {0} to ''{1}''. But ''{1}'' is still a public warp."
   info:

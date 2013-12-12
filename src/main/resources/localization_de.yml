@@ -44,13 +44,13 @@ commands:
     group:
       already-invited: "Die Gruppe ''{0}'' ist bereits zu diesem Warp eingeladen."
       private: "§bDu hast die Gruppe {0} zu ''{1}'' eingeladen."
-      public: "§bDu hast die Gruppe {0} zu ''{1}'' eingeladen. Aber ''{0}'' ist immer noch öffentlich."
+      public: "§bDu hast die Gruppe {0} zu ''{1}'' eingeladen. Aber ''{1}'' ist immer noch öffentlich."
     player:
       already-invited: "{0} ist bereits zu diesem Warp eingeladen."
       is-creator: "{0} hat diesen Warp erstellt, natürlich ist er eingeladen."
       player-invited: "§b{0} hat dich zu ''{1}'' eingeladen. Nutze §f'/warp {0}' §bum dich dorthin zu warpen."
       private: "§bDu hast {0} zu ''{1}'' eingeladen."
-      public: "§bDu hast {0} zu ''{1}'' eingeladen. Aber ''{0}'' ist immer noch öffentlich."
+      public: "§bDu hast {0} zu ''{1}'' eingeladen. Aber ''{1}'' ist immer noch öffentlich."
   info:
     created-by: "Erstellt von:"
     created-by-you: "(das bist du!)"
