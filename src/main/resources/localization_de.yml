@@ -170,7 +170,7 @@ warp:
     no-teleport: "§cDer Warp ''{0}'' ist nicht sicher. Es konnte auch kein sicherer Ort in seiner Nähe gefunden werden."
   world-non-existing: "§cDie Welt ''§f{0}§c'' existiert nicht."
 warp-signs:
-  created: "§bDas Warp-Schild wurde erfolgreich erstellt."
+  created-successful: "§bDas Warp-Schild wurde erfolgreich erstellt."
   created-permission: "§cDir fehlen die Rechte, um Warp-Schilder zu erstellen."
   create-warp-permission: "§cDir fehlen die Rechte, um ein Warp-Schild zu ''{0}'' zu erstellen."
   use-permission: "§cDir fehlen die Rechte, um Warp-Schilder zu nutzen."
