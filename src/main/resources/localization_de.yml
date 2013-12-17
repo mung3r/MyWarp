@@ -83,8 +83,8 @@ commands:
     already-private: "''{0}'' ist bereits privat."
     description: "Privatisiert §7<name>§f."
     privatized: |
-      "§bDu hast ''{0}'' privatisiert.
-      §fMöchtest du andere Spieler einladen, nutze: §c/warp invite <player> {0}"    
+      §bDu hast ''{0}'' privatisiert.
+      §fMöchtest du andere Spieler einladen, nutze: §c/warp invite <player> {0}
   public:
     already-public: "''{0}'' ist bereits öffentlich."
     description: "Veröffentlicht §7<name>§f."
@@ -123,14 +123,14 @@ commands:
     player-offline: "Konnte keinen Spieler namens ''{0}'' finden. Ist er online?"
     limit-reached:
       private: |
-        "Du hast dein Maximum an privaten Warps §e({0, number, integer})§c erreicht.
-        §fLösche einige deiner Warps um mehr zu erstellen."
+        Du hast dein Maximum an privaten Warps §e({0, number, integer})§c erreicht.
+        §fLösche einige deiner Warps um mehr zu erstellen.
       public:  |
-        "Du hast dein Maximum an öffentlichen Warps §e({0, number, integer})§c erreicht.
-        §fLösche einige deiner Warps um mehr zu erstellen."
+        Du hast dein Maximum an öffentlichen Warps §e({0, number, integer})§c erreicht.
+        §fLösche einige deiner Warps um mehr zu erstellen.
       total: |
-        "Du hast dein Maximum an Warps §e({0, number, integer})§c erreicht.
-        §fLösche einige deiner Warps um mehr zu erstellen"
+        Du hast dein Maximum an Warps §e({0, number, integer})§c erreicht.
+        §fLösche einige deiner Warps um mehr zu erstellen
     name-is-cmd: "''§f{0}§c'' ist äquivalent mit einem Kommando und kann nicht als Name benutzt werden."
     warp-exists: "Ein Warp namens ''§f{0}§c'' existiert bereits."
     warp-non-existent: "Es existiert kein Warp namens ''{0}''."

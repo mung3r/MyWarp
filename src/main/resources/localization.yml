@@ -83,8 +83,8 @@ commands:
     already-private: "''{0}'' is already private."
     description: "Makes §7<name>§f private."
     privatized: |
-      "§bYou have privatized ''{0}''.
-      §fIf you'd like to invite others to it, use: §c/warp invite <player> {0}"    
+      §bYou have privatized ''{0}''.
+      §fIf you'd like to invite others to it, use: §c/warp invite <player> {0}
   public:
     already-public: "''{0}'' is already public."
     description: "Makes §7<name>§f public."
@@ -123,16 +123,16 @@ commands:
     player-offline: "Could not find a player named ''{0}''. Is he online?"
     limit-reached:
       private: |
-        "You have reached your maximum of private warps §e({0, number, integer})§c.
-        §fDelete some of your warps to create more."
+        You have reached your maximum of private warps §e({0, number, integer})§c.
+        §fDelete some of your warps to create more.
       public:  |
-        "You have reached your maximum of public warps §e({0, number, integer})§c.
-        §fDelete some of your warps to create more. "
+        You have reached your maximum of public warps §e({0, number, integer})§c.
+        §fDelete some of your warps to create more.
       total: |
-        "You have reached your maximum of warps §e({0, number, integer})§c.
+        You have reached your maximum of warps §e({0, number, integer})§c.
         §fDelete some of your warps to create more."
     name-is-cmd: "''§f{0}§c'' is equivalent to a command and cannot be used as a name."
-    warp-exists: "A warp called ''§f{0}§c'' already exists."
+    warp-exists: "A warp called ''§f{0}§c'' already exists.
     warp-non-existent: "No such warp ''{0}''."
     warp-suggestion: "No such warp ''{0}''. Did you mean ''§f{1}§c''?"
   use-permission: "You do not have permission to use this command."
