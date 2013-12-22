@@ -11,12 +11,12 @@ commands:
   create:
     created-successful: | 
       §b''{0}'' wurde erfolgreich erstellt.
-      §fWenn du den Warp privatisieren möchtest, nutze: §c/warp private {0}
+      §fWenn du den Warp privatisieren möchtest, nutze: §c/warp private {0}§f.
     description: "Erstellt einen neuen öffentlichen Warp namens §7<Name>§f in der aktuellen Position."
   create-private:
     created-successful: |
       §b''{0}'' wurde erfolgreich erstellt.
-      §fWenn du andere Spieler einladen möchtest, nutze: §c/warp invite <Spieler> {0}
+      §fWenn du andere Spieler einladen möchtest, nutze: §c/warp invite <Spieler> {0}§f.
     description: "Erstellt einen neuen privaten Warp namens §7<Name>§f in der aktuellen Position."
   delete:
     deleted-successful: "§b''{0}'' wurde gelöscht."
@@ -130,7 +130,7 @@ commands:
         §fLösche einige deiner Warps um mehr zu erstellen.
       total: |
         Du hast dein Maximum an Warps §e({0, number, integer})§c erreicht.
-        §fLösche einige deiner Warps um mehr zu erstellen
+        §fLösche einige deiner Warps um mehr zu erstellen.
     name-is-cmd: "''§f{0}§c'' ist äquivalent mit einem Kommando und kann nicht als Name benutzt werden."
     warp-exists: "Ein Warp namens ''§f{0}§c'' existiert bereits."
     warp-non-existent: "Es existiert kein Warp namens ''{0}''."
