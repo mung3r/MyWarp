@@ -120,21 +120,21 @@ public class BasicCommands {
                         .inst()
                         .getLocalizationManager()
                         .getEffectiveString("commands.assets.public-warps", sender,
-                                publicWarps.size() + "/" + entry.getKey().getMaxPublic(),
+                                publicWarps.size() + "/" + entry.getKey().getPublicLimit(),
                                 CommandUtils.joinWarps(publicWarps));
                 String privateEntry = MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getEffectiveString("commands.assets.private-warps", sender,
-                                privateWarps.size() + "/" + entry.getKey().getMaxPrivate(),
+                                privateWarps.size() + "/" + entry.getKey().getPrivateLimit(),
                                 CommandUtils.joinWarps(privateWarps));
 
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getEffectiveString("commands.assets.total-warps", sender,
-                                StringUtils.join(entry.getKey().getEffectiveWorlds(), ", "),
-                                entry.getValue().size() + "/" + entry.getKey().getMaxTotal()));
+                                StringUtils.join(entry.getKey().getAffectedWorlds(), ", "),
+                                entry.getValue().size() + "/" + entry.getKey().getTotalLimit()));
                 sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
             }
         } else {

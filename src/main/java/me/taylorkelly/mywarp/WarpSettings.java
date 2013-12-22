@@ -156,13 +156,13 @@ public class WarpSettings implements Reloadable {
         for (String key : configuredLimits.getKeys(false)) {
             if (key.equals("default")) {
                 // the default-limit is always global
-                limitsDefaultWarpLimit = new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
-                        configuredLimits.getInt(key + ".maxPublic", 0), configuredLimits.getInt(key
-                                + ".maxPrivate", 0), Arrays.asList("all"));
+                limitsDefaultWarpLimit = new WarpLimit(key, configuredLimits.getInt(key + ".totalLimit", 0),
+                        configuredLimits.getInt(key + ".publicLimit", 0), configuredLimits.getInt(key
+                                + ".privateLimit", 0), Arrays.asList("all"));
             } else {
-                limitsWarpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
-                        configuredLimits.getInt(key + ".maxPublic", 0), configuredLimits.getInt(key
-                                + ".maxPrivate", 0), (List<String>) configuredLimits.getList(key + ".worlds",
+                limitsWarpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".totalLimit", 0),
+                        configuredLimits.getInt(key + ".publicLimit", 0), configuredLimits.getInt(key
+                                + ".privateLimit", 0), (List<String>) configuredLimits.getList(key + ".affectedWorlds",
                                 Arrays.asList("all"))));
             }
         }

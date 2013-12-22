@@ -29,14 +29,14 @@ limits:
   enabled: true
   configured-limits:
     default:
-      maxTotal: 15
-      maxPublic: 5
-      maxPrivate: 10
+      totalLimit: 15
+      publicLimit: 5
+      privateLimit: 10
     user:
-      maxTotal: 8
-      maxPublic: 4
-      maxPrivate: 4
-      worlds:
+      totalLimit: 8
+      publicLimit: 4
+      privateLimit: 4
+      affectedWorlds:
       - test-world
 timers:
   enabled: false

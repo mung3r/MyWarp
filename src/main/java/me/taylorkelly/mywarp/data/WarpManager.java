@@ -308,8 +308,8 @@ public class WarpManager {
             return true;
         }
         WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        return numPrivateWarpsPlayer(player, limit.isGlobal() ? null : limit.getEffectiveWorlds()) < limit
-                .getMaxPrivate();
+        return numPrivateWarpsPlayer(player, limit.isGlobal() ? null : limit.getAffectedWorlds()) < limit
+                .getPrivateLimit();
     }
 
     /**
@@ -328,8 +328,8 @@ public class WarpManager {
             return true;
         }
         WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        return numPublicWarpsPlayer(player, limit.isGlobal() ? null : limit.getEffectiveWorlds()) < limit
-                .getMaxPublic();
+        return numPublicWarpsPlayer(player, limit.isGlobal() ? null : limit.getAffectedWorlds()) < limit
+                .getPublicLimit();
     }
 
     /**
@@ -347,8 +347,8 @@ public class WarpManager {
             return true;
         }
         WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        return numWarpsPlayer(player, limit.isGlobal() ? null : limit.getEffectiveWorlds()) < limit
-                .getMaxTotal();
+        return numWarpsPlayer(player, limit.isGlobal() ? null : limit.getAffectedWorlds()) < limit
+                .getTotalLimit();
     }
 
     /**
