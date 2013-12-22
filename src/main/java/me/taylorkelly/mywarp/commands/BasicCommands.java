@@ -1,6 +1,8 @@
 package me.taylorkelly.mywarp.commands;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -88,27 +90,41 @@ public class BasicCommands {
 
         if (MyWarp.inst().getWarpSettings().limitsEnabled) {
             Map<WarpLimit, TreeSet<Warp>> userWarps = new HashMap<WarpLimit, TreeSet<Warp>>();
-            Map<String, WarpLimit> limitLookup = new HashMap<String, WarpLimit>();
+            List<String> worlds = new ArrayList<String>();
+            for (WarpLimit limit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
+                if (!MyWarp.inst().getPermissionsManager()
+                        .hasPermission(sender, "mywarp.limit." + limit.getName())) {
+                    continue;
+                }
+                userWarps.put(limit, null);
+                worlds.addAll(limit.getAffectedWorlds());
+            }
+            // if there is a world that is not covered by all custom warp
+            // limits, the default one is needed
+            if (!worlds.containsAll(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit
+                    .getAffectedWorlds())) {
+                userWarps.put(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit, null);
+            }
 
             for (Warp warp : MyWarp.inst().getWarpManager().getWarps(null, player.getName())) {
-                String world = warp.getWorld();
-                WarpLimit limit = limitLookup.get(world);
-                if (limit == null) {
-                    limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player, world);
-                    limitLookup.put(world, limit);
+                for (WarpLimit limit : userWarps.keySet()) {
+                    if (!limit.getAffectedWorlds().contains(warp.getWorld())) {
+                        continue;
+                    }
+                    TreeSet<Warp> limitWarps = userWarps.get(limit);
+                    if (limitWarps == null) {
+                        limitWarps = new TreeSet<Warp>();
+                        userWarps.put(limit, limitWarps);
+                    }
+                    limitWarps.add(warp);
                 }
-                TreeSet<Warp> limitWarps = userWarps.get(limit);
-                if (limitWarps == null) {
-                    limitWarps = new TreeSet<Warp>();
-                    userWarps.put(limit, limitWarps);
-                }
-                limitWarps.add(warp);
             }
 
             for (Entry<WarpLimit, TreeSet<Warp>> entry : userWarps.entrySet()) {
                 Set<Warp> privateWarps = new TreeSet<Warp>();
                 Set<Warp> publicWarps = new TreeSet<Warp>();
                 for (Warp warp : entry.getValue()) {
+
                     if (warp.isPublicAll()) {
                         publicWarps.add(warp);
                     } else {
