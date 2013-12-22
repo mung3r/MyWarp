@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.World;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -39,11 +38,6 @@ public class WarpLimit extends ValuePermissionContainer {
         this.maxPublic = maxPublic;
         this.maxPrivate = maxPrivate;
         this.worlds = worlds;
-
-        // TODO remove debug
-        MyWarp.logger().info(
-                "Initated warp-limit: " + name + "(maxTotal: " + maxTotal + ", maxPublic: " + maxPublic
-                        + ", maxPrivate: " + maxPrivate + ", worlds: " + StringUtils.join(worlds, ";") + ")");
     }
 
     /**
