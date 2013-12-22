@@ -131,7 +131,7 @@ public class Warp implements Comparable<Warp> {
         this.z = creator.getLocation().getZ();
         this.yaw = Math.round(creator.getLocation().getYaw()) % 360;
         this.pitch = Math.round(creator.getLocation().getPitch()) % 360;
-        this.setPublicAll(publicAll);
+        this.publicAll = publicAll;
         this.permissions = new ArrayList<String>();
         this.groupPermissions = new ArrayList<String>();
         this.welcomeMessage = MyWarp
