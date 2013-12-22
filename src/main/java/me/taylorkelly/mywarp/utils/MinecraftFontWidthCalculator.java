@@ -15,7 +15,7 @@ public class MinecraftFontWidthCalculator {
     /**
      * The maximum width that can be used in Minecraft's chat
      */
-    private final static int chatwidth = 318; // 325
+    private final static int CHAT_WIDTH = 318; // 325
 
     /**
      * Stores all characters supported in Minecraft's chat
@@ -91,7 +91,7 @@ public class MinecraftFontWidthCalculator {
      * @return a padded string the same length as the chat
      */
     public static String paddingRight(String str, char pad) {
-        return paddingRight(str, pad, chatwidth);
+        return paddingRight(str, pad, CHAT_WIDTH);
     }
 
     /**
@@ -133,7 +133,7 @@ public class MinecraftFontWidthCalculator {
      * @return a padded string the same length as the chat
      */
     public static String paddingLeft(String str, char pad) {
-        return paddingLeft(str, pad, chatwidth);
+        return paddingLeft(str, pad, CHAT_WIDTH);
     }
 
     /**
@@ -176,7 +176,7 @@ public class MinecraftFontWidthCalculator {
      * @return a centralized string the same length as the chat
      */
     public static String centralize(String str, char pad) {
-        return centralize(str, pad, chatwidth);
+        return centralize(str, pad, CHAT_WIDTH);
     }
 
     /**
@@ -205,7 +205,7 @@ public class MinecraftFontWidthCalculator {
      * @return a string trimmed to the maximal chat width
      */
     public static String trim(String str) {
-        return trim(str, chatwidth);
+        return trim(str, CHAT_WIDTH);
     }
 
     /**
@@ -265,7 +265,7 @@ public class MinecraftFontWidthCalculator {
      * @return a string that contains the left and right aligned strings
      */
     public static String rightLeftAlign(String left, String right, char pad) {
-        return rightLeftAlign(left, right, pad, chatwidth);
+        return rightLeftAlign(left, right, pad, CHAT_WIDTH);
     }
 
     /**
@@ -295,12 +295,30 @@ public class MinecraftFontWidthCalculator {
         return left + StringUtils.repeat(Character.toString(pad), length / getWidth(pad)) + right;
     }
 
-    public static String toList(String... strings) {
-        return toList('-', strings);
+    /**
+     * Calls {@link #toList(char, String...)} using a '-' as list character
+     * 
+     * @param entries
+     *            the list's entries
+     * @return a string with all entries
+     */
+    public static String toList(String... entries) {
+        return toList('-', entries);
     }
 
-    public static String toList(char c, String... strings) {
-        return toList(c, chatwidth, strings);
+    /**
+     * Calls {@link #toList(char, int, String...)} using the chat width as
+     * length
+     * 
+     * @param listChar
+     *            the character that will be displayed as bullet point before
+     *            each entry
+     * @param entries
+     *            the list's entries
+     * @return a string with all entries
+     */
+    public static String toList(char listChar, String... entries) {
+        return toList(listChar, CHAT_WIDTH, entries);
     }
 
     /**
@@ -322,7 +340,7 @@ public class MinecraftFontWidthCalculator {
         for (String entry : entries) {
             if (!fullLines.isEmpty()) {
                 fullLines.appendNewLine();
-                //reset colors from the previous entry
+                // reset colors from the previous entry
                 fullLines.append(ChatColor.RESET);
             }
 
