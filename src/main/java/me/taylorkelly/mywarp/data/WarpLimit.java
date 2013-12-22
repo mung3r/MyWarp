@@ -1,9 +1,11 @@
 package me.taylorkelly.mywarp.data;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.World;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
@@ -37,8 +39,11 @@ public class WarpLimit extends ValuePermissionContainer {
         this.maxPublic = maxPublic;
         this.maxPrivate = maxPrivate;
         this.worlds = worlds;
-        
-        MyWarp.logger().info("Initated warp-limit: " + name + "(maxTotal: " + maxTotal + ", maxPublic: " + maxPublic + ", maxPrivate: " + maxPrivate + ", worlds: " + StringUtils.join(worlds, ";") + ")"); 
+
+        // TODO remove debug
+        MyWarp.logger().info(
+                "Initated warp-limit: " + name + "(maxTotal: " + maxTotal + ", maxPublic: " + maxPublic
+                        + ", maxPrivate: " + maxPrivate + ", worlds: " + StringUtils.join(worlds, ";") + ")");
     }
 
     /**
@@ -69,14 +74,22 @@ public class WarpLimit extends ValuePermissionContainer {
     }
 
     public List<String> getEffectiveWorlds() {
+        // if the limit is global, worlds just contains "all"
+        if (isGlobal()) {
+            List<String> effectiveWorlds = new ArrayList<String>();
+            for (World world : MyWarp.server().getWorlds()) {
+                effectiveWorlds.add(world.getName());
+            }
+            return Collections.unmodifiableList(effectiveWorlds);
+        }
         return Collections.unmodifiableList(worlds);
     }
-    
+
     public boolean isGlobal() {
         return worlds.contains("all");
     }
-    
-    public boolean isEffectiveWorld (String worldname) {
+
+    public boolean isEffectiveWorld(String worldname) {
         return isGlobal() || worlds.contains(worldname);
     }
 }

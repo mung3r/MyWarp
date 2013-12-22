@@ -95,7 +95,7 @@ public class PermissionsManager implements PermissionsHandler {
         }
         return MyWarp.inst().getWarpSettings().timersDefaultWarmup;
     }
-
+    
     /**
      * Gets the {@link WarpLimit} affective for this player. Returns the default
      * limit if the player does not have any of the specific limits
@@ -105,8 +105,20 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the limit affective for this player
      */
     public WarpLimit getWarpLimit(Player player) {
+        return getWarpLimit(player, player.getWorld().getName());
+    }
+
+    /**
+     * Gets the {@link WarpLimit} affective for this player. Returns the default
+     * limit if the player does not have any of the specific limits
+     * 
+     * @param player
+     *            the player
+     * @return the limit affective for this player
+     */
+    public WarpLimit getWarpLimit(Player player, String world) {
         for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
-            if (!warpLimit.isEffectiveWorld(player.getWorld().getName())) {
+            if (!warpLimit.isEffectiveWorld(world)) {
                 continue;
             }
             if (hasPermission(player, "mywarp.limit." + warpLimit.getName())) {

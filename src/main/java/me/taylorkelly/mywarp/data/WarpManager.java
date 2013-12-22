@@ -185,11 +185,11 @@ public class WarpManager {
      * 
      * @return a set with all existing public warps
      */
-    public TreeSet<Warp> getWarps(boolean publicAll, String creator) {
+    public TreeSet<Warp> getWarps(Boolean publicAll, String creator) {
         TreeSet<Warp> ret = new TreeSet<Warp>();
 
         for (Warp warp : warpMap.values()) {
-            if (warp.isPublicAll() == publicAll && (creator == null || warp.isCreator(creator))) {
+            if ((publicAll == null || warp.isPublicAll() == publicAll) && (creator == null || warp.isCreator(creator))) {
                 ret.add(warp);
             }
         }

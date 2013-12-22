@@ -6,8 +6,9 @@ commands:
   assets:
     description: "Listet alle Warps des angegebenen [Spielers] zusammen mit dem entsprechenden Limit auf."
     heading: "{0}s Warps"
-    public-heading: "Öffentliche Warps"
-    private-heading: "Private Warps"
+    total-warps: "§7Warps in {0} ({1}):"
+    public-warps: "Öffentliche Warps ({0}):§f§o {1}"
+    private-warps: "Private Warps ({0}):§f§o {1}"
   create:
     created-successful: | 
       §b''{0}'' wurde erfolgreich erstellt.

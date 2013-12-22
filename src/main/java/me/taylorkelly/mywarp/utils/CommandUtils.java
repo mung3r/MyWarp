@@ -245,7 +245,7 @@ public class CommandUtils {
      * @param name
      *            the name to check
      * @throws CommandException
-     *             if the name canot be used for a new warp
+     *             if the name cannot be used for a new warp
      */
     public static void checkWarpname(CommandSender sender, String name) throws CommandException {
         if (MyWarp.inst().getWarpManager().warpExists(name)) {

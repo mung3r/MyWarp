@@ -2,6 +2,7 @@ package me.taylorkelly.mywarp.utils;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
 
 /**
@@ -40,13 +41,13 @@ public class MinecraftFontWidthCalculator {
      *            the string to check
      * @return the width of the string in pixels
      */
-    public static int getStringWidth(String str) {
+    public static int getWidth(String str) {
         int i = 0;
         if (str != null) {
             // remove chat colors
             str = ChatColor.stripColor(str);
             for (int j = 0; j < str.length(); j++) {
-                i += getCharWidth(str.charAt(j));
+                i += getWidth(str.charAt(j));
             }
         }
         return i;
@@ -60,7 +61,7 @@ public class MinecraftFontWidthCalculator {
      *            the character to check
      * @return the width of the character
      */
-    public static int getCharWidth(char c) {
+    public static int getWidth(char c) {
         int k = charWidthIndexIndex.indexOf(c);
         if (c != '\247' && k >= 0)
             return charWidths[k];
@@ -106,8 +107,8 @@ public class MinecraftFontWidthCalculator {
      * @return a padded string of the given length
      */
     public static String paddingRight(String str, char pad, int finalLength) {
-        finalLength -= getStringWidth(str);
-        return str + StringUtils.repeat(Character.toString(pad), finalLength / getCharWidth(pad));
+        finalLength -= getWidth(str);
+        return str + StringUtils.repeat(Character.toString(pad), finalLength / getWidth(pad));
     }
 
     /**
@@ -148,8 +149,8 @@ public class MinecraftFontWidthCalculator {
      * @return a padded string with the given length
      */
     public static String paddingLeft(String str, char pad, int finalLength) {
-        finalLength -= finalLength - getStringWidth(str);
-        return StringUtils.repeat(Character.toString(pad), finalLength / getCharWidth(pad)).concat(str);
+        finalLength -= finalLength - getWidth(str);
+        return StringUtils.repeat(Character.toString(pad), finalLength / getWidth(pad)).concat(str);
     }
 
     /**
@@ -191,8 +192,8 @@ public class MinecraftFontWidthCalculator {
      * @return a centralized string
      */
     public static String centralize(String str, char pad, int finalLength) {
-        finalLength -= getStringWidth(str);
-        String pading = StringUtils.repeat(Character.toString(pad), finalLength / getCharWidth(pad) / 2);
+        finalLength -= getWidth(str);
+        String pading = StringUtils.repeat(Character.toString(pad), finalLength / getWidth(pad) / 2);
         return pading + str + pading;
     }
 
@@ -208,7 +209,7 @@ public class MinecraftFontWidthCalculator {
     }
 
     /**
-     * Trims the given until it has the given length (in pixels, not
+     * Trims the given String until it has the given length (in pixels, not
      * characters). To do so, the method will remove characters from the end,
      * color codes are recognized and fully removed.
      * 
@@ -221,7 +222,7 @@ public class MinecraftFontWidthCalculator {
     public static String trim(String str, int length) {
         char[] chars = str.toCharArray();
         for (int i = chars.length - 1; i > 0; i--) {
-            if (getStringWidth(String.valueOf(chars)) <= length) {
+            if (getWidth(String.valueOf(chars)) <= length) {
                 return String.copyValueOf(chars);
             }
             chars = ArrayUtils.remove(chars, i);
@@ -284,13 +285,82 @@ public class MinecraftFontWidthCalculator {
      * @return a string that contains the left and right aligned strings
      */
     public static String rightLeftAlign(String left, String right, char pad, int length) {
-        length -= (getStringWidth(left) + getStringWidth(right));
+        length -= (getWidth(left) + getWidth(right));
         // the length is negative if both strings are larger than the required
         // length. If this happens we trim the left string.
         if (length < 0) {
             // TODO check if right is bigger?
-            left = trim(left, getStringWidth(left) + length);
+            left = trim(left, getWidth(left) + length);
         }
-        return left + StringUtils.repeat(Character.toString(pad), length / getCharWidth(pad)) + right;
+        return left + StringUtils.repeat(Character.toString(pad), length / getWidth(pad)) + right;
+    }
+
+    public static String toList(String... strings) {
+        return toList('-', strings);
+    }
+
+    public static String toList(char c, String... strings) {
+        return toList(c, chatwidth, strings);
+    }
+
+    /**
+     * Creates a not numbered list from the given strings. Each string
+     * represents an independent entry on the list. Strings that are linger than
+     * the given length will be split above several lines.
+     * 
+     * @param listChar
+     *            the character that will be displayed as bullet point before
+     *            each entry
+     * @param length
+     *            the maximal length of each entry in pixels
+     * @param entries
+     *            the list's entries
+     * @return a string with all entries
+     */
+    public static String toList(char listChar, int length, String... entries) {
+        StrBuilder fullLines = new StrBuilder();
+        for (String entry : entries) {
+            if (!fullLines.isEmpty()) {
+                fullLines.appendNewLine();
+                //reset colors from the previous entry
+                fullLines.append(ChatColor.RESET);
+            }
+
+            StrBuilder line = new StrBuilder();
+            String[] words = entry.split(" ");
+            line.append(listChar);
+            line.append(' ');
+
+            for (String word : words) {
+                // if the word itself is longer than the max. length, add chars
+                // as long as possible
+                if (getWidth(word) > length) {
+                    for (char c : word.toCharArray()) {
+                        if (getWidth(line.toString()) + getWidth(c) > length) {
+                            fullLines.appendln(line.toString());
+                            line.clear();
+                            line.appendPadding(3, ' ');
+                        }
+                        line.append(c);
+                    }
+                } else {
+                    // if the world plus the needed blank is longer than the
+                    // max. length, make a new line
+                    if (getWidth(line.toString()) + getWidth(word) + getWidth(' ') > length) {
+                        fullLines.appendln(line.toString());
+                        line.clear();
+                        line.appendPadding(3, ' ');
+                    }
+                    if (!line.isEmpty() && line.charAt(line.length() - 1) != ' ') {
+                        line.append(' ');
+                    }
+                    line.append(word);
+                }
+            }
+            if (!line.isEmpty()) {
+                fullLines.append(line.toString());
+            }
+        }
+        return fullLines.toString();
     }
 }
