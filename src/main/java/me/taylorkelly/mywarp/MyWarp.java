@@ -229,11 +229,14 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         if (getConnectionManager() != null) {
             getConnectionManager().close();
         }
+        // remove cached resource bundles
+        if (localizationManager != null) {
+            localizationManager.reload();
+        }
         // unregister dynamic permissions
         if (permissionsManager != null) {
             permissionsManager.unregisterPermissions();
         }
-
         // cancel all pending tasks
         getServer().getScheduler().cancelTasks(this);
 
