@@ -191,11 +191,7 @@ public class PermissionsManager implements PermissionsHandler {
                             + "' in the config", PermissionDefault.FALSE));
         }
         // per world overrides
-//        Map<String, Boolean> totalLimits = new HashMap<String, Boolean>();
-//        Map<String, Boolean> privateLimits = new HashMap<String, Boolean>();
-//        Map<String, Boolean> publicLimits = new HashMap<String, Boolean>();
         for (World world : MyWarp.server().getWorlds()) {
-            //Map<String, Boolean> perWorldLimits = new HashMap<String, Boolean>();
             String perm = "mywarp.limit.disobey." + world.getName();
 
             // mywarp.limit.disobey.[WORLDNAME].total
@@ -204,17 +200,11 @@ public class PermissionsManager implements PermissionsHandler {
             totalPerm.addParent("mywarp.limit.disobey.total", true);
             totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
             registerPermission(totalPerm);
-            //totalLimits.put(perm + ".total", true);
-            //perWorldLimits.put(perm + ".total", true);
-
-            // mywarp.limit.disobey.[WORLDNAME].private
             Permission privatePerm = new Permission(perm + ".private",
                     "User may disobey the private-warp limit in '" + world.getName() + "'");
             totalPerm.addParent("mywarp.limit.disobey.private", true);
             totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
             registerPermission(privatePerm);
-//            privateLimits.put(perm + ".private", true);
-//            perWorldLimits.put(perm + ".private", true);
 
             // mywarp.limit.disobey.[WORLDNAME].public
             Permission publicPerm = new Permission(perm + ".public", "User may disobey the public-warp limit in '"
@@ -222,19 +212,7 @@ public class PermissionsManager implements PermissionsHandler {
             totalPerm.addParent("mywarp.limit.disobey.public", true);
             totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
             registerPermission(publicPerm);
-//            publicLimits.put(perm + ".public", true);
-//            perWorldLimits.put(perm + ".public", true);
-
-            // mywarp.limit.disobey.[WORLDNAME].*
-//            registerPermission(new Permission("mywarp.limit.disobey." + world.getName() + ".*",
-//                    "User may disobey all limits in '" + world.getName() + "'", perWorldLimits));
         }
-//        registerPermission(new Permission("mywarp.limit.disobey.total",
-//                "User may disobey the total-warp limit in all worlds", totalLimits));
-//        registerPermission(new Permission("mywarp.limit.disobey.private",
-//                "User may disobey the private-warp limit in all worlds", privateLimits));
-//        registerPermission(new Permission("mywarp.limit.disobey.public",
-//                "User may disobey the public-warp limit in all worlds", publicLimits));
 
         // mywarp.cooldown permissions
         for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().timersCooldowns) {
