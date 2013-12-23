@@ -1,9 +1,16 @@
 package me.taylorkelly.mywarp.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeSet;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.data.WarpLimit;
 import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.MatchList;
@@ -15,7 +22,9 @@ import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -71,47 +80,107 @@ public class BasicCommands {
             player = CommandUtils.matchPlayer(sender, args.getString(0));
         }
 
-        TreeSet<Warp> publicWarps = MyWarp.inst().getWarpManager().getWarps(true, player.getName());
-        TreeSet<Warp> privateWarps = MyWarp.inst().getWarpManager().getWarps(false, player.getName());
-
-        String header = MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.assets.heading", sender, player.getName());
-        String publicHeader = MyWarp.inst().getLocalizationManager()
-                .getString("commands.assets.public-heading", sender);
-        String privateHeader = MyWarp.inst().getLocalizationManager()
-                .getString("commands.assets.private-heading", sender);
+        sender.sendMessage(ChatColor.GOLD
+                + MinecraftFontWidthCalculator.centralize(
+                        " "
+                                + MyWarp.inst()
+                                        .getLocalizationManager()
+                                        .getEffectiveString("commands.assets.heading", sender,
+                                                player.getName()) + " ", '-'));
 
         if (MyWarp.inst().getWarpSettings().limitsEnabled) {
-            header = header
-                    + " ("
-                    + (publicWarps.size() + privateWarps.size())
-                    + "/"
-                    + (MyWarp.inst().getPermissionsManager()
-                            .hasPermission(player, "mywarp.limit.total.unlimited") ? "-" : MyWarp.inst()
-                            .getPermissionsManager().getWarpLimit(player).getMaxTotal()) + ")";
+            Map<WarpLimit, TreeSet<Warp>> userWarps = new HashMap<WarpLimit, TreeSet<Warp>>();
+            List<String> worlds = new ArrayList<String>();
+            for (WarpLimit limit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
+                if (!MyWarp.inst().getPermissionsManager()
+                        .hasPermission(sender, "mywarp.limit." + limit.getName())) {
+                    continue;
+                }
+                userWarps.put(limit, null);
+                worlds.addAll(limit.getAffectedWorlds());
+            }
+            // if there is a world that is not covered by all custom warp
+            // limits, the default one is needed
+            if (!worlds.containsAll(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit
+                    .getAffectedWorlds())) {
+                userWarps.put(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit, null);
+            }
 
-            privateHeader = privateHeader
-                    + " ("
-                    + privateWarps.size()
-                    + "/"
-                    + (MyWarp.inst().getPermissionsManager()
-                            .hasPermission(player, "mywarp.limit.private.unlimited") ? "-" : MyWarp.inst()
-                            .getPermissionsManager().getWarpLimit(player).getMaxPrivate()) + ")";
+            for (Warp warp : MyWarp.inst().getWarpManager().getWarps(null, player.getName())) {
+                for (WarpLimit limit : userWarps.keySet()) {
+                    if (!limit.getAffectedWorlds().contains(warp.getWorld())) {
+                        continue;
+                    }
+                    TreeSet<Warp> limitWarps = userWarps.get(limit);
+                    if (limitWarps == null) {
+                        limitWarps = new TreeSet<Warp>();
+                        userWarps.put(limit, limitWarps);
+                    }
+                    limitWarps.add(warp);
+                }
+            }
 
-            publicHeader = publicHeader
-                    + " ("
-                    + publicWarps.size()
-                    + "/"
-                    + (MyWarp.inst().getPermissionsManager()
-                            .hasPermission(player, "mywarp.limit.public.unlimited") ? "-" : MyWarp.inst()
-                            .getPermissionsManager().getWarpLimit(player).getMaxPublic()) + ")";
+            for (Entry<WarpLimit, TreeSet<Warp>> entry : userWarps.entrySet()) {
+                Set<Warp> privateWarps = new TreeSet<Warp>();
+                Set<Warp> publicWarps = new TreeSet<Warp>();
+                for (Warp warp : entry.getValue()) {
+
+                    if (warp.isPublicAll()) {
+                        publicWarps.add(warp);
+                    } else {
+                        privateWarps.add(warp);
+                    }
+                }
+
+                String publicEntry = MyWarp
+                        .inst()
+                        .getLocalizationManager()
+                        .getEffectiveString("commands.assets.public-warps", sender,
+                                publicWarps.size() + "/" + entry.getKey().getPublicLimit(),
+                                CommandUtils.joinWarps(publicWarps));
+                String privateEntry = MyWarp
+                        .inst()
+                        .getLocalizationManager()
+                        .getEffectiveString("commands.assets.private-warps", sender,
+                                privateWarps.size() + "/" + entry.getKey().getPrivateLimit(),
+                                CommandUtils.joinWarps(privateWarps));
+
+                sender.sendMessage(MyWarp
+                        .inst()
+                        .getLocalizationManager()
+                        .getEffectiveString("commands.assets.total-warps", sender,
+                                StringUtils.join(entry.getKey().getAffectedWorlds(), ", "),
+                                entry.getValue().size() + "/" + entry.getKey().getTotalLimit()));
+                sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
+            }
+        } else {
+            Set<Warp> privateWarps = MyWarp.inst().getWarpManager().getWarps(false, player.getName());
+            Set<Warp> publicWarps = MyWarp.inst().getWarpManager().getWarps(true, player.getName());
+
+            String publicEntry = MyWarp
+                    .inst()
+                    .getLocalizationManager()
+                    .getEffectiveString("commands.assets.public-warps", sender, publicWarps.size(),
+                            CommandUtils.joinWarps(publicWarps));
+            String privateEntry = MyWarp
+                    .inst()
+                    .getLocalizationManager()
+                    .getEffectiveString("commands.assets.private-warps", sender, privateWarps.size(),
+                            CommandUtils.joinWarps(privateWarps));
+
+            StrBuilder worldNames = new StrBuilder();
+            for (World world : MyWarp.server().getWorlds()) {
+                worldNames.appendSeparator(", ");
+                worldNames.append(world.getName());
+            }
+
+            sender.sendMessage(MyWarp
+                    .inst()
+                    .getLocalizationManager()
+                    .getEffectiveString("commands.assets.total-warps", sender, worldNames.toString(),
+                            (privateWarps.size() + publicWarps.size())));
+            sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
         }
-
-        sender.sendMessage(ChatColor.GOLD + MinecraftFontWidthCalculator.centralize(" " + header + " ", '-'));
-        sender.sendMessage(ChatColor.GRAY + publicHeader + ": " + ChatColor.WHITE
-                + CommandUtils.joinWarps(publicWarps));
-        sender.sendMessage(ChatColor.GRAY + privateHeader + ": " + ChatColor.WHITE
-                + CommandUtils.joinWarps(privateWarps));
     }
 
     @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "commands.list.description", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
@@ -217,8 +286,7 @@ public class BasicCommands {
                             .getEffectiveString("commands.search.heading", sender, args.getJoinedStrings(0)));
             if (!matches.exactMatches.isEmpty()) {
                 sender.sendMessage(ChatColor.GRAY
-                        + MyWarp.inst()
-                                .getLocalizationManager()
+                        + MyWarp.inst().getLocalizationManager()
                                 .getString("commands.search.exact-heading", sender) + ": " + ChatColor.WHITE
                         + CommandUtils.joinWarps(matches.exactMatches));
             }
@@ -227,7 +295,7 @@ public class BasicCommands {
                         + MyWarp.inst()
                                 .getLocalizationManager()
                                 .getEffectiveString("commands.search.partital-heading", sender,
-                                        matches.matches.size()) +  ": " + ChatColor.WHITE
+                                        matches.matches.size()) + ": " + ChatColor.WHITE
                         + CommandUtils.joinWarps(matches.matches));
             }
         }

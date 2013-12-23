@@ -8,11 +8,11 @@ authors:
   - mung3r
   - thee
 softdepend:
+  - dynmap
   - bPermissions
   - PermissionsEx
   - GroupManager
   - Vault
-  - dynmap
 website: ${project.url}
 main: me.taylorkelly.mywarp.MyWarp
 commands:
@@ -117,15 +117,6 @@ permissions:
   mywarp.warp.world.currentworld:
     description: Can warp inside of worlds but not across them
     default: op
-  mywarp.limit.total.unlimited:
-    description: Can disobey total limit for warp creation
-    default: op
-  mywarp.limit.private.unlimited:
-    description: Can disobey limit for warp private creation
-    default: op
-  mywarp.limit.public.unlimited:
-    description: Can disobey limit for warp public creation
-    default: op
   mywarp.cooldown.disobey:
     description: Can disobey any cooldown
     default: op
@@ -141,13 +132,15 @@ permissions:
   mywarp.economy.free:
     description: Is never charged anywhere.
     default: op
-  mywarp.limit.unlimited:
+  mywarp.limit.disobey.*:
     description: Can disobey all limits for warp creation
     children:
-      mywarp.limit.total.unlimited: true
-      mywarp.limit.private.unlimited: true
-      mywarp.limit.public.unlimited: true
+      mywarp.limit.disobey.total: true
+      mywarp.limit.disobey.private: true
+      mywarp.limit.disobey.public: true
   mywarp.admin.*:
+    description: Admin /warp commands
+    children:
        mywarp.admin.accessAll: true
        mywarp.admin.modifyAll: true
        mywarp.admin.import: true
@@ -200,5 +193,5 @@ permissions:
     children:
       mywarp.warp.*: true
       mywarp.admin.*: true
-      mywarp.limit.unlimited: true
+      mywarp.limit.disobey.*: true
       mywarp.economy.free: true

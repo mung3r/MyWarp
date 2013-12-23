@@ -3,6 +3,7 @@ package me.taylorkelly.mywarp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -110,6 +111,7 @@ public class WarpSettings implements Reloadable {
     /**
      * Loads all values out of the FileConfiguration into the intern-logic
      */
+    @SuppressWarnings("unchecked")
     private void loadValues(FileConfiguration config) {
         limitsWarpLimits = new ArrayList<WarpLimit>();
         timersCooldowns = new ArrayList<Time>();
@@ -150,19 +152,18 @@ public class WarpSettings implements Reloadable {
 
         // Limits
         limitsEnabled = config.getBoolean("limits.enabled");
-        ConfigurationSection configuredLimits = config.getConfigurationSection("limits");
-        for (String key : config.getConfigurationSection("limits").getKeys(false)) {
-            if (key.equals("enabled")) {
-                // ignore the enabled option
-                continue;
-            } else if (key.equals("default")) {
-                limitsDefaultWarpLimit = new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
-                        configuredLimits.getInt(key + ".maxPublic", 0), configuredLimits.getInt(key
-                                + ".maxPrivate", 0));
+        ConfigurationSection configuredLimits = config.getConfigurationSection("limits.configured-limits");
+        for (String key : configuredLimits.getKeys(false)) {
+            if (key.equals("default")) {
+                // the default-limit is always global
+                limitsDefaultWarpLimit = new WarpLimit(key, configuredLimits.getInt(key + ".totalLimit", 0),
+                        configuredLimits.getInt(key + ".publicLimit", 0), configuredLimits.getInt(key
+                                + ".privateLimit", 0), Arrays.asList("all"));
             } else {
-                limitsWarpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".maxTotal", 0),
-                        configuredLimits.getInt(key + ".maxPublic", 0), configuredLimits.getInt(key
-                                + ".maxPrivate", 0)));
+                limitsWarpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".totalLimit", 0),
+                        configuredLimits.getInt(key + ".publicLimit", 0), configuredLimits.getInt(key
+                                + ".privateLimit", 0), (List<String>) configuredLimits.getList(key + ".affectedWorlds",
+                                Arrays.asList("all"))));
             }
         }
         Collections.sort(limitsWarpLimits);
@@ -248,12 +249,12 @@ public class WarpSettings implements Reloadable {
 
         // port limits
         config.set(
-                "limits.default.maxTotal",
+                "limits.configured-limits.default.maxTotal",
                 file.getInt("maxPublic", 5, "Maximum number of public warps any player can make")
                         + file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
-        config.set("limits.default.maxPublic",
+        config.set("limits.configured-limits.default.maxPublic",
                 file.getInt("maxPublic", 5, "Maximum number of public warps any player can make"));
-        config.set("limits.default.maxPrivate",
+        config.set("limits.configured-limits.default.maxPrivate",
                 file.getInt("maxPrivate", 10, "Maximum number of private warps any player can make"));
 
         // port database

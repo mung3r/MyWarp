@@ -1,5 +1,12 @@
 package me.taylorkelly.mywarp.data;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.bukkit.World;
+
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
 
 /**
@@ -8,27 +15,30 @@ import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
  */
 public class WarpLimit extends ValuePermissionContainer {
 
-    private final int maxTotal;
-    private final int maxPublic;
-    private final int maxPrivate;
+    private final int totalLimit;
+    private final int publicLimit;
+    private final int privateLimit;
+    private final List<String> affectedWorlds;
 
     /**
      * Initializes the WarpLimit. The given limits are stored internally.
      * 
      * @param name
      *            the name used on permission lookup
-     * @param maxTotal
+     * @param totalLimit
      *            the total warp-limit
-     * @param maxPublic
+     * @param publicLimit
      *            the public warp-limit
-     * @param maxPrivate
+     * @param privateLimit
      *            the private warp-limit
      */
-    public WarpLimit(String name, int maxTotal, int maxPublic, int maxPrivate) {
+    public WarpLimit(String name, int totalLimit, int publicLimit, int privateLimit,
+            List<String> affectedWorlds) {
         super(name);
-        this.maxTotal = maxTotal;
-        this.maxPublic = maxPublic;
-        this.maxPrivate = maxPrivate;
+        this.totalLimit = totalLimit;
+        this.publicLimit = publicLimit;
+        this.privateLimit = privateLimit;
+        this.affectedWorlds = affectedWorlds;
     }
 
     /**
@@ -36,8 +46,8 @@ public class WarpLimit extends ValuePermissionContainer {
      * 
      * @return the total warp-limit
      */
-    public int getMaxTotal() {
-        return maxTotal;
+    public int getTotalLimit() {
+        return totalLimit;
     }
 
     /**
@@ -45,8 +55,8 @@ public class WarpLimit extends ValuePermissionContainer {
      * 
      * @return the public warp-limit
      */
-    public int getMaxPublic() {
-        return maxPublic;
+    public int getPublicLimit() {
+        return publicLimit;
     }
 
     /**
@@ -54,7 +64,27 @@ public class WarpLimit extends ValuePermissionContainer {
      * 
      * @return the private warp-limit
      */
-    public int getMaxPrivate() {
-        return maxPrivate;
+    public int getPrivateLimit() {
+        return privateLimit;
+    }
+
+    public List<String> getAffectedWorlds() {
+        // if the limit is global, worlds just contains "all"
+        if (isGlobal()) {
+            List<String> affectedWorlds = new ArrayList<String>();
+            for (World world : MyWarp.server().getWorlds()) {
+                affectedWorlds.add(world.getName());
+            }
+            return Collections.unmodifiableList(affectedWorlds);
+        }
+        return Collections.unmodifiableList(affectedWorlds);
+    }
+
+    public boolean isGlobal() {
+        return affectedWorlds.contains("all");
+    }
+
+    public boolean isEffectiveWorld(String worldname) {
+        return isGlobal() || affectedWorlds.contains(worldname);
     }
 }

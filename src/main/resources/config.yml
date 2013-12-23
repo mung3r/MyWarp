@@ -27,14 +27,17 @@ warpSigns:
   - Warp
 limits:
   enabled: true
-  default:
-    maxTotal: 15
-    maxPublic: 5
-    maxPrivate: 10
-  user:
-    maxTotal: 8
-    maxPublic: 4
-    maxPrivate: 4
+  configured-limits:
+    default:
+      totalLimit: 15
+      publicLimit: 5
+      privateLimit: 10
+    user:
+      totalLimit: 8
+      publicLimit: 4
+      privateLimit: 4
+      affectedWorlds:
+      - test-world
 timers:
   enabled: false
   coolDownNotify: false
