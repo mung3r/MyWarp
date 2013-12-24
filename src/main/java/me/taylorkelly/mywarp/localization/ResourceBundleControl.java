@@ -27,7 +27,7 @@ public class ResourceBundleControl extends ResourceBundle.Control {
     @Override
     public List<String> getFormats(String baseName) {
         Validate.notNull(baseName);
-        return Collections.unmodifiableList(Arrays.asList("yml"));
+        return Collections.unmodifiableList(Arrays.asList("yml", "yaml"));
     }
 
     @Override
