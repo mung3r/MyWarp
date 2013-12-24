@@ -155,10 +155,10 @@ commands:
       §bDie neue Willkommensnachricht für ''{0}'' lautet:
       §7§o{1}
     description: "Ändert die Willkommensnachricht von §7<Name>§f. Du wirst anschließend separat nach der neuen Willkommensnachricht gefragt."
-    enter: "§bGib' die neue Willkommensnachricht für ''{0}'' ein:"
     enter: |
-      §bGib' die neue Willkommensnachricht für ''{0}'' ein.
-      §fNutze ''§7#none§f'' um sie zu deaktivieren und um ''§7#cancel§f'' abzubrechen.
+      §bGib die neue Willkommensnachricht für ''{0}'' ein.
+      §fNutze ''§7#none§f'' um sie zu löschen und um ''§7#cancel§f'' abzubrechen.
+    removed-successful: "§bDu hast die Willkommensnachricht von ''{0}'' entfernt."
 dynmap:
   marker: "<b>%warp%</b></br><i>Erstellt von %creator%</i>"
 economy:

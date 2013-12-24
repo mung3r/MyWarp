@@ -154,11 +154,11 @@ commands:
     changed-successful: |
       §bChanged welcome message for ''{0}'' to:
       §7§o{1}
-    removed-successful: "You have removed the welcome message from ''{0}''."
     description: "Changes the welcome message of §7<name>§f. You will be ask to enter the welcome message afterwards."
     enter: |
       §bEnter the new welcome message for ''{0}''.
       §fUse ''§7#none§f'' to disable it and ''§7#cancel§f'' to abort.
+    removed-successful: "§bYou have removed the welcome message from ''{0}''."
 dynmap:
   marker: "<b>%warp%</b></br><i>Created by %creator%</i>"
 economy:
