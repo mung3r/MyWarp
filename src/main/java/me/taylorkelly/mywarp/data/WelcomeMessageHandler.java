@@ -25,7 +25,7 @@ public class WelcomeMessageHandler {
      * The custom conversation factory
      */
     private static ConversationFactory conversationFactory = new ConversationFactory(MyWarp.inst())
-            .withModality(true).withLocalEcho(false).withTimeout(30).withEscapeSequence(ESCAPE_SEQUENCE)
+            .withModality(true).withTimeout(30).withEscapeSequence(ESCAPE_SEQUENCE)
             .withFirstPrompt(new WelcomeMessagePrompt());
 
     /**
