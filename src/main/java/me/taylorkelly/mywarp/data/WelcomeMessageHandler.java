@@ -67,7 +67,7 @@ public class WelcomeMessageHandler {
             return MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.welcome.enter", (Player) context.getForWhom(),
+                    .getString("commands.welcome.enter", (Player) context.getForWhom(),
                             warp.getName());
         }
     }
@@ -88,13 +88,13 @@ public class WelcomeMessageHandler {
                 return MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getEffectiveString("commands.welcome.removed-successful",
+                        .getString("commands.welcome.removed-successful",
                                 (Player) context.getForWhom(), warp.getName());
             } else {
                 return MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getEffectiveString("commands.welcome.changed-successful",
+                        .getString("commands.welcome.changed-successful",
                                 (Player) context.getForWhom(), warp.getName(), message);
             }
         }

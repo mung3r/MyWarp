@@ -44,7 +44,7 @@ public class WarpWarmup extends TimerAction<String> {
             player.sendMessage(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.warp-to.warmup.started", player, warp.getName(),
+                    .getString("commands.warp-to.warmup.started", player, warp.getName(),
                             duration.getSeconds()));
         }
 
@@ -69,7 +69,7 @@ public class WarpWarmup extends TimerAction<String> {
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst().getLocalizationManager()
-                                .getEffectiveString("economy.cannot-afford", player, fee));
+                                .getString("economy.cannot-afford", player, fee));
                 return;
             }
         }

@@ -46,10 +46,10 @@ public class CommandUtils {
 
             if (MyWarp.inst().getWarpSettings().dynamicsSuggestWarps && match != null) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("commands.utils.warp-suggestion", sender, query, match.getName()));
+                        .getString("commands.utils.warp-suggestion", sender, query, match.getName()));
             } else {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("commands.utils.warp-non-existent", sender, query));
+                        .getString("commands.utils.warp-non-existent", sender, query));
             }
         }
         return warp;
@@ -72,7 +72,7 @@ public class CommandUtils {
 
         if (!warp.isModifiable(sender)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.modify-permission", sender, warp.getName()));
+                    .getString("commands.modify-permission", sender, warp.getName()));
         }
         return warp;
     }
@@ -96,7 +96,7 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.utils.limit-reached.total", sender,
+                    .getString("commands.utils.limit-reached.total", sender,
                             (MyWarp.inst().getPermissionsManager().getWarpLimit(player).getTotalLimit())));
         }
     }
@@ -120,7 +120,7 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.utils.limit-reached.public", sender,
+                    .getString("commands.utils.limit-reached.public", sender,
                             MyWarp.inst().getPermissionsManager().getWarpLimit(player).getPublicLimit()));
         }
     }
@@ -144,7 +144,7 @@ public class CommandUtils {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getEffectiveString("commands.utils.limit-reached.private", sender,
+                    .getString("commands.utils.limit-reached.private", sender,
                             MyWarp.inst().getPermissionsManager().getWarpLimit(player).getPrivateLimit()));
         }
     }
@@ -196,7 +196,7 @@ public class CommandUtils {
         Player actuallPlayer = MyWarp.inst().getServer().getPlayer(name);
         if (actuallPlayer == null) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.utils.player-offline", sender, name));
+                    .getString("commands.utils.player-offline", sender, name));
         }
         return actuallPlayer;
     }
@@ -250,11 +250,11 @@ public class CommandUtils {
     public static void checkWarpname(CommandSender sender, String name) throws CommandException {
         if (MyWarp.inst().getWarpManager().warpExists(name)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.utils.warp-exists", sender, name));
+                    .getString("commands.utils.warp-exists", sender, name));
         }
         if (MyWarp.inst().getCommandsManager().hasSubCommand("mywarp", name)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.utils.name-is-cmd", sender, name));
+                    .getString("commands.utils.name-is-cmd", sender, name));
         }
     }
 

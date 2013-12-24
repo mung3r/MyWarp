@@ -28,7 +28,7 @@ public class RootCommands {
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("economy.cannot-afford", sender, fee));
+                        .getString("economy.cannot-afford", sender, fee));
             }
         }
 
@@ -38,7 +38,7 @@ public class RootCommands {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getEffectiveString(
+                        .getString(
                                 "commands.warp-to.cooldown.active",
                                 sender,
                                 MyWarp.inst().getTimerFactory()
@@ -49,7 +49,7 @@ public class RootCommands {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getEffectiveString(
+                        .getString(
                                 "commands.warp-to.warmup.active",
                                 sender,
                                 MyWarp.inst().getTimerFactory()

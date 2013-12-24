@@ -169,7 +169,7 @@ public class CommandsManager {
 
             if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("economy.cannot-afford", sender, fee));
+                        .getString("economy.cannot-afford", sender, fee));
             }
         }
         Object instance = instances.get(method);

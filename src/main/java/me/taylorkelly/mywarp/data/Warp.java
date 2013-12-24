@@ -577,13 +577,13 @@ public class Warp implements Comparable<Warp> {
         Location location = getLocation();
         if (location == null) {
             player.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("warp.world-non-existing", player, getWorld()));
+                    .getString("warp.world-non-existing", player, getWorld()));
         } else {
 
             switch (SafeTeleport.safeTeleport(player, location)) {
             case NONE:
                 player.sendMessage(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("warp.unsafe-loc.no-teleport", player, getName()));
+                        .getString("warp.unsafe-loc.no-teleport", player, getName()));
                 break;
             case ORIGINAL_LOC:
                 if (!welcomeMessage.isEmpty()) {
@@ -602,7 +602,7 @@ public class Warp implements Comparable<Warp> {
                 break;
             case SAFE_LOC:
                 player.sendMessage(MyWarp.inst().getLocalizationManager()
-                        .getEffectiveString("warp.unsafe-loc.closest-location", player, getName()));
+                        .getString("warp.unsafe-loc.closest-location", player, getName()));
                 visit();
 
                 if (MyWarp.inst().getWarpSettings().economyEnabled && charge) {

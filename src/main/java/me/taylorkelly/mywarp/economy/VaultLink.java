@@ -68,7 +68,7 @@ public class VaultLink implements EconomyLink {
                     + MyWarp.inst().getLocalizationManager().getString("economy.unknown-exception", sender));
         } else if (MyWarp.inst().getWarpSettings().economyInformAfterTransaction) {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("economy.transaction-complete", sender, amount));
+                    .getString("economy.transaction-complete", sender, amount));
         }
     }
 }

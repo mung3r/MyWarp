@@ -112,7 +112,7 @@ public class WarpSignManager implements Listener {
         if (!MyWarp.inst().getWarpManager().warpExists(name)) {
             player.sendMessage(ChatColor.RED
                     + MyWarp.inst().getLocalizationManager()
-                            .getEffectiveString("commands.utils.warp-non-existent", player, name));
+                            .getString("commands.utils.warp-non-existent", player, name));
             return;
         }
         final Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
@@ -120,7 +120,7 @@ public class WarpSignManager implements Listener {
         if (!warp.isUsable(player)) {
             player.sendMessage(ChatColor.RED
                     + MyWarp.inst().getLocalizationManager()
-                            .getEffectiveString("warp-signs.use-warp-permission", player, name));
+                            .getString("warp-signs.use-warp-permission", player, name));
             return;
         }
 
@@ -130,7 +130,7 @@ public class WarpSignManager implements Listener {
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst().getLocalizationManager()
-                                .getEffectiveString("economy.cannot-afford", player, fee));
+                                .getString("economy.cannot-afford", player, fee));
                 return;
             }
             MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
@@ -172,7 +172,7 @@ public class WarpSignManager implements Listener {
 
         if (!MyWarp.inst().getWarpManager().warpExists(name)) {
             player.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.utils.warp-non-existent", player, name));
+                    .getString("commands.utils.warp-non-existent", player, name));
             return false;
         }
         Warp warp = MyWarp.inst().getWarpManager().getWarp(name);
@@ -181,7 +181,7 @@ public class WarpSignManager implements Listener {
                 && !MyWarp.inst().getPermissionsManager()
                         .hasPermission(player, "mywarp.warp.sign.create.all")) {
             player.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("warp-signs.create-warp-permissione", player, name));
+                    .getString("warp-signs.create-warp-permissione", player, name));
             return false;
         }
 
@@ -191,7 +191,7 @@ public class WarpSignManager implements Listener {
             if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
                 player.sendMessage(ChatColor.RED
                         + MyWarp.inst().getLocalizationManager()
-                                .getEffectiveString("economy.cannot-afford", player, fee));
+                                .getString("economy.cannot-afford", player, fee));
                 return false;
             }
             MyWarp.inst().getEconomyLink().withdrawSender(player, fee);

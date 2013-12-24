@@ -142,12 +142,12 @@ public class CommandContext {
                 if (valueFlags.contains(flagName)) {
                     if (this.valueFlags.containsKey(flagName)) {
                         throw new CommandException(MyWarp.inst().getLocalizationManager()
-                                .getEffectiveString("commands.library.flag-already-set", sender, flagName));
+                                .getString("commands.library.flag-already-set", sender, flagName));
                     }
 
                     if (nextArg >= argList.size()) {
                         throw new CommandException(MyWarp.inst().getLocalizationManager()
-                                .getEffectiveString("commands.library.flag-no-value", sender, flagName));
+                                .getString("commands.library.flag-no-value", sender, flagName));
                     }
 
                     // If it is a value flag, read another argument and add it

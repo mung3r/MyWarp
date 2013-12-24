@@ -48,7 +48,7 @@ public class LocalizationManager implements Reloadable {
      */
     public LocalizationManager() throws LocalizationException {
         // create all language files that we provide
-        for (String bundleName : Arrays.asList("localization.yml", "localization_en.yml", "localization_de.yml")) {
+        for (String bundleName : Arrays.asList("mywarp_lang.yml", "mywarp_lang_en.yml", "mywarp_lang_de.yml")) {
             InputStream bundled = MyWarp.inst().getResource("lang/" + bundleName);
             FileConfiguration bundledConfig;
             try {
@@ -127,40 +127,47 @@ public class LocalizationManager implements Reloadable {
     }
 
     /**
-     * Gets {@link #getString(String, CommandSender)} and replaces all
-     * searchStrings with the given replacements. Form is searchString,
-     * replacement, searchString2, replacement2, etc. Will throw an exception if
-     * replacement's length is not even.
+     * Gets the string that is associated with the given key in the resource
+     * bundle that is used for the locale used by the the given command-sender.
+     * 
+     * @see #getString(String, Locale, Object...)
+     * @see #getCommandSenderLocale(CommandSender)
      * 
      * @param key
      *            the key of the string
      * @param sender
      *            the command-sender who receives this message
      * @param replacements
-     *            the replacements - must be even
-     * @return the corresponding string out of the language map with replaced
-     *         values
+     *            the replacements
+     * @return the corresponding string out of effective resource bundle
      */
-    public String getEffectiveString(String key, CommandSender sender, Object... replacements) {
-        return getEffectiveString(key, getCommandSenderLocale(sender), replacements);
+    public String getString(String key, CommandSender sender, Object... replacements) {
+        return getString(key, getCommandSenderLocale(sender), replacements);
     }
 
     /**
-     * Returns {@link #getString(String)} and replaces all searchStrings with
-     * the given replacements. Form is searchString, replacement, searchString2,
-     * replacement2, etc. Will throw an exception if replacement's length is not
-     * even.
+     * Gets the string that is associated with the given key in the resource
+     * bundle that is used for the given locale. If replacements are given, the
+     * string will be parsed via a {@link MessageFormat} to match all
+     * replacements with its placeholder.
+     * 
+     * This method will also replace any color code it finds with the
+     * corresponding {@link ChatColor}.
      * 
      * @param key
      *            the key of the string
      * @param replacements
-     *            the replacements - must be even
-     * @return the corresponding string out of the language map with replaced
-     *         values
+     *            the replacements
+     * @return the corresponding string out of effective resource bundle
      */
-    public String getEffectiveString(String key, Locale locale, Object... replacements) {
+    public String getString(String key, Locale locale, Object... replacements) {
         ResourceBundle resource = getResourceBundle(locale);
-        MessageFormat msgFormat = new MessageFormat(resource.getString(key));
+        String value = ChatColor.translateAlternateColorCodes('§', resource.getString(key));
+        // do not create a new MessageFormat if it won't be needed
+        if (replacements.length == 0) {
+            return value;
+        }
+        MessageFormat msgFormat = new MessageFormat(value);
         msgFormat.setLocale(resource.getLocale());
         return msgFormat.format(replacements);
     }
@@ -198,38 +205,7 @@ public class LocalizationManager implements Reloadable {
      * @return the corresponding resource-bundle
      */
     private ResourceBundle getResourceBundle(Locale locale) {
-        return YamlResourceBundle.getBundle("localization", locale, resourceBundleControl);
-    }
-
-    /**
-     * Gets the string associated with the given key in the corresponding
-     * ResourceBundle. To determine the correct resource bundle, this method
-     * tries to get the local used by the player. If the sender is not a Player
-     * ot the process fails, it defaults to the default-local set in the
-     * configuration.
-     * 
-     * @param key
-     *            the key of the string
-     * @param sender
-     *            the command-sender who receives this message
-     * @return the corresponding string out of the language map
-     */
-    public String getString(String key, CommandSender sender) {
-        return getString(key, getCommandSenderLocale(sender));
-    }
-
-    /**
-     * Gets the string associated with the given key in the corresponding
-     * ResourceBundle. This method will always attempt to use the default-locale
-     * set in the configuration.
-     * 
-     * @param key
-     *            the key of the string
-     * @return the corresponding string out of the language map
-     */
-    public String getString(String key, Locale locale) {
-        String value = getResourceBundle(locale).getString(key).trim();
-        return ChatColor.translateAlternateColorCodes('§', value);
+        return YamlResourceBundle.getBundle("mywarp_lang", locale, resourceBundleControl);
     }
 
     @Override
