@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.WarpLimit;
+import me.taylorkelly.mywarp.data.WelcomeMessageHandler;
 import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.MatchList;
@@ -306,9 +307,7 @@ public class BasicCommands {
 
         Warp warp = CommandUtils.getWarpForModification(sender, args.getJoinedStrings(0));
 
-        MyWarp.inst().getWarpManager().welcomeMessage(warp, sender);
-        sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getEffectiveString("commands.welcome.enter", sender, warp.getName()));
+        WelcomeMessageHandler.initiateWelcomeMessageChange(sender, warp);
     }
 
     @Command(aliases = { "help" }, usage = "#", desc = "commands.help.description", fee = Fee.HELP, max = 1, permissions = { "mywarp.warp.basic.help" })

@@ -151,9 +151,14 @@ commands:
     description: "Warps §7<player>§f to §7<name>§f if you may visit it."
     teleport-successful: "§bYou have teleported {0} to ''{1}''."
   welcome:
-    changed: "§bChanged welcome message for ''{0}'' to:"
+    changed-successful: |
+      §bChanged welcome message for ''{0}'' to:
+      §7§o{1}
+    removed-successful: "You have removed the welcome message from ''{0}''."
     description: "Changes the welcome message of §7<name>§f. You will be ask to enter the welcome message afterwards."
-    enter: "§bEnter the new welcome message for ''{0}'':"
+    enter: |
+      §bEnter the new welcome message for ''{0}''.
+      §fUse ''§7#none§f'' to disable it and ''§7#cancel§f'' to abort.
 dynmap:
   marker: "<b>%warp%</b></br><i>Created by %creator%</i>"
 economy:

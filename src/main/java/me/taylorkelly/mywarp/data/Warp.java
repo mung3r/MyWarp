@@ -586,7 +586,9 @@ public class Warp implements Comparable<Warp> {
                         .getEffectiveString("warp.unsafe-loc.no-teleport", player, getName()));
                 break;
             case ORIGINAL_LOC:
-                player.sendMessage(ChatColor.AQUA + getSpecificWelcomeMessage(player));
+                if (!welcomeMessage.isEmpty()) {
+                    player.sendMessage(ChatColor.AQUA + getSpecificWelcomeMessage(player));
+                }
                 visit();
 
                 if (MyWarp.inst().getWarpSettings().economyEnabled && charge) {

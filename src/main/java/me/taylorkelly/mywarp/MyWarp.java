@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import me.taylorkelly.mywarp.commands.RootCommands;
-import me.taylorkelly.mywarp.data.EventListener;
 import me.taylorkelly.mywarp.data.WarpManager;
 import me.taylorkelly.mywarp.data.WarpSignManager;
 import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
@@ -345,7 +344,6 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         if (getWarpSettings().warpSignsEnabled) {
             getServer().getPluginManager().registerEvents(new WarpSignManager(), this);
         }
-        getServer().getPluginManager().registerEvents(new EventListener(), this);
     }
 
     @Override

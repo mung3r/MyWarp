@@ -151,9 +151,14 @@ commands:
     description: "Teleportiert §7<Spieler>§f zu §7<Name>§f, wenn du den Warp besuchen kannst."
     teleport-successful: "§bDu hast {0} zu ''{1}'' teleportiert."
   welcome:
-    changed: "§Die neue Willkommensnachricht für ''{0}'' lautet:"
+    changed-successful: |
+      §bDie neue Willkommensnachricht für ''{0}'' lautet:
+      §7§o{1}
     description: "Ändert die Willkommensnachricht von §7<Name>§f. Du wirst anschließend separat nach der neuen Willkommensnachricht gefragt."
     enter: "§bGib' die neue Willkommensnachricht für ''{0}'' ein:"
+    enter: |
+      §bGib' die neue Willkommensnachricht für ''{0}'' ein.
+      §fNutze ''§7#none§f'' um sie zu deaktivieren und um ''§7#cancel§f'' abzubrechen.
 dynmap:
   marker: "<b>%warp%</b></br><i>Erstellt von %creator%</i>"
 economy:

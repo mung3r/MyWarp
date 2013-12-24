@@ -5,14 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.utils.MatchList;
-import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
-
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,15 +24,9 @@ public class WarpManager {
      */
     private Map<String, Warp> warpMap;
 
-    /**
-     * Self-cleaning storage for welcome messages
-     */
-    private ConcurrentHashMap<String, Warp> welcomeMessage;
-
     public WarpManager() {
-        welcomeMessage = new TempConcurrentHashMap<String, Warp>();
         warpMap = MyWarp.inst().getConnectionManager().getMap();
-        MyWarp.logger().info(getSize() + " warps loaded");
+        MyWarp.logger().info(getSize() + " warps loaded.");
     }
 
     /**
@@ -218,17 +207,6 @@ public class WarpManager {
     }
 
     /**
-     * Indicates that the given player is not longer expected to send a welcome
-     * message. Threadsafe.
-     * 
-     * @param player
-     *            the player
-     */
-    public void notWaiting(Player player) {
-        welcomeMessage.remove(player.getName());
-    }
-
-    /**
      * Gets the total number of all existing private warps created and owned by
      * this player
      * 
@@ -365,45 +343,6 @@ public class WarpManager {
     }
 
     /**
-     * Sets the welcome message to the given message for the warp that is stored
-     * under the given player in the welcomeMessages-Map. Threadsafe.
-     * 
-     * @param player
-     *            the player
-     * @param message
-     *            the message
-     */
-    public void setWelcomeMessage(Player player, String message) {
-        if (welcomeMessage.containsKey(player.getName())) {
-            Warp warp = welcomeMessage.get(player.getName());
-
-            // this method is almost always called asnyc so the warp needs to be
-            // locked for changes
-            synchronized (warp) {
-                warp.setWelcomeMessage(message);
-            }
-
-            // sendMessage is threadsafe
-            player.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getEffectiveString("commands.welcome.changed", player, warp.getName()));
-            player.sendMessage(ChatColor.AQUA + message);
-        }
-    }
-
-    /**
-     * Checks the given player needs to send a welcome message for a certain
-     * warp. Threadsafe.
-     * 
-     * @param player
-     *            the player
-     * @return true if this player still needs to send a welcome message, false
-     *         if not
-     */
-    public boolean waitingForWelcome(Player player) {
-        return welcomeMessage.containsKey(player.getName());
-    }
-
-    /**
      * Checks if a warp with the given name exist
      * 
      * @param name
@@ -456,18 +395,5 @@ public class WarpManager {
             results.add(warp);
         }
         return results;
-    }
-
-    /**
-     * Indicates that the given player is expected to send a new welcome message
-     * for the given warp. Threadsafe.
-     * 
-     * @param warp
-     *            the warp
-     * @param player
-     *            the player
-     */
-    public void welcomeMessage(Warp warp, final Player player) {
-        welcomeMessage.put(player.getName(), warp);
     }
 }
