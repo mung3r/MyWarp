@@ -66,6 +66,9 @@ public class MySQLConnection implements DataConnection {
      *             if a database access error occurs
      */
     private synchronized Connection getConnection() throws SQLException {
+        if (conn != null && !conn.isValid(5)) {
+            conn.close();
+        }
         if (conn == null || conn.isClosed()) {
             conn = DriverManager.getConnection(dsn, user, pass);
         }
