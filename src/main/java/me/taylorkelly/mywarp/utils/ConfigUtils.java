@@ -1,15 +1,19 @@
 package me.taylorkelly.mywarp.utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.logging.Level;
 
 import me.taylorkelly.mywarp.MyWarp;
 
+import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -42,11 +46,11 @@ public class ConfigUtils {
         try {
             reader = forceEncoding ? new InputStreamReader(stream, "UTF-8") : new InputStreamReader(stream);
             bufferedReader = new BufferedReader(reader);
-            StringBuilder builder = new StringBuilder();
+            StrBuilder builder = new StrBuilder();
             String line = null;
 
             while ((line = bufferedReader.readLine()) != null) {
-                builder.append(line).append(System.getProperty("line.separator"));
+                builder.appendln(line);
             }
             yamlConfig.loadFromString(builder.toString());
         } finally {
@@ -68,12 +72,14 @@ public class ConfigUtils {
      * If the configuration-file is unreadable, this method will return the
      * provided default-configuration.
      * 
+     * @param configFile
+     *            the file that holds the configuration
      * @param defaultConfig
      *            a FileConfiguration that contains all default values
      * @param forceEncoding
      *            if set, the stream will be read using <code>UTF-8</code>,
      *            instead of the default char-set
-     * @return the FileConfiguraion of the given file
+     * @return the FileConfiguration of the given file
      */
     public static FileConfiguration getYamlConfig(File configFile, FileConfiguration defaultConfig,
             boolean forceEncoding) {
@@ -104,7 +110,9 @@ public class ConfigUtils {
             // copy defaults for missing values
             config.setDefaults(defaultConfig);
             config.options().copyDefaults(true);
-            config.save(configFile);
+
+            // save the file
+            saveYamlConfig(configFile, config, forceEncoding);
         } catch (IOException e) {
             MyWarp.logger().log(Level.SEVERE,
                     "Failed to create default " + configFile.getName() + " , using build-in defaults: ", e);
@@ -115,5 +123,62 @@ public class ConfigUtils {
                             + " (not a FileConfiguration), using build-in defaults: ", e);
         }
         return config;
+    }
+
+    /**
+     * Saves the given FileConfiguration back to disk. If the file does not
+     * exist, it will be created.
+     * 
+     * @param configFile
+     *            the file that holds the configuration
+     * @param config
+     *            the FileConfiguration that should be saved
+     * @param forceEncoding
+     *            if set, the stream will be written using <code>UTF-8</code>,
+     *            instead of the default char-set
+     * @return true if the configuration could be saved
+     */
+    public static boolean saveYamlConfig(File configFile, FileConfiguration config, boolean forceEncoding) {
+        if (!configFile.exists()) {
+            try {
+                configFile.createNewFile();
+            } catch (IOException e) {
+                return false;
+            }
+        }
+
+        FileOutputStream stream = null;
+        OutputStreamWriter writer = null;
+        BufferedWriter bufferedWriter = null;
+        try {
+            stream = new FileOutputStream(configFile);
+            writer = forceEncoding ? new OutputStreamWriter(stream, "UTF-8") : new OutputStreamWriter(stream);
+            bufferedWriter = new BufferedWriter(writer);
+
+            writer.write(config.saveToString());
+            writer.flush();
+        } catch (IOException e) {
+            return false;
+        } finally {
+            if (bufferedWriter != null) {
+                try {
+                    bufferedWriter.close();
+                } catch (IOException e) {
+                }
+            }
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                }
+            }
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return true;
     }
 }
