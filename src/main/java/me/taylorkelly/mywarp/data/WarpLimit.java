@@ -68,6 +68,12 @@ public class WarpLimit extends ValuePermissionContainer {
         return privateLimit;
     }
 
+    /**
+     * Gets a list of all worlds affected by this limit. The returned list will
+     * be unmodifiable!
+     * 
+     * @return an unmodifiable list with all affected words
+     */
     public List<String> getAffectedWorlds() {
         // if the limit is global, worlds just contains "all"
         if (isGlobal()) {
@@ -80,10 +86,23 @@ public class WarpLimit extends ValuePermissionContainer {
         return Collections.unmodifiableList(affectedWorlds);
     }
 
+    /**
+     * Returns whether this limit is global and affects all worlds or not and
+     * only affects specific worlds.
+     * 
+     * @return true if the limit is global, false if not
+     */
     public boolean isGlobal() {
         return affectedWorlds.contains("all");
     }
 
+    /**
+     * Returns if the world of the given name is affected by this limit.
+     * 
+     * @param worldname
+     *            the case sensitive worldname
+     * @return true if the world is affected by this limit, false if not.
+     */
     public boolean isEffectiveWorld(String worldname) {
         return isGlobal() || affectedWorlds.contains(worldname);
     }

@@ -92,7 +92,7 @@ public class CommandUtils {
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpManager().playerCanBuildWarp(player)) {
+        if (!MyWarp.inst().getWarpManager().canBuildWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
@@ -116,7 +116,7 @@ public class CommandUtils {
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpManager().playerCanBuildPublicWarp(player)) {
+        if (!MyWarp.inst().getWarpManager().canBuildPublicWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
@@ -140,7 +140,7 @@ public class CommandUtils {
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpManager().playerCanBuildPrivateWarp(player)) {
+        if (!MyWarp.inst().getWarpManager().canBuildPrivateWarp(player)) {
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
@@ -168,14 +168,14 @@ public class CommandUtils {
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpManager().playerCanBuildWarp(player)) {
+        if (!MyWarp.inst().getWarpManager().canBuildWarp(player)) {
             return false;
         }
         if (publicAll) {
-            if (!MyWarp.inst().getWarpManager().playerCanBuildPublicWarp(player)) {
+            if (!MyWarp.inst().getWarpManager().canBuildPublicWarp(player)) {
                 return false;
             }
-        } else if (!MyWarp.inst().getWarpManager().playerCanBuildPrivateWarp(player)) {
+        } else if (!MyWarp.inst().getWarpManager().canBuildPrivateWarp(player)) {
             return false;
         }
         return true;

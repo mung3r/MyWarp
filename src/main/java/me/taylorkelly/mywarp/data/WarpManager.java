@@ -1,12 +1,15 @@
 package me.taylorkelly.mywarp.data;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.utils.MatchList;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -178,7 +181,8 @@ public class WarpManager {
         TreeSet<Warp> ret = new TreeSet<Warp>();
 
         for (Warp warp : warpMap.values()) {
-            if ((publicAll == null || warp.isPublicAll() == publicAll) && (creator == null || warp.isCreator(creator))) {
+            if ((publicAll == null || warp.isPublicAll() == publicAll)
+                    && (creator == null || warp.isCreator(creator))) {
                 ret.add(warp);
             }
         }
@@ -207,14 +211,17 @@ public class WarpManager {
     }
 
     /**
-     * Gets the total number of all existing private warps created and owned by
-     * this player
+     * Gets the number of all existing private warps created by the given
+     * player, on the given worlds.
      * 
      * @param player
      *            the player
-     * @return the number of all private warps owned by this player
+     * @param worlds
+     *            a list of worlds the warp must be on to be counted, can be
+     *            null
+     * @return the number of all private warps
      */
-    private int numPrivateWarpsPlayer(Player player, List<String> worlds) {
+    private int getPrivateWarpNumber(Player player, List<String> worlds) {
         int size = 0;
         for (Warp warp : warpMap.values()) {
             if (worlds != null && !worlds.contains(warp.getWorld())) {
@@ -228,15 +235,17 @@ public class WarpManager {
     }
 
     /**
-     * Gets the total number of all existing public warps created and owned by
-     * this player
+     * Gets the number of all existing public warps created by the given player,
+     * on the given worlds.
      * 
      * @param player
      *            the player
-     * @param list
-     * @return the number of all public warps owned by this player
+     * @param worlds
+     *            a list of worlds the warp must be on to be counted, can be
+     *            null
+     * @return the number of all public warps
      */
-    private int numPublicWarpsPlayer(Player player, List<String> worlds) {
+    private int getPublicWarpNumber(Player player, List<String> worlds) {
         int size = 0;
         for (Warp warp : warpMap.values()) {
             if (worlds != null && !worlds.contains(warp.getWorld())) {
@@ -250,14 +259,17 @@ public class WarpManager {
     }
 
     /**
-     * Gets the total number of all existing warps created and owned by this
-     * player
+     * Gets the number of all existing warps created by the given player, on the
+     * given worlds.
      * 
      * @param player
      *            the player
-     * @return the number of all warps owned by this player
+     * @param worlds
+     *            a list of worlds the warp must be on to be counted, can be
+     *            null
+     * @return the number of all warps
      */
-    private int numWarpsPlayer(Player player, List<String> worlds) {
+    private int getTotalWarpNumber(Player player, List<String> worlds) {
         int size = 0;
         for (Warp warp : warpMap.values()) {
             if (worlds != null && !worlds.contains(warp.getWorld())) {
@@ -273,41 +285,61 @@ public class WarpManager {
     /**
      * Checks if the given player may build additional private warps using his
      * private-limit. This method does not take into account if limits are
-     * enabled ot not!
+     * enabled or not!
      * 
      * @param player
      *            the player
      * @return true if the player can build additional private warps, false if
      *         not
      */
-    public boolean playerCanBuildPrivateWarp(Player player) {
+    public boolean canBuildPrivateWarp(Player player) {
+        // abort directly if the player can disobey limits on this world
         if (MyWarp.inst().getPermissionsManager()
                 .hasPermission(player, "mywarp.limit.disobey." + player.getWorld().getName() + ".private")) {
             return true;
         }
+
         WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        return numPrivateWarpsPlayer(player, limit.isGlobal() ? null : limit.getAffectedWorlds()) < limit
-                .getPrivateLimit();
+        List<String> affectedWorlds = new ArrayList<String>();
+        for (String world : limit.getAffectedWorlds()) {
+            // only count warps on worlds the player cannot disobey limits on
+            if (!MyWarp.inst().getPermissionsManager()
+                    .hasPermission(player, "mywarp.limit.disobey." + world + ".private")) {
+                affectedWorlds.add(world);
+            }
+        }
+
+        return getPrivateWarpNumber(player, affectedWorlds) < limit.getPrivateLimit();
     }
 
     /**
      * Checks if the given player may build additional warps using his
      * public-limit. This method does not take into account if limits are
-     * enabled ot not!
+     * enabled or not!
      * 
      * @param player
      *            the player
      * @return true if the player can build additional public warps, false if
      *         not
      */
-    public boolean playerCanBuildPublicWarp(Player player) {
+    public boolean canBuildPublicWarp(Player player) {
+        // abort directly if the player can disobey limits on this world
         if (MyWarp.inst().getPermissionsManager()
                 .hasPermission(player, "mywarp.limit.disobey." + player.getWorld().getName() + ".public")) {
             return true;
         }
+
         WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        return numPublicWarpsPlayer(player, limit.isGlobal() ? null : limit.getAffectedWorlds()) < limit
-                .getPublicLimit();
+        List<String> affectedWorlds = new ArrayList<String>();
+        for (String world : limit.getAffectedWorlds()) {
+            // only count warps on worlds the player cannot disobey limits on
+            if (!MyWarp.inst().getPermissionsManager()
+                    .hasPermission(player, "mywarp.limit.disobey." + world + ".public")) {
+                affectedWorlds.add(world);
+            }
+        }
+
+        return getPublicWarpNumber(player, affectedWorlds) < limit.getPublicLimit();
     }
 
     /**
@@ -319,14 +351,24 @@ public class WarpManager {
      *            the player
      * @return true if the player can build additional warps, false if not
      */
-    public boolean playerCanBuildWarp(Player player) {
+    public boolean canBuildWarp(Player player) {
+        // abort directly if the player can disobey limits on this world
         if (MyWarp.inst().getPermissionsManager()
                 .hasPermission(player, "mywarp.limit.disobey." + player.getWorld().getName() + ".total")) {
             return true;
         }
+
         WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        return numWarpsPlayer(player, limit.isGlobal() ? null : limit.getAffectedWorlds()) < limit
-                .getTotalLimit();
+        List<String> affectedWorlds = new ArrayList<String>();
+        for (String world : limit.getAffectedWorlds()) {
+            // only count warps on worlds the player cannot disobey limits on
+            if (!MyWarp.inst().getPermissionsManager()
+                    .hasPermission(player, "mywarp.limit.disobey." + world + ".total")) {
+                affectedWorlds.add(world);
+            }
+        }
+
+        return getTotalWarpNumber(player, affectedWorlds) < limit.getTotalLimit();
     }
 
     /**

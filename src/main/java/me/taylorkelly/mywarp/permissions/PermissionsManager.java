@@ -44,9 +44,9 @@ public class PermissionsManager implements PermissionsHandler {
     }
 
     /**
-     * Gets the cooldown (as {@link Time}) affective for this player. Returns the
-     * default-cooldown if the player does not have any of the of the specific
-     * cooldowns
+     * Gets the cooldown (as {@link Time}) affective for this player. Returns
+     * the default-cooldown if the player does not have any of the of the
+     * specific cooldowns
      * 
      * @param player
      *            the player
@@ -95,7 +95,7 @@ public class PermissionsManager implements PermissionsHandler {
         }
         return MyWarp.inst().getWarpSettings().timersDefaultWarmup;
     }
-    
+
     /**
      * Gets the {@link WarpLimit} affective for this player. Returns the default
      * limit if the player does not have any of the specific limits
@@ -195,22 +195,24 @@ public class PermissionsManager implements PermissionsHandler {
             String perm = "mywarp.limit.disobey." + world.getName();
 
             // mywarp.limit.disobey.[WORLDNAME].total
-            Permission totalPerm = new Permission(perm + ".total", "User may disobey the total-warp limit in '"
-                    + world.getName() + "'");
+            Permission totalPerm = new Permission(perm + ".total",
+                    "User may disobey the total-warp limit in '" + world.getName() + "'");
             totalPerm.addParent("mywarp.limit.disobey.total", true);
             totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
             registerPermission(totalPerm);
+
+            // mywarp.limit.disobey.[WORLDNAME].private
             Permission privatePerm = new Permission(perm + ".private",
                     "User may disobey the private-warp limit in '" + world.getName() + "'");
-            totalPerm.addParent("mywarp.limit.disobey.private", true);
-            totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
+            privatePerm.addParent("mywarp.limit.disobey.private", true);
+            privatePerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
             registerPermission(privatePerm);
 
             // mywarp.limit.disobey.[WORLDNAME].public
-            Permission publicPerm = new Permission(perm + ".public", "User may disobey the public-warp limit in '"
-                    + world.getName() + "'");
-            totalPerm.addParent("mywarp.limit.disobey.public", true);
-            totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
+            Permission publicPerm = new Permission(perm + ".public",
+                    "User may disobey the public-warp limit in '" + world.getName() + "'");
+            publicPerm.addParent("mywarp.limit.disobey.public", true);
+            publicPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
             registerPermission(publicPerm);
         }
 
