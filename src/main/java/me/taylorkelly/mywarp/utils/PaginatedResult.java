@@ -14,6 +14,9 @@ import org.bukkit.command.CommandSender;
  * Commands that wish to display a paginated list of results can use this class
  * to do the actual pagination, giving a list of items, a page number, and basic
  * formatting information.
+ * 
+ * @param <T>
+ *            the type that should be listed by this instance.
  */
 public abstract class PaginatedResult<T> {
     protected static final int PER_PAGE = 8;

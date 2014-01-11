@@ -14,8 +14,8 @@ public interface EconomyLink {
      * 
      * @param sender
      *            the sender to check
-     * @param the
-     *            amount that the sender needs to hold
+     * @param amount
+     *            the amount that the sender needs to hold
      * @return true if the sender has the given amount
      */
     public boolean canAfford(CommandSender sender, double amount);

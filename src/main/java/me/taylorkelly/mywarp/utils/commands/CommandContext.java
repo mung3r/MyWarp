@@ -51,6 +51,8 @@ public class CommandContext {
      * @param level
      *            An Integer representing where on what command level we are
      *            working - 0 for root, 1 for sub-commands.
+     * @param sender
+     *            the command-sender who initiated the command
      * @throws CommandException
      *             This is thrown if flag fails for some reason.
      */

@@ -22,9 +22,8 @@ import org.yaml.snakeyaml.representer.Representer;
 /**
  * A custom implementation of {@link YamlConfiguration} which fixes saving
  * multi-line strings. This change only needs a small modification on the
- * DumperOptions (provided by the {@link FancyDumperOptions}). The rest of code
- * is completely mirrored from bukkit's default implementation but needed due to
- * restricted constructors or methods.
+ * DumperOptions. The rest of code is completely mirrored from bukkit's default
+ * implementation but needed due to restricted constructors or methods.
  * 
  * @see <a href="https://bukkit.atlassian.net/browse/BUKKIT-48">BUKKIT-48</a>
  */

@@ -51,6 +51,7 @@ public class JDBCUtil {
      *            the database metadata to be used to look up this table
      * @param tableName
      *            the table name
+     * @return true if the table exists, false if not
      * 
      * @throws SQLException
      *             if an exception is encountered while accessing the database
@@ -69,6 +70,7 @@ public class JDBCUtil {
      *            the database metadata to be used to look up this table
      * @param tableName
      *            the case sensitive table name
+     * @return true if the table exists, false if not
      * 
      * @throws SQLException
      *             if an exception is encountered while accessing the database
@@ -95,6 +97,7 @@ public class JDBCUtil {
      *            the table name
      * @param columnName
      *            the column name
+     * @return true if the column exists, false if not
      * 
      * @throws SQLException
      *             if an exception is encountered while accessing the database
@@ -126,6 +129,7 @@ public class JDBCUtil {
      *            the case sensitive table name
      * @param columnName
      *            the case sensitive column name
+     * @return true if the column exists, false if not
      * 
      * @throws SQLException
      *             if an exception is encountered while accessing the database
@@ -154,6 +158,7 @@ public class JDBCUtil {
      *            the case sensitive column name
      * @param dataType
      *            the case insensitive data type
+     * @return true if the column is of the given data-type, false if not
      * 
      * @throws SQLException
      *             if an exception is encountered while accessing the database

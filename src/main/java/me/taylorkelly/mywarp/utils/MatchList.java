@@ -29,8 +29,6 @@ public class MatchList {
     /**
      * Gets the closest match. Will return null if no exact match could be found
      * 
-     * @param name
-     *            the name
      * @return the closest match, must be exact
      */
     public Warp getMatch() {

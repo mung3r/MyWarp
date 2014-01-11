@@ -286,9 +286,9 @@ public class CommandsManager {
      * Creates a colored multi-line string that reflects the usage of the given
      * command. The first line holds the full syntax using the root command
      * provided and all acceptable sub-command aliases together with acceptable
-     * flags as returned by {@link #getArguments(Command)} and the additional
-     * syntax defined by the command. The second line holds the description as
-     * described by the command.
+     * flags as returned by {@link #getArguments(Command, CommandSender)} and
+     * the additional syntax defined by the command. The second line holds the
+     * description as described by the command.
      * 
      * @param args
      *            the arguments that were used by the user
@@ -325,9 +325,8 @@ public class CommandsManager {
 
     /**
      * Bridge for bukkit's command-system. Will return false if the command name
-     * is not one of the registered root-commands. If it is, it will call
-     * {@link #execute(CommandSender, String, String[])} to execute the command
-     * and return true.
+     * is not one of the registered root-commands. If it is the command will be
+     * executed via this CommandsManager and always return true.
      * 
      * @param sender
      *            the command sender

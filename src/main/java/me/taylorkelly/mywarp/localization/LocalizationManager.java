@@ -64,30 +64,41 @@ public class LocalizationManager implements Reloadable {
                 } catch (IOException e) {
                 }
             }
+            // ...and update them!
             ConfigUtils.getYamlConfig(new File(MyWarp.inst().getDataFolder(), bundleName), bundledConfig,
                     true);
         }
     }
 
     /**
-     * Gets {@link #getString(String, CommandSender)} without colors
+     * Gets the string that is associated with the given key in the resource
+     * bundle that is used for the locale used by the the given command-sender
+     * and removes all color- and formatting codes.
+     * 
+     * @see #getString(String, Locale, Object...)
      * 
      * @param key
      *            the key of the string
      * @param sender
      *            the command-sender who receives this message
-     * @return the corresponding string out of the language map without colors
+     * @return the corresponding string out of the effective resource bundle
      */
     public String getColorlessString(String key, CommandSender sender) {
         return getColorlessString(key, getCommandSenderLocale(sender));
     }
 
     /**
-     * Returns {@link #getString(String)} without colors
+     * Gets the string that is associated with the given key in the resource
+     * bundle that is used for the given locale and removes all color- and
+     * formatting codes.
+     * 
+     * @see #getString(String, Locale, Object...)
      * 
      * @param key
      *            the key of the string
-     * @return the corresponding string out of the language map without colors
+     * @param locale
+     *            the locale
+     * @return the corresponding string out of the effective resource bundle
      */
     public String getColorlessString(String key, Locale locale) {
         return ChatColor.stripColor(getString(key, locale));
@@ -131,7 +142,6 @@ public class LocalizationManager implements Reloadable {
      * bundle that is used for the locale used by the the given command-sender.
      * 
      * @see #getString(String, Locale, Object...)
-     * @see #getCommandSenderLocale(CommandSender)
      * 
      * @param key
      *            the key of the string
@@ -139,7 +149,7 @@ public class LocalizationManager implements Reloadable {
      *            the command-sender who receives this message
      * @param replacements
      *            the replacements
-     * @return the corresponding string out of effective resource bundle
+     * @return the corresponding string out of the effective resource bundle
      */
     public String getString(String key, CommandSender sender, Object... replacements) {
         return getString(key, getCommandSenderLocale(sender), replacements);
@@ -156,9 +166,11 @@ public class LocalizationManager implements Reloadable {
      * 
      * @param key
      *            the key of the string
+     * @param locale
+     *            the locale
      * @param replacements
      *            the replacements
-     * @return the corresponding string out of effective resource bundle
+     * @return the corresponding string out of the effective resource bundle
      */
     public String getString(String key, Locale locale, Object... replacements) {
         ResourceBundle resource = getResourceBundle(locale);

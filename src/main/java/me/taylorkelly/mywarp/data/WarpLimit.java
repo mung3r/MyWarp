@@ -31,6 +31,9 @@ public class WarpLimit extends ValuePermissionContainer {
      *            the public warp-limit
      * @param privateLimit
      *            the private warp-limit
+     * @param affectedWorlds
+     *            a list of worlds affected by this plugin. If it contains
+     *            <code>all</code>, the limit is global.
      */
     public WarpLimit(String name, int totalLimit, int publicLimit, int privateLimit,
             List<String> affectedWorlds) {

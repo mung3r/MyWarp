@@ -114,6 +114,8 @@ public class PermissionsManager implements PermissionsHandler {
      * 
      * @param player
      *            the player
+     * @param world
+     *            the world that should be affected by the limit
      * @return the limit affective for this player
      */
     public WarpLimit getWarpLimit(Player player, String world) {

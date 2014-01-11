@@ -17,7 +17,7 @@ import me.taylorkelly.mywarp.MyWarp;
 import org.apache.commons.lang.Validate;
 
 /**
- * A custom implementation of {@link ResourceBundle.Control} for Yaml-files
+ * A custom implementation of {@link java.util.ResourceBundle.Control} for Yaml-files
  * only. ResourceBundle-files are expected to be found inside the plugin's data
  * folder. If the file does not exist (which is unlikely to happen), it tries to
  * load the file that is bundled with the plugin as fallback.

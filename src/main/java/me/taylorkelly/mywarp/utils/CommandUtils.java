@@ -159,6 +159,7 @@ public class CommandUtils {
      * @param publicAll
      *            whether public (true) or private (false) limits should be
      *            checked
+     * @return true if the sender may build more warps, false if not.
      * @throws CommandException
      *             if the command sender has reached one of his limits
      */

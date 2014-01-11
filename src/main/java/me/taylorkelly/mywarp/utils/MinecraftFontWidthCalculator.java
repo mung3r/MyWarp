@@ -260,8 +260,6 @@ public class MinecraftFontWidthCalculator {
      *            the string that should be aligned on the right
      * @param pad
      *            the padding character
-     * @param length
-     *            the length
      * @return a string that contains the left and right aligned strings
      */
     public static String rightLeftAlign(String left, String right, char pad) {

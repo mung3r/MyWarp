@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 /**
@@ -299,8 +300,8 @@ public class Warp implements Comparable<Warp> {
     /**
      * Invites the player of the given name to the warp
      * 
-     * @param group
-     *            the player's name
+     * @param player
+     *            the name of the player
      */
     public void invite(String player) {
         permissions.add(player);
@@ -398,6 +399,8 @@ public class Warp implements Comparable<Warp> {
     /**
      * Checks if the group of the given name is invited to this warp.
      * 
+     * @param group
+     *            the name of the group
      * @return true if invited, false if not.
      */
     public boolean isGroupInvited(String group) {
@@ -408,6 +411,8 @@ public class Warp implements Comparable<Warp> {
      * Checks if the given command-sender is invited due to one of his
      * permission-groups.
      * 
+     * @param sender
+     *            the command-sender
      * @return true if invited, false if not.
      */
     public boolean isGroupInvited(CommandSender sender) {
@@ -424,10 +429,9 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
-     * Checks if the given player is invited to this warp
+     * Checks if the given command-sender is invited to this warp
      * 
-     * @param player
-     *            the player's name
+     * @param sender the command-sender
      * @return true if the player is invited, false if not
      */
     public boolean isInvited(CommandSender sender) {
@@ -438,11 +442,11 @@ public class Warp implements Comparable<Warp> {
      * Checks if the given player is invited to this warp
      * 
      * @param player
-     *            the player's name
+     *            the name of the player
      * @return true if the player is invited, false if not
      */
-    public boolean isInvited(String name) {
-        return permissions.contains(name);
+    public boolean isInvited(String player) {
+        return permissions.contains(player);
     }
 
     /**
@@ -563,7 +567,7 @@ public class Warp implements Comparable<Warp> {
      * Attempts to teleport the given player to this warp. Will send an error
      * message to the player, if the warp's world does not exist. The teleport
      * itself is handled via
-     * {@link me.taylorkelly.mywarp.safety.SafeTeleport#safeTeleport(Player, Location, String)}
+     * {@link SafeTeleport#safeTeleport(Entity, Location)}
      * 
      * TODO Remove crappy implementation for warp-fees!
      * 

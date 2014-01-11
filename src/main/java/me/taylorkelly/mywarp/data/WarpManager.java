@@ -175,6 +175,13 @@ public class WarpManager {
     /**
      * Gets a sorted set with all warps matching the criteria in the network.
      * 
+     * @param publicAll
+     *            true if the warps should be public, false if private or null
+     *            for all types.
+     * @param creator
+     *            the exact creator-name of the warps or null for warps by all
+     *            creators
+     * 
      * @return a set with all existing public warps
      */
     public TreeSet<Warp> getWarps(Boolean publicAll, String creator) {
