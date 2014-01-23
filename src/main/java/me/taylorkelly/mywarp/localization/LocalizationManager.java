@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -174,7 +175,15 @@ public class LocalizationManager implements Reloadable {
      */
     public String getString(String key, Locale locale, Object... replacements) {
         ResourceBundle resource = getResourceBundle(locale);
-        String value = ChatColor.translateAlternateColorCodes('§', resource.getString(key));
+        String value;
+        try {
+            value = ChatColor.translateAlternateColorCodes('§', resource.getString(key));
+        } catch (MissingResourceException e) {
+            MyWarp.logger().warning(
+                    "The resource for '" + key + "' is missing in all resource bundles applicable for "
+                            + locale.toString() + ".");
+            return key;
+        }
         // do not create a new MessageFormat if it won't be needed
         if (replacements.length == 0) {
             return value;
