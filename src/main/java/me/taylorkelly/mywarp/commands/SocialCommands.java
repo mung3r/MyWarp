@@ -20,7 +20,7 @@ public class SocialCommands {
 
     private TempConcurrentHashMap<String, Warp> givenWarps = new TempConcurrentHashMap<String, Warp>();
 
-    @Command(aliases = { "give" }, usage = "<player> <name>", desc = "commands.given.description", fee = Fee.GIVE, min = 2, flags = "df", permissions = { "mywarp.warp.soc.give" })
+    @Command(aliases = { "give" }, usage = "<player> <name>", desc = "commands.give.description", fee = Fee.GIVE, min = 2, flags = "df", permissions = { "mywarp.warp.soc.give" })
     public void giveWarp(CommandContext args, CommandSender sender) throws CommandException {
         // check flag permissions first because anything else depends on them
         if (args.hasFlag('d')) {

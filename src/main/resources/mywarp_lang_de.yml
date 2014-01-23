@@ -27,7 +27,7 @@ commands:
     description: "Gibt §7<Name>§f an §7<Spieler>§f ab. Nutze [-d], um den Warp direkt abzugeben und [-f], um Limits zu ignorieren (falls aktiviert)."
     givee-limits: "{0} besitzt bereits das mögliche Maximum an Warps. Der Spieler muss einen Warp löschen, um diesen erhalten zu können."
     givee-message: "§b{0} möchte ''{1}'' an dich abgeben. Nutze '§f/warp accept§b', um den Warp zu akzeptieren."
-    given-successful: "§bYDu hast ''{0}'' an {1} abgegeben."
+    given-successful: "§bDu hast ''{0}'' an {1} abgegeben."
     is-owner: "{0} ist bereits der Besitzer."
   help:
     description: "Zeigt das Hilfemenü an."
