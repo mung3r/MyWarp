@@ -84,10 +84,9 @@ public class BasicCommands {
         sender.sendMessage(ChatColor.GOLD
                 + MinecraftFontWidthCalculator.centralize(
                         " "
-                                + MyWarp.inst()
-                                        .getLocalizationManager()
-                                        .getString("commands.assets.heading", sender,
-                                                player.getName()) + " ", '-'));
+                                + MyWarp.inst().getLocalizationManager()
+                                        .getString("commands.assets.heading", sender, player.getName()) + " ",
+                        '-'));
 
         if (MyWarp.inst().getWarpSettings().limitsEnabled) {
             Map<WarpLimit, TreeSet<Warp>> userWarps = new HashMap<WarpLimit, TreeSet<Warp>>();
@@ -124,12 +123,16 @@ public class BasicCommands {
             for (Entry<WarpLimit, TreeSet<Warp>> entry : userWarps.entrySet()) {
                 Set<Warp> privateWarps = new TreeSet<Warp>();
                 Set<Warp> publicWarps = new TreeSet<Warp>();
-                for (Warp warp : entry.getValue()) {
+                
+                //do not sort if there are no warps
+                if (entry.getValue() != null) {
+                    for (Warp warp : entry.getValue()) {
 
-                    if (warp.isPublicAll()) {
-                        publicWarps.add(warp);
-                    } else {
-                        privateWarps.add(warp);
+                        if (warp.isPublicAll()) {
+                            publicWarps.add(warp);
+                        } else {
+                            privateWarps.add(warp);
+                        }
                     }
                 }
 
@@ -151,7 +154,7 @@ public class BasicCommands {
                         .getLocalizationManager()
                         .getString("commands.assets.total-warps", sender,
                                 StringUtils.join(entry.getKey().getAffectedWorlds(), ", "),
-                                entry.getValue().size() + "/" + entry.getKey().getTotalLimit()));
+                                (privateWarps.size() + publicWarps.size()) + "/" + entry.getKey().getTotalLimit()));
                 sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
             }
         } else {
@@ -247,11 +250,8 @@ public class BasicCommands {
         try {
             cmdList.display(sender, results, args.getInteger(0, 1));
         } catch (NumberFormatException e) {
-            throw new CommandException(MyWarp
-                    .inst()
-                    .getLocalizationManager()
-                    .getString("commands.invalid-number", sender,
-                            StringUtils.join(args.getCommand(), ' ')));
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
+                    .getString("commands.invalid-number", sender, StringUtils.join(args.getCommand(), ' ')));
         }
     }
 
@@ -295,9 +295,8 @@ public class BasicCommands {
                 sender.sendMessage(ChatColor.GRAY
                         + MyWarp.inst()
                                 .getLocalizationManager()
-                                .getString("commands.search.partital-heading", sender,
-                                        matches.matches.size()) + ": " + ChatColor.WHITE
-                        + CommandUtils.joinWarps(matches.matches));
+                                .getString("commands.search.partital-heading", sender, matches.matches.size())
+                        + ": " + ChatColor.WHITE + CommandUtils.joinWarps(matches.matches));
             }
         }
     }
@@ -337,11 +336,8 @@ public class BasicCommands {
             cmdList.display(sender, MyWarp.inst().getCommandsManager().getUsableCommands(sender, "warp"),
                     args.getInteger(0, 1));
         } catch (NumberFormatException e) {
-            throw new CommandException(MyWarp
-                    .inst()
-                    .getLocalizationManager()
-                    .getString("commands.invalid-number", sender,
-                            StringUtils.join(args.getCommand(), ' ')));
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
+                    .getString("commands.invalid-number", sender, StringUtils.join(args.getCommand(), ' ')));
         }
     }
 
