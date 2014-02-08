@@ -49,7 +49,7 @@ commands:
     player:
       already-invited: "{0} ist bereits zu diesem Warp eingeladen."
       is-creator: "{0} hat diesen Warp erstellt, natürlich ist er eingeladen."
-      player-invited: "§b{0} hat dich zu ''{1}'' eingeladen. Nutze §f''/warp {0}'' §bum dich dorthin zu warpen."
+      player-invited: "§b{0} hat dich zu ''{1}'' eingeladen. Nutze §f''/warp {1}'' §bum dich dorthin zu warpen."
       private: "§bDu hast {0} zu ''{1}'' eingeladen."
       public: "§bDu hast {0} zu ''{1}'' eingeladen. Aber ''{1}'' ist immer noch öffentlich."
   info:
