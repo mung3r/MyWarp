@@ -177,7 +177,7 @@ public class LocalizationManager implements Reloadable {
         ResourceBundle resource = getResourceBundle(locale);
         String value;
         try {
-            value = ChatColor.translateAlternateColorCodes('§', resource.getString(key));
+            value = ChatColor.translateAlternateColorCodes('&', resource.getString(key));
         } catch (MissingResourceException e) {
             MyWarp.logger().warning(
                     "The resource for '" + key + "' is missing in all resource bundles applicable for "
