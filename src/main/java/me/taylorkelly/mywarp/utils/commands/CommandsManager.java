@@ -47,24 +47,23 @@ public class CommandsManager {
     }
 
     /**
-     * Checks if the command is usable by all possible command senders. If not,
-     * it checks if the given sender may use the command.
+     * Returns whether the given command sender may execute the given command
+     * because it is either the same or a superclass or superinterface of the
+     * command sender that is specified in the given command.
      * 
      * @param command
      *            the command to check
      * @param sender
      *            the sender the check
-     * @throws CommandException
-     *             If the sender may not execute the command
+     * @return true if the command sender can execute the command
      */
-    private void checkSender(Method method, CommandSender sender) throws CommandException {
-
+    private boolean canExecute(Method method, CommandSender sender) {
         Class<?>[] params = method.getParameterTypes();
 
         if (params[1] != CommandSender.class && !params[1].isAssignableFrom(sender.getClass())) {
-            throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("commands.library.invalid-sender", sender));
+            return false;
         }
+        return true;
     }
 
     /**
@@ -117,7 +116,10 @@ public class CommandsManager {
         if (!hasPermission(cmd, sender)) {
             throw new CommandPermissionsException();
         }
-        checkSender(method, sender);
+        if (!canExecute(method, sender)) {
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
+                    .getString("commands.library.invalid-sender", sender));
+        }
 
         final Set<Character> valueFlags = new HashSet<Character>();
         char[] flags = cmd.flags().toCharArray();
@@ -274,7 +276,7 @@ public class CommandsManager {
             }
             for (Method cmdMethod : entry.getValue().values()) {
                 Command cmd = cmdMethod.getAnnotation(Command.class);
-                if (hasPermission(cmd, sender) && !ret.contains(cmd)) {
+                if (hasPermission(cmd, sender) && canExecute(cmdMethod, sender) && !ret.contains(cmd)) {
                     ret.add(cmd);
                 }
             }
