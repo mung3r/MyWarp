@@ -88,6 +88,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
      * Constructs the instance
      */
     public MyWarp() {
+        super();
+
         instance = this;
     }
 
