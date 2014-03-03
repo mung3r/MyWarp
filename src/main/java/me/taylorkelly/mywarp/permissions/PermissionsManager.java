@@ -1,7 +1,9 @@
 package me.taylorkelly.mywarp.permissions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -94,6 +96,54 @@ public class PermissionsManager implements PermissionsHandler {
             }
         }
         return MyWarp.inst().getWarpSettings().timersDefaultWarmup;
+    }
+
+    /**
+     * Gets all {@link WarpLimit}s that could affect the given player.
+     * 
+     * @param player
+     *            the player
+     * @return all affective warp-limits
+     */
+    public Iterable<WarpLimit> getAffectiveWarpLimits(final Player player) {
+        List<WarpLimit> ret = new ArrayList<WarpLimit>();
+        Set<String> worlds = new HashSet<String>();
+        for (WarpLimit limit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
+            if (!hasPermission(player, "mywarp.limit." + limit.getName())) {
+                continue;
+            }
+            if (isLimitOverwritten(ret, limit)) {
+                continue;
+            }
+            ret.add(limit);
+            worlds.addAll(limit.getAffectedWorlds());
+        }
+        // if there is a world that is not covered by all custom warp
+        // limits, the default one is needed
+        if (!worlds.containsAll(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit.getAffectedWorlds())) {
+            ret.add(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit);
+        }
+        return ret;
+    }
+
+    /**
+     * Returns whether a warp-limit is effectively overwritten by an other
+     * warp-limit.
+     * 
+     * @param affectiveLimits
+     *            the limits that are already affective and could possibly
+     *            overwrite the the limit to check
+     * @param limit
+     *            the limit that could be overwritten
+     * @return true if the limit is overwritten, false if not
+     */
+    private boolean isLimitOverwritten(Iterable<WarpLimit> affectiveLimits, WarpLimit limit) {
+        for (WarpLimit overwritingLimit : affectiveLimits) {
+            if (overwritingLimit.getAffectedWorlds().containsAll(limit.getAffectedWorlds())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

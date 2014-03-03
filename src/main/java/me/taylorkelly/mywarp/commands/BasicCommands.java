@@ -1,10 +1,6 @@
 package me.taylorkelly.mywarp.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,6 +24,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * This class contains all commands that cover basic tasks. They should be
@@ -71,8 +70,8 @@ public class BasicCommands {
                 .getString("commands.delete.deleted-successful", sender, warp.getName()));
     }
 
-    @Command(aliases = { "assets", "pstats", "pinfo", "limits" }, usage = "[player]", desc = "commands.assets.description", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
-    public void listPlayerWarps(CommandContext args, CommandSender sender) throws CommandException {
+    @Command(aliases = { "assets", "limits", "pstats", "pinfo" }, usage = "[player]", desc = "commands.assets.description", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
+    public void showAssets(CommandContext args, CommandSender sender) throws CommandException {
         Player player = null;
         if (args.argsLength() == 0) {
             player = CommandUtils.checkPlayer(sender);
@@ -89,72 +88,57 @@ public class BasicCommands {
                         '-'));
 
         if (MyWarp.inst().getWarpSettings().limitsEnabled) {
-            Map<WarpLimit, TreeSet<Warp>> userWarps = new HashMap<WarpLimit, TreeSet<Warp>>();
-            List<String> worlds = new ArrayList<String>();
-            for (WarpLimit limit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
-                if (!MyWarp.inst().getPermissionsManager()
-                        .hasPermission(sender, "mywarp.limit." + limit.getName())) {
-                    continue;
-                }
-                userWarps.put(limit, null);
-                worlds.addAll(limit.getAffectedWorlds());
-            }
-            // if there is a world that is not covered by all custom warp
-            // limits, the default one is needed
-            if (!worlds.containsAll(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit
-                    .getAffectedWorlds())) {
-                userWarps.put(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit, null);
-            }
-
+            Iterable<WarpLimit> limits = MyWarp.inst().getPermissionsManager().getAffectiveWarpLimits(player);
+            Multimap<WarpLimit, Warp> limitWarps = HashMultimap.create();
+            
+            //match warp to limits
             for (Warp warp : MyWarp.inst().getWarpManager().getWarps(null, player.getName())) {
-                for (WarpLimit limit : userWarps.keySet()) {
-                    if (!limit.getAffectedWorlds().contains(warp.getWorld())) {
-                        continue;
+                for (WarpLimit limit : limits) {
+                    if (limit.getAffectedWorlds().contains(warp.getWorld())) {
+                        limitWarps.put(limit, warp);
                     }
-                    TreeSet<Warp> limitWarps = userWarps.get(limit);
-                    if (limitWarps == null) {
-                        limitWarps = new TreeSet<Warp>();
-                        userWarps.put(limit, limitWarps);
-                    }
-                    limitWarps.add(warp);
                 }
             }
-
-            for (Entry<WarpLimit, TreeSet<Warp>> entry : userWarps.entrySet()) {
+            
+            //get the warps stored for every existing limit
+            for (WarpLimit limit : limits) {
+                Collection<Warp> warps = limitWarps.get(limit);
+                
+                //match public/private warps
                 Set<Warp> privateWarps = new TreeSet<Warp>();
                 Set<Warp> publicWarps = new TreeSet<Warp>();
-                
-                //do not sort if there are no warps
-                if (entry.getValue() != null) {
-                    for (Warp warp : entry.getValue()) {
-
-                        if (warp.isPublicAll()) {
-                            publicWarps.add(warp);
-                        } else {
-                            privateWarps.add(warp);
-                        }
+                for (Warp warp : warps) {
+                    if (warp.isPublicAll()) {
+                        publicWarps.add(warp);
+                    } else {
+                        privateWarps.add(warp);
                     }
                 }
-
+                
+                //create the strings
                 String publicEntry = MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString("commands.assets.public-warps", sender,
-                                publicWarps.size() + "/" + entry.getKey().getPublicLimit(),
+                                publicWarps.size() + "/" + limit.getPublicLimit(),
                                 CommandUtils.joinWarps(publicWarps));
                 String privateEntry = MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString("commands.assets.private-warps", sender,
-                                privateWarps.size() + "/" + entry.getKey().getPrivateLimit(),
+                                privateWarps.size() + "/" + limit.getPrivateLimit(),
                                 CommandUtils.joinWarps(privateWarps));
 
+                //send the messages
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getString("commands.assets.total-warps", sender,
-                                StringUtils.join(entry.getKey().getAffectedWorlds(), ", "),
-                                (privateWarps.size() + publicWarps.size()) + "/" + entry.getKey().getTotalLimit()));
+                        .getString(
+                                "commands.assets.total-warps",
+                                sender,
+                                StringUtils.join(limit.getAffectedWorlds(), ", "),
+                                (privateWarps.size() + publicWarps.size()) + "/"
+                                        + limit.getTotalLimit()));
                 sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
             }
         } else {
