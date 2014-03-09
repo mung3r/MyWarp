@@ -1,17 +1,18 @@
 package me.taylorkelly.mywarp.timer;
 
-import java.util.HashMap;
-import java.util.Map;
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 /**
  * The TimerFactory manages running timers
  */
 public class TimerFactory {
 
-    private final Map<Object, Map<Class<? extends TimerAction<?>>, TimerAction<?>>> timers = new HashMap<Object, Map<Class<? extends TimerAction<?>>, TimerAction<?>>>();
+    private final Table<Object, Class<? extends TimerAction<?>>, TimerAction<?>> timers = HashBasedTable.create();
 
     /**
      * Registers a new timer. This method will start the timer right away.
@@ -22,12 +23,7 @@ public class TimerFactory {
     @SuppressWarnings("unchecked")
     // uncheck situation cannot happen, TimerAction is abstract!
     public void registerNewTimer(TimerAction<?> timer) {
-        Map<Class<? extends TimerAction<?>>, TimerAction<?>> timerMap = timers.get(timer.type);
-        if (timerMap == null) {
-            timerMap = new HashMap<Class<? extends TimerAction<?>>, TimerAction<?>>();
-            timers.put(timer.type, timerMap);
-        }
-        timerMap.put((Class<? extends TimerAction<?>>) timer.getClass(), timer);
+        timers.put(timer.type, (Class<? extends TimerAction<?>>) timer.getClass(), timer);
         timer.runTaskLater(MyWarp.inst(), timer.duration);
     }
 
@@ -42,16 +38,11 @@ public class TimerFactory {
      * @return true if the timer could be ended, false if not
      */
     public boolean cancelTimer(Object identifier, Class<? extends TimerAction<?>> clazz) {
-        Map<Class<? extends TimerAction<?>>, TimerAction<?>> timerMap = timers.get(identifier);
-        if (timerMap == null) {
-            return false;
-        }
-        TimerAction<?> timer = timerMap.get(identifier);
-        if (timer == null) {
+        TimerAction<?> timer = timers.remove(identifier, clazz);
+        if (timers == null){
             return false;
         }
         timer.cancel();
-        timerMap.remove(clazz);
         return true;
     }
 
@@ -66,7 +57,7 @@ public class TimerFactory {
      * @return true if a timer is currently running, false if not
      */
     public boolean hasRunningTimer(Object identifier, Class<? extends TimerAction<?>> clazz) {
-        return getTimer(identifier, clazz) != null;
+        return timers.get(identifier, clazz) != null;
     }
 
     /**
@@ -81,7 +72,7 @@ public class TimerFactory {
      * @return ticks remaining until the timer is executed
      */
     public long getRemainingTicks(Object identifier, Class<? extends TimerAction<?>> clazz) {
-        TimerAction<?> timer = getTimer(identifier, clazz);
+        TimerAction<?> timer = timers.get(identifier, clazz);
         if (timer != null) {
             return timer.getRemainingTicks();
         }
@@ -101,25 +92,8 @@ public class TimerFactory {
      */
     public int getRemainingSeconds(Object identifier, Class<? extends TimerAction<?>> clazz) {
         long remainingTicks = getRemainingTicks(identifier, clazz);
-        return remainingTicks != 0 ? (int) (remainingTicks / 20) : 0;
-    }
-
-    /**
-     * Gets the timer running for the given object, identified by the given
-     * class-type. Will return null if no timer is found.
-     * 
-     * @param identifier
-     *            the object the timer runs for
-     * @param clazz
-     *            the class of the timer
-     * @return the timer as identified
-     */
-    private TimerAction<?> getTimer(Object identifier, Class<? extends TimerAction<?>> clazz) {
-        Map<Class<? extends TimerAction<?>>, TimerAction<?>> timerMap = timers.get(identifier);
-        if (timerMap == null) {
-            return null;
-        }
-        return timerMap.get(clazz);
+        //by adding 0.5 it will always round properly
+        return remainingTicks != 0 ? (int) ((remainingTicks / 20) + 0.5) : 0;
     }
 
     /**
@@ -149,13 +123,13 @@ public class TimerFactory {
 
         @Override
         public void cancel() {
-            timers.get(type).remove(getClass());
+            timers.remove(type, getClass());
             super.cancel();
         }
 
         @Override
         public void run() {
-            timers.get(type).remove(getClass());
+            timers.remove(type, getClass());
             action();
         }
 
