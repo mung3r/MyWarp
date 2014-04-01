@@ -1,5 +1,7 @@
 package me.taylorkelly.mywarp.timer;
 
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,7 +15,7 @@ import me.taylorkelly.mywarp.timer.TimerFactory.TimerAction;
 /**
  * Represents the action that takes place once a warp-warmup is finished.
  */
-public class WarpWarmup extends TimerAction<String> {
+public class WarpWarmup extends TimerAction<UUID> {
 
     private static final int CHECK_FREQUENCY = 2;
 
@@ -34,7 +36,7 @@ public class WarpWarmup extends TimerAction<String> {
      *            the duration of the warmup
      */
     public WarpWarmup(TimerFactory timerFactory, Player player, Warp warp, Time duration) {
-        timerFactory.super(player.getName(), duration.getTicks());
+        timerFactory.super(player.getUniqueId(), duration.getTicks());
         this.warp = warp;
 
         originalLoc = player.getLocation().clone();
@@ -58,7 +60,7 @@ public class WarpWarmup extends TimerAction<String> {
 
     @Override
     public void action() {
-        Player player = MyWarp.server().getPlayerExact(type);
+        Player player = MyWarp.server().getPlayer(type);
         if (player == null) {
             return;
         }
@@ -96,7 +98,7 @@ public class WarpWarmup extends TimerAction<String> {
                 return;
             }
 
-            Player player = MyWarp.server().getPlayerExact(type);
+            Player player = MyWarp.server().getPlayer(type);
             if (player == null) {
                 cancel();
                 return;
@@ -127,7 +129,7 @@ public class WarpWarmup extends TimerAction<String> {
                 return;
             }
 
-            Player player = MyWarp.server().getPlayerExact(type);
+            Player player = MyWarp.server().getPlayer(type);
             if (player == null) {
                 cancel();
                 return;

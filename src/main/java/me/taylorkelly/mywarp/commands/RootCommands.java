@@ -34,7 +34,7 @@ public class RootCommands {
 
         Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(0));
         if (MyWarp.inst().getWarpSettings().timersEnabled) {
-            if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getName(), WarpCooldown.class)) {
+            if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getUniqueId(), WarpCooldown.class)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLocalizationManager()
@@ -42,10 +42,10 @@ public class RootCommands {
                                 "commands.warp-to.cooldown.active",
                                 sender,
                                 MyWarp.inst().getTimerFactory()
-                                        .getRemainingSeconds(sender.getName(), WarpCooldown.class)));
+                                        .getRemainingSeconds(sender.getUniqueId(), WarpCooldown.class)));
             }
 
-            if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getName(), WarpWarmup.class)) {
+            if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getUniqueId(), WarpWarmup.class)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLocalizationManager()
@@ -53,7 +53,7 @@ public class RootCommands {
                                 "commands.warp-to.warmup.active",
                                 sender,
                                 MyWarp.inst().getTimerFactory()
-                                        .getRemainingSeconds(sender.getName(), WarpWarmup.class)));
+                                        .getRemainingSeconds(sender.getUniqueId(), WarpWarmup.class)));
             }
 
             if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.warmup.disobey")) {

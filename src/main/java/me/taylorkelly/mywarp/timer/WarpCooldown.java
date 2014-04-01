@@ -1,5 +1,7 @@
 package me.taylorkelly.mywarp.timer;
 
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -8,7 +10,7 @@ import me.taylorkelly.mywarp.timer.TimerFactory.TimerAction;
 /**
  * Represents the action that takes place once a warp-cooldown is finished.
  */
-public class WarpCooldown extends TimerAction<String> {
+public class WarpCooldown extends TimerAction<UUID> {
 
     /**
      * Initializes the warp-cooldown.
@@ -21,13 +23,13 @@ public class WarpCooldown extends TimerAction<String> {
      *            the duration of the cooldown
      */
     public WarpCooldown(TimerFactory timerFactory, Player player, Time duration) {
-        timerFactory.super(player.getName(), duration.getTicks());
+        timerFactory.super(player.getUniqueId(), duration.getTicks());
     }
 
     @Override
     public void action() {
         if (MyWarp.inst().getWarpSettings().timersCooldownNotify) {
-            Player player = MyWarp.server().getPlayerExact(type);
+            Player player = MyWarp.server().getPlayer(type);
 
             if (player != null) {
                 player.sendMessage(MyWarp.inst().getLocalizationManager()
