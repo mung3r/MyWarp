@@ -8,13 +8,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.text.StrBuilder;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.data.Warp.Type;
 
+//FIXME HORRIBLE hack to make things compile
 public class SQLiteConnection implements DataConnection {
 
     /**
@@ -159,8 +166,8 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public Map<String, Warp> getMap() {
-        HashMap<String, Warp> ret = new HashMap<String, Warp>();
+    public Collection<Warp> getWarps() {
+        Collection<Warp> ret = new HashSet<Warp>();
         Statement stmnt = null;
         ResultSet rsWarps = null;
 
@@ -170,7 +177,6 @@ public class SQLiteConnection implements DataConnection {
 
             rsWarps = stmnt.executeQuery("SELECT * FROM " + table);
             while (rsWarps.next()) {
-                int index = rsWarps.getInt("id");
                 String name = rsWarps.getString("name");
                 String creator = rsWarps.getString("creator");
                 String world = rsWarps.getString("world");
@@ -184,9 +190,28 @@ public class SQLiteConnection implements DataConnection {
                 String groupPermissions = rsWarps.getString("groupPermissions");
                 String welcomeMessage = rsWarps.getString("welcomeMessage");
                 int visits = rsWarps.getInt("visits");
-                Warp warp = new Warp(index, name, creator, world, x, y, z, yaw, pitch, publicAll,
-                        permissions, groupPermissions, welcomeMessage, visits);
-                ret.put(name, warp);
+
+                UUID creatorId = MyWarp.server().getOfflinePlayer(creator).getUniqueId();
+                UUID worldId = MyWarp.server().getWorld(world).getUID();
+                Type type = publicAll ? Type.PUBLIC : Type.PRIVATE;
+
+                Set<UUID> invitedPlayers = new HashSet<UUID>();
+                for (String player : permissions.split(",")) {
+                    if (player.isEmpty()) {
+                        continue;
+                    }
+                    invitedPlayers.add(MyWarp.server().getOfflinePlayer(player).getUniqueId());
+                }
+                Set<String> invitedGroups = new HashSet<String>();
+                for (String group : groupPermissions.split(",")) {
+                    if (group.isEmpty()) {
+                        continue;
+                    }
+                    invitedGroups.add(group);
+                }
+                Warp warp = new Warp(name, creatorId, type, x, y, z, yaw, pitch, worldId, visits,
+                        welcomeMessage, invitedPlayers, invitedGroups);
+                ret.add(warp);
             }
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Load Exception: " + ex);
@@ -215,21 +240,28 @@ public class SQLiteConnection implements DataConnection {
             stmnt = conn
                     .prepareStatement("INSERT INTO "
                             + table
-                            + " (id, name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            stmnt.setInt(1, warp.getIndex());
-            stmnt.setString(2, warp.getName());
-            stmnt.setString(3, warp.getCreator());
-            stmnt.setString(4, warp.getWorld());
-            stmnt.setDouble(5, warp.getX());
-            stmnt.setInt(6, warp.getY());
-            stmnt.setDouble(7, warp.getZ());
-            stmnt.setInt(8, warp.getYaw());
-            stmnt.setInt(9, warp.getPitch());
-            stmnt.setBoolean(10, warp.isPublicAll());
-            stmnt.setString(11, warp.permissionsString());
-            stmnt.setString(12, warp.groupPermissionsString());
-            stmnt.setString(13, warp.getRawWelcomeMessage());
-            stmnt.setInt(14, warp.getVisits());
+                            + " (name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            stmnt.setString(1, warp.getName());
+            stmnt.setString(2, warp.getCreator().getName());
+            stmnt.setString(3, warp.getWorld().getName());
+            stmnt.setDouble(4, warp.getX());
+            stmnt.setInt(5, (int) warp.getY());
+            stmnt.setDouble(6, warp.getZ());
+            stmnt.setInt(7, (int) warp.getYaw());
+            stmnt.setInt(8, (int) warp.getPitch());
+            stmnt.setBoolean(9, warp.getType() == Type.PUBLIC ? true : false);
+
+            Set<UUID> invitedPlayerIds = warp.getInvitedPlayerIds();
+            StrBuilder dbData = new StrBuilder();
+            for (UUID playerId : invitedPlayerIds) {
+                dbData.appendSeparator(',');
+                dbData.append(MyWarp.server().getOfflinePlayer(playerId).getName());
+            }
+
+            stmnt.setString(10, dbData.toString());
+            stmnt.setString(11, StringUtils.join(warp.getInvitedGroups(), ','));
+            stmnt.setString(12, warp.getWelcomeMessage());
+            stmnt.setInt(13, warp.getVisits());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Insert Exception: ", ex);
@@ -251,8 +283,8 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("DELETE FROM " + table + " WHERE id = ?");
-            stmnt.setInt(1, warp.getIndex());
+            stmnt = conn.prepareStatement("DELETE FROM " + table + " WHERE name = ?");
+            stmnt.setString(1, warp.getName());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Delete Exception: ", ex);
@@ -268,15 +300,15 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public synchronized void publicizeWarp(Warp warp, boolean publicAll) {
+    public synchronized void updateType(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET publicAll = ? WHERE id = ?");
-            stmnt.setBoolean(1, publicAll);
-            stmnt.setInt(2, warp.getIndex());
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET publicAll = ? WHERE name = ?");
+            stmnt.setBoolean(1, warp.getType() == Type.PUBLIC ? true : false);
+            stmnt.setString(2, warp.getName());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Publicize Exception: ", ex);
@@ -299,9 +331,9 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET creator = ? WHERE id = ?");
-            stmnt.setString(1, warp.getCreator());
-            stmnt.setInt(2, warp.getIndex());
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET creator = ? WHERE name = ?");
+            stmnt.setString(1, warp.getCreator().getName());
+            stmnt.setString(2, warp.getName());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception: ", ex);
@@ -325,14 +357,14 @@ public class SQLiteConnection implements DataConnection {
             conn = getConnection();
 
             stmnt = conn.prepareStatement("UPDATE " + table
-                    + " SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE id = ?");
-            stmnt.setString(1, warp.getWorld());
+                    + " SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE name = ?");
+            stmnt.setString(1, warp.getWorld().getName());
             stmnt.setDouble(2, warp.getX());
-            stmnt.setInt(3, warp.getY());
+            stmnt.setInt(3, (int) warp.getY());
             stmnt.setDouble(4, warp.getZ());
-            stmnt.setInt(5, warp.getYaw());
-            stmnt.setInt(6, warp.getPitch());
-            stmnt.setInt(7, warp.getIndex());
+            stmnt.setInt(5, (int) warp.getYaw());
+            stmnt.setInt(6, (int) warp.getPitch());
+            stmnt.setString(7, warp.getName());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Location Exception: ", ex);
@@ -348,15 +380,23 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public synchronized void updatePermissions(Warp warp) {
+    public synchronized void updateInvitedPlayers(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET permissions = ? WHERE id = ?");
-            stmnt.setString(1, warp.permissionsString());
-            stmnt.setInt(2, warp.getIndex());
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET permissions = ? WHERE name = ?");
+
+            Set<UUID> invitedPlayerIds = warp.getInvitedPlayerIds();
+            StrBuilder dbData = new StrBuilder();
+            for (UUID playerId : invitedPlayerIds) {
+                dbData.appendSeparator(',');
+                dbData.append(MyWarp.server().getOfflinePlayer(playerId).getName());
+            }
+
+            stmnt.setString(1, dbData.toString());
+            stmnt.setString(2, warp.getName());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Permissions Exception: ", ex);
@@ -373,15 +413,15 @@ public class SQLiteConnection implements DataConnection {
     }
 
     @Override
-    public synchronized void updateGroupPermissions(Warp warp) {
+    public synchronized void updateInvitedGroups(Warp warp) {
         PreparedStatement stmnt = null;
 
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET groupPermissions = ? WHERE id = ?");
-            stmnt.setString(1, warp.groupPermissionsString());
-            stmnt.setInt(2, warp.getIndex());
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET groupPermissions = ? WHERE name = ?");
+            stmnt.setString(1, StringUtils.join(warp.getInvitedGroups(), ','));
+            stmnt.setString(2, warp.getName());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp GroupPermissions Exception: ", ex);
@@ -404,9 +444,9 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET visits = ? WHERE id = ?");
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET visits = ? WHERE name = ?");
             stmnt.setInt(1, warp.getVisits());
-            stmnt.setInt(2, warp.getIndex());
+            stmnt.setString(2, warp.getName());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Visits Exception: ", ex);
@@ -428,9 +468,9 @@ public class SQLiteConnection implements DataConnection {
         try {
             conn = getConnection();
 
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET welcomeMessage = ? WHERE id = ?");
-            stmnt.setString(1, warp.getRawWelcomeMessage());
-            stmnt.setInt(2, warp.getIndex());
+            stmnt = conn.prepareStatement("UPDATE " + table + " SET welcomeMessage = ? WHERE name = ?");
+            stmnt.setString(1, warp.getWelcomeMessage());
+            stmnt.setString(2, warp.getName());
             stmnt.executeUpdate();
         } catch (SQLException ex) {
             MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception: ", ex);

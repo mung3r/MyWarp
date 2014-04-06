@@ -2,18 +2,21 @@ package me.taylorkelly.mywarp.commands;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.data.Warp.Type;
 import me.taylorkelly.mywarp.data.WarpLimit;
+import me.taylorkelly.mywarp.data.WarpLimit.Limit;
 import me.taylorkelly.mywarp.data.WelcomeMessageHandler;
 import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
-import me.taylorkelly.mywarp.utils.MatchList;
+import me.taylorkelly.mywarp.utils.Matcher;
 import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
 import me.taylorkelly.mywarp.utils.PaginatedResult;
-import me.taylorkelly.mywarp.utils.PopularityWarpComparator;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
@@ -21,12 +24,16 @@ import me.taylorkelly.mywarp.utils.commands.CommandException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * This class contains all commands that cover basic tasks. They should be
@@ -39,11 +46,10 @@ public class BasicCommands {
     public void createPrivateWarp(CommandContext args, Player sender) throws CommandException {
         String name = args.getJoinedStrings(0);
 
-        CommandUtils.checkTotalLimit(sender);
-        CommandUtils.checkPrivateLimit(sender);
+        CommandUtils.checkLimits(sender, true, Type.PRIVATE);
         CommandUtils.checkWarpname(sender, name);
 
-        MyWarp.inst().getWarpManager().addWarpPrivate(name, sender);
+        MyWarp.inst().getWarpManager().addWarp(name, sender, Type.PRIVATE);
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
                 .getString("commands.create-private.created-successful", sender, name));
     }
@@ -52,18 +58,17 @@ public class BasicCommands {
     public void createPublicWarp(CommandContext args, Player sender) throws CommandException {
         String name = args.getJoinedStrings(0);
 
-        CommandUtils.checkTotalLimit(sender);
-        CommandUtils.checkPublicLimit(sender);
+        CommandUtils.checkLimits(sender, true, Type.PUBLIC);
         CommandUtils.checkWarpname(sender, name);
 
-        MyWarp.inst().getWarpManager().addWarpPublic(name, sender);
+        MyWarp.inst().getWarpManager().addWarp(name, sender, Type.PUBLIC);
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
                 .getString("commands.create.created-successful", sender, name));
     }
 
     @Command(aliases = { "delete", "remove" }, usage = "<name>", desc = "commands.delete.description", fee = Fee.DELETE, min = 1, permissions = { "mywarp.warp.basic.delete" })
     public void deleteWarp(CommandContext args, CommandSender sender) throws CommandException {
-        Warp warp = CommandUtils.getWarpForModification(sender, args.getJoinedStrings(0));
+        Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
 
         MyWarp.inst().getWarpManager().deleteWarp(warp);
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
@@ -71,8 +76,8 @@ public class BasicCommands {
     }
 
     @Command(aliases = { "assets", "limits", "pstats", "pinfo" }, usage = "[player]", desc = "commands.assets.description", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
-    public void showAssets(CommandContext args, CommandSender sender) throws CommandException {
-        Player player = null;
+    public void showAssets(CommandContext args, final CommandSender sender) throws CommandException {
+        final Player player;
         if (args.argsLength() == 0) {
             player = CommandUtils.checkPlayer(sender);
         } else {
@@ -90,46 +95,54 @@ public class BasicCommands {
         if (MyWarp.inst().getWarpSettings().limitsEnabled) {
             Iterable<WarpLimit> limits = MyWarp.inst().getPermissionsManager().getAffectiveWarpLimits(player);
             Multimap<WarpLimit, Warp> limitWarps = HashMultimap.create();
-            
-            //match warp to limits
-            for (Warp warp : MyWarp.inst().getWarpManager().getWarps(null, player.getName())) {
+
+            // match warp to limits
+            for (Warp warp : MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
+
+                @Override
+                public boolean apply(Warp warp) {
+                    return warp.isCreator(player);
+                }
+
+            })) {
                 for (WarpLimit limit : limits) {
-                    if (limit.getAffectedWorlds().contains(warp.getWorld())) {
+                    if (limit.getAffectedWorlds().contains(warp.getWorld().getName())) {
                         limitWarps.put(limit, warp);
                     }
                 }
             }
-            
-            //get the warps stored for every existing limit
+
+            // get the warps stored for every existing limit
             for (WarpLimit limit : limits) {
                 Collection<Warp> warps = limitWarps.get(limit);
-                
-                //match public/private warps
+
+                // match public/private warps
+                // TODO use yet another multimap ?
                 Set<Warp> privateWarps = new TreeSet<Warp>();
                 Set<Warp> publicWarps = new TreeSet<Warp>();
                 for (Warp warp : warps) {
-                    if (warp.isPublicAll()) {
+                    if (warp.getType() == Type.PUBLIC) {
                         publicWarps.add(warp);
-                    } else {
+                    } else if (warp.getType() == Type.PRIVATE) {
                         privateWarps.add(warp);
                     }
                 }
-                
-                //create the strings
+
+                // create the strings
                 String publicEntry = MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString("commands.assets.public-warps", sender,
-                                publicWarps.size() + "/" + limit.getPublicLimit(),
+                                publicWarps.size() + "/" + limit.getLimit(Limit.PUBLIC),
                                 CommandUtils.joinWarps(publicWarps));
                 String privateEntry = MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString("commands.assets.private-warps", sender,
-                                privateWarps.size() + "/" + limit.getPrivateLimit(),
+                                privateWarps.size() + "/" + limit.getLimit(Limit.PRIVATE),
                                 CommandUtils.joinWarps(privateWarps));
 
-                //send the messages
+                // send the messages
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLocalizationManager()
@@ -138,23 +151,40 @@ public class BasicCommands {
                                 sender,
                                 StringUtils.join(limit.getAffectedWorlds(), ", "),
                                 (privateWarps.size() + publicWarps.size()) + "/"
-                                        + limit.getTotalLimit()));
+                                        + limit.getLimit(Limit.TOTAL)));
                 sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
             }
         } else {
-            Set<Warp> privateWarps = MyWarp.inst().getWarpManager().getWarps(false, player.getName());
-            Set<Warp> publicWarps = MyWarp.inst().getWarpManager().getWarps(true, player.getName());
+            SortedSet<Warp> sortedWarps = new TreeSet<Warp>();
+            sortedWarps.addAll(MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
+
+                @Override
+                public boolean apply(Warp warp) {
+                    return warp.isCreator(player);
+                }
+
+            }));
+
+            Multimap<Type, Warp> warpsPerType = Multimaps.index(sortedWarps, new Function<Warp, Type>() {
+
+                @Override
+                public Type apply(Warp warp) {
+                    return warp.getType();
+                }
+
+            });
 
             String publicEntry = MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getString("commands.assets.public-warps", sender, publicWarps.size(),
-                            CommandUtils.joinWarps(publicWarps));
+                    .getString("commands.assets.public-warps", sender, warpsPerType.get(Type.PUBLIC).size(),
+                            CommandUtils.joinWarps(warpsPerType.get(Type.PUBLIC)));
             String privateEntry = MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getString("commands.assets.private-warps", sender, privateWarps.size(),
-                            CommandUtils.joinWarps(privateWarps));
+                    .getString("commands.assets.private-warps", sender,
+                            warpsPerType.get(Type.PRIVATE).size(),
+                            CommandUtils.joinWarps(warpsPerType.get(Type.PRIVATE)));
 
             StrBuilder worldNames = new StrBuilder();
             for (World world : MyWarp.server().getWorlds()) {
@@ -166,20 +196,55 @@ public class BasicCommands {
                     .inst()
                     .getLocalizationManager()
                     .getString("commands.assets.total-warps", sender, worldNames.toString(),
-                            (privateWarps.size() + publicWarps.size())));
+                            (warpsPerType.values().size())));
             sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
         }
     }
 
     @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "commands.list.description", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
-    public void listWarps(CommandContext args, CommandSender sender) throws CommandException {
-        TreeSet<Warp> results = MyWarp
-                .inst()
-                .getWarpManager()
-                .getUsableWarps(sender, args.getFlag('c'), args.getFlag('w'),
-                        args.hasFlag('p') ? new PopularityWarpComparator() : null);
+    public void listWarps(final CommandContext args, final CommandSender sender) throws CommandException {
+        final OfflinePlayer creator = args.hasFlag('c') ? MyWarp.inst().getWarpManager()
+                .getMatchingCreator(args.getFlag('c'), new Predicate<Warp>() {
 
-        PaginatedResult<Warp> cmdList = new PaginatedResult<Warp>(MyWarp.inst().getLocalizationManager()
+                    @Override
+                    public boolean apply(Warp warp) {
+                        return warp.isViewable(sender);
+                    }
+
+                }) : null;
+        final World world = args.hasFlag('w') ? MyWarp.inst().getWarpManager()
+                .getMatchingWorld(args.getFlag('w'), new Predicate<Warp>() {
+
+                    @Override
+                    public boolean apply(Warp warp) {
+                        return warp.isViewable(sender);
+                    }
+
+                }) : null;
+
+        // TODO throw exceptions on null?
+
+        SortedSet<Warp> results = args.hasFlag('p') ? new TreeSet<Warp>(new Warp.PopularityComparator())
+                : new TreeSet<Warp>();
+        results.addAll(MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
+
+            @Override
+            public boolean apply(Warp warp) {
+                if (!warp.isViewable(sender)) {
+                    return false;
+                }
+                if (creator != null && warp.isCreator(creator)) {
+                    return false;
+                }
+                if (world != null && warp.getWorldId() != world.getUID()) {
+                    return false;
+                }
+                return true;
+            }
+
+        }));
+
+        PaginatedResult<Warp> warpList = new PaginatedResult<Warp>(MyWarp.inst().getLocalizationManager()
                 .getColorlessString("commands.list.heading", sender)
                 + ", ") {
 
@@ -187,35 +252,24 @@ public class BasicCommands {
             public String format(Warp warp, CommandSender sender) {
                 // 'name'(+) by player
                 StringBuilder first = new StringBuilder();
-
-                if (warp.isCreator(sender)) {
-                    if (warp.isPublicAll()) {
-                        first.append(ChatColor.AQUA);
-                    } else {
-                        first.append(ChatColor.BLUE);
-                    }
-                } else if (warp.isPublicAll()) {
-                    first.append(ChatColor.GREEN);
-                } else {
-                    first.append(ChatColor.RED);
-                }
                 first.append("'");
+                first.append(warp.getType().getColor());
                 first.append(warp.getName());
-                first.append("'");
                 first.append(ChatColor.WHITE);
+                first.append("'");
                 first.append(" (");
-                first.append(warp.isPublicAll() ? "+" : "-");
+                first.append(warp.getType().getSymbol());
                 first.append(") ");
                 first.append(MyWarp.inst().getLocalizationManager()
                         .getColorlessString("commands.list.by", sender));
                 first.append(" ");
                 first.append(ChatColor.ITALIC);
 
-                if (warp.isCreator(sender)) {
+                if (sender instanceof Player && warp.isCreator((Player) sender)) {
                     first.append(MyWarp.inst().getLocalizationManager()
                             .getColorlessString("commands.list.you", sender));
                 } else {
-                    first.append(warp.getCreator());
+                    first.append(warp.getCreator().getName());
                 }
                 // @(x, y, z)
                 StringBuilder last = new StringBuilder();
@@ -232,7 +286,7 @@ public class BasicCommands {
         };
 
         try {
-            cmdList.display(sender, results, args.getInteger(0, 1));
+            warpList.display(sender, results, args.getInteger(0, 1));
         } catch (NumberFormatException e) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getString("commands.invalid-number", sender, StringUtils.join(args.getCommand(), ' ')));
@@ -246,49 +300,57 @@ public class BasicCommands {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("commands.point.reset", sender));
         } else {
-            Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(0));
+            Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(0));
+            warp.asCompassTarget(sender);
 
-            MyWarp.inst().getWarpManager().point(warp, sender);
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("commands.point.set", sender, warp.getName()));
         }
     }
 
+    // XXX color warp names
     @Command(aliases = { "search" }, flags = "p", usage = "<name>", desc = "commands.search.description", fee = Fee.SEARCH, min = 1, permissions = { "mywarp.warp.basic.search" })
-    public void searchWarps(CommandContext args, CommandSender sender) throws CommandException {
-        MatchList matches = MyWarp
-                .inst()
-                .getWarpManager()
-                .getMatches(args.getJoinedStrings(0), sender instanceof Player ? (Player) sender : null,
-                        args.hasFlag('p') ? new PopularityWarpComparator() : null);
+    public void searchWarps(CommandContext args, final CommandSender sender) throws CommandException {
+        Matcher matcher = Matcher.match(args.getJoinedStrings(0), new Predicate<Warp>() {
 
-        if (matches.exactMatches.size() == 0 && matches.matches.size() == 0) {
+            @Override
+            public boolean apply(Warp warp) {
+                return warp.isViewable(sender);
+            }
+
+        });
+        Warp exactMatch = matcher.getExactMatch();
+        SortedSet<Warp> matches = args.hasFlag('p') ? matcher.getMatches(new Warp.PopularityComparator())
+                : matcher.getMatches();
+
+        if (exactMatch == null && matches.isEmpty()) {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("commands.search.no-matches", sender, args.getJoinedStrings(0)));
         } else {
             sender.sendMessage(ChatColor.GOLD
                     + MyWarp.inst().getLocalizationManager()
                             .getString("commands.search.heading", sender, args.getJoinedStrings(0)));
-            if (!matches.exactMatches.isEmpty()) {
+
+            if (exactMatch != null) {
                 sender.sendMessage(ChatColor.GRAY
                         + MyWarp.inst().getLocalizationManager()
                                 .getString("commands.search.exact-heading", sender) + ": " + ChatColor.WHITE
-                        + CommandUtils.joinWarps(matches.exactMatches));
+                        + exactMatch.getName());
             }
-            if (!matches.matches.isEmpty()) {
+
+            if (!matches.isEmpty()) {
                 sender.sendMessage(ChatColor.GRAY
-                        + MyWarp.inst()
-                                .getLocalizationManager()
-                                .getString("commands.search.partital-heading", sender, matches.matches.size())
-                        + ": " + ChatColor.WHITE + CommandUtils.joinWarps(matches.matches));
+                        + MyWarp.inst().getLocalizationManager()
+                                .getString("commands.search.partital-heading", sender, matches.size()) + ": "
+                        + ChatColor.WHITE + CommandUtils.joinWarps(matches));
             }
         }
+
     }
 
     @Command(aliases = { "welcome" }, usage = "<name>", desc = "commands.welcome.description", fee = Fee.WELCOME, min = 1, permissions = { "mywarp.warp.basic.welcome" })
     public void setWarpWelcome(CommandContext args, Player sender) throws CommandException {
-
-        Warp warp = CommandUtils.getWarpForModification(sender, args.getJoinedStrings(0));
+        Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
 
         WelcomeMessageHandler.initiateWelcomeMessageChange(sender, warp);
     }
@@ -327,7 +389,7 @@ public class BasicCommands {
 
     @Command(aliases = { "update" }, usage = "<name>", desc = "commands.update.description", fee = Fee.UPDATE, min = 1, permissions = { "mywarp.warp.basic.update" })
     public void updateWarp(CommandContext args, Player sender) throws CommandException {
-        Warp warp = CommandUtils.getWarpForModification(sender, args.getJoinedStrings(0));
+        Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
 
         warp.setLocation(sender.getLocation());
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
@@ -336,32 +398,29 @@ public class BasicCommands {
 
     @Command(aliases = { "info", "stats" }, usage = "<name>", desc = "commands.info.description", fee = Fee.INFO, min = 1, permissions = { "mywarp.warp.basic.info" })
     public void showWarpInfo(CommandContext args, CommandSender sender) throws CommandException {
-        Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(0));
-        StringBuilder infos = new StringBuilder();
+        Warp warp = CommandUtils.getViewableWarp(sender, args.getJoinedStrings(0));
+        
+        StrBuilder infos = new StrBuilder();
 
         infos.append(ChatColor.GOLD);
-        // color the warp depending on its visibility
         infos.append(MyWarp
                 .inst()
                 .getLocalizationManager()
-                .getString(
-                        "commands.info.heading",
-                        sender,
-                        (warp.isPublicAll() ? ChatColor.GREEN : ChatColor.RED) + warp.getName()
-                                + ChatColor.GOLD));
-        infos.append("\n");
+                .getString("commands.info.heading", sender,
+                        warp.getType().getColor() + warp.getName() + ChatColor.GOLD));
+        infos.appendNewLine();
 
         infos.append(ChatColor.GRAY);
         infos.append(MyWarp.inst().getLocalizationManager().getString("commands.info.created-by", sender));
         infos.append(" ");
         infos.append(ChatColor.WHITE);
-        infos.append(warp.getCreator());
-        if (warp.isCreator(sender)) {
+        infos.append(warp.getCreator().getName());
+        if (sender instanceof Player && warp.isCreator((Player) sender)) {
             infos.append(" ");
             infos.append(MyWarp.inst().getLocalizationManager()
                     .getString("commands.info.created-by-you", sender));
         }
-        infos.append("\n");
+        infos.appendNewLine();
 
         infos.append(ChatColor.GRAY);
         infos.append(MyWarp.inst().getLocalizationManager().getString("commands.info.location", sender));
@@ -374,8 +433,8 @@ public class BasicCommands {
         infos.append(Math.round(warp.getZ()));
         infos.append(" ");
         infos.append(MyWarp.inst().getLocalizationManager()
-                .getString("commands.info.in-world", sender, warp.getWorld()));
-        infos.append("\n");
+                .getString("commands.info.in-world", sender, warp.getWorld().getName()));
+        infos.appendNewLine();
 
         if (warp.isModifiable(sender)) {
             infos.append(ChatColor.GRAY);
@@ -383,18 +442,30 @@ public class BasicCommands {
                     .getString("commands.info.invited-players", sender));
             infos.append(" ");
             infos.append(ChatColor.WHITE);
-            infos.append(warp.getAllInvitedPlayers().isEmpty() ? "-" : StringUtils.join(
-                    warp.getAllInvitedPlayers(), ", "));
-            infos.append("\n");
+
+            Set<UUID> invitedPlayerIds = warp.getInvitedPlayerIds();
+            if (invitedPlayerIds.isEmpty()) {
+                infos.append("-");
+            } else {
+                SortedSet<String> invitedPlayerNames = new TreeSet<String>();
+                for (UUID playerId : invitedPlayerIds) {
+                    invitedPlayerNames.add(MyWarp.server().getOfflinePlayer(playerId).getName());
+                }
+                infos.append(StringUtils.join(invitedPlayerNames, ", "));
+            }
+            infos.appendNewLine();
 
             infos.append(ChatColor.GRAY);
             infos.append(MyWarp.inst().getLocalizationManager()
                     .getString("commands.info.invited-groups", sender));
             infos.append(" ");
             infos.append(ChatColor.WHITE);
-            infos.append(warp.getAllInvitedGroups().isEmpty() ? "-" : StringUtils.join(
-                    warp.getAllInvitedGroups(), ", "));
-            infos.append("\n");
+
+            //XXX don't create new set when there are no invited groups?
+            SortedSet<String> invitedGroups = new TreeSet<String>();
+            invitedGroups.addAll(warp.getInvitedGroups());
+            infos.append(invitedGroups.isEmpty() ? "-" : StringUtils.join(invitedGroups, ", "));
+            infos.appendNewLine();
         }
 
         infos.append(ChatColor.GRAY);

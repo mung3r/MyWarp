@@ -1,6 +1,6 @@
 package me.taylorkelly.mywarp.dataconnections;
 
-import java.util.Map;
+import java.util.Collection;
 
 import me.taylorkelly.mywarp.data.Warp;
 
@@ -44,7 +44,7 @@ public interface DataConnection {
      * 
      * @return a map with all warps
      */
-    public Map<String, Warp> getMap();
+    public Collection<Warp> getWarps();
 
     /**
      * Adds the warp to the database
@@ -63,15 +63,12 @@ public interface DataConnection {
     public void deleteWarp(Warp warp);
 
     /**
-     * Publicizes or privatizes a warp in the database.
+     * Update's a warp's type in the databse
      * 
      * @param warp
      *            the warp
-     * @param publicAll
-     *            true if the warp should be publicized, false it should be
-     *            privatized
      */
-    public void publicizeWarp(Warp warp, boolean publicAll);
+    public void updateType(Warp warp);
 
     /**
      * Updates a warp's creator in the database
@@ -96,7 +93,7 @@ public interface DataConnection {
      * @param warp
      *            the warp
      */
-    public void updatePermissions(Warp warp);
+    public void updateInvitedPlayers(Warp warp);
 
     /**
      * Updates the group-permissions (list of invited groups) of the given warp
@@ -105,7 +102,7 @@ public interface DataConnection {
      * @param warp
      *            the warp
      */
-    public void updateGroupPermissions(Warp warp);
+    public void updateInvitedGroups(Warp warp);
 
     /**
      * Updates the visits of the given warp in the database

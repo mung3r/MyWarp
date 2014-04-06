@@ -2,12 +2,15 @@ package me.taylorkelly.mywarp.markers;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.data.Warp.Type;
 
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
+
+import com.google.common.base.Predicate;
 
 public class DynmapMarkers implements Markers {
 
@@ -48,15 +51,22 @@ public class DynmapMarkers implements Markers {
         markerSet.setLabelShow(MyWarp.inst().getWarpSettings().dynmapMarkerShowLable);
         markerSet.setMinZoom(MyWarp.inst().getWarpSettings().dynmapMarkerMinZoom);
 
-        // add all warps
-        for (Warp warp : MyWarp.inst().getWarpManager().getWarps(true, null)) {
+        // add all public warps
+        for (Warp warp : MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
+
+            @Override
+            public boolean apply(Warp warp) {
+                return warp.isType(Type.PUBLIC);
+            }
+            
+        })) {
             addWarp(warp);
         }
     }
 
     @Override
     public void addWarp(Warp warp) {
-        markerSet.createMarker(MARKER_ID + warp.getName(), warpLabel(warp), true, warp.getWorld(),
+        markerSet.createMarker(MARKER_ID + warp.getName(), warpLabel(warp), true, warp.getWorld().getName(),
                 warp.getX(), warp.getY(), warp.getZ(), markerIcon, false);
     }
 
@@ -65,7 +75,7 @@ public class DynmapMarkers implements Markers {
         Marker marker = getMatchingMarker(MARKER_ID + warp.getName());
 
         if (marker != null) {
-            marker.setLocation(warp.getWorld(), warp.getX(), warp.getY(), warp.getZ());
+            marker.setLocation(warp.getWorld().getName(), warp.getX(), warp.getY(), warp.getZ());
             marker.setLabel(warpLabel(warp));
         }
     }
@@ -90,7 +100,7 @@ public class DynmapMarkers implements Markers {
 
     private String warpLabel(Warp warp) {
         return warp.replaceWarpMacros(MyWarp.inst().getLocalizationManager()
-                .getString("dynmap.marker", MyWarp.inst().getWarpSettings().localizationDefLocale));
+                .getString("dynmap.marker", MyWarp.inst().getWarpSettings().localizationDefLocale), null);
 
     }
 }

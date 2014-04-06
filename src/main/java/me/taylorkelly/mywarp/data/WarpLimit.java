@@ -1,12 +1,13 @@
 package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
 import org.bukkit.World;
 
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.data.Warp.Type;
 import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
 
 /**
@@ -15,9 +16,12 @@ import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
  */
 public class WarpLimit extends ValuePermissionContainer {
 
-    private final int totalLimit;
-    private final int publicLimit;
-    private final int privateLimit;
+    public static enum Limit {
+        TOTAL, PRIVATE, PUBLIC
+    }
+
+    private final EnumMap<Limit, Integer> limits = new EnumMap<Limit, Integer>(WarpLimit.Limit.class);
+
     private final List<String> affectedWorlds;
 
     /**
@@ -38,55 +42,44 @@ public class WarpLimit extends ValuePermissionContainer {
     public WarpLimit(String name, int totalLimit, int publicLimit, int privateLimit,
             List<String> affectedWorlds) {
         super(name);
-        this.totalLimit = totalLimit;
-        this.publicLimit = publicLimit;
-        this.privateLimit = privateLimit;
+
+        limits.put(Limit.TOTAL, totalLimit);
+        limits.put(Limit.PUBLIC, publicLimit);
+        limits.put(Limit.PRIVATE, privateLimit);
         this.affectedWorlds = affectedWorlds;
     }
 
-    /**
-     * Gets the limit for all warps
-     * 
-     * @return the total warp-limit
-     */
-    public int getTotalLimit() {
-        return totalLimit;
+    public int getLimit(Limit limit) {
+        return limits.get(limit);
+    }
+
+    // mapping to warp-types
+    public int getLimit(Type type) {
+        switch (type) {
+        case PRIVATE:
+            return limits.get(Limit.PRIVATE);
+        case PUBLIC:
+            return limits.get(Limit.PUBLIC);
+        default:
+            return 0;
+        }
     }
 
     /**
-     * Gets the limit for public warps
+     * Gets a list of all worlds affected by this limit.
      * 
-     * @return the public warp-limit
+     * @return a list with all affected worlds
      */
-    public int getPublicLimit() {
-        return publicLimit;
-    }
-
-    /**
-     * Gets the limit for private warps
-     * 
-     * @return the private warp-limit
-     */
-    public int getPrivateLimit() {
-        return privateLimit;
-    }
-
-    /**
-     * Gets a list of all worlds affected by this limit. The returned list will
-     * be unmodifiable!
-     * 
-     * @return an unmodifiable list with all affected words
-     */
-    public List<String> getAffectedWorlds() {
+    public List<World> getAffectedWorlds() {
         // if the limit is global, worlds just contains "all"
         if (isGlobal()) {
-            List<String> affectedWorlds = new ArrayList<String>();
-            for (World world : MyWarp.server().getWorlds()) {
-                affectedWorlds.add(world.getName());
-            }
-            return Collections.unmodifiableList(affectedWorlds);
+            return MyWarp.server().getWorlds();
         }
-        return Collections.unmodifiableList(affectedWorlds);
+        List<World> ret = new ArrayList<World>();
+        for (String worldname : affectedWorlds) {
+            ret.add(MyWarp.server().getWorld(worldname));
+        }
+        return ret;
     }
 
     /**
@@ -100,13 +93,13 @@ public class WarpLimit extends ValuePermissionContainer {
     }
 
     /**
-     * Returns if the world of the given name is affected by this limit.
+     * Returns if the given world is affected by this limit.
      * 
-     * @param worldname
-     *            the case sensitive worldname
+     * @param world
+     *            the world
      * @return true if the world is affected by this limit, false if not.
      */
-    public boolean isEffectiveWorld(String worldname) {
-        return isGlobal() || affectedWorlds.contains(worldname);
+    public boolean isEffectiveWorld(World world) {
+        return isGlobal() || affectedWorlds.contains(world.getName());
     }
 }

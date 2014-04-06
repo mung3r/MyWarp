@@ -76,7 +76,7 @@ public class WarpWarmup extends TimerAction<UUID> {
             }
         }
 
-        warp.warp(player, true);
+        warp.teleport(player, true);
         if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.cooldown.disobey")) {
             MyWarp.inst()
                     .getTimerFactory()

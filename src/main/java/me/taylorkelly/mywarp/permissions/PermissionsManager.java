@@ -107,7 +107,7 @@ public class PermissionsManager implements PermissionsHandler {
      */
     public Iterable<WarpLimit> getAffectiveWarpLimits(final Player player) {
         List<WarpLimit> ret = new ArrayList<WarpLimit>();
-        Set<String> worlds = new HashSet<String>();
+        Set<World> worlds = new HashSet<World>();
         for (WarpLimit limit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
             if (!hasPermission(player, "mywarp.limit." + limit.getName())) {
                 continue;
@@ -155,7 +155,7 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the limit affective for this player
      */
     public WarpLimit getWarpLimit(Player player) {
-        return getWarpLimit(player, player.getWorld().getName());
+        return getWarpLimit(player, player.getWorld());
     }
 
     /**
@@ -168,7 +168,7 @@ public class PermissionsManager implements PermissionsHandler {
      *            the world that should be affected by the limit
      * @return the limit affective for this player
      */
-    public WarpLimit getWarpLimit(Player player, String world) {
+    public WarpLimit getWarpLimit(Player player, World world) {
         for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
             if (!warpLimit.isEffectiveWorld(world)) {
                 continue;
@@ -195,21 +195,20 @@ public class PermissionsManager implements PermissionsHandler {
     }
 
     /**
-     * Checks if the given player may access warps in the world of the given
-     * name from is current location
+     * Checks if the given player may access warps in the given world from is
+     * current location
      * 
      * @param player
      *            the player
-     * @param worldName
-     *            the name of the world
+     * @param world
+     *            the world
      * @return true if the player may use warps in this world, false if not
      */
-    public boolean playerCanAccessWorld(Player player, String worldName) {
-        if (player.getWorld().getName().equals(worldName)
-                && hasPermission(player, "mywarp.warp.world.currentworld")) {
+    public boolean canAccessWorld(Player player, World world) {
+        if (player.getWorld() == world && hasPermission(player, "mywarp.warp.world.currentworld")) {
             return true;
         }
-        if (hasPermission(player, "mywarp.warp.world." + worldName)) {
+        if (hasPermission(player, "mywarp.warp.world." + world.getName())) {
             return true;
         }
         return false;

@@ -32,7 +32,7 @@ public class RootCommands {
             }
         }
 
-        Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(0));
+        Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(0));
         if (MyWarp.inst().getWarpSettings().timersEnabled) {
             if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getUniqueId(), WarpCooldown.class)) {
                 throw new CommandException(MyWarp
@@ -57,7 +57,7 @@ public class RootCommands {
             }
 
             if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.warmup.disobey")) {
-                warp.warp(sender, true);
+                warp.teleport(sender, true);
 
                 if (!MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.cooldown.disobey")) {
                     MyWarp.inst()
@@ -76,7 +76,7 @@ public class RootCommands {
                                     .getPermissionsManager().getWarmup(sender)));
 
         } else {
-            warp.warp(sender, true);
+            warp.teleport(sender, true);
         }
     }
 }

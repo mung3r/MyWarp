@@ -20,7 +20,7 @@ public class SafeTeleport {
     /**
      * The individual teleport-status
      */
-    public enum TeleportStatus {
+    public static enum TeleportStatus {
         NONE, ORIGINAL_LOC, SAFE_LOC,
     };
 

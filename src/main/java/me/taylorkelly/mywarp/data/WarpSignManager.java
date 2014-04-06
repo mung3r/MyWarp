@@ -44,7 +44,7 @@ public class WarpSignManager implements Listener {
      * @param event
      *            the event
      */
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             Block block = event.getClickedBlock();
@@ -137,17 +137,17 @@ public class WarpSignManager implements Listener {
         }
 
         // workaround for BUKKIT-4365
-        if (!sign.getWorld().getName().equals(warp.getWorld())) {
+        if (!sign.getWorld().equals(warp.getWorld())) {
             MyWarp.server().getScheduler().scheduleSyncDelayedTask(MyWarp.inst(), new Runnable() {
 
                 @Override
                 public void run() {
-                    warp.warp(player, false);
+                    warp.teleport(player, false);
                 }
 
-            }, 1L);
+            }, 2L);
         } else {
-            warp.warp(player, false);
+            warp.teleport(player, false);
         }
 
     }

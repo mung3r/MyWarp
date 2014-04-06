@@ -1,86 +1,69 @@
 package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
+import javax.annotation.Nullable;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.utils.MatchList;
-
+import me.taylorkelly.mywarp.data.Warp.Type;
+import me.taylorkelly.mywarp.data.WarpLimit.Limit;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.command.CommandSender;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+
 /**
- * This class manages all warps in the network. It provides all methods that are
- * needed when making changes on the warp-network.
+ * A warp-manager represents a warp-network. Each warp within this network is
+ * unique.
  * 
  */
 public class WarpManager {
 
     /**
-     * This map represents the warp network. It stores all warps using their
-     * name as key.
+     * This map stores all warps managed by this manager under their name.
      */
-    private Map<String, Warp> warpMap;
+    private final Map<String, Warp> warpMap = new HashMap<String, Warp>();
+
+    public enum BuildWarp {
+        ALLOW, DENY_TOTAL, DENY_PRIVATE, DENY_PUBLIC
+    }
 
     public WarpManager() {
-        warpMap = MyWarp.inst().getConnectionManager().getMap();
-        MyWarp.logger().info(getSize() + " warps loaded.");
+        populate(MyWarp.inst().getConnectionManager().getWarps());
+        MyWarp.logger().info(getLoadedWarpNumber() + " warps loaded.");
     }
 
     /**
-     * Adds the given warp to the network
+     * Adds a newly created warp with the given name and type at the player's
+     * current position to this manager.
      * 
      * @param name
      *            the name of the warp
-     * @param warp
-     *            the warp
+     * @param player
+     *            the player
+     * @param type
+     *            the type
      */
-    public void addWarp(String name, Warp warp) {
+    public void addWarp(String name, Player player, Type type) {
+        Warp warp = new Warp(name, player, type);
+
         warpMap.put(name, warp);
         MyWarp.inst().getConnectionManager().addWarp(warp);
-    }
 
-    /**
-     * Creates a private warp owned by the given player at the his position and
-     * calls {@link #addWarp(String, Warp)} to add it to the network
-     * 
-     * @param name
-     *            the name of the warp
-     * @param player
-     *            the player
-     */
-    public void addWarpPrivate(String name, Player player) {
-        Warp warp = new Warp(name, player, false);
-        addWarp(name, warp);
-    }
-
-    /**
-     * Creates a public warp owned by the given player at the his position and
-     * calls {@link #addWarp(String, Warp)} to add it to the network. If Dynmap
-     * is used, a marker is added
-     * 
-     * @param name
-     *            the name of the warp
-     * @param player
-     *            the player
-     */
-    public void addWarpPublic(String name, Player player) {
-        Warp warp = new Warp(name, player);
-        addWarp(name, warp);
-
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled && type == Type.PUBLIC) {
             MyWarp.inst().getMarkers().addWarp(warp);
         }
     }
 
     /**
-     * Removes the given warp from the network. Will also remove the marker if
-     * needed.
+     * Deletes the given warp from this manager.
      * 
      * @param warp
      *            the warp
@@ -95,354 +78,189 @@ public class WarpManager {
     }
 
     /**
-     * Gets a {@link MatchList} with all warps accessible by the given player
-     * and matching the given name (exactly or partly). Optionally a comparator
-     * can be specified to control the internal sorting of the match-list
-     * elements.
+     * Populates this manager with all given warps.
      * 
-     * @param name
-     *            the name of the warp
-     * @param player
-     *            the player
-     * @param comperator
-     *            the comparator or null for default sorting
-     * @return a match list with warps matching the given criteria
+     * @param warps
+     *            a collection of warps
      */
-    public MatchList getMatches(String name, Player player, Comparator<Warp> comperator) {
-        TreeSet<Warp> exactMatches = new TreeSet<Warp>(comperator);
-        TreeSet<Warp> matches = new TreeSet<Warp>(comperator);
-
-        for (Warp warp : warpMap.values()) {
-            if (player != null && !warp.isUsable(player)) {
-                continue;
-            }
-            if (warp.getName().equalsIgnoreCase(name)) {
-                exactMatches.add(warp);
-            } else if (warp.getName().toLowerCase().contains(name.toLowerCase())) {
-                matches.add(warp);
-            }
+    public void populate(Collection<Warp> warps) {
+        for (Warp warp : warps) {
+            warpMap.put(warp.getName(), warp);
         }
-        if (exactMatches.size() > 1) {
-            Iterator<Warp> iterator = exactMatches.iterator();
-            while (iterator.hasNext()) {
-                Warp warp = iterator.next();
-                if (!warp.getName().equals(name)) {
-                    matches.add(warp);
-                    iterator.remove();
-                }
-            }
-        }
-        return new MatchList(exactMatches, matches);
     }
 
     /**
-     * Attempts to match the given creator string to a creator who owns warps
-     * usable by the given command-sender. This method will always return the
-     * full name of the searched creator or null if there either no or more than
-     * on match(es)
-     * 
-     * @param sender
-     *            the command-sender
-     * @param creator
-     *            the (part of) the searched creator
-     * @return the an exactly matching creator existing in the network or an
-     *         null if not exact match exist
-     */
-    public String getMatchingCreator(CommandSender sender, String creator) {
-        String match = null;
-
-        for (Warp warp : warpMap.values()) {
-            if (!warp.isUsable(sender)) {
-                continue;
-            }
-            String warpCreator = warp.getCreator();
-
-            // minecraft usernames are case insensitive
-            if (warpCreator.equalsIgnoreCase(creator)) {
-                return warpCreator;
-            }
-            if (!StringUtils.containsIgnoreCase(warpCreator, creator)) {
-                continue;
-            }
-            if (match != null && !match.equals(warpCreator)) {
-                return null;
-            }
-            match = warpCreator;
-        }
-        return match;
-    }
-
-    /**
-     * Gets a sorted set with all warps matching the criteria in the network.
-     * 
-     * @param publicAll
-     *            true if the warps should be public, false if private or null
-     *            for all types.
-     * @param creator
-     *            the exact creator-name of the warps or null for warps by all
-     *            creators
-     * 
-     * @return a set with all existing public warps
-     */
-    public TreeSet<Warp> getWarps(Boolean publicAll, String creator) {
-        TreeSet<Warp> ret = new TreeSet<Warp>();
-
-        for (Warp warp : warpMap.values()) {
-            if ((publicAll == null || warp.isPublicAll() == publicAll)
-                    && (creator == null || warp.isCreator(creator))) {
-                ret.add(warp);
-            }
-        }
-        return ret;
-    }
-
-    /**
-     * gets the number of all warps in the network
+     * Gets the number of all warps that are currently managed by this manger.
      * 
      * @return the total number of warps
      */
-    public int getSize() {
+    public int getLoadedWarpNumber() {
         return warpMap.size();
     }
 
     /**
-     * gets the warp of the given name from the warp network. Will return null
-     * if the warp does not exist.
+     * Checks if a warp with the given name is currently managed by this
+     * manager.
      * 
      * @param name
-     *            the warp's name
-     * @return the warp with the given name
-     */
-    public Warp getWarp(String name) {
-        return warpMap.get(name);
-    }
-
-    /**
-     * Gets the number of all existing private warps created by the given
-     * player, on the given worlds.
-     * 
-     * @param player
-     *            the player
-     * @param worlds
-     *            a list of worlds the warp must be on to be counted, can be
-     *            null
-     * @return the number of all private warps
-     */
-    private int getPrivateWarpNumber(Player player, List<String> worlds) {
-        int size = 0;
-        for (Warp warp : warpMap.values()) {
-            if (worlds != null && !worlds.contains(warp.getWorld())) {
-                continue;
-            }
-            if (warp.isCreator(player) && !warp.isPublicAll()) {
-                size++;
-            }
-        }
-        return size;
-    }
-
-    /**
-     * Gets the number of all existing public warps created by the given player,
-     * on the given worlds.
-     * 
-     * @param player
-     *            the player
-     * @param worlds
-     *            a list of worlds the warp must be on to be counted, can be
-     *            null
-     * @return the number of all public warps
-     */
-    private int getPublicWarpNumber(Player player, List<String> worlds) {
-        int size = 0;
-        for (Warp warp : warpMap.values()) {
-            if (worlds != null && !worlds.contains(warp.getWorld())) {
-                continue;
-            }
-            if (warp.isCreator(player) && warp.isPublicAll()) {
-                size++;
-            }
-        }
-        return size;
-    }
-
-    /**
-     * Gets the number of all existing warps created by the given player, on the
-     * given worlds.
-     * 
-     * @param player
-     *            the player
-     * @param worlds
-     *            a list of worlds the warp must be on to be counted, can be
-     *            null
-     * @return the number of all warps
-     */
-    private int getTotalWarpNumber(Player player, List<String> worlds) {
-        int size = 0;
-        for (Warp warp : warpMap.values()) {
-            if (worlds != null && !worlds.contains(warp.getWorld())) {
-                continue;
-            }
-            if (warp.isCreator(player)) {
-                size++;
-            }
-        }
-        return size;
-    }
-
-    /**
-     * Checks if the given player may build additional private warps using his
-     * private-limit. This method does not take into account if limits are
-     * enabled or not!
-     * 
-     * @param player
-     *            the player
-     * @return true if the player can build additional private warps, false if
-     *         not
-     */
-    public boolean canBuildPrivateWarp(Player player) {
-        // abort directly if the player can disobey limits on this world
-        if (MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.limit.disobey." + player.getWorld().getName() + ".private")) {
-            return true;
-        }
-
-        WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        List<String> affectedWorlds = new ArrayList<String>();
-        for (String world : limit.getAffectedWorlds()) {
-            // only count warps on worlds the player cannot disobey limits on
-            if (!MyWarp.inst().getPermissionsManager()
-                    .hasPermission(player, "mywarp.limit.disobey." + world + ".private")) {
-                affectedWorlds.add(world);
-            }
-        }
-
-        return getPrivateWarpNumber(player, affectedWorlds) < limit.getPrivateLimit();
-    }
-
-    /**
-     * Checks if the given player may build additional warps using his
-     * public-limit. This method does not take into account if limits are
-     * enabled or not!
-     * 
-     * @param player
-     *            the player
-     * @return true if the player can build additional public warps, false if
-     *         not
-     */
-    public boolean canBuildPublicWarp(Player player) {
-        // abort directly if the player can disobey limits on this world
-        if (MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.limit.disobey." + player.getWorld().getName() + ".public")) {
-            return true;
-        }
-
-        WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        List<String> affectedWorlds = new ArrayList<String>();
-        for (String world : limit.getAffectedWorlds()) {
-            // only count warps on worlds the player cannot disobey limits on
-            if (!MyWarp.inst().getPermissionsManager()
-                    .hasPermission(player, "mywarp.limit.disobey." + world + ".public")) {
-                affectedWorlds.add(world);
-            }
-        }
-
-        return getPublicWarpNumber(player, affectedWorlds) < limit.getPublicLimit();
-    }
-
-    /**
-     * Checks if the given player may build additional warps using his
-     * total-limit. This method does not take into account if limits are enabled
-     * or not!
-     * 
-     * @param player
-     *            the player
-     * @return true if the player can build additional warps, false if not
-     */
-    public boolean canBuildWarp(Player player) {
-        // abort directly if the player can disobey limits on this world
-        if (MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.limit.disobey." + player.getWorld().getName() + ".total")) {
-            return true;
-        }
-
-        WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        List<String> affectedWorlds = new ArrayList<String>();
-        for (String world : limit.getAffectedWorlds()) {
-            // only count warps on worlds the player cannot disobey limits on
-            if (!MyWarp.inst().getPermissionsManager()
-                    .hasPermission(player, "mywarp.limit.disobey." + world + ".total")) {
-                affectedWorlds.add(world);
-            }
-        }
-
-        return getTotalWarpNumber(player, affectedWorlds) < limit.getTotalLimit();
-    }
-
-    /**
-     * Sets the compass target of the given player to the location of the given
-     * warp
-     * 
-     * @param warp
-     *            the warp
-     * @param player
-     *            the player
-     */
-    public void point(Warp warp, Player player) {
-        player.setCompassTarget(warp.getLocation());
-    }
-
-    /**
-     * Checks if a warp with the given name exist
-     * 
-     * @param name
-     *            the name
-     * @return true if a warp with this name exists, false if not
+     *            the exact name
+     * @return whether a warp with this name is already present
      */
     public boolean warpExists(String name) {
         return warpMap.containsKey(name);
     }
 
     /**
-     * gets a sorted set with all warps, the given command-sender has access to.
-     * Optionally, this warps must be all created by the given creator or exist
-     * in a world of the given name. The sorting of the warps can be controlled
-     * by giving a custom comperator.
+     * Gets the warp of the given name from this manager. Will return
+     * <code>null</code> if a warp with the given name is not available on this
+     * manager.
      * 
-     * @param sender
-     *            the command sender
-     * @param creator
-     *            the creator's name or null for all creators
-     * @param world
-     *            the world's name or null for all worlds
-     * @param comperator
-     *            the comperator or null for the default sorting
-     * @return a sorted list with all warps matching the given criteria
+     * @param name
+     *            the exact name
+     * @return the warp with the given name
      */
-    public TreeSet<Warp> getUsableWarps(CommandSender sender, String creator, String world,
-            Comparator<Warp> comperator) {
-        TreeSet<Warp> results = new TreeSet<Warp>(comperator);
+    @Nullable
+    public Warp getWarp(String name) {
+        return warpMap.get(name);
+    }
 
-        if (creator != null) {
-            creator = getMatchingCreator(sender, creator);
+    /**
+     * Gets a live view of all warps that fulfill the given predicate currently
+     * managed by this manager.
+     * 
+     * @param predicate
+     *            the predicate
+     * @return all matching warps
+     */
+    public Collection<Warp> getWarps(Predicate<Warp> predicate) {
+        return Collections2.filter(warpMap.values(), predicate);
+    }
 
-            // unable to find a matching creator
-            if (creator == null) {
-                return results;
+    /**
+     * Matches a creator of warps managed by this manager that fulfill the given
+     * predicate. Will return <code>null</code> if either no creator matches or
+     * multiple creator match the given filter.
+     * 
+     * @param filter
+     *            the filter
+     * @param predicate
+     *            the predicate
+     * @return a matching creator
+     */
+    @Nullable
+    public OfflinePlayer getMatchingCreator(String filter, Predicate<Warp> predicate) {
+        Collection<Warp> applicableWarps = getWarps(predicate);
+        OfflinePlayer ret = null;
+        for (Warp warp : applicableWarps) {
+            MyWarp.logger().info("Checking warp: " + warp.getName());
+            OfflinePlayer creator = warp.getCreator();
+            MyWarp.logger().info("With Creator: " + creator.getName());
+            if (StringUtils.equalsIgnoreCase(creator.getName(), filter)) {
+                // minecraft names are, as of 1.7.x case insensitive
+                return creator;
+            }
+            if (StringUtils.containsIgnoreCase(creator.getName(), filter)) {
+                if (ret != null) {
+                    // no clear match so there is no point in continuing
+                    return null;
+                }
+                ret = creator;
             }
         }
+        return ret;
+    }
 
-        for (Warp warp : warpMap.values()) {
-            if (!warp.isUsable(sender)) {
+    /**
+     * Matches a world that contains warps managed by this manager that fulfill
+     * the given predicate. Will return <code>null</code> if either no world
+     * matches or multiple worlds match the given filter.
+     * 
+     * @param filter
+     *            the filter
+     * @param predicate
+     *            the predicate
+     * @return a matching world
+     */
+    @Nullable
+    public World getMatchingWorld(String filter, Predicate<Warp> predicate) {
+        Collection<Warp> applicableWarps = getWarps(predicate);
+        World ret = null;
+        for (Warp warp : applicableWarps) {
+            World world = warp.getWorld();
+            if (world == null) {
+                // world not loaded
                 continue;
             }
-            if (creator != null && !warp.isCreator(creator)) {
-                continue;
+            if (world.getName().equals(filter)) {
+                return world;
             }
-            if (world != null && !warp.getWorld().equals(world)) {
-                continue;
+            if (StringUtils.containsIgnoreCase(world.getName(), filter)) {
+                if (ret != null) {
+                    // no clear match so there is no point in continuing
+                    return null;
+                }
+                ret = world;
             }
-            results.add(warp);
         }
-        return results;
+        return ret;
+    }
+
+    public BuildWarp canAddWarp(final Player player, final World world, boolean newlyBuild, final Type type) {
+        if ((!newlyBuild || MyWarp.inst().getPermissionsManager()
+                .hasPermission(player, "mywarp.limit.disobey." + world.getName() + ".total"))
+                && MyWarp
+                        .inst()
+                        .getPermissionsManager()
+                        .hasPermission(player,
+                                "mywarp.limit.disobey." + world.getName() + "." + type.getPermissionSuffix())) {
+            return BuildWarp.ALLOW;
+        }
+        WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
+        final List<String> affectedWorlds = new ArrayList<String>();
+        for (World affectedWorld : limit.getAffectedWorlds()) {
+            // only count warps on worlds the player cannot disobey limits on
+            if (!MyWarp
+                    .inst()
+                    .getPermissionsManager()
+                    .hasPermission(
+                            player,
+                            "mywarp.limit.disobey." + affectedWorld.getName() + "."
+                                    + type.getPermissionSuffix())) {
+                affectedWorlds.add(affectedWorld.getName());
+            }
+        }
+        Collection<Warp> totalWarps = getWarps(new Predicate<Warp>() {
+
+            @Override
+            public boolean apply(Warp warp) {
+                return warp.isCreator(player) && warp.isType(type);
+            }
+
+        });
+
+        if (newlyBuild && atLeast(totalWarps, limit.getLimit(Limit.TOTAL))) {
+            return BuildWarp.DENY_TOTAL;
+        }
+
+        if (atLeast(Collections2.filter(totalWarps, new Predicate<Warp>() {
+
+            @Override
+            public boolean apply(Warp warp) {
+                return warp.isType(type);
+            }
+
+        }), limit.getLimit(type))) {
+            switch (type) {
+            case PUBLIC:
+                return BuildWarp.DENY_PUBLIC;
+            case PRIVATE:
+                return BuildWarp.DENY_PRIVATE;
+            }
+        }
+        return BuildWarp.ALLOW;
+    }
+
+    private <T> boolean atLeast(Iterable<T> iterable, int count) {
+        return Iterables.size(Iterables.limit(iterable, count)) == count;
     }
 }

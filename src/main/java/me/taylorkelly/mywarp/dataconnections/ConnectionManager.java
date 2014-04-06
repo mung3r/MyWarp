@@ -1,7 +1,7 @@
 package me.taylorkelly.mywarp.dataconnections;
 
 import java.io.File;
-import java.util.Map;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -85,8 +85,8 @@ public class ConnectionManager implements DataConnection {
     }
 
     @Override
-    public Map<String, Warp> getMap() {
-        return handler.getMap();
+    public Collection<Warp> getWarps() {
+        return handler.getWarps();
     }
 
     @Override
@@ -110,11 +110,11 @@ public class ConnectionManager implements DataConnection {
     }
 
     @Override
-    public void publicizeWarp(final Warp warp, final boolean publicAll) {
+    public void updateType(final Warp warp) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                handler.publicizeWarp(warp, publicAll);
+                handler.updateType(warp);
             }
         });
     }
@@ -140,21 +140,21 @@ public class ConnectionManager implements DataConnection {
     }
 
     @Override
-    public void updatePermissions(final Warp warp) {
+    public void updateInvitedPlayers(final Warp warp) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                handler.updatePermissions(warp);
+                handler.updateInvitedPlayers(warp);
             }
         });
     }
 
     @Override
-    public void updateGroupPermissions(final Warp warp) {
+    public void updateInvitedGroups(final Warp warp) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                handler.updateGroupPermissions(warp);
+                handler.updateInvitedGroups(warp);
             }
         });
     }

@@ -1,9 +1,9 @@
 package me.taylorkelly.mywarp.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
@@ -39,35 +39,37 @@ public class AdminCommands {
         }
 
         try {
-            int counter = 0;
             ConnectionManager importConnection = new ConnectionManager(importMySQL, false, true);
-            Map<String, Warp> importedWarps = importConnection.getMap();
-            List<String> notImportedWarps = new ArrayList<String>();
+            Collection<Warp> importedWarps = importConnection.getWarps();
+            Set<Warp> notImportedWarps = new HashSet<Warp>();
 
-            for (Entry<String, Warp> importedWarpEntry : importedWarps.entrySet()) {
-                String name = importedWarpEntry.getKey();
-                Warp importedWarp = importedWarpEntry.getValue();
-
-                if (MyWarp.inst().getWarpManager().warpExists(name)) {
-                    if (!args.hasFlag('f')) {
-                        notImportedWarps.add(name);
-                        continue;
+            Iterator<Warp> iterator = importedWarps.iterator();
+            while (iterator.hasNext()) {
+                Warp warp = iterator.next();
+                if (MyWarp.inst().getWarpManager().warpExists(iterator.next().getName())) {
+                    if (args.hasFlag('f')) {
+                        // remove the old warp
+                        // XXX That seems somewhat ugly.
+                        MyWarp.inst().getWarpManager()
+                                .deleteWarp(MyWarp.inst().getWarpManager().getWarp(warp.getName()));
+                    } else {
+                        // skip
+                        notImportedWarps.add(warp);
+                        iterator.remove();
                     }
-                    // remove the old warp before adding the new one
-                    MyWarp.inst().getWarpManager().deleteWarp(MyWarp.inst().getWarpManager().getWarp(name));
-                } else {
-                    MyWarp.inst().getWarpManager().addWarp(name, importedWarp);
-                    counter++;
                 }
             }
+
+            MyWarp.inst().getWarpManager().populate(importedWarps);
+
             if (notImportedWarps.isEmpty()) {
                 sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                        .getString("commands.import.import-successful", sender, counter));
+                        .getString("commands.import.import-successful", sender, importedWarps.size()));
             } else {
                 sender.sendMessage(MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getString("commands.import.import-with-skips", sender, counter,
+                        .getString("commands.import.import-with-skips", sender, importedWarps.size(),
                                 notImportedWarps.size())
                         + " " + StringUtils.join(notImportedWarps, ", "));
             }
@@ -88,9 +90,9 @@ public class AdminCommands {
     @Command(aliases = { "player" }, usage = "<player> <name>", desc = "commands.warp-player.description", fee = Fee.WARP_PLAYER, min = 2, permissions = { "mywarp.admin.warpto" })
     public void warpPlayer(CommandContext args, CommandSender sender) throws CommandException {
         Player invitee = CommandUtils.matchPlayer(sender, args.getString(0));
-        Warp warp = CommandUtils.getWarpForUsage(sender, args.getJoinedStrings(1));
+        Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(1));
 
-        warp.warp(invitee, false);
+        warp.teleport(invitee, false);
         sender.sendMessage(MyWarp
                 .inst()
                 .getLocalizationManager()

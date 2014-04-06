@@ -4,12 +4,19 @@ import java.util.Collection;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.data.Warp.Type;
+import me.taylorkelly.mywarp.data.WarpLimit.Limit;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 import me.taylorkelly.mywarp.utils.commands.CommandPermissionsException;
 
 import org.apache.commons.lang.text.StrBuilder;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import com.google.common.base.Predicate;
 
 /**
  * This class bundles all methods that are only used to simplify certain task
@@ -17,169 +24,113 @@ import org.bukkit.entity.Player;
  */
 public class CommandUtils {
 
-    /**
-     * This method will try to get a warp using the given query as name or part
-     * of the name. Internally it creates a {@link MatchList} with all possible
-     * warps, respecting if the given CommandSender can access a warp or not.
-     * 
-     * If multiple valid warps are found, this method will throw a
-     * CommandException. If enabled it will try to recommend one of the warps.
-     * 
-     * @param sender
-     *            the command sender
-     * @param query
-     *            the (part) of the searched warp's name
-     * @return the warp identified by the query
-     * @throws CommandException
-     *             if not warp could be found (could either mean a warp does not
-     *             exist in the network or the sender has no right to access it)
-     */
-    public static Warp getWarpForUsage(CommandSender sender, String query) throws CommandException {
-        Player player = sender instanceof Player ? (Player) sender : null;
-        MatchList matches = MyWarp.inst().getWarpManager()
-                .getMatches(query, player, new PopularityWarpComparator());
+    public static Warp getViewableWarp(final CommandSender sender, String filter) throws CommandException {
+        return getWarp(sender, filter, new Predicate<Warp>() {
 
-        Warp warp = matches.getMatch();
+            @Override
+            public boolean apply(Warp warp) {
+                return warp.isViewable(sender);
+            }
+
+        });
+    }
+
+    public static Warp getUsableWarp(final CommandSender sender, String filter) throws CommandException {
+        return getWarp(sender, filter, new Predicate<Warp>() {
+
+            @Override
+            public boolean apply(Warp warp) {
+                return sender instanceof Entity && warp.isUsable((Entity) sender);
+            }
+
+        });
+    }
+
+    // TODO remove 'commands.modify-permission' localization string
+    public static Warp getModifiableWarp(final CommandSender sender, String filter) throws CommandException {
+        return getWarp(sender, filter, new Predicate<Warp>() {
+
+            @Override
+            public boolean apply(Warp warp) {
+                return warp.isModifiable(sender);
+            }
+
+        });
+    }
+
+    public static Warp getWarp(CommandSender sender, String filter, Predicate<Warp> predicate)
+            throws CommandException {
+        Matcher matcher = Matcher.match(filter, predicate);
+        Warp warp = matcher.getExactMatch();
 
         if (warp == null) {
-            Warp match = matches.getLikliestMatch();
+            Warp match = matcher.getMatch();
 
             if (MyWarp.inst().getWarpSettings().dynamicsSuggestWarps && match != null) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getString("commands.utils.warp-suggestion", sender, query, match.getName()));
+                        .getString("commands.utils.warp-suggestion", sender, filter, match.getName()));
             } else {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getString("commands.utils.warp-non-existent", sender, query));
+                        .getString("commands.utils.warp-non-existent", sender, filter));
             }
         }
         return warp;
     }
 
-    /**
-     * Gets a warp using {@link #getWarpForUsage(CommandSender, String)} and
-     * determines if the given sender may modify it.
-     * 
-     * @param sender
-     *            the command sender
-     * @param query
-     *            the (part) of the searched warp's name
-     * @return the warp identified by the query
-     * @throws CommandException
-     *             if the given sender may not modify the warp
-     */
-    public static Warp getWarpForModification(CommandSender sender, String query) throws CommandException {
-        Warp warp = getWarpForUsage(sender, query);
-
-        if (!warp.isModifiable(sender)) {
-            throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("commands.modify-permission", sender, warp.getName()));
-        }
-        return warp;
-    }
-
-    /**
-     * Checks the total warp-limit (private and public) of the given
-     * command-sender. This method will do nothing if limits are disabled.
-     * 
-     * @param sender
-     *            the command-sender
-     * @throws CommandException
-     *             if the sender has reached his total limit
-     */
-    public static void checkTotalLimit(CommandSender sender) throws CommandException {
+    public static void checkLimits(CommandSender sender, boolean newlyBuild, Type type)
+            throws CommandException {
         if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
             return;
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpManager().canBuildWarp(player)) {
+        switch (MyWarp.inst().getWarpManager().canAddWarp(player, player.getWorld(), newlyBuild, type)) {
+        case DENY_PRIVATE:
             throw new CommandException(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getString("commands.utils.limit-reached.total", sender,
-                            (MyWarp.inst().getPermissionsManager().getWarpLimit(player).getTotalLimit())));
-        }
-    }
-
-    /**
-     * Checks the public warp-limit of the given command-sender. This method
-     * will do nothing if limits are disabled.
-     * 
-     * @param sender
-     *            the command-sender
-     * @throws CommandException
-     *             if the sender has reached his public limit
-     */
-    public static void checkPublicLimit(CommandSender sender) throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
+                    .getString(
+                            "commands.utils.limit-reached.private",
+                            sender,
+                            MyWarp.inst().getPermissionsManager().getWarpLimit(player)
+                                    .getLimit(Limit.PRIVATE)));
+        case DENY_PUBLIC:
+            throw new CommandException(
+                    MyWarp.inst()
+                            .getLocalizationManager()
+                            .getString(
+                                    "commands.utils.limit-reached.public",
+                                    sender,
+                                    MyWarp.inst().getPermissionsManager().getWarpLimit(player)
+                                            .getLimit(Limit.PUBLIC)));
+        case DENY_TOTAL:
+            throw new CommandException(
+                    MyWarp.inst()
+                            .getLocalizationManager()
+                            .getString(
+                                    "commands.utils.limit-reached.total",
+                                    sender,
+                                    (MyWarp.inst().getPermissionsManager().getWarpLimit(player)
+                                            .getLimit(Limit.TOTAL))));
+        default:
             return;
-        }
-        Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpManager().canBuildPublicWarp(player)) {
-            throw new CommandException(MyWarp
-                    .inst()
-                    .getLocalizationManager()
-                    .getString("commands.utils.limit-reached.public", sender,
-                            MyWarp.inst().getPermissionsManager().getWarpLimit(player).getPublicLimit()));
         }
     }
 
-    /**
-     * Checks the private warp-limit of the given command-sender. This method
-     * will do nothing if limits are disabled.
-     * 
-     * @param sender
-     *            the command-sender
-     * @throws CommandException
-     *             if the sender has reached his private limit
-     */
-    public static void checkPrivateLimit(CommandSender sender) throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
-            return;
-        }
-        Player player = (Player) sender;
-
-        if (!MyWarp.inst().getWarpManager().canBuildPrivateWarp(player)) {
-            throw new CommandException(MyWarp
-                    .inst()
-                    .getLocalizationManager()
-                    .getString("commands.utils.limit-reached.private", sender,
-                            MyWarp.inst().getPermissionsManager().getWarpLimit(player).getPrivateLimit()));
-        }
-    }
-
-    /**
-     * Checks all warp-limits of the given command-sender, returns true if the
-     * player can build an additional warp, false if not. If limits are
-     * disabled, this method will do nothing.
-     * 
-     * @param sender
-     *            the command-sender
-     * @param publicAll
-     *            whether public (true) or private (false) limits should be
-     *            checked
-     * @return true if the sender may build more warps, false if not.
-     * @throws CommandException
-     *             if the command sender has reached one of his limits
-     */
-    public static boolean checkPlayerLimits(CommandSender sender, boolean publicAll) throws CommandException {
+    public static boolean checkPlayerLimits(CommandSender sender, World world, Type type)
+            throws CommandException {
         if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
             return true;
         }
         Player player = (Player) sender;
 
-        if (!MyWarp.inst().getWarpManager().canBuildWarp(player)) {
+        switch (MyWarp.inst().getWarpManager().canAddWarp(player, world, true, type)) {
+        case ALLOW:
+            return true;
+        default:
             return false;
         }
-        if (publicAll) {
-            if (!MyWarp.inst().getWarpManager().canBuildPublicWarp(player)) {
-                return false;
-            }
-        } else if (!MyWarp.inst().getWarpManager().canBuildPrivateWarp(player)) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -278,5 +229,13 @@ public class CommandUtils {
             ret.append(warp.getName());
         }
         return ret.toString();
+    }
+
+    public static OfflinePlayer matchOfflinePlayer(String name) {
+        OfflinePlayer actuallPlayer = MyWarp.inst().getServer().getPlayer(name);
+        if (actuallPlayer == null) {
+            actuallPlayer = MyWarp.server().getOfflinePlayer(name);
+        }
+        return actuallPlayer;
     }
 }
