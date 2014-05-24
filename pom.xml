@@ -64,7 +64,7 @@
         <dependency> <!-- Bukkit implementation -->
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.7.8-R0.1-SNAPSHOT</version>
+            <version>1.7.9-R0.1</version>
         </dependency>
 
         <dependency><!-- Dynmap API -->
@@ -95,6 +95,22 @@
             <groupId>de.bananaco</groupId>
             <artifactId>bpermissions</artifactId>
             <version>2.10.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>3.3.1</version>
         </dependency>
     </dependencies>
 
