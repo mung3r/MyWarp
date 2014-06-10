@@ -1,6 +1,8 @@
 package me.taylorkelly.mywarp.commands;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -34,6 +36,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * This class contains all commands that cover basic tasks. They should be
@@ -114,33 +117,32 @@ public class BasicCommands {
 
             // get the warps stored for every existing limit
             for (WarpLimit limit : limits) {
-                Collection<Warp> warps = limitWarps.get(limit);
+                List<Warp> warps = new ArrayList<Warp>(limitWarps.get(limit));
+                Collections.sort(warps);
 
                 // match public/private warps
-                // TODO use yet another multimap ?
-                Set<Warp> privateWarps = new TreeSet<Warp>();
-                Set<Warp> publicWarps = new TreeSet<Warp>();
-                for (Warp warp : warps) {
-                    if (warp.getType() == Type.PUBLIC) {
-                        publicWarps.add(warp);
-                    } else if (warp.getType() == Type.PRIVATE) {
-                        privateWarps.add(warp);
+                Multimap<Type, Warp> warpsPerType = Multimaps.index(warps, new Function<Warp, Type>() {
+
+                    @Override
+                    public Type apply(Warp warp) {
+                        return warp.getType();
                     }
-                }
+
+                });
 
                 // create the strings
                 String publicEntry = MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString("commands.assets.public-warps", sender,
-                                publicWarps.size() + "/" + limit.getLimit(Limit.PUBLIC),
-                                CommandUtils.joinWarps(publicWarps));
+                                warpsPerType.get(Type.PUBLIC).size() + "/" + limit.getLimit(Limit.PUBLIC),
+                                CommandUtils.joinWarps(warpsPerType.get(Type.PUBLIC)));
                 String privateEntry = MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString("commands.assets.private-warps", sender,
-                                privateWarps.size() + "/" + limit.getLimit(Limit.PRIVATE),
-                                CommandUtils.joinWarps(privateWarps));
+                                warpsPerType.get(Type.PRIVATE).size() + "/" + limit.getLimit(Limit.PRIVATE),
+                                CommandUtils.joinWarps(warpsPerType.get(Type.PRIVATE)));
 
                 // send the messages
                 sender.sendMessage(MyWarp
@@ -150,8 +152,8 @@ public class BasicCommands {
                                 "commands.assets.total-warps",
                                 sender,
                                 StringUtils.join(limit.getAffectedWorlds(), ", "),
-                                (privateWarps.size() + publicWarps.size()) + "/"
-                                        + limit.getLimit(Limit.TOTAL)));
+                                (warpsPerType.get(Type.PRIVATE).size() + warpsPerType.get(Type.PUBLIC).size())
+                                        + "/" + limit.getLimit(Limit.TOTAL)));
                 sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
             }
         } else {
@@ -222,7 +224,7 @@ public class BasicCommands {
 
                 }) : null;
 
-        // TODO throw exceptions on null?
+        // TODO throw exceptions instead of null?
 
         SortedSet<Warp> results = args.hasFlag('p') ? new TreeSet<Warp>(new Warp.PopularityComparator())
                 : new TreeSet<Warp>();
@@ -308,7 +310,7 @@ public class BasicCommands {
         }
     }
 
-    // XXX color warp names
+    // TODO color warp names
     @Command(aliases = { "search" }, flags = "p", usage = "<name>", desc = "commands.search.description", fee = Fee.SEARCH, min = 1, permissions = { "mywarp.warp.basic.search" })
     public void searchWarps(CommandContext args, final CommandSender sender) throws CommandException {
         Matcher matcher = Matcher.match(args.getJoinedStrings(0), new Predicate<Warp>() {
@@ -399,7 +401,7 @@ public class BasicCommands {
     @Command(aliases = { "info", "stats" }, usage = "<name>", desc = "commands.info.description", fee = Fee.INFO, min = 1, permissions = { "mywarp.warp.basic.info" })
     public void showWarpInfo(CommandContext args, CommandSender sender) throws CommandException {
         Warp warp = CommandUtils.getViewableWarp(sender, args.getJoinedStrings(0));
-        
+
         StrBuilder infos = new StrBuilder();
 
         infos.append(ChatColor.GOLD);
@@ -449,7 +451,11 @@ public class BasicCommands {
             } else {
                 SortedSet<String> invitedPlayerNames = new TreeSet<String>();
                 for (UUID playerId : invitedPlayerIds) {
-                    invitedPlayerNames.add(MyWarp.server().getOfflinePlayer(playerId).getName());
+                    // FIXME investigate this bug.
+                    String name = MyWarp.server().getOfflinePlayer(playerId).getName();
+                    name = (name == null) ? "unknown-uuid:" + playerId.toString() : name;
+
+                    invitedPlayerNames.add(name);
                 }
                 infos.append(StringUtils.join(invitedPlayerNames, ", "));
             }
@@ -461,9 +467,7 @@ public class BasicCommands {
             infos.append(" ");
             infos.append(ChatColor.WHITE);
 
-            //XXX don't create new set when there are no invited groups?
-            SortedSet<String> invitedGroups = new TreeSet<String>();
-            invitedGroups.addAll(warp.getInvitedGroups());
+            SortedSet<String> invitedGroups = new TreeSet<String>(warp.getInvitedGroups());
             infos.append(invitedGroups.isEmpty() ? "-" : StringUtils.join(invitedGroups, ", "));
             infos.appendNewLine();
         }

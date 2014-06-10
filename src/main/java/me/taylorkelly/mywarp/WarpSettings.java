@@ -42,7 +42,6 @@ public class WarpSettings implements Reloadable {
     public String mysqlHost;
     public int mysqlPort;
     public String mysqlDatabase;
-    public String mysqlTable;
     public String mysqlUsername;
     public String mysqlPassword;
 
@@ -134,7 +133,6 @@ public class WarpSettings implements Reloadable {
         mysqlUsername = config.getString("mysql.username");
         mysqlPassword = config.getString("mysql.password");
         mysqlDatabase = config.getString("mysql.database");
-        mysqlTable = config.getString("mysql.table");
 
         // Localization
         localizationDefLocale = LocaleUtils.toLocale(config.getString("localization.defaultLocale"));

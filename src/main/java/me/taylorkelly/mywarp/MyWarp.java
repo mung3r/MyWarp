@@ -1,14 +1,17 @@
 package me.taylorkelly.mywarp;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import me.taylorkelly.mywarp.commands.RootCommands;
+import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.WarpManager;
 import me.taylorkelly.mywarp.data.WarpSignManager;
-import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
-import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
+import me.taylorkelly.mywarp.dataconnections.DataConnection;
+import me.taylorkelly.mywarp.dataconnections.MySQLConnection;
+import me.taylorkelly.mywarp.dataconnections.SQLiteConnection;
 import me.taylorkelly.mywarp.economy.EconomyLink;
 import me.taylorkelly.mywarp.economy.VaultLink;
 import me.taylorkelly.mywarp.localization.LocalizationManager;
@@ -31,6 +34,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.FileUtil;
 import org.dynmap.DynmapCommonAPI;
 
+import com.google.common.util.concurrent.ListenableFuture;
+
 public class MyWarp extends JavaPlugin implements Reloadable {
 
     /**
@@ -45,9 +50,9 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     private CommandsManager commandsManager;
 
     /**
-     * Manages the database connections
+     * The connection to the configured data-source
      */
-    private ConnectionManager connectionManager;
+    private DataConnection dataConnection;
 
     /**
      * The economy Link in use
@@ -130,15 +135,15 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets MyWarp's {@link ConnectionManager}, this method should be used for
-     * all database access.
+     * Gets MyWarp's active {@link DataConnection} that provides access to the
+     * active data-source.
      * 
-     * This method can return null.
+     * This method may return null if the connection is not yet setup.
      * 
      * @return the connection manager
      */
-    public ConnectionManager getConnectionManager() {
-        return connectionManager;
+    public DataConnection getDataConnection() {
+        return dataConnection;
     }
 
     /**
@@ -227,8 +232,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     @Override
     public void onDisable() {
         // close all open database connections
-        if (getConnectionManager() != null) {
-            getConnectionManager().close();
+        if (getDataConnection() != null) {
+            getDataConnection().close();
         }
         // remove cached resource bundles
         if (localizationManager != null) {
@@ -273,10 +278,20 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         }
 
         // initialize the database connection
+        ListenableFuture<DataConnection> futureConnection;
+        if (getWarpSettings().mysqlEnabled) {
+            futureConnection = MySQLConnection.getConnection(getWarpSettings().mysqlHost,
+                    getWarpSettings().mysqlPort, getWarpSettings().mysqlDatabase,
+                    getWarpSettings().mysqlUsername, getWarpSettings().mysqlPassword, true);
+        } else {
+            futureConnection = SQLiteConnection.getConnection(new File(getDataFolder(), "mywarps.db"), true);
+        }
         try {
-            connectionManager = new ConnectionManager(getWarpSettings().mysqlEnabled, true, true);
-        } catch (DataConnectionException e) {
-            logger().severe("Could not establish database connection. Disabling MyWarp.");
+            // block main thread until we have a connection
+            dataConnection = futureConnection.get();
+        } catch (Exception e) {
+            logger().severe(
+                    "Could not establish database connection (" + e.getMessage() + "). Disabling MyWarp.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -346,13 +361,26 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         if (getWarpSettings().warpSignsEnabled) {
             getServer().getPluginManager().registerEvents(new WarpSignManager(), this);
         }
+
+        // block the main thread until the warps are loaded
+        // TODO chaining?
+        try {
+            Collection<Warp> warps = getDataConnection().getWarps().get();
+            warpManager.populate(warps);
+            logger().info(warpManager.getLoadedWarpNumber() + " warps loaded.");
+        } catch (Exception e) {
+            MyWarp.logger().log(Level.SEVERE, "Failed to load warps from database.", e);
+        }
     }
 
     @Override
     public void reload() {
         // unload old stuff from the server
         HandlerList.unregisterAll(this);
+        // TODO make permissionManager reloadable
         permissionsManager.unregisterPermissions();
+        // TODO move into warpManager?
+        warpManager.clear();
 
         // load new stuff
         getWarpSettings().reload();

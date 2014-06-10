@@ -12,7 +12,7 @@ commands:
     public-warps: "Öffentliche Warps ({0}):&f&o {1}"
     private-warps: "Private Warps ({0}):&f&o {1}"
   create:
-    created-successful: | 
+    created-successful: |
       &b''{0}'' wurde erfolgreich erstellt.
       &fWenn du den Warp privatisieren möchtest, nutze: &c/warp private {0}&f.
     description: "Erstellt einen neuen öffentlichen Warp namens &7<Name>&f in der aktuellen Position."
@@ -36,11 +36,12 @@ commands:
     heading: "Hilfe"
     note: "Nutze '/<Kommando> -?' um mehr Informationen zu erhalten."
   import:
-    description: "Importiert alle Warps aus &7<SQLite|MySQL>&f in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt."
+    description: "Importiert Warps aus zuvor genutzten Datenbanken in die aktuelle Datenbank. Bereits existierende Warps werden nicht überschrieben, es sei denn, [-f] wird genutzt."
+    file-non-existent: "Die Datei ''{0}'' existiert nicht."
     import-successful: "&bEs {0,choice,0#wurden keine Warps|1#wurde ein Warp|1<wurden {0,number,integer} Warps} importiert."
     import-with-skips: "&bEs {0,choice,0#wurden keine Warps|1#wurde ein Warp|1<wurden {0,number,integer} Warps} importiert, aber {1,choice,1#ein Warp wurde|1<{1,number,integer} Warps wurden} übersprungen:&f"
     invalid-option: "{0} ist keine gültige Import-Option."
-    no-connection: "Es konnte keine Datenbankverbindung zum Import aufgebaut werden:"
+    no-connection: "Es konnte keine Datenbankverbindung zum Import aufgebaut werden: {0}"
   invalid-number: "Du musst eine gültige Nummer eingeben. Mit &f/{0} -?&c erhältst du mehr Informationen dazu."
   invite:
     description: "Lädt &7<Spieler|Gruppe>&f zu &7<Name>&f ein."
@@ -77,7 +78,6 @@ commands:
     description: "Listet alle Warps auf, die besucht werden können. [-c Ersteller] listet alle Warps eines Spielers, [-w Welt] ausschließlich Warps in dieser Welt. Mit [-p] werden die Warps nach Beliebtheit sortiert."
     heading: "Warps"
     you: "dir"
-  modify-permission: "Dir fehlen die Rechte um ''{0}'' zu bearbeiten."
   point:
     description: "Richtet den Kompass auf &7[Name]&f aus. Um den Kompass wieder zurückzusetzen, nutze dieses Kommando schlicht ohne einen Warp anzugeben."
     reset: "&bDein Kompass zeigt jetzt wieder auf den Spawnpunkt."

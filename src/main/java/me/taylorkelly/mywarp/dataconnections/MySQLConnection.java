@@ -1,492 +1,191 @@
 package me.taylorkelly.mywarp.dataconnections;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Level;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrBuilder;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.data.Warp.Type;
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
-//FIXME HORRIBLE hack to make things compile
-public class MySQLConnection implements DataConnection {
+/**
+ * The connection to a MySQL database.
+ */
+public class MySQLConnection {
 
     /**
-     * DSN.
+     * Enforce factory usage.
      */
-    private final String dsn;
-    /**
-     * Username.
-     */
-    private final String user;
-    /**
-     * Password.
-     */
-    private final String pass;
-    /**
-     * Table.
-     */
-    private final String table;
-    /**
-     * Database creation SQL
-     */
-    private final String WARP_TABLE;
-    /**
-     * Database connection.
-     */
-    private Connection conn;
-
-    public MySQLConnection(String dsn, String user, String pass, String table) {
-        this.dsn = dsn;
-        this.user = user;
-        this.pass = pass;
-        this.table = table;
-
-        WARP_TABLE = "CREATE TABLE `" + table + "` (" + "`id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`name` varchar(32) NOT NULL DEFAULT 'warp',"
-                + "`creator` varchar(32) NOT NULL DEFAULT 'Player',"
-                + "`world` varchar(32) NOT NULL DEFAULT '0'," + "`x` DOUBLE NOT NULL DEFAULT '0',"
-                + "`y` smallint NOT NULL DEFAULT '0'," + "`z` DOUBLE NOT NULL DEFAULT '0',"
-                + "`yaw` smallint NOT NULL DEFAULT '0'," + "`pitch` smallint NOT NULL DEFAULT '0',"
-                + "`publicAll` boolean NOT NULL DEFAULT '1'," + "`permissions` text NOT NULL,"
-                + "`groupPermissions` text NOT NULL," + "`welcomeMessage` varchar(100) NOT NULL DEFAULT '',"
-                + "`visits` int DEFAULT '0'" + ");";
+    private MySQLConnection() {
     }
 
     /**
-     * Establishes a connection with the database
+     * Gets a valid connection to the given MySQL database. The connection is
+     * created asynchronous, the returned CheckedFuture either contains the
+     * ready-to-use connection or throws a {@link DataConnectionException}.
      * 
-     * @return a valid connection to the database
-     * @throws SQLException
-     *             if a database access error occurs
+     * @param host
+     *            the host of the MySQL server
+     * @param port
+     *            the port the MySQL server listens to
+     * @param database
+     *            the name of the MySQL database to use
+     * @param user
+     *            the MySQL user to use
+     * @param password
+     *            the user's password
+     * @param controlDBLayout
+     *            whether the implementation should create tables and execute
+     *            updates, if necessary
+     * @return a CheckedFuture containing a valid, setup connection
      */
-    private synchronized Connection getConnection() throws SQLException {
-        if (conn != null && !conn.isValid(5)) {
-            conn.close();
-        }
-        if (conn == null || conn.isClosed()) {
-            conn = DriverManager.getConnection(dsn, user, pass);
-        }
-        return conn;
-    }
+    public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final String host,
+            final int port, final String database, final String user, final String password, final boolean controlDBLayout) {
+        final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
+                .newSingleThreadExecutor());
 
-    @Override
-    public synchronized void close() {
-        try {
-            if (conn != null && !conn.isClosed()) {
-                conn.close();
-            }
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Unable to close SQL connection: " + ex);
-        }
-    }
+        ListenableFuture<DataConnection> future = executor.submit(new Callable<DataConnection>() {
 
-    @Override
-    public void checkDB(boolean createIfNotExist) throws DataConnectionException {
-        Statement stmnt = null;
+            @Override
+            public DataConnection call() throws DataConnectionException {
+                String dsn = "jdbc:mysql://" + host + ":" + port + "/" + database;
 
-        try {
-            conn = getConnection();
-            DatabaseMetaData dbm = conn.getMetaData();
-            stmnt = conn.createStatement();
-
-            if (!JDBCUtil.tableExists(dbm, table)) {
-                if (createIfNotExist) {
-                    stmnt.execute(WARP_TABLE);
-                } else {
-                    throw new DataConnectionException("Table '" + table + "' does not exist.");
+                Connection conn;
+                try {
+                    conn = DriverManager.getConnection(dsn, user, password);
+                } catch (SQLException e) {
+                    throw new DataConnectionException("Failed to connect to the database.", e);
                 }
-            }
 
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Table Check Exception: " + ex);
-            throw new DataConnectionException(ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
+                // the database scheme can be configured by users
+                Settings settings = new Settings().withRenderSchema(false);
+
+                DSLContext create = DSL.using(conn, SQLDialect.MYSQL, settings);
+
+                if (controlDBLayout) {
+                    // @formatter:off
+                    // Table `Player`
+                    create.execute("CREATE TABLE IF NOT EXISTS `player` (" + 
+                            "  `player-id` INT UNSIGNED NOT NULL AUTO_INCREMENT," + 
+                            "  `player` BINARY(16) NOT NULL," + 
+                            "  PRIMARY KEY (`player-id`)," + 
+                            "  UNIQUE INDEX `U_player` (`player` ASC))" + 
+                            "ENGINE = InnoDB;");
+
+                    // Table `World`
+                    create.execute("CREATE TABLE IF NOT EXISTS `world` (" + 
+                            "  `world-id` INT UNSIGNED NOT NULL AUTO_INCREMENT," + 
+                            "  `world` BINARY(16) NOT NULL," + 
+                            "  PRIMARY KEY (`world-id`)," + 
+                            "  UNIQUE INDEX `U_world` (`world` ASC))" + 
+                            "ENGINE = InnoDB;");
+
+                    // Table `Warp`
+                    create.execute("CREATE TABLE IF NOT EXISTS `warp` (" + 
+                            "  `warp-id` INT UNSIGNED NOT NULL AUTO_INCREMENT," + 
+                            "  `name` VARCHAR(32) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL," + 
+                            "  `player-id` INT UNSIGNED NOT NULL," + 
+                            "  `x` DOUBLE NOT NULL," + 
+                            "  `y` DOUBLE NOT NULL," + 
+                            "  `z` DOUBLE NOT NULL," + 
+                            "  `pitch` FLOAT NOT NULL," + 
+                            "  `yaw` FLOAT NOT NULL," + 
+                            "  `world-id` INT UNSIGNED NOT NULL," + 
+                            "  `creation-date` DATETIME NOT NULL," + 
+                            "  `type` TINYINT UNSIGNED NOT NULL," + 
+                            "  `visits` INT UNSIGNED NOT NULL DEFAULT 0," + 
+                            "  `fee` DOUBLE UNSIGNED NULL DEFAULT NULL," + 
+                            "  `welcome-message` TINYTEXT NULL DEFAULT NULL," + 
+                            "  UNIQUE INDEX `U_name` (`name` ASC)," + 
+                            "  PRIMARY KEY (`warp-id`)," + 
+                            "  INDEX `fk_warp_player_idx` (`player-id` ASC)," + 
+                            "  INDEX `fk_warp_world1_idx` (`world-id` ASC)," + 
+                            "  CONSTRAINT `fk_warp_player`" + 
+                            "    FOREIGN KEY (`player-id`)" + 
+                            "    REFERENCES `player` (`player-id`)" + 
+                            "    ON DELETE NO ACTION" + 
+                            "    ON UPDATE NO ACTION," + 
+                            "  CONSTRAINT `fk_warp_world1`" + 
+                            "    FOREIGN KEY (`world-id`)" + 
+                            "    REFERENCES `world` (`world-id`)" + 
+                            "    ON DELETE NO ACTION" + 
+                            "    ON UPDATE NO ACTION)" + 
+                            "ENGINE = InnoDB;");
+
+                    // Table `Group`
+                    create.execute("CREATE TABLE IF NOT EXISTS `group` (" + 
+                            "  `group-id` INT UNSIGNED NOT NULL AUTO_INCREMENT," + 
+                            "  `group` VARCHAR(32) NOT NULL," + 
+                            "  PRIMARY KEY (`group-id`)," + 
+                            "  UNIQUE INDEX `U_group` (`group` ASC))" + 
+                            "ENGINE = InnoDB;");
+
+                    // Table `warp2player`
+                    create.execute("CREATE TABLE IF NOT EXISTS `warp2player` (" + 
+                            "  `player-id` INT UNSIGNED NOT NULL," + 
+                            "  `warp-id` INT UNSIGNED NOT NULL," + 
+                            "  INDEX `fk_table1_player1_idx` (`player-id` ASC)," + 
+                            "  INDEX `fk_table1_warp1_idx` (`warp-id` ASC)," + 
+                            "  PRIMARY KEY (`player-id`, `warp-id`)," + 
+                            "  CONSTRAINT `fk_table1_player1`" + 
+                            "    FOREIGN KEY (`player-id`)" + 
+                            "    REFERENCES `player` (`player-id`)" + 
+                            "    ON DELETE NO ACTION" + 
+                            "    ON UPDATE NO ACTION," + 
+                            "  CONSTRAINT `fk_table1_warp1`" + 
+                            "    FOREIGN KEY (`warp-id`)" + 
+                            "    REFERENCES `warp` (`warp-id`)" + 
+                            "    ON DELETE NO ACTION" + 
+                            "    ON UPDATE NO ACTION)" + 
+                            "ENGINE = InnoDB;");
+
+                    // Table `warp2group`
+                    create.execute("CREATE TABLE IF NOT EXISTS `warp2group` (" + 
+                            "  `group-id` INT UNSIGNED NOT NULL," + 
+                            "  `warp-id` INT UNSIGNED NOT NULL," + 
+                            "  INDEX `fk_table1_group1_idx` (`group-id` ASC)," + 
+                            "  INDEX `fk_table1_warp2_idx` (`warp-id` ASC)," + 
+                            "  PRIMARY KEY (`group-id`, `warp-id`)," + 
+                            "  CONSTRAINT `fk_table1_group1`" + 
+                            "    FOREIGN KEY (`group-id`)" + 
+                            "    REFERENCES `group` (`group-id`)" + 
+                            "    ON DELETE NO ACTION" + 
+                            "    ON UPDATE NO ACTION," + 
+                            "  CONSTRAINT `fk_table1_warp2`" + 
+                            "    FOREIGN KEY (`warp-id`)" + 
+                            "    REFERENCES `warp` (`warp-id`)" + 
+                            "    ON DELETE NO ACTION" + 
+                            "    ON UPDATE NO ACTION)" + 
+                            "ENGINE = InnoDB;");
+                    // @formatter:on
+
+                    // updates should be executed at this point
+                    // create.execute(...);
                 }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Table Check Exception (on close): " + ex);
+
+                return new JOOQConnection(create, conn, executor);
             }
-        }
-    }
 
-    @Override
-    public void updateDB(boolean updateIfNecessary) throws DataConnectionException {
-        Statement stmnt = null;
+        });
+        return Futures.makeChecked(future, new Function<Exception, DataConnectionException>() {
 
-        try {
-            conn = getConnection();
-            DatabaseMetaData dbm = conn.getMetaData();
-            stmnt = conn.createStatement();
-
-            // changes 'y' to smallint, changed with 2.4
-            if (!JDBCUtil.columnIsDataType(dbm, table, "y", "smallint")) {
-                if (updateIfNecessary) {
-                    stmnt.execute("ALTER TABLE " + table + " MODIFY `y` smallint");
-                } else {
-                    throw new DataConnectionException("Column 'y' has the wrong data type.");
+            @Override
+            public DataConnectionException apply(Exception ex) {
+                if (ex instanceof DataConnectionException) {
+                    return (DataConnectionException) ex;
                 }
+                return new DataConnectionException(ex);
             }
-            // groupPermissions, added with 2.4
-            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "groupPermissions")) {
-                if (updateIfNecessary) {
-                    stmnt.execute("ALTER TABLE " + table
-                            + " ADD COLUMN `groupPermissions` text NOT NULL AFTER `permissions`");
-                } else {
-                    throw new DataConnectionException("Column 'groupPermissions' does not exist.");
-                }
-            }
-            // visits, added with 2.4
-            if (!JDBCUtil.columnExistsCaseSensitive(dbm, table, "visits")) {
-                if (updateIfNecessary) {
-                    stmnt.execute("ALTER TABLE " + table + " ADD COLUMN `visits` int DEFAULT '0'");
-                } else {
-                    throw new DataConnectionException("Column 'visits' does not exist.");
-                }
-            }
-
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Table Update Exception: " + ex);
-            throw new DataConnectionException(ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Table Update Exception (on close): " + ex);
-            }
-        }
-    }
-
-    @Override
-    public Collection<Warp> getWarps() {
-        Collection<Warp> ret = new HashSet<Warp>();
-        Statement stmnt = null;
-        ResultSet rsWarps = null;
-
-        try {
-            conn = getConnection();
-            stmnt = conn.createStatement();
-
-            rsWarps = stmnt.executeQuery("SELECT * FROM " + table);
-            while (rsWarps.next()) {
-                String name = rsWarps.getString("name");
-                String creator = rsWarps.getString("creator");
-                String world = rsWarps.getString("world");
-                double x = rsWarps.getDouble("x");
-                int y = rsWarps.getInt("y");
-                double z = rsWarps.getDouble("z");
-                int yaw = rsWarps.getInt("yaw");
-                int pitch = rsWarps.getInt("pitch");
-                boolean publicAll = rsWarps.getBoolean("publicAll");
-                String permissions = rsWarps.getString("permissions");
-                String groupPermissions = rsWarps.getString("groupPermissions");
-                String welcomeMessage = rsWarps.getString("welcomeMessage");
-                int visits = rsWarps.getInt("visits");
-
-                UUID creatorId = MyWarp.server().getOfflinePlayer(creator).getUniqueId();
-                UUID worldId = MyWarp.server().getWorld(world).getUID();
-                Type type = publicAll ? Type.PUBLIC : Type.PRIVATE;
-
-                Set<UUID> invitedPlayers = new HashSet<UUID>();
-                for (String player : permissions.split(",")) {
-                    invitedPlayers.add(MyWarp.server().getOfflinePlayer(player).getUniqueId());
-                }
-                Set<String> invitedGroups = new HashSet<String>();
-                for (String group : groupPermissions.split(",")) {
-                    if (group.isEmpty()) {
-                        continue;
-                    }
-                    invitedGroups.add(group);
-                }
-                Warp warp = new Warp(name, creatorId, type, x, y, z, yaw, pitch, worldId, visits,
-                        welcomeMessage, invitedPlayers, invitedGroups);
-                ret.add(warp);
-            }
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Load Exception: " + ex);
-        } finally {
-            try {
-                if (rsWarps != null) {
-                    rsWarps.close();
-                }
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Load Exception (on close):" + ex);
-            }
-        }
-        return ret;
-    }
-
-    @Override
-    public synchronized void addWarp(Warp warp) {
-        PreparedStatement stmnt = null;
-
-        try {
-            conn = getConnection();
-
-            stmnt = conn
-                    .prepareStatement("INSERT INTO "
-                            + table
-                            + " (name, creator, world, x, y, z, yaw, pitch, publicAll, permissions, groupPermissions, welcomeMessage, visits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            stmnt.setString(1, warp.getName());
-            stmnt.setString(2, warp.getCreator().getName());
-            stmnt.setString(3, warp.getWorld().getName());
-            stmnt.setDouble(4, warp.getX());
-            stmnt.setInt(5, (int) warp.getY());
-            stmnt.setDouble(6, warp.getZ());
-            stmnt.setInt(7, (int) warp.getYaw());
-            stmnt.setInt(8, (int) warp.getPitch());
-            stmnt.setBoolean(9, warp.getType() == Type.PUBLIC ? true : false);
-
-            Set<UUID> invitedPlayerIds = warp.getInvitedPlayerIds();
-            StrBuilder dbData = new StrBuilder();
-            for (UUID playerId : invitedPlayerIds) {
-                dbData.appendSeparator(',');
-                dbData.append(MyWarp.server().getOfflinePlayer(playerId).getName());
-            }
-
-            stmnt.setString(10, dbData.toString());
-            stmnt.setString(11, StringUtils.join(warp.getInvitedGroups(), ','));
-            stmnt.setString(12, warp.getWelcomeMessage());
-            stmnt.setInt(13, warp.getVisits());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Insert Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Insert Exception (on close): ", ex);
-            }
-        }
-
-    }
-
-    @Override
-    public synchronized void deleteWarp(Warp warp) {
-        PreparedStatement stmnt = null;
-        try {
-            conn = getConnection();
-
-            stmnt = conn.prepareStatement("DELETE FROM " + table + " WHERE name = ?");
-            stmnt.setString(1, warp.getName());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Delete Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Delete Exception (on close): ", ex);
-            }
-        }
-    }
-
-    @Override
-    public synchronized void updateType(Warp warp) {
-        PreparedStatement stmnt = null;
-
-        try {
-            conn = getConnection();
-
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET publicAll = ? WHERE name = ?");
-            stmnt.setBoolean(1, warp.getType() == Type.PUBLIC ? true : false);
-            stmnt.setString(2, warp.getName());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Publicize Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Publicize Exception (on close): ", ex);
-            }
-        }
-
-    }
-
-    @Override
-    public synchronized void updateCreator(Warp warp) {
-        PreparedStatement stmnt = null;
-
-        try {
-            conn = getConnection();
-
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET creator = ? WHERE name = ?");
-            stmnt.setString(1, warp.getCreator().getName());
-            stmnt.setString(2, warp.getName());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception (on close): ", ex);
-            }
-        }
-
-    }
-
-    @Override
-    public synchronized void updateLocation(Warp warp) {
-        PreparedStatement stmnt = null;
-
-        try {
-            conn = getConnection();
-
-            stmnt = conn.prepareStatement("UPDATE " + table
-                    + " SET world = ?, x = ?, y = ?, Z = ?, yaw = ?, pitch = ? WHERE name = ?");
-            stmnt.setString(1, warp.getWorld().getName());
-            stmnt.setDouble(2, warp.getX());
-            stmnt.setInt(3, (int) warp.getY());
-            stmnt.setDouble(4, warp.getZ());
-            stmnt.setInt(5, (int) warp.getYaw());
-            stmnt.setInt(6, (int) warp.getPitch());
-            stmnt.setString(7, warp.getName());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Location Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Location Exception (on close): ", ex);
-            }
-        }
-    }
-
-    @Override
-    public synchronized void updateInvitedPlayers(Warp warp) {
-        PreparedStatement stmnt = null;
-
-        try {
-            conn = getConnection();
-
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET permissions = ? WHERE name = ?");
-
-            Set<UUID> invitedPlayerIds = warp.getInvitedPlayerIds();
-            StrBuilder dbData = new StrBuilder();
-            for (UUID playerId : invitedPlayerIds) {
-                dbData.appendSeparator(',');
-                dbData.append(MyWarp.server().getOfflinePlayer(playerId).getName());
-            }
-
-            stmnt.setString(1, dbData.toString());
-            stmnt.setString(2, warp.getName());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Permissions Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Permissions Exception (on close): ", ex);
-            }
-        }
-
-    }
-
-    @Override
-    public synchronized void updateInvitedGroups(Warp warp) {
-        PreparedStatement stmnt = null;
-
-        try {
-            conn = getConnection();
-
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET groupPermissions = ? WHERE name = ?");
-            stmnt.setString(1, StringUtils.join(warp.getInvitedGroups(), ','));
-            stmnt.setString(2, warp.getName());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp GroupPermissions Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp GroupPermissions Exception (on close): ", ex);
-            }
-        }
-
-    }
-
-    @Override
-    public synchronized void updateVisits(Warp warp) {
-        PreparedStatement stmnt = null;
-
-        try {
-            conn = getConnection();
-
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET visits = ? WHERE name = ?");
-            stmnt.setInt(1, warp.getVisits());
-            stmnt.setString(2, warp.getName());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Visits Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Visits Exception (on close): ", ex);
-            }
-        }
-    }
-
-    @Override
-    public synchronized void updateWelcomeMessage(Warp warp) {
-        PreparedStatement stmnt = null;
-
-        try {
-            conn = getConnection();
-
-            stmnt = conn.prepareStatement("UPDATE " + table + " SET welcomeMessage = ? WHERE name = ?");
-            stmnt.setString(1, warp.getWelcomeMessage());
-            stmnt.setString(2, warp.getName());
-            stmnt.executeUpdate();
-        } catch (SQLException ex) {
-            MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception: ", ex);
-        } finally {
-            try {
-                if (stmnt != null) {
-                    stmnt.close();
-                }
-            } catch (SQLException ex) {
-                MyWarp.logger().log(Level.SEVERE, "Warp Creator Exception (on close): ", ex);
-            }
-        }
+        });
     }
 }

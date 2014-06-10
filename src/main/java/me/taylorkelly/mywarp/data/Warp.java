@@ -60,7 +60,7 @@ public class Warp implements Comparable<Warp> {
     }
 
     private final String name;
-    
+
     private volatile UUID creatorId;
     private volatile Type type;
 
@@ -76,6 +76,36 @@ public class Warp implements Comparable<Warp> {
     private final Set<UUID> invitedPlayerIds = new HashSet<UUID>();
     private final Set<String> invitedGroups = new HashSet<String>();
 
+    /**
+     * Creates a new Warp with the given values.
+     * 
+     * @param name
+     *            the name
+     * @param creatorId
+     *            the UUID of the player who created this warp
+     * @param type
+     *            the type
+     * @param x
+     *            the x-coordinate
+     * @param y
+     *            the y-coordinate
+     * @param z
+     *            the z-coordinate
+     * @param yaw
+     *            the location's yaw
+     * @param pitch
+     *            the location's pitch
+     * @param worldId
+     *            the UUID of the location's world
+     * @param visits
+     *            the visit count
+     * @param welcomeMessage
+     *            the welcome message
+     * @param inivtedPlayerIds
+     *            a collection that contains all invited player UUIDs
+     * @param invitedGroups
+     *            a collection that includes all invited group names
+     */
     public Warp(String name, UUID creatorId, Type type, double x, double y, double z, float yaw, float pitch,
             UUID worldId, int visits, String welcomeMessage, Collection<UUID> inivtedPlayerIds,
             Collection<String> invitedGroups) {
@@ -108,7 +138,6 @@ public class Warp implements Comparable<Warp> {
         this.pitch = loc.getPitch();
         this.worldId = loc.getWorld().getUID();
 
-        // XXX move out of constructor?
         this.visits = 0;
         this.welcomeMessage = MyWarp
                 .inst()
@@ -239,25 +268,25 @@ public class Warp implements Comparable<Warp> {
     public void inviteGroup(String group) {
         invitedGroups.add(group);
 
-        MyWarp.inst().getConnectionManager().updateInvitedGroups(this);
+        MyWarp.inst().getDataConnection().inviteGroup(this, group);
     }
 
     public void invitePlayer(UUID playerId) {
         invitedPlayerIds.add(playerId);
 
-        MyWarp.inst().getConnectionManager().updateInvitedPlayers(this);
+        MyWarp.inst().getDataConnection().invitePlayer(this, playerId);
     }
 
     public void uninviteGroup(String group) {
         invitedGroups.remove(group);
 
-        MyWarp.inst().getConnectionManager().updateInvitedGroups(this);
+        MyWarp.inst().getDataConnection().uninviteGroup(this, group);
     }
 
     public void uninvitePlayer(UUID playerId) {
         invitedPlayerIds.remove(playerId);
 
-        MyWarp.inst().getConnectionManager().updateInvitedPlayers(this);
+        MyWarp.inst().getDataConnection().uninvitePlayer(this, playerId);
     }
 
     public String replaceWarpMacros(String str, @Nullable Player forWhom) {
@@ -363,7 +392,7 @@ public class Warp implements Comparable<Warp> {
     public void setCreatorId(UUID creator) {
         this.creatorId = creator;
 
-        MyWarp.inst().getConnectionManager().updateCreator(this);
+        MyWarp.inst().getDataConnection().updateCreator(this);
     }
 
     public void setLocation(Location loc) {
@@ -374,7 +403,7 @@ public class Warp implements Comparable<Warp> {
         yaw = loc.getYaw();
         worldId = loc.getWorld().getUID();
 
-        MyWarp.inst().getConnectionManager().updateInvitedPlayers(this);
+        MyWarp.inst().getDataConnection().updateLocation(this);
 
         if (MyWarp.inst().getWarpSettings().dynmapEnabled && type == Type.PUBLIC) {
             MyWarp.inst().getMarkers().updateWarp(this);
@@ -384,19 +413,19 @@ public class Warp implements Comparable<Warp> {
     public void setType(Type type) {
         this.type = type;
 
-        MyWarp.inst().getConnectionManager().updateType(this);
+        MyWarp.inst().getDataConnection().updateType(this);
     }
 
     private void incraseVisists() {
         visits++;
 
-        MyWarp.inst().getConnectionManager().updateVisits(this);
+        MyWarp.inst().getDataConnection().updateVisits(this);
     }
 
     public void setWelcomeMessage(String welcomeMessage) {
         this.welcomeMessage = welcomeMessage;
 
-        MyWarp.inst().getConnectionManager().updateWelcomeMessage(this);
+        MyWarp.inst().getDataConnection().updateWelcomeMessage(this);
     }
 
     @Override

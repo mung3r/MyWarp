@@ -12,7 +12,7 @@ commands:
     public-warps: "Public Warps ({0}):&f&o {1}"
     private-warps: "Private Warps ({0}):&f&o {1}"
   create:
-    created-successful: | 
+    created-successful: |
       &bSuccessfully created ''{0}''.
       &fIf you''d like to privatize it, use: &c/warp private {0}&f.
     description: "Creates a new public warp called &7<name>&f in your current location."
@@ -36,11 +36,12 @@ commands:
     heading: "Help"
     note: "Use '/<command> -?' to get more information about it."
   import:
-    description: "Imports warps from &7<SQLite|MySQL>&f into the current database. Existing warps will not be overwritten unless [-f] is used."
+    description: "Imports warps from previously used databases into the current database. Existing warps will not be overwritten unless [-f] is used."
+    file-non-existent: "The file ''{0}'' does not exist."
     import-successful: "&b{0,choice,0#No warps were|1#One warp was|1<{0,number,integer} warps were} imported."
     import-with-skips: "&b{0,choice,0#No warps were|1# One warp was|1< {0,number,integer} warps were} imported, but {1,choice,1#one warp was|1<{1,number,integer} warps were} skipped:&f"
     invalid-option: "{0} is not a valid import option."
-    no-connection: "Could not establish database connection in order to import warps:"
+    no-connection: "Could not establish database connection in order to import warps: {0}"
   invalid-number: "You need to enter a valid number. Check &f/{0} -?&c for more information."
   invite:
     description: "Invites &7<player|group>&f to &7<name>."
@@ -77,7 +78,6 @@ commands:
     description: "Lists all warps you can visit. Use [-c creator] to list warps of the given creator only and [-w world] to list warps of the given world only. If the warps should be listed by popularity, use [-p]."
     heading: "Warps"
     you: "you"
-  modify-permission: "You do not have permission to modify ''{0}''."
   point:
     description: "Points your compass towards &7[name]&f. If you want to reset the compass, simply use this command without specifying a warp."
     reset: "&bYour compass now points back to the spawn point."

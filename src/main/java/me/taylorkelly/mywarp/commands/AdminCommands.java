@@ -1,23 +1,30 @@
 package me.taylorkelly.mywarp.commands;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.dataconnections.ConnectionManager;
-import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
+import me.taylorkelly.mywarp.dataconnections.MySQLConnection;
+import me.taylorkelly.mywarp.dataconnections.SQLiteConnection;
+import me.taylorkelly.mywarp.dataconnections.migrators.DataConnectionMigrator;
+import me.taylorkelly.mywarp.dataconnections.migrators.DataMigrator;
+import me.taylorkelly.mywarp.dataconnections.migrators.LegacyMySQLMigrator;
+import me.taylorkelly.mywarp.dataconnections.migrators.LegacySQLiteMigrator;
 import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * This class contains all commands that cover admin tasks. They should be
@@ -25,59 +32,102 @@ import org.bukkit.entity.Player;
  */
 public class AdminCommands {
 
-    @Command(aliases = { "import" }, usage = "<sqlite/mysql>", desc = "commands.import.description", min = 1, max = 1, flags = "f", permissions = { "mywarp.admin.import" })
-    public void importWarps(CommandContext args, CommandSender sender) throws CommandException {
-        boolean importMySQL;
-
-        if (args.getString(0).equalsIgnoreCase("mysql")) {
-            importMySQL = true;
+    @Command(aliases = { "import" }, usage = "<sqlite path/to/db|mysql host port database user password|legacy-sqlite path/to/db|legacy-mysql host port database user password table-name>", desc = "commands.import.description", min = 2, max = 7, flags = "f", permissions = { "mywarp.admin.import" })
+    public void importWarps(final CommandContext args, final CommandSender sender) throws CommandException {
+        DataMigrator migrator;
+        if (args.getString(0).equalsIgnoreCase("legacy-mysql")) {
+            if (args.argsLength() < 7) {
+                throw new CommandException(MyWarp.inst().getLocalizationManager()
+                        .getString("commands.library.too-few-args", sender));
+            }
+            migrator = new LegacyMySQLMigrator(args.getString(1), args.getInteger(2), args.getString(3),
+                    args.getString(4), args.getString(5), args.getString(6));
+        } else if (args.getString(0).equalsIgnoreCase("legacy-sqlite")) {
+            File database = new File(MyWarp.inst().getDataFolder(), args.getString(1));
+            if (!database.exists()) {
+                throw new CommandException(MyWarp.inst().getLocalizationManager()
+                        .getString("commands.import.file-non-existent", sender, database.getAbsolutePath()));
+            }
+            migrator = new LegacySQLiteMigrator(database);
+        } else if (args.getString(0).equalsIgnoreCase("mysql")) {
+            if (args.argsLength() < 7) {
+                throw new CommandException(MyWarp.inst().getLocalizationManager()
+                        .getString("commands.library.too-few-args", sender));
+            }
+            migrator = new DataConnectionMigrator(MySQLConnection.getConnection(args.getString(1),
+                    args.getInteger(2), args.getString(3), args.getString(4), args.getString(5), false));
         } else if (args.getString(0).equalsIgnoreCase("sqlite")) {
-            importMySQL = false;
+            File database = new File(MyWarp.inst().getDataFolder(), args.getString(1));
+            if (!database.exists()) {
+                throw new CommandException(MyWarp.inst().getLocalizationManager()
+                        .getString("commands.import.file-non-existent", sender, database.getAbsolutePath()));
+            }
+            migrator = new DataConnectionMigrator(SQLiteConnection.getConnection(database, false));
         } else {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getString("commands.import.invalid-option", sender, args.getString(0)));
         }
 
-        try {
-            ConnectionManager importConnection = new ConnectionManager(importMySQL, false, true);
-            Collection<Warp> importedWarps = importConnection.getWarps();
-            Set<Warp> notImportedWarps = new HashSet<Warp>();
+        ListenableFuture<Collection<Warp>> futureWarps = migrator.getWarps();
 
-            Iterator<Warp> iterator = importedWarps.iterator();
-            while (iterator.hasNext()) {
-                Warp warp = iterator.next();
-                if (MyWarp.inst().getWarpManager().warpExists(iterator.next().getName())) {
-                    if (args.hasFlag('f')) {
-                        // remove the old warp
-                        // XXX That seems somewhat ugly.
-                        MyWarp.inst().getWarpManager()
-                                .deleteWarp(MyWarp.inst().getWarpManager().getWarp(warp.getName()));
-                    } else {
-                        // skip
-                        notImportedWarps.add(warp);
-                        iterator.remove();
+        // import the warps when they are ready - executed async!
+        Futures.addCallback(futureWarps, new FutureCallback<Collection<Warp>>() {
+
+            @Override
+            public void onFailure(final Throwable t) {
+
+                // back to the main thread...
+                MyWarp.server().getScheduler().runTask(MyWarp.inst(), new Runnable() {
+
+                    @Override
+                    public void run() {
+                        sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                                .getString("commands.import.no-connection", sender, t.getMessage()));
                     }
-                }
+
+                });
             }
 
-            MyWarp.inst().getWarpManager().populate(importedWarps);
+            @Override
+            public void onSuccess(final Collection<Warp> warps) {
+                // back to the main thread...
+                MyWarp.server().getScheduler().runTask(MyWarp.inst(), new Runnable() {
 
-            if (notImportedWarps.isEmpty()) {
-                sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                        .getString("commands.import.import-successful", sender, importedWarps.size()));
-            } else {
-                sender.sendMessage(MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getString("commands.import.import-with-skips", sender, importedWarps.size(),
-                                notImportedWarps.size())
-                        + " " + StringUtils.join(notImportedWarps, ", "));
+                    @Override
+                    public void run() {
+                        Set<Warp> notImportedWarps = new HashSet<Warp>();
+                        for (Warp warp : warps) {
+                            // REVIEW this process seems a bit ugly.
+                            if (MyWarp.inst().getWarpManager().warpExists(warp.getName())) {
+                                if (!args.hasFlag('f')) {
+                                    // skip the warp
+                                    notImportedWarps.add(warp);
+                                    continue;
+                                }
+                                // remove the old warp
+                                MyWarp.inst().getWarpManager()
+                                        .deleteWarp(MyWarp.inst().getWarpManager().getWarp(warp.getName()));
+                            }
+                            MyWarp.inst().getWarpManager().addWarp(warp);
+                        }
+
+                        if (notImportedWarps.isEmpty()) {
+                            sender.sendMessage(MyWarp.inst().getLocalizationManager()
+                                    .getString("commands.import.import-successful", sender, warps.size()));
+                        } else {
+                            sender.sendMessage(MyWarp
+                                    .inst()
+                                    .getLocalizationManager()
+                                    .getString("commands.import.import-with-skips", sender, warps.size(),
+                                            notImportedWarps.size())
+                                    + " " + CommandUtils.joinWarps(notImportedWarps));
+                        }
+                    }
+
+                });
             }
-        } catch (DataConnectionException ex) {
-            sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getString("commands.import.no-connection", sender)
-                    + ex.getMessage());
-        }
+
+        });
     }
 
     @Command(aliases = { "reload" }, usage = "", desc = "commands.reload.description", max = 0, permissions = { "mywarp.admin.reload" })

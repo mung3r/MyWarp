@@ -46,7 +46,6 @@ public class CommandUtils {
         });
     }
 
-    // TODO remove 'commands.modify-permission' localization string
     public static Warp getModifiableWarp(final CommandSender sender, String filter) throws CommandException {
         return getWarp(sender, filter, new Predicate<Warp>() {
 

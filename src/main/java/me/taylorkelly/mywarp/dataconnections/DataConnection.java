@@ -1,53 +1,24 @@
 package me.taylorkelly.mywarp.dataconnections;
 
 import java.util.Collection;
+import java.util.UUID;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 import me.taylorkelly.mywarp.data.Warp;
 
 /**
- * This interface defines all usable methods for data-connections used by
- * MyWarp. Implementations are expected to be threadsafe!
+ * A connection to a data-source.
  */
 public interface DataConnection {
 
     /**
-     * Closes all pending database connections
+     * Closes any connection to the underlying data-source.
      */
     public void close();
 
     /**
-     * Checks the given database. Depending on the implementation this could be
-     * used to check if the database exists, if it contains all values etc.
-     * 
-     * @param createIfNotExist
-     *            whether the method should create the database if it does not
-     *            exist
-     * @throws DataConnectionException
-     *             if any circumstance prevents working with the database
-     */
-    public void checkDB(boolean createIfNotExist) throws DataConnectionException;
-
-    /**
-     * Executes updates to the database. Depending on the implementation this
-     * could be used to add missing values, change database-layouts etc.
-     * 
-     * @param updateIfNecessary
-     *            whether the method should update the database if necessary
-     * @throws DataConnectionException
-     *             if any circumstance prevents working with the database
-     */
-    public void updateDB(boolean updateIfNecessary) throws DataConnectionException;
-
-    /**
-     * Loads all warps from the database and returns them as map. Each warp is
-     * stored under their name.
-     * 
-     * @return a map with all warps
-     */
-    public Collection<Warp> getWarps();
-
-    /**
-     * Adds the warp to the database
+     * Adds the given warp to the underlying data-source.
      * 
      * @param warp
      *            the warp
@@ -55,7 +26,7 @@ public interface DataConnection {
     public void addWarp(Warp warp);
 
     /**
-     * Deletes the warp from the database
+     * Deletes the given warp from the underlying data-source.
      * 
      * @param warp
      *            the warp
@@ -63,15 +34,54 @@ public interface DataConnection {
     public void deleteWarp(Warp warp);
 
     /**
-     * Update's a warp's type in the databse
+     * Gets all warps from the underlying data-source.
+     * 
+     * @return a ListenableFuture that contains a collection of warps
+     */
+    public ListenableFuture<Collection<Warp>> getWarps();
+
+    /**
+     * Adds the given group to the invited groups for the given warp.
      * 
      * @param warp
      *            the warp
+     * @param group
+     *            the identifier of the group
      */
-    public void updateType(Warp warp);
+    public void inviteGroup(Warp warp, String group);
 
     /**
-     * Updates a warp's creator in the database
+     * Adds the given playerId to the invited playerIds for the given players.
+     * 
+     * @param warp
+     *            the warp
+     * @param playerId
+     *            the player-id
+     */
+    public void invitePlayer(Warp warp, UUID playerId);
+
+    /**
+     * Removes the given group from the invited groups for the given warp.
+     * 
+     * @param warp
+     *            the warp
+     * @param group
+     *            the group identifier
+     */
+    public void uninviteGroup(Warp warp, String group);
+
+    /**
+     * Removes the given playerId from the invited playerIds for the given warp
+     * 
+     * @param warp
+     *            the warp
+     * @param playerId
+     *            the player-id
+     */
+    public void uninvitePlayer(Warp warp, UUID playerId);
+
+    /**
+     * Updates the creator of the given warp-
      * 
      * @param warp
      *            the warp
@@ -79,7 +89,7 @@ public interface DataConnection {
     public void updateCreator(Warp warp);
 
     /**
-     * Updates the location of the given warp in the database
+     * Updates the location of the given warp.
      * 
      * @param warp
      *            the warp
@@ -87,25 +97,15 @@ public interface DataConnection {
     public void updateLocation(Warp warp);
 
     /**
-     * Updates the permissions (list of invited players) of the given warp in
-     * the database
+     * Updates the type of the given warp.
      * 
      * @param warp
      *            the warp
      */
-    public void updateInvitedPlayers(Warp warp);
+    public void updateType(Warp warp);
 
     /**
-     * Updates the group-permissions (list of invited groups) of the given warp
-     * in the database
-     * 
-     * @param warp
-     *            the warp
-     */
-    public void updateInvitedGroups(Warp warp);
-
-    /**
-     * Updates the visits of the given warp in the database
+     * Updates the visits of the given warp.
      * 
      * @param warp
      *            the warp
@@ -113,10 +113,11 @@ public interface DataConnection {
     public void updateVisits(Warp warp);
 
     /**
-     * Updates the welcome message of the given warp in the database
+     * Update the welcome-message of the given warp.
      * 
      * @param warp
      *            the warp
      */
     public void updateWelcomeMessage(Warp warp);
+
 }

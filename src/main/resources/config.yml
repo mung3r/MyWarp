@@ -9,7 +9,6 @@ mysql:
   host: 'localhost'
   port: 3306
   database: 'minecraft'
-  table: 'warpTable'
   username: 'root'
   password: 'password'
 localization:

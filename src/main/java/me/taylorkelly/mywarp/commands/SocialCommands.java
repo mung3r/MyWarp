@@ -170,6 +170,7 @@ public class SocialCommands {
         CommandUtils.checkLimits(sender, false, Type.PRIVATE);
 
         warp.setType(Type.PRIVATE);
+        //TODO fix second message place-holder
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
                 .getString("commands.private.privatized", sender, warp.getName()));
     }

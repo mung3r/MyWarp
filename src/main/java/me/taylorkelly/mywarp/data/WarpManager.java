@@ -35,9 +35,13 @@ public class WarpManager {
         ALLOW, DENY_TOTAL, DENY_PRIVATE, DENY_PUBLIC
     }
 
-    public WarpManager() {
-        populate(MyWarp.inst().getConnectionManager().getWarps());
-        MyWarp.logger().info(getLoadedWarpNumber() + " warps loaded.");
+    // public WarpManager(Collection<Warp> innitialWarps) {
+    // populate(innitialWarps);
+    // MyWarp.logger().info(getLoadedWarpNumber() + " warps loaded.");
+    // }
+
+    public void clear() {
+        warpMap.clear();
     }
 
     /**
@@ -52,12 +56,15 @@ public class WarpManager {
      *            the type
      */
     public void addWarp(String name, Player player, Type type) {
-        Warp warp = new Warp(name, player, type);
+        addWarp(new Warp(name, player, type));
+    }
 
-        warpMap.put(name, warp);
-        MyWarp.inst().getConnectionManager().addWarp(warp);
+    //REVIEW Is this method needed? Are there better alternatives for multiple insets?
+    public void addWarp(Warp warp) {
+        warpMap.put(warp.getName(), warp);
+        MyWarp.inst().getDataConnection().addWarp(warp);
 
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled && type == Type.PUBLIC) {
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled && warp.getType() == Type.PUBLIC) {
             MyWarp.inst().getMarkers().addWarp(warp);
         }
     }
@@ -70,7 +77,7 @@ public class WarpManager {
      */
     public void deleteWarp(Warp warp) {
         warpMap.remove(warp.getName());
-        MyWarp.inst().getConnectionManager().deleteWarp(warp);
+        MyWarp.inst().getDataConnection().deleteWarp(warp);
 
         if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
             MyWarp.inst().getMarkers().deleteWarp(warp);
@@ -152,9 +159,7 @@ public class WarpManager {
         Collection<Warp> applicableWarps = getWarps(predicate);
         OfflinePlayer ret = null;
         for (Warp warp : applicableWarps) {
-            MyWarp.logger().info("Checking warp: " + warp.getName());
             OfflinePlayer creator = warp.getCreator();
-            MyWarp.logger().info("With Creator: " + creator.getName());
             if (StringUtils.equalsIgnoreCase(creator.getName(), filter)) {
                 // minecraft names are, as of 1.7.x case insensitive
                 return creator;
