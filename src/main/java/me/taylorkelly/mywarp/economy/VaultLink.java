@@ -50,7 +50,8 @@ public class VaultLink implements EconomyLink {
         if (canDisobeyFees(sender, amount)) {
             return true;
         }
-        return economy.has(sender.getName(), ((Player) sender).getWorld().getName(), amount);
+        Player player = (Player) sender;
+        return economy.has(player, player.getWorld().getName(), amount);
     }
 
     @Override
@@ -59,8 +60,8 @@ public class VaultLink implements EconomyLink {
         if (canDisobeyFees(sender, amount)) {
             return;
         }
-        EconomyResponse response = economy.withdrawPlayer(sender.getName(), ((Player) sender).getWorld()
-                .getName(), amount);
+        Player player = (Player) sender;
+        EconomyResponse response = economy.withdrawPlayer(player, player.getWorld().getName(), amount);
 
         if (!response.transactionSuccess()) {
             MyWarp.logger().severe("Could not withdraw " + sender.getName() + ", " + response.errorMessage);
