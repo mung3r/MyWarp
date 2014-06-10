@@ -257,10 +257,7 @@ public class BasicCommands {
                 first.append(warp.getType().getColor());
                 first.append(warp.getName());
                 first.append(ChatColor.WHITE);
-                first.append("'");
-                first.append(" (");
-                first.append(warp.getType().getSymbol());
-                first.append(") ");
+                first.append("' ");
                 first.append(MyWarp.inst().getLocalizationManager()
                         .getColorlessString("commands.list.by", sender));
                 first.append(" ");

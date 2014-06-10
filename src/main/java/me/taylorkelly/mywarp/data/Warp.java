@@ -25,25 +25,18 @@ import org.bukkit.entity.Player;
 public class Warp implements Comparable<Warp> {
 
     public static enum Type {
-        PRIVATE("private", '-', ChatColor.RED), PUBLIC("public", '+', ChatColor.GREEN);
+        PRIVATE("private", ChatColor.RED), PUBLIC("public", ChatColor.GREEN);
 
         private final String permissionSuffix;
         private final ChatColor color;
-        private final char symbol;
 
-        Type(String permissionSuffix, char symbol, ChatColor color) {
+        Type(String permissionSuffix, ChatColor color) {
             this.permissionSuffix = permissionSuffix;
-            this.symbol = symbol;
             this.color = color;
         }
 
         public ChatColor getColor() {
             return color;
-        }
-
-        public char getSymbol() {
-            // TODO symbol has no real use, so it might as well be removed...
-            return symbol;
         }
 
         public String getPermissionSuffix() {
