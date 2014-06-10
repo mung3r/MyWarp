@@ -36,7 +36,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.common.collect.TreeMultimap;
 
 /**
  * This class contains all commands that cover basic tasks. They should be
