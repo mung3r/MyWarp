@@ -87,7 +87,7 @@ commands:
     description: "Makes &7<name>&f private."
     privatized: |
       &bYou have privatized ''{0}''.
-      &fIf you'd like to invite others to it, use: &c/warp invite <player> {0}
+      &fIf you''d like to invite others to it, use: &c/warp invite <player> {0}
   public:
     already-public: "''{0}'' is already public."
     description: "Makes &7<name>&f public."
