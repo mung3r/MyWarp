@@ -9,14 +9,16 @@ import me.taylorkelly.mywarp.data.WarpLimit.Limit;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 import me.taylorkelly.mywarp.utils.commands.CommandPermissionsException;
 
-import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 
 /**
  * This class bundles all methods that are only used to simplify certain task
@@ -222,12 +224,15 @@ public class CommandUtils {
             return "-";
         }
 
-        StrBuilder ret = new StrBuilder();
-        for (Warp warp : warps) {
-            ret.appendSeparator(", ");
-            ret.append(warp.getName());
-        }
-        return ret.toString();
+        return Joiner.on(", ").join(Collections2.transform(warps, new Function<Warp, String>() {
+
+            @Override
+            public String apply(Warp warp) {
+                // XXX color warp names?
+                return warp.getName();
+            }
+
+        }));
     }
 
     public static OfflinePlayer matchOfflinePlayer(String name) {

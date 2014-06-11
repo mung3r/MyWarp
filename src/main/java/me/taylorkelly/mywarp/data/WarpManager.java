@@ -59,7 +59,8 @@ public class WarpManager {
         addWarp(new Warp(name, player, type));
     }
 
-    //REVIEW Is this method needed? Are there better alternatives for multiple insets?
+    // REVIEW Is this method needed? Are there better alternatives for multiple
+    // insets?
     public void addWarp(Warp warp) {
         warpMap.put(warp.getName(), warp);
         MyWarp.inst().getDataConnection().addWarp(warp);

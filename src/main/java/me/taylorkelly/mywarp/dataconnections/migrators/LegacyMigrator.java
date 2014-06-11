@@ -7,22 +7,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record13;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 
 /**
  * An abstract migrator for legacy (pre 2.7) database layouts.
  */
 public abstract class LegacyMigrator {
+
+    private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
 
     /**
      * Migrates warps from the given DSLContext looking inside the table of the
@@ -56,10 +59,10 @@ public abstract class LegacyMigrator {
                         DSL.fieldByName(String.class, "groupPermissions")).from(DSL.tableByName(tableName))
                 .fetch();
 
-        //TODO don't split this string twice
+        // TODO don't split this string twice
         List<String> playerNames = results.getValues("creator", String.class);
         for (String invitedPlayers : results.getValues("permissions", String.class)) {
-            for (String invitedPlayer : StringUtils.split(invitedPlayers, ',')) {
+            for (String invitedPlayer : splitter.split(invitedPlayers)) {
                 if (playerNames.contains(invitedPlayer)) {
                     continue;
                 }
@@ -84,10 +87,10 @@ public abstract class LegacyMigrator {
                     .next();
             UUID worldId = MyWarp.server().getWorld(record.value9()).getUID();
             Warp.Type type = record.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
-            Collection<String> invitedGroups = Sets.newHashSet(StringUtils.split(record.value13(), ','));
+            Collection<String> invitedGroups = Sets.newHashSet(splitter.split(record.value13()));
 
             Collection<UUID> invitedPlayerIds = new HashSet<UUID>();
-            for (String invitedPlayer : StringUtils.split(record.value12(), ',')) {
+            for (String invitedPlayer : splitter.split(record.value12())) {
                 invitedPlayerIds.add(lookup.get(invitedPlayer));
             }
             Warp w = new Warp(record.value1(), lookup.get(record.value2()), type, record.value4(),

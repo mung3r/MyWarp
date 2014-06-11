@@ -202,7 +202,8 @@ public class WarpSignManager implements Listener {
         line = line.substring(1, line.length() - 1);
         sign.setLine(1, "[" + MyWarp.inst().getWarpSettings().warpSignsIdentifiers.ceiling(line) + "]");
 
-        player.sendMessage(MyWarp.inst().getLocalizationManager().getString("warp-signs.created-successful", player));
+        player.sendMessage(MyWarp.inst().getLocalizationManager()
+                .getString("warp-signs.created-successful", player));
         return true;
     }
 

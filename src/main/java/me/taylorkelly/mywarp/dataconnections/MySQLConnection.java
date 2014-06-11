@@ -50,7 +50,8 @@ public class MySQLConnection {
      * @return a CheckedFuture containing a valid, setup connection
      */
     public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final String host,
-            final int port, final String database, final String user, final String password, final boolean controlDBLayout) {
+            final int port, final String database, final String user, final String password,
+            final boolean controlDBLayout) {
         final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
                 .newSingleThreadExecutor());
 

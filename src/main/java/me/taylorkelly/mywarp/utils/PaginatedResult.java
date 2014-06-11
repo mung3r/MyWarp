@@ -94,7 +94,7 @@ public abstract class PaginatedResult<T> {
         }
 
         sender.sendMessage(ChatColor.GOLD
-                + MinecraftFontWidthCalculator.centralize(" " + header
+                + FormattingUtils.center(" " + header
                         + MyWarp.inst().getLocalizationManager().getColorlessString("lister.page", sender)
                         + " " + (page + 1) + "/" + (maxPages + 1) + " ", '-'));
         if (note != null) {

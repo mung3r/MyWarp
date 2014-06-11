@@ -23,7 +23,6 @@ import me.taylorkelly.mywarp.timer.TimerFactory;
 import me.taylorkelly.mywarp.utils.commands.CommandsManager;
 import net.milkbowl.vault.economy.Economy;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -34,6 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.FileUtil;
 import org.dynmap.DynmapCommonAPI;
 
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
 
 public class MyWarp extends JavaPlugin implements Reloadable {
@@ -331,7 +331,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
             try {
                 RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
                         .getRegistration(net.milkbowl.vault.economy.Economy.class);
-                Validate.notNull(economyProvider, "EconomyProvider cannnot be null.");
+                Preconditions.checkNotNull(economyProvider, "EconomyProvider cannnot be null.");
                 economyLink = new VaultLink(economyProvider);
             } catch (NoClassDefFoundError e) {
                 // economy provider class is not present
@@ -363,7 +363,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         }
 
         // block the main thread until the warps are loaded
-        // TODO chaining?
+        // REVIEW chain this loading instead of blocking the main thread?
         try {
             Collection<Warp> warps = getDataConnection().getWarps().get();
             warpManager.populate(warps);

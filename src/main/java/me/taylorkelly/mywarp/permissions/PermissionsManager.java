@@ -311,7 +311,6 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the created permissionsHander
      */
     private PermissionsHandler setupHandler() {
-        PermissionsHandler handler = null;
 
         // check for Vault first!
         try {
@@ -319,11 +318,9 @@ public class PermissionsManager implements PermissionsHandler {
                     .getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
             if (permissionProvider != null) {
                 MyWarp.logger().info("Using Vault for group support");
-                handler = new VaultHandler(permissionProvider.getProvider());
-                return handler;
+                return new VaultHandler(permissionProvider.getProvider());
             }
         } catch (NoClassDefFoundError e) {
-            // Do nothing
         }
 
         Plugin checkPlugin;
@@ -335,29 +332,24 @@ public class PermissionsManager implements PermissionsHandler {
                 MyWarp.logger().info(
                         "Using bPermissions v" + checkPlugin.getDescription().getVersion()
                                 + " for group support");
-                handler = new BPermissions2Handler();
-                return handler;
+                return new BPermissions2Handler();
             }
         }
 
         checkPlugin = MyWarp.server().getPluginManager().getPlugin("GroupManager");
         if (checkPlugin != null && checkPlugin.isEnabled()) {
-            handler = new GroupManagerHandler(checkPlugin);
-
             MyWarp.logger()
                     .info("Using GroupManager v" + checkPlugin.getDescription().getVersion()
                             + " for group support");
-            return handler;
+            return new GroupManagerHandler(checkPlugin);
         }
 
         checkPlugin = MyWarp.server().getPluginManager().getPlugin("PermissionsEx");
         if (checkPlugin != null && checkPlugin.isEnabled()) {
-            handler = new PermissionsExHandler();
-
             MyWarp.logger().info(
                     "Using PermissionsEx v" + checkPlugin.getDescription().getVersion()
                             + " for group support");
-            return handler;
+            return new PermissionsExHandler();
         }
 
         MyWarp.logger().info(

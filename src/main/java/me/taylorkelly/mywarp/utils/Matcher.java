@@ -35,7 +35,7 @@ public class Matcher {
 
                 }));
     }
-    
+
     public static Matcher match(final String filter, Predicate<Warp> predicate) {
         return new Matcher(filter, predicate);
     }

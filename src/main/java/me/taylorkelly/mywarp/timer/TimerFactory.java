@@ -12,7 +12,8 @@ import com.google.common.collect.Table;
  */
 public class TimerFactory {
 
-    private final Table<Object, Class<? extends TimerAction<?>>, TimerAction<?>> timers = HashBasedTable.create();
+    private final Table<Object, Class<? extends TimerAction<?>>, TimerAction<?>> timers = HashBasedTable
+            .create();
 
     /**
      * Registers a new timer. This method will start the timer right away.
@@ -39,7 +40,7 @@ public class TimerFactory {
      */
     public boolean cancelTimer(Object identifier, Class<? extends TimerAction<?>> clazz) {
         TimerAction<?> timer = timers.remove(identifier, clazz);
-        if (timers == null){
+        if (timers == null) {
             return false;
         }
         timer.cancel();
@@ -92,7 +93,7 @@ public class TimerFactory {
      */
     public int getRemainingSeconds(Object identifier, Class<? extends TimerAction<?>> clazz) {
         long remainingTicks = getRemainingTicks(identifier, clazz);
-        //by adding 0.5 it will always round properly
+        // by adding 0.5 it will always round properly
         return remainingTicks != 0 ? (int) ((remainingTicks / 20) + 0.5) : 0;
     }
 

@@ -160,8 +160,8 @@ public class WarpSettings implements Reloadable {
             } else {
                 limitsWarpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".totalLimit", 0),
                         configuredLimits.getInt(key + ".publicLimit", 0), configuredLimits.getInt(key
-                                + ".privateLimit", 0), (List<String>) configuredLimits.getList(key + ".affectedWorlds",
-                                Arrays.asList("all"))));
+                                + ".privateLimit", 0), (List<String>) configuredLimits.getList(key
+                                + ".affectedWorlds", Arrays.asList("all"))));
             }
         }
         Collections.sort(limitsWarpLimits);

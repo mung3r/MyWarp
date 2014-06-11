@@ -97,8 +97,8 @@ public class SafeTeleport {
         case TRAPPED_CHEST: // 146
         case DAYLIGHT_DETECTOR: // 151
         case QUARTZ_STAIRS: // 156
-        case ACACIA_STAIRS: //163
-        case DARK_OAK_STAIRS: //164
+        case ACACIA_STAIRS: // 163
+        case DARK_OAK_STAIRS: // 164
             return true;
         default:
             return false;

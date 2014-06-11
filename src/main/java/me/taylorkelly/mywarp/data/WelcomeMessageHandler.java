@@ -64,11 +64,8 @@ public class WelcomeMessageHandler {
         @Override
         public String getPromptText(ConversationContext context) {
             Warp warp = (Warp) context.getSessionData("warp");
-            return MyWarp
-                    .inst()
-                    .getLocalizationManager()
-                    .getString("commands.welcome.enter", (Player) context.getForWhom(),
-                            warp.getName());
+            return MyWarp.inst().getLocalizationManager()
+                    .getString("commands.welcome.enter", (Player) context.getForWhom(), warp.getName());
         }
     }
 
@@ -88,14 +85,14 @@ public class WelcomeMessageHandler {
                 return MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getString("commands.welcome.removed-successful",
-                                (Player) context.getForWhom(), warp.getName());
+                        .getString("commands.welcome.removed-successful", (Player) context.getForWhom(),
+                                warp.getName());
             } else {
                 return MyWarp
                         .inst()
                         .getLocalizationManager()
-                        .getString("commands.welcome.changed-successful",
-                                (Player) context.getForWhom(), warp.getName(), message);
+                        .getString("commands.welcome.changed-successful", (Player) context.getForWhom(),
+                                warp.getName(), message);
             }
         }
 

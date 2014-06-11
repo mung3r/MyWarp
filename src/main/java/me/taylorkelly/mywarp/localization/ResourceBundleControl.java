@@ -12,31 +12,32 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.google.common.base.Preconditions;
+
 import me.taylorkelly.mywarp.MyWarp;
 
-import org.apache.commons.lang.Validate;
-
 /**
- * A custom implementation of {@link java.util.ResourceBundle.Control} for Yaml-files
- * only. ResourceBundle-files are expected to be found inside the plugin's data
- * folder. If the file does not exist (which is unlikely to happen), it tries to
- * load the file that is bundled with the plugin as fallback.
+ * A custom implementation of {@link java.util.ResourceBundle.Control} for
+ * Yaml-files only. ResourceBundle-files are expected to be found inside the
+ * plugin's data folder. If the file does not exist (which is unlikely to
+ * happen), it tries to load the file that is bundled with the plugin as
+ * fallback.
  */
 public class ResourceBundleControl extends ResourceBundle.Control {
 
     @Override
     public List<String> getFormats(String baseName) {
-        Validate.notNull(baseName);
+        Preconditions.checkNotNull(baseName);
         return Collections.unmodifiableList(Arrays.asList("yml", "yaml"));
     }
 
     @Override
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
             boolean reload) throws IllegalAccessException, InstantiationException, IOException {
-        Validate.notNull(baseName);
-        Validate.notNull(locale);
-        Validate.notNull(format);
-        Validate.notNull(loader);
+        Preconditions.checkNotNull(baseName);
+        Preconditions.checkNotNull(locale);
+        Preconditions.checkNotNull(format);
+        Preconditions.checkNotNull(loader);
 
         String bundleName = toBundleName(baseName, locale);
         String resourceName = toResourceName(bundleName, format);

@@ -50,6 +50,7 @@ public class SQLiteConnection {
         ListenableFuture<DataConnection> futureConnection = executor.submit(new Callable<DataConnection>() {
 
 
+
             @Override
             public DataConnection call() throws DataConnectionException {
                 String dsn = "jdbc:sqlite://" + database.getAbsolutePath();

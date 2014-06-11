@@ -17,13 +17,12 @@ import me.taylorkelly.mywarp.data.WelcomeMessageHandler;
 import me.taylorkelly.mywarp.economy.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.Matcher;
-import me.taylorkelly.mywarp.utils.MinecraftFontWidthCalculator;
+import me.taylorkelly.mywarp.utils.FormattingUtils;
 import me.taylorkelly.mywarp.utils.PaginatedResult;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -32,6 +31,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -88,7 +88,7 @@ public class BasicCommands {
         }
 
         sender.sendMessage(ChatColor.GOLD
-                + MinecraftFontWidthCalculator.centralize(
+                + FormattingUtils.center(
                         " "
                                 + MyWarp.inst().getLocalizationManager()
                                         .getString("commands.assets.heading", sender, player.getName()) + " ",
@@ -150,10 +150,10 @@ public class BasicCommands {
                         .getString(
                                 "commands.assets.total-warps",
                                 sender,
-                                StringUtils.join(limit.getAffectedWorlds(), ", "),
+                                Joiner.on(", ").join(limit.getAffectedWorlds()),
                                 (warpsPerType.get(Type.PRIVATE).size() + warpsPerType.get(Type.PUBLIC).size())
                                         + "/" + limit.getLimit(Limit.TOTAL)));
-                sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
+                sender.sendMessage(FormattingUtils.toList(publicEntry, privateEntry));
             }
         } else {
             SortedSet<Warp> sortedWarps = new TreeSet<Warp>();
@@ -198,7 +198,7 @@ public class BasicCommands {
                     .getLocalizationManager()
                     .getString("commands.assets.total-warps", sender, worldNames.toString(),
                             (warpsPerType.values().size())));
-            sender.sendMessage(MinecraftFontWidthCalculator.toList(publicEntry, privateEntry));
+            sender.sendMessage(FormattingUtils.toList(publicEntry, privateEntry));
         }
     }
 
@@ -279,7 +279,7 @@ public class BasicCommands {
                 last.append(", ");
                 last.append(Math.round(warp.getZ()));
                 last.append(")");
-                return (MinecraftFontWidthCalculator.rightLeftAlign(first.toString(), last.toString()));
+                return (FormattingUtils.twoColumnAlign(first.toString(), last.toString()));
             }
         };
 
@@ -287,7 +287,7 @@ public class BasicCommands {
             warpList.display(sender, results, args.getInteger(0, 1));
         } catch (NumberFormatException e) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("commands.invalid-number", sender, StringUtils.join(args.getCommand(), ' ')));
+                    .getString("commands.invalid-number", sender, args.getCommandString()));
         }
     }
 
@@ -363,12 +363,12 @@ public class BasicCommands {
             @Override
             public String format(Command cmd, CommandSender sender) {
                 // /root sub|sub [flags] <args>
-                StringBuilder ret = new StringBuilder();
+                StrBuilder ret = new StrBuilder();
                 ret.append(ChatColor.GOLD);
                 ret.append("/");
                 ret.append(args.getCommand()[0]);
                 ret.append(" ");
-                ret.append(StringUtils.join(cmd.aliases(), '|'));
+                ret.appendWithSeparators(cmd.aliases(), "|");
                 ret.append(" ");
                 ret.append(ChatColor.GRAY);
                 ret.append(MyWarp.inst().getCommandsManager().getArguments(cmd, sender));
@@ -381,7 +381,7 @@ public class BasicCommands {
                     args.getInteger(0, 1));
         } catch (NumberFormatException e) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("commands.invalid-number", sender, StringUtils.join(args.getCommand(), ' ')));
+                    .getString("commands.invalid-number", sender, args.getCommandString()));
         }
     }
 
@@ -453,7 +453,7 @@ public class BasicCommands {
 
                     invitedPlayerNames.add(name);
                 }
-                infos.append(StringUtils.join(invitedPlayerNames, ", "));
+                infos.appendWithSeparators(invitedPlayerNames, ", ");
             }
             infos.appendNewLine();
 
@@ -464,7 +464,11 @@ public class BasicCommands {
             infos.append(ChatColor.WHITE);
 
             SortedSet<String> invitedGroups = new TreeSet<String>(warp.getInvitedGroups());
-            infos.append(invitedGroups.isEmpty() ? "-" : StringUtils.join(invitedGroups, ", "));
+            if (invitedGroups.isEmpty()) {
+                infos.append("-");
+            } else {
+                infos.appendWithSeparators(invitedGroups, ", ");
+            }
             infos.appendNewLine();
         }
 

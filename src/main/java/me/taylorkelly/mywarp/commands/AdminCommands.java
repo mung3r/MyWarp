@@ -19,7 +19,6 @@ import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -47,11 +46,8 @@ public class AdminCommands {
                 migrator = new LegacyMySQLMigrator(args.getString(1), args.getInteger(2), args.getString(3),
                         args.getString(4), args.getString(5), args.getString(6));
             } catch (NumberFormatException e) {
-                throw new CommandException(MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getString("commands.invalid-number", sender,
-                                StringUtils.join(args.getCommand(), ' ')));
+                throw new CommandException(MyWarp.inst().getLocalizationManager()
+                        .getString("commands.invalid-number", sender, args.getCommandString()));
             }
         } else if (args.getString(0).equalsIgnoreCase("legacy-sqlite")) {
             File database = new File(MyWarp.inst().getDataFolder(), args.getString(1));
@@ -69,11 +65,8 @@ public class AdminCommands {
                 migrator = new DataConnectionMigrator(MySQLConnection.getConnection(args.getString(1),
                         args.getInteger(2), args.getString(3), args.getString(4), args.getString(5), false));
             } catch (NumberFormatException e) {
-                throw new CommandException(MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getString("commands.invalid-number", sender,
-                                StringUtils.join(args.getCommand(), ' ')));
+                throw new CommandException(MyWarp.inst().getLocalizationManager()
+                        .getString("commands.invalid-number", sender, args.getCommandString()));
             }
         } else if (args.getString(0).equalsIgnoreCase("sqlite")) {
             File database = new File(MyWarp.inst().getDataFolder(), args.getString(1));

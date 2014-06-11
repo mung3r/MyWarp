@@ -58,7 +58,7 @@ public class DynmapMarkers implements Markers {
             public boolean apply(Warp warp) {
                 return warp.isType(Type.PUBLIC);
             }
-            
+
         })) {
             addWarp(warp);
         }
@@ -99,8 +99,10 @@ public class DynmapMarkers implements Markers {
     }
 
     private String warpLabel(Warp warp) {
-        return warp.replaceWarpMacros(MyWarp.inst().getLocalizationManager()
-                .getString("dynmap.marker", MyWarp.inst().getWarpSettings().localizationDefLocale), null);
+        return warp.replaceWarpMacros(
+                MyWarp.inst().getLocalizationManager()
+                        .getString("dynmap.marker", MyWarp.inst().getWarpSettings().localizationDefLocale),
+                null);
 
     }
 }

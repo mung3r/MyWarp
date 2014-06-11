@@ -12,8 +12,9 @@ import java.util.regex.Pattern;
 
 import me.taylorkelly.mywarp.MyWarp;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
+
+import com.google.common.base.Joiner;
 
 public class CommandContext {
     protected final String command[];
@@ -165,8 +166,12 @@ public class CommandContext {
         return command;
     }
 
+    public String getCommandString() {
+        return Joiner.on(' ').join(command);
+    }
+
     public boolean matches(String command) {
-        return StringUtils.join(this.command, ' ').equalsIgnoreCase(command);
+        return getCommandString().equalsIgnoreCase(command);
     }
 
     public String getString(int index) {
