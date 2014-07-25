@@ -1,5 +1,7 @@
 package me.taylorkelly.mywarp.dataconnections;
 
+import static me.taylorkelly.mywarp.dataconnections.jooq.Tables.*;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -11,25 +13,24 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 
-import org.jooq.DSLContext;
-import org.jooq.Query;
-import org.jooq.Record13;
-import org.jooq.Result;
-import org.jooq.types.UInteger;
-
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.Warp.Type;
-import me.taylorkelly.mywarp.dataconnections.DataConnection;
-import me.taylorkelly.mywarp.dataconnections.jooq.Tables;
 import me.taylorkelly.mywarp.dataconnections.jooq.tables.Player;
 import me.taylorkelly.mywarp.dataconnections.jooq.tables.records.GroupRecord;
 import me.taylorkelly.mywarp.dataconnections.jooq.tables.records.PlayerRecord;
 import me.taylorkelly.mywarp.dataconnections.jooq.tables.records.WarpRecord;
 import me.taylorkelly.mywarp.dataconnections.jooq.tables.records.WorldRecord;
+
+import org.jooq.DSLContext;
+import org.jooq.Record13;
+import org.jooq.Result;
+import org.jooq.types.UInteger;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
 /**
  * The connection to a SQL database via JOOQ.
@@ -49,7 +50,7 @@ public class JOOQConnection implements DataConnection {
      * @param create
      *            the DSLContext to use
      * @param conn
-     *            the Connection zo use
+     *            the Connection to use
      */
     protected JOOQConnection(DSLContext create, Connection conn, ListeningExecutorService executor) {
         this.create = create;
@@ -77,14 +78,13 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                WarpRecord record = create.newRecord(Tables.WARP);
+                WarpRecord record = create.newRecord(WARP);
 
                 record.setName(warp.getName());
 
-                PlayerRecord playerRecord = create.fetchOne(Tables.PLAYER,
-                        Tables.PLAYER.PLAYER_.eq(warp.getCreatorId()));
+                PlayerRecord playerRecord = create.fetchOne(PLAYER, PLAYER.PLAYER_.eq(warp.getCreatorId()));
                 if (playerRecord == null) {
-                    playerRecord = create.newRecord(Tables.PLAYER);
+                    playerRecord = create.newRecord(PLAYER);
                     playerRecord.setPlayer(warp.getCreatorId());
                     playerRecord.store();
                 }
@@ -99,11 +99,10 @@ public class JOOQConnection implements DataConnection {
                 record.setYaw(warp.getYaw());
 
                 // world
-                WorldRecord worldRecord = create.fetchOne(Tables.WORLD,
-                        Tables.WORLD.WORLD_.eq(warp.getWorldId()));
+                WorldRecord worldRecord = create.fetchOne(WORLD, WORLD.WORLD_.eq(warp.getWorldId()));
 
                 if (worldRecord == null) {
-                    worldRecord = create.newRecord(Tables.WORLD);
+                    worldRecord = create.newRecord(WORLD);
                     worldRecord.setWorld(warp.getWorldId());
                     worldRecord.store();
                 }
@@ -129,8 +128,7 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                Query query = create.delete(Tables.WARP).where(Tables.WARP.NAME.eq(warp.getName()));
-                query.execute();
+                create.delete(WARP).where(WARP.NAME.eq(warp.getName())).execute();
             }
 
         });
@@ -143,37 +141,35 @@ public class JOOQConnection implements DataConnection {
             @Override
             public Collection<Warp> call() {
                 // Alias for the player-table to represent the warp-creator
-                Player c = Tables.PLAYER.as("c");
+                Player c = PLAYER.as("c");
 
                 // query the database and group results by name - each map-entry
                 // contains all values for one single warp
                 Map<String, Result<Record13<String, UUID, Type, Double, Double, Double, Float, Float, UUID, UInteger, String, UUID, String>>> groupedResults = create
-                        .select(Tables.WARP.NAME, c.PLAYER_, Tables.WARP.TYPE, Tables.WARP.X, Tables.WARP.Y,
-                                Tables.WARP.Z, Tables.WARP.YAW, Tables.WARP.PITCH, Tables.WORLD.WORLD_,
-                                Tables.WARP.VISITS, Tables.WARP.WELCOME_MESSAGE, Tables.PLAYER.PLAYER_,
-                                Tables.GROUP.GROUP_)
-                        .from(Tables.WARP.join(Tables.WORLD)
-                                .on(Tables.WARP.WORLD_ID.eq(Tables.WORLD.WORLD_ID)).join(c)
-                                .on(Tables.WARP.PLAYER_ID.eq(c.PLAYER_ID)).leftOuterJoin(Tables.WARP2PLAYER)
-                                .on(Tables.WARP2PLAYER.WARP_ID.eq(Tables.WARP.WARP_ID))
-                                .leftOuterJoin(Tables.PLAYER)
-                                .on(Tables.WARP2PLAYER.PLAYER_ID.eq(Tables.PLAYER.PLAYER_ID)))
-                        .leftOuterJoin(Tables.WARP2GROUP)
-                        .on(Tables.WARP2GROUP.WARP_ID.eq(Tables.WARP.WARP_ID)).leftOuterJoin(Tables.GROUP)
-                        .on(Tables.WARP2GROUP.GROUP_ID.eq(Tables.GROUP.GROUP_ID)).fetch()
-                        .intoGroups(Tables.WARP.NAME);
+                        .select(WARP.NAME, c.PLAYER_, WARP.TYPE, WARP.X, WARP.Y, WARP.Z, WARP.YAW,
+                                WARP.PITCH, WORLD.WORLD_, WARP.VISITS, WARP.WELCOME_MESSAGE, PLAYER.PLAYER_,
+                                GROUP.GROUP_)
+                        .from(WARP
+                                .join(WORLD).on(WARP.WORLD_ID.eq(WORLD.WORLD_ID))
+                        .join(c).on(WARP.PLAYER_ID.eq(c.PLAYER_ID))
+                        .leftOuterJoin(WARP2PLAYER).on(WARP2PLAYER.WARP_ID.eq(WARP.WARP_ID))
+                        .leftOuterJoin(PLAYER).on(WARP2PLAYER.PLAYER_ID.eq(PLAYER.PLAYER_ID)))
+                        .leftOuterJoin(WARP2GROUP).on(WARP2GROUP.WARP_ID.eq(WARP.WARP_ID))
+                        .leftOuterJoin(GROUP).on(WARP2GROUP.GROUP_ID.eq(GROUP.GROUP_ID))
+                        .fetch().intoGroups(WARP.NAME);
 
                 // create warp-instances from the results
                 Collection<Warp> ret = new ArrayList<Warp>(groupedResults.size());
                 for (Result<Record13<String, UUID, Type, Double, Double, Double, Float, Float, UUID, UInteger, String, UUID, String>> result : groupedResults
                         .values()) {
-                    Warp warp = new Warp(result.getValue(0, Tables.WARP.NAME), result.getValue(0, c.PLAYER_),
-                            result.getValue(0, Tables.WARP.TYPE), result.getValue(0, Tables.WARP.X), result
-                                    .getValue(0, Tables.WARP.Y), result.getValue(0, Tables.WARP.Z), result
-                                    .getValue(0, Tables.WARP.YAW), result.getValue(0, Tables.WARP.PITCH),
-                            result.getValue(0, Tables.WORLD.WORLD_), result.getValue(0, Tables.WARP.VISITS)
-                                    .intValue(), result.getValue(0, Tables.WARP.WELCOME_MESSAGE), result
-                                    .getValues(Tables.PLAYER.PLAYER_), result.getValues(Tables.GROUP.GROUP_));
+                    //XXX move code into a pretty helper method
+                    Warp warp = new Warp(result.getValue(0, WARP.NAME), result.getValue(0, c.PLAYER_), result
+                            .getValue(0, WARP.TYPE), result.getValue(0, WARP.X), result.getValue(0, WARP.Y),
+                            result.getValue(0, WARP.Z), result.getValue(0, WARP.YAW), result.getValue(0,
+                                    WARP.PITCH), result.getValue(0, WORLD.WORLD_), result.getValue(0,
+                                    WARP.VISITS).intValue(), result.getValue(0, WARP.WELCOME_MESSAGE),
+                            Collections2.filter(result.getValues(PLAYER.PLAYER_), Predicates.notNull()),
+                            Collections2.filter(result.getValues(GROUP.GROUP_), Predicates.notNull()));
                     ret.add(warp);
                 }
 
@@ -185,25 +181,22 @@ public class JOOQConnection implements DataConnection {
     }
 
     @Override
-    public void inviteGroup(final Warp warp, final String group) {
+    public void inviteGroup(final Warp warp, final String groupId) {
         executor.submit(new Runnable() {
 
             @Override
             public void run() {
-                WarpRecord warpRecord = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
+                WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
-                GroupRecord groupRecord = create.fetchOne(Tables.GROUP, Tables.GROUP.GROUP_.eq(group));
-
+                GroupRecord groupRecord = create.fetchOne(GROUP, GROUP.GROUP_.eq(groupId));
                 if (groupRecord == null) {
-                    groupRecord = create.newRecord(Tables.GROUP);
-                    groupRecord.setGroup(group);
+                    groupRecord = create.newRecord(GROUP);
+                    groupRecord.setGroup(groupId);
                     groupRecord.store();
                 }
 
-                Query query = create.insertInto(Tables.WARP2PLAYER)
-                        .set(Tables.WARP2PLAYER.WARP_ID, warpRecord.getWarp_id())
-                        .set(Tables.WARP2PLAYER.PLAYER_ID, groupRecord.getGroup_id());
-                query.execute();
+                create.insertInto(WARP2GROUP).set(WARP2GROUP.WARP_ID, warpRecord.getWarp_id())
+                        .set(WARP2GROUP.GROUP_ID, groupRecord.getGroup_id()).execute();
             }
 
         });
@@ -216,20 +209,18 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                WarpRecord warpRecord = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
+                WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
-                PlayerRecord playerRecord = create.fetchOne(Tables.PLAYER, Tables.PLAYER.PLAYER_.eq(player));
+                PlayerRecord playerRecord = create.fetchOne(PLAYER, PLAYER.PLAYER_.eq(player));
 
                 if (playerRecord == null) {
-                    playerRecord = create.newRecord(Tables.PLAYER);
+                    playerRecord = create.newRecord(PLAYER);
                     playerRecord.setPlayer(player);
                     playerRecord.store();
                 }
 
-                Query query = create.insertInto(Tables.WARP2PLAYER)
-                        .set(Tables.WARP2PLAYER.WARP_ID, warpRecord.getWarp_id())
-                        .set(Tables.WARP2PLAYER.PLAYER_ID, playerRecord.getPlayer_id());
-                query.execute();
+                create.insertInto(WARP2PLAYER).set(WARP2PLAYER.WARP_ID, warpRecord.getWarp_id())
+                        .set(WARP2PLAYER.PLAYER_ID, playerRecord.getPlayer_id()).execute();
             }
 
         });
@@ -237,17 +228,17 @@ public class JOOQConnection implements DataConnection {
     }
 
     @Override
-    public void uninviteGroup(final Warp warp, final String group) {
+    public void uninviteGroup(final Warp warp, final String groupId) {
         executor.submit(new Runnable() {
 
             @Override
             public void run() {
-                WarpRecord warpRecord = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
-                GroupRecord groupRecord = create.fetchOne(Tables.GROUP, Tables.GROUP.GROUP_.eq(group));
+                WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
+                GroupRecord groupRecord = create.fetchOne(GROUP, GROUP.GROUP_.eq(groupId));
 
-                create.delete(Tables.WARP2GROUP).where(
-                        Tables.WARP2GROUP.WARP_ID.eq(warpRecord.getWarp_id()).and(
-                                Tables.WARP2GROUP.GROUP_ID.eq(groupRecord.getGroup_id())));
+                create.delete(WARP2GROUP).where(
+                        WARP2GROUP.WARP_ID.eq(warpRecord.getWarp_id()).and(
+                                WARP2GROUP.GROUP_ID.eq(groupRecord.getGroup_id()))).execute();
             }
 
         });
@@ -260,13 +251,12 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                WarpRecord warpRecord = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
-                PlayerRecord playerRecord = create.fetchOne(Tables.PLAYER, Tables.PLAYER.PLAYER_.eq(player));
+                WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
+                PlayerRecord playerRecord = create.fetchOne(PLAYER, PLAYER.PLAYER_.eq(player));
 
-                Query query = create.delete(Tables.WARP2PLAYER).where(
-                        Tables.WARP2PLAYER.WARP_ID.eq(warpRecord.getWarp_id()).and(
-                                Tables.WARP2PLAYER.PLAYER_ID.eq(playerRecord.getPlayer_id())));
-                query.execute();
+                create.delete(WARP2PLAYER).where(
+                        WARP2PLAYER.WARP_ID.eq(warpRecord.getWarp_id()).and(
+                                WARP2PLAYER.PLAYER_ID.eq(playerRecord.getPlayer_id()))).execute();
             }
 
         });
@@ -279,13 +269,12 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                WarpRecord record = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
+                WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
-                PlayerRecord playerRecord = create.fetchOne(Tables.PLAYER,
-                        Tables.PLAYER.PLAYER_.eq(warp.getCreatorId()));
+                PlayerRecord playerRecord = create.fetchOne(PLAYER, PLAYER.PLAYER_.eq(warp.getCreatorId()));
 
                 if (playerRecord == null) {
-                    playerRecord = create.newRecord(Tables.PLAYER);
+                    playerRecord = create.newRecord(PLAYER);
                     playerRecord.setPlayer(warp.getCreatorId());
                     playerRecord.store();
                 }
@@ -303,7 +292,7 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                WarpRecord record = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
+                WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
                 // set the loc
                 record.setX(warp.getX());
@@ -313,11 +302,10 @@ public class JOOQConnection implements DataConnection {
                 record.setYaw(warp.getYaw());
 
                 // world
-                WorldRecord worldRecord = create.fetchOne(Tables.WORLD,
-                        Tables.WORLD.WORLD_.eq(warp.getWorldId()));
+                WorldRecord worldRecord = create.fetchOne(WORLD, WORLD.WORLD_.eq(warp.getWorldId()));
 
                 if (worldRecord == null) {
-                    worldRecord = create.newRecord(Tables.WORLD);
+                    worldRecord = create.newRecord(WORLD);
                     worldRecord.setWorld(warp.getWorldId());
                     worldRecord.store();
                 }
@@ -335,7 +323,7 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                WarpRecord record = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
+                WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
                 record.setType(warp.getType());
                 record.update();
@@ -351,7 +339,7 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                WarpRecord record = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
+                WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
                 record.setVisits(UInteger.valueOf(warp.getVisits()));
                 record.update();
@@ -367,7 +355,7 @@ public class JOOQConnection implements DataConnection {
 
             @Override
             public void run() {
-                WarpRecord record = create.fetchOne(Tables.WARP, Tables.WARP.NAME.eq(warp.getName()));
+                WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
                 record.setWelcome_message(warp.getWelcomeMessage());
                 record.update();
