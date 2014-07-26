@@ -2,60 +2,56 @@ package me.taylorkelly.mywarp.timer;
 
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.economy.Fee;
-import me.taylorkelly.mywarp.timer.TimerFactory.TimerAction;
+import me.taylorkelly.mywarp.economy.FeeBundle;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * Represents the action that takes place once a warp-warmup is finished.
+ * A warmup that teleports a player to a warp when done.
  */
 public class WarpWarmup extends TimerAction<UUID> {
 
     private static final int CHECK_FREQUENCY = 2;
 
     private final Warp warp;
-    private final Location originalLoc;
-    private final double originalHealth;
 
     /**
      * Initializes the warp-warmup.
      * 
-     * @param timerFactory
-     *            the {@link TimerFactory} instance this action is registered on
      * @param player
      *            the player who is cooling down
      * @param warp
      *            the warp that the player wants to use
-     * @param duration
-     *            the duration of the warmup
      */
-    public WarpWarmup(TimerFactory timerFactory, Player player, Warp warp, Time duration) {
-        timerFactory.super(player.getUniqueId(), duration.getTicks());
+    public WarpWarmup(Player player, Warp warp) {
+        super(player.getUniqueId(), MyWarp.inst().getPermissionsManager().getTimeBundleManager()
+                .getBundle(player).getTicks(TimeBundle.Time.WARP_WARMUP));
         this.warp = warp;
+    }
 
-        originalLoc = player.getLocation().clone();
-        originalHealth = player.getHealth();
+    @Override
+    protected void run(TimerManager timerManager, Plugin plugin) {
+        Player player = MyWarp.server().getPlayer(type);
 
         if (MyWarp.inst().getWarpSettings().timersWarmupNotify) {
-            player.sendMessage(MyWarp
-                    .inst()
-                    .getLocalizationManager()
-                    .getString("commands.warp-to.warmup.started", player, warp.getName(),
-                            duration.getSeconds()));
+            player.sendMessage(MyWarp.inst().getLocalizationManager()
+                    .getString("commands.warp-to.warmup.started", player, warp.getName(), duration / 20));
         }
 
         if (MyWarp.inst().getWarpSettings().timersAbortOnDamage) {
-            new HealthCheck().runTaskTimer(MyWarp.inst(), 20 * CHECK_FREQUENCY, 20 * CHECK_FREQUENCY);
+            new HealthCheck(player.getHealth()).runTaskTimer(MyWarp.inst(), 20 * CHECK_FREQUENCY,
+                    20 * CHECK_FREQUENCY);
         }
         if (MyWarp.inst().getWarpSettings().timersAbortOnMove) {
-            new MovementCheck().runTaskTimer(MyWarp.inst(), 20 * CHECK_FREQUENCY, 20 * CHECK_FREQUENCY);
+            new MovementCheck(player.getLocation()).runTaskTimer(MyWarp.inst(), 20 * CHECK_FREQUENCY,
+                    20 * CHECK_FREQUENCY);
         }
+        super.run(timerManager, plugin);
     }
 
     @Override
@@ -66,83 +62,90 @@ public class WarpWarmup extends TimerAction<UUID> {
         }
 
         if (MyWarp.inst().getWarpSettings().economyEnabled) {
-            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(player).getFee(Fee.WARP_TO);
-
-            if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
-                player.sendMessage(ChatColor.RED
-                        + MyWarp.inst().getLocalizationManager()
-                                .getString("economy.cannot-afford", player, fee));
+            FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player);
+            if (!fees.hasAtLeast(player, FeeBundle.Fee.WARP_TO)) {
                 return;
             }
         }
 
-        warp.teleport(player, true);
-        if (!MyWarp.inst().getPermissionsManager().hasPermission(player, "mywarp.cooldown.disobey")) {
-            MyWarp.inst()
-                    .getTimerFactory()
-                    .registerNewTimer(
-                            new WarpCooldown(MyWarp.inst().getTimerFactory(), player, MyWarp.inst()
-                                    .getPermissionsManager().getCooldown(player)));
-        }
+        warp.teleport(player, FeeBundle.Fee.WARP_TO);
+        MyWarp.inst().getTimerManager().registerNewTimer(new WarpCooldown(player));
     }
 
     /**
      * Runnable that checks if the player moves
      */
-    private class MovementCheck extends BukkitRunnable {
+    private class MovementCheck extends PlayerCheck {
+
+        private final Location originalLoc;
+
+        public MovementCheck(Location originalLoc) {
+            this.originalLoc = originalLoc;
+        }
 
         @Override
-        public void run() {
-            if (!MyWarp.inst().getTimerFactory().hasRunningTimer(type, WarpWarmup.class)) {
-                cancel();
-                return;
-            }
-
-            Player player = MyWarp.server().getPlayer(type);
-            if (player == null) {
-                cancel();
-                return;
-            }
-
+        public boolean cancelAction(Player player) {
             Location loc = player.getLocation();
             if (loc.distanceSquared(originalLoc) >= 2 * 2) {
+                // REVIEW permission logic
                 if (!MyWarp.inst().getPermissionsManager()
-                        .hasPermission(player, "mywarp.warmup.disobey.moveabort")) {
-                    WarpWarmup.this.cancel();
+                        .hasPermission(player, "mywarp.timer.disobey.moveabort")) {
                     player.sendMessage(MyWarp.inst().getLocalizationManager()
                             .getString("commands.warp-to.warmup.cancelled-move", player));
-                    cancel();
+                    return true;
                 }
             }
+            return false;
         }
     }
 
     /**
      * Runnable that checks if the player loses any health
      */
-    private class HealthCheck extends BukkitRunnable {
+    private class HealthCheck extends PlayerCheck {
+
+        private final double originalHealth;
+
+        public HealthCheck(double originalHealth) {
+            this.originalHealth = originalHealth;
+        }
+
+        @Override
+        public boolean cancelAction(Player player) {
+            if (player.getHealth() < originalHealth) {
+                // REVIEW permission logic
+                if (!MyWarp.inst().getPermissionsManager()
+                        .hasPermission(player, "mywarp.timer.disobey.dmgabort")) {
+                    player.sendMessage(MyWarp.inst().getLocalizationManager()
+                            .getString("commands.warp-to.warmup.cancelled-damage", player));
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * An abstract runnable that runs checks on a player
+     */
+    private abstract class PlayerCheck extends BukkitRunnable {
+
+        public abstract boolean cancelAction(Player player);
 
         @Override
         public void run() {
-            if (!MyWarp.inst().getTimerFactory().hasRunningTimer(type, WarpWarmup.class)) {
+            if (!MyWarp.inst().getTimerManager().hasRunningTimer(type, WarpWarmup.class)) {
                 cancel();
                 return;
             }
-
             Player player = MyWarp.server().getPlayer(type);
             if (player == null) {
                 cancel();
                 return;
             }
-
-            if (player.getHealth() < originalHealth) {
-                if (!MyWarp.inst().getPermissionsManager()
-                        .hasPermission(player, "mywarp.warmup.disobey.dmgabort")) {
-                    WarpWarmup.this.cancel();
-                    player.sendMessage(MyWarp.inst().getLocalizationManager()
-                            .getString("commands.warp-to.warmup.cancelled-damage", player));
-                    cancel();
-                }
+            if (cancelAction(player)) {
+                WarpWarmup.this.cancel();
+                cancel();
             }
         }
     }

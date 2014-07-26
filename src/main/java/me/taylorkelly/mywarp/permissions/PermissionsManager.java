@@ -1,24 +1,20 @@
 package me.taylorkelly.mywarp.permissions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.data.WarpLimit;
-import me.taylorkelly.mywarp.economy.WarpFees;
-import me.taylorkelly.mywarp.timer.Time;
-import me.taylorkelly.mywarp.utils.ValuePermissionContainer;
+import me.taylorkelly.mywarp.data.LimitBundle;
+import me.taylorkelly.mywarp.economy.FeeBundle;
+import me.taylorkelly.mywarp.permissions.valuebundles.MultiworldValueBundleManager;
+import me.taylorkelly.mywarp.permissions.valuebundles.SimpleValueBundleManager;
+import me.taylorkelly.mywarp.timer.TimeBundle;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -28,14 +24,29 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public class PermissionsManager implements PermissionsHandler {
 
     /**
-     * A set that contains all registered permissions
+     * A set that contains all manually registered permissions
      */
     private final Set<Permission> registeredPermissions = new HashSet<Permission>();
 
     /**
-     * The permissions handler in use
+     * The permissions-handler
      */
     private final PermissionsHandler handler;
+
+    /**
+     * The fee-bundle-manager
+     */
+    private final SimpleValueBundleManager<FeeBundle> feeBundleManager;
+
+    /**
+     * The time-bundle-manager
+     */
+    private final SimpleValueBundleManager<TimeBundle> timeBundleManager;
+
+    /**
+     * The limit-bundle-manager
+     */
+    private final MultiworldValueBundleManager<LimitBundle> limitBundleManager;
 
     /**
      * Setups the permissions-manager.
@@ -43,141 +54,100 @@ public class PermissionsManager implements PermissionsHandler {
     public PermissionsManager() {
         // setup the permissions handler
         handler = setupHandler();
+
+        // setup value-bundles
+        feeBundleManager = new SimpleValueBundleManager<FeeBundle>(this,
+                MyWarp.inst().getWarpSettings().economyFeeBundles,
+                MyWarp.inst().getWarpSettings().economyDefaultFeeBundle);
+        timeBundleManager = new SimpleValueBundleManager<TimeBundle>(this,
+                MyWarp.inst().getWarpSettings().timersTimeBundles,
+                MyWarp.inst().getWarpSettings().timersDefaultTimeBundle);
+        limitBundleManager = new MultiworldValueBundleManager<LimitBundle>(this, MyWarp.inst()
+                .getWarpSettings().limitsLimitBundles,
+                MyWarp.inst().getWarpSettings().limitsDefaultLimitBundle) {
+            @Override
+            protected void registerPermissions(PermissionsManager manager) {
+                // mywarp.limit.[IDENTIFIER]
+                super.registerPermissions(manager);
+
+                // per world overrides
+                for (World world : MyWarp.server().getWorlds()) {
+                    String perm = "mywarp.limit.disobey." + world.getName();
+
+                    // mywarp.limit.disobey.[WORLDNAME].total
+                    Permission totalPerm = new Permission(perm + ".total");
+                    totalPerm.addParent("mywarp.limit.disobey.total", true);
+                    totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
+                    manager.registerPermission(totalPerm);
+
+                    // mywarp.limit.disobey.[WORLDNAME].private
+                    Permission privatePerm = new Permission(perm + ".private");
+                    privatePerm.addParent("mywarp.limit.disobey.private", true);
+                    privatePerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
+                    manager.registerPermission(privatePerm);
+
+                    // mywarp.limit.disobey.[WORLDNAME].public
+                    Permission publicPerm = new Permission(perm + ".public");
+                    publicPerm.addParent("mywarp.limit.disobey.public", true);
+                    publicPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
+                    manager.registerPermission(publicPerm);
+                }
+            }
+        };
+
+        // register mywarp.warp.world permissions
+        for (World world : MyWarp.server().getWorlds()) {
+            Permission worldPerm = new Permission("mywarp.warp.world." + world.getName());
+            worldPerm.addParent("mywarp.warp.world.*", true);
+            registerPermission(worldPerm);
+        }
     }
 
     /**
-     * Gets the cooldown (as {@link Time}) affective for this player. Returns
-     * the default-cooldown if the player does not have any of the of the
-     * specific cooldowns
+     * Returns whether the given player may access warps in the given world from
+     * his current location
      * 
      * @param player
      *            the player
-     * @return the cooldown affective from this player
+     * @param world
+     *            the world
+     * @return true if the player may use warps in this world
      */
-    public Time getCooldown(Player player) {
-        for (Time cooldown : MyWarp.inst().getWarpSettings().timersCooldowns) {
-            if (hasPermission(player, "mywarp.cooldown." + cooldown.getName())) {
-                return cooldown;
-            }
+    public boolean canAccessWorld(Player player, World world) {
+        if (player.getWorld().equals(world) && hasPermission(player, "mywarp.warp.world.currentworld")) {
+            return true;
         }
-        return MyWarp.inst().getWarpSettings().timersDefaultCooldown;
-    }
-
-    /**
-     * Gets the {@link WarpFees} affective for this player. Returns the
-     * default-fees if the player does not have any of the of the specific fees
-     * 
-     * @param sender
-     *            the sender
-     * @return the fees affective for this sender
-     */
-    public WarpFees getEconomyPrices(CommandSender sender) {
-        for (WarpFees warpFees : MyWarp.inst().getWarpSettings().economyFees) {
-            if (hasPermission(sender, "mywarp.economy." + warpFees.getName())) {
-                return warpFees;
-            }
-        }
-        return MyWarp.inst().getWarpSettings().economyDefaultFees;
-    }
-
-    /**
-     * Gets the warmup (as {@link Time}) affective for this player. Returns the
-     * default-warmup if the player does not have any of the of the specific
-     * warmups
-     * 
-     * @param player
-     *            the player
-     * @return the warmup affective for this player
-     */
-    public Time getWarmup(Player player) {
-        for (Time warmup : MyWarp.inst().getWarpSettings().timersWarmups) {
-            if (hasPermission(player, "mywarp.warmup." + warmup.getName())) {
-                return warmup;
-            }
-        }
-        return MyWarp.inst().getWarpSettings().timersDefaultWarmup;
-    }
-
-    /**
-     * Gets all {@link WarpLimit}s that could affect the given player.
-     * 
-     * @param player
-     *            the player
-     * @return all affective warp-limits
-     */
-    public Iterable<WarpLimit> getAffectiveWarpLimits(final Player player) {
-        List<WarpLimit> ret = new ArrayList<WarpLimit>();
-        Set<World> worlds = new HashSet<World>();
-        for (WarpLimit limit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
-            if (!hasPermission(player, "mywarp.limit." + limit.getName())) {
-                continue;
-            }
-            if (isLimitOverwritten(ret, limit)) {
-                continue;
-            }
-            ret.add(limit);
-            worlds.addAll(limit.getAffectedWorlds());
-        }
-        // if there is a world that is not covered by all custom warp
-        // limits, the default one is needed
-        if (!worlds.containsAll(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit.getAffectedWorlds())) {
-            ret.add(MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit);
-        }
-        return ret;
-    }
-
-    /**
-     * Returns whether a warp-limit is effectively overwritten by an other
-     * warp-limit.
-     * 
-     * @param affectiveLimits
-     *            the limits that are already affective and could possibly
-     *            overwrite the the limit to check
-     * @param limit
-     *            the limit that could be overwritten
-     * @return true if the limit is overwritten, false if not
-     */
-    private boolean isLimitOverwritten(Iterable<WarpLimit> affectiveLimits, WarpLimit limit) {
-        for (WarpLimit overwritingLimit : affectiveLimits) {
-            if (overwritingLimit.getAffectedWorlds().containsAll(limit.getAffectedWorlds())) {
-                return true;
-            }
+        if (hasPermission(player, "mywarp.warp.world." + world.getName())) {
+            return true;
         }
         return false;
     }
 
     /**
-     * Gets the {@link WarpLimit} affective for this player. Returns the default
-     * limit if the player does not have any of the specific limits
+     * Gets the fee-bundle-manager that manages {@link FeeBundle}s.
      * 
-     * @param player
-     *            the player
-     * @return the limit affective for this player
+     * @return the used fee-bundle-manager
      */
-    public WarpLimit getWarpLimit(Player player) {
-        return getWarpLimit(player, player.getWorld());
+    public SimpleValueBundleManager<FeeBundle> getFeeBundleManager() {
+        return feeBundleManager;
     }
 
     /**
-     * Gets the {@link WarpLimit} affective for this player. Returns the default
-     * limit if the player does not have any of the specific limits
+     * Gets the time-bundle-manager that manages {@link TimeBundle}s.
      * 
-     * @param player
-     *            the player
-     * @param world
-     *            the world that should be affected by the limit
-     * @return the limit affective for this player
+     * @return the used time-bundle-manager
      */
-    public WarpLimit getWarpLimit(Player player, World world) {
-        for (WarpLimit warpLimit : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
-            if (!warpLimit.isEffectiveWorld(world)) {
-                continue;
-            }
-            if (hasPermission(player, "mywarp.limit." + warpLimit.getName())) {
-                return warpLimit;
-            }
-        }
-        return MyWarp.inst().getWarpSettings().limitsDefaultWarpLimit;
+    public SimpleValueBundleManager<TimeBundle> getTimeBundleManager() {
+        return timeBundleManager;
+    }
+
+    /**
+     * Gets the limit-bundle-manager that manages {@link LimitBundle}s.
+     * 
+     * @return the used limit-bundle-manager
+     */
+    public MultiworldValueBundleManager<LimitBundle> getLimitBundleManager() {
+        return limitBundleManager;
     }
 
     /**
@@ -190,28 +160,8 @@ public class PermissionsManager implements PermissionsHandler {
      *            the permission node
      * @return true if the command sender has the permission, false if not
      */
-    public boolean hasPermission(final CommandSender sender, final String node) {
+    public boolean hasPermission(CommandSender sender, String node) {
         return sender.hasPermission(node);
-    }
-
-    /**
-     * Checks if the given player may access warps in the given world from is
-     * current location
-     * 
-     * @param player
-     *            the player
-     * @param world
-     *            the world
-     * @return true if the player may use warps in this world, false if not
-     */
-    public boolean canAccessWorld(Player player, World world) {
-        if (player.getWorld() == world && hasPermission(player, "mywarp.warp.world.currentworld")) {
-            return true;
-        }
-        if (hasPermission(player, "mywarp.warp.world." + world.getName())) {
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -225,80 +175,9 @@ public class PermissionsManager implements PermissionsHandler {
      * @param perm
      *            the permission
      */
-    private void registerPermission(Permission perm) {
+    public void registerPermission(Permission perm) {
         MyWarp.server().getPluginManager().addPermission(perm);
         registeredPermissions.add(perm);
-    }
-
-    /**
-     * Registers permissions on the server. This method should only be used for
-     * permissions that must be registered dynamically.
-     */
-    public void registerPermissions() {
-        // mywarp.limit permissions
-        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().limitsWarpLimits) {
-            registerPermission(new Permission("mywarp.limit." + container.getName(),
-                    "Gives acess to the number of warps defined for '" + container.getName()
-                            + "' in the config", PermissionDefault.FALSE));
-        }
-        // per world overrides
-        for (World world : MyWarp.server().getWorlds()) {
-            String perm = "mywarp.limit.disobey." + world.getName();
-
-            // mywarp.limit.disobey.[WORLDNAME].total
-            Permission totalPerm = new Permission(perm + ".total",
-                    "User may disobey the total-warp limit in '" + world.getName() + "'");
-            totalPerm.addParent("mywarp.limit.disobey.total", true);
-            totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
-            registerPermission(totalPerm);
-
-            // mywarp.limit.disobey.[WORLDNAME].private
-            Permission privatePerm = new Permission(perm + ".private",
-                    "User may disobey the private-warp limit in '" + world.getName() + "'");
-            privatePerm.addParent("mywarp.limit.disobey.private", true);
-            privatePerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
-            registerPermission(privatePerm);
-
-            // mywarp.limit.disobey.[WORLDNAME].public
-            Permission publicPerm = new Permission(perm + ".public",
-                    "User may disobey the public-warp limit in '" + world.getName() + "'");
-            publicPerm.addParent("mywarp.limit.disobey.public", true);
-            publicPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
-            registerPermission(publicPerm);
-        }
-
-        // mywarp.cooldown permissions
-        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().timersCooldowns) {
-            registerPermission(new Permission("mywarp.cooldown." + container.getName(),
-                    "User is affected by the cooldowns defined for '" + container.getName()
-                            + "' in the config", PermissionDefault.FALSE));
-        }
-
-        // mywarp.warmup permissions
-        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().timersWarmups) {
-            registerPermission(new Permission(
-                    "mywarp.warmup." + container.getName(),
-                    "User is affected by the warmups defined for '" + container.getName() + "' in the config",
-                    PermissionDefault.FALSE));
-        }
-
-        // mywarp.warp.world permissions
-        Map<String, Boolean> worldAccess = new HashMap<String, Boolean>();
-        for (World world : MyWarp.server().getWorlds()) {
-            registerPermission(new Permission("mywarp.warp.world." + world.getName(),
-                    "User may warp to worlds in world '" + world.getName() + "'"));
-            worldAccess.put("mywarp.warp.world." + world.getName(), true);
-        }
-        worldAccess.put("mywarp.warp.world.currentworld", true);
-
-        registerPermission(new Permission("mywarp.warp.world.*", "User may warp to all worlds", worldAccess));
-
-        // mywarp.economy permissions
-        for (ValuePermissionContainer container : MyWarp.inst().getWarpSettings().economyFees) {
-            registerPermission(new Permission("mywarp.economy." + container.getName(),
-                    "User is affected by the fees defined for '" + container.getName() + "' in the config",
-                    PermissionDefault.FALSE));
-        }
     }
 
     /**
@@ -311,7 +190,6 @@ public class PermissionsManager implements PermissionsHandler {
      * @return the created permissionsHander
      */
     private PermissionsHandler setupHandler() {
-
         // check for Vault first!
         try {
             RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> permissionProvider = Bukkit
@@ -358,9 +236,8 @@ public class PermissionsManager implements PermissionsHandler {
     }
 
     /**
-     * Unregisters permissions from the server. This method mirrors
-     * {@link #registerPermissions()} and unregisters all permissions registered
-     * before.
+     * Unregisters all permissions from the server that where manually
+     * registered before.
      */
     public void unregisterPermissions() {
         for (Permission perm : registeredPermissions) {

@@ -2,9 +2,9 @@ package me.taylorkelly.mywarp.dataconnections.migrators;
 
 import java.util.Collection;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import me.taylorkelly.mywarp.data.Warp;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * A data migrator loads Warps from a read-only data source.

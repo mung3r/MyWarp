@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
+import me.taylorkelly.mywarp.utils.ConfigUtils;
+
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-
-import me.taylorkelly.mywarp.utils.ConfigUtils;
 
 /**
  * A ResourceBundle implementation for YAML files

@@ -2,28 +2,24 @@ package me.taylorkelly.mywarp.timer;
 
 import java.util.UUID;
 
+import me.taylorkelly.mywarp.MyWarp;
+
 import org.bukkit.entity.Player;
 
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.timer.TimerFactory.TimerAction;
-
 /**
- * Represents the action that takes place once a warp-cooldown is finished.
+ * A cooldown that blocks a player from teleporting to warps.
  */
 public class WarpCooldown extends TimerAction<UUID> {
 
     /**
-     * Initializes the warp-cooldown.
+     * Initializes this WarpCooldown.
      * 
-     * @param timerFactory
-     *            the {@link TimerFactory} instance this action is registered on
      * @param player
      *            the player who is cooling down
-     * @param duration
-     *            the duration of the cooldown
      */
-    public WarpCooldown(TimerFactory timerFactory, Player player, Time duration) {
-        timerFactory.super(player.getUniqueId(), duration.getTicks());
+    public WarpCooldown(Player player) {
+        super(player.getUniqueId(), MyWarp.inst().getPermissionsManager().getTimeBundleManager()
+                .getBundle(player).getTicks(TimeBundle.Time.WARP_COOLDOWN));
     }
 
     @Override
@@ -36,7 +32,6 @@ public class WarpCooldown extends TimerAction<UUID> {
                         .getString("commands.warp-to.cooldown.ended", player));
             }
         }
-
     }
 
 }

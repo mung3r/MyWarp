@@ -3,16 +3,14 @@ package me.taylorkelly.mywarp;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import me.taylorkelly.mywarp.data.WarpLimit;
-import me.taylorkelly.mywarp.economy.WarpFees;
-import me.taylorkelly.mywarp.timer.Time;
+import me.taylorkelly.mywarp.data.LimitBundle;
+import me.taylorkelly.mywarp.economy.FeeBundle;
+import me.taylorkelly.mywarp.timer.TimeBundle;
 import me.taylorkelly.mywarp.utils.ConfigUtils;
 import me.taylorkelly.mywarp.utils.PropertiesFile;
 
@@ -61,8 +59,8 @@ public class WarpSettings implements Reloadable {
 
     // Limits
     public boolean limitsEnabled;
-    public WarpLimit limitsDefaultWarpLimit;
-    public List<WarpLimit> limitsWarpLimits;
+    public LimitBundle limitsDefaultLimitBundle;
+    public List<LimitBundle> limitsLimitBundles;
 
     // Timers
     public boolean timersEnabled;
@@ -70,16 +68,14 @@ public class WarpSettings implements Reloadable {
     public boolean timersWarmupNotify;
     public boolean timersAbortOnMove;
     public boolean timersAbortOnDamage;
-    public Time timersDefaultCooldown;
-    public List<Time> timersCooldowns;
-    public Time timersDefaultWarmup;
-    public List<Time> timersWarmups;
+    public TimeBundle timersDefaultTimeBundle;
+    public List<TimeBundle> timersTimeBundles;
 
     // Economy
     public boolean economyEnabled;
     public boolean economyInformAfterTransaction;
-    public WarpFees economyDefaultFees;
-    public List<WarpFees> economyFees;
+    public FeeBundle economyDefaultFeeBundle;
+    public List<FeeBundle> economyFeeBundles;
 
     // Dynmap
     public boolean dynmapEnabled;
@@ -110,12 +106,10 @@ public class WarpSettings implements Reloadable {
     /**
      * Loads all values out of the FileConfiguration into the intern-logic
      */
-    @SuppressWarnings("unchecked")
     private void loadValues(FileConfiguration config) {
-        limitsWarpLimits = new ArrayList<WarpLimit>();
-        timersCooldowns = new ArrayList<Time>();
-        timersWarmups = new ArrayList<Time>();
-        economyFees = new ArrayList<WarpFees>();
+        limitsLimitBundles = new ArrayList<LimitBundle>();
+        timersTimeBundles = new ArrayList<TimeBundle>();
+        economyFeeBundles = new ArrayList<FeeBundle>();
         warpSignsIdentifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
 
         // Settings
@@ -152,19 +146,14 @@ public class WarpSettings implements Reloadable {
         limitsEnabled = config.getBoolean("limits.enabled");
         ConfigurationSection configuredLimits = config.getConfigurationSection("limits.configured-limits");
         for (String key : configuredLimits.getKeys(false)) {
+            LimitBundle limitBundle = new LimitBundle(key, configuredLimits.getConfigurationSection(key));
             if (key.equals("default")) {
                 // the default-limit is always global
-                limitsDefaultWarpLimit = new WarpLimit(key, configuredLimits.getInt(key + ".totalLimit", 0),
-                        configuredLimits.getInt(key + ".publicLimit", 0), configuredLimits.getInt(key
-                                + ".privateLimit", 0), Arrays.asList("all"));
+                limitsDefaultLimitBundle = limitBundle;
             } else {
-                limitsWarpLimits.add(new WarpLimit(key, configuredLimits.getInt(key + ".totalLimit", 0),
-                        configuredLimits.getInt(key + ".publicLimit", 0), configuredLimits.getInt(key
-                                + ".privateLimit", 0), (List<String>) configuredLimits.getList(key
-                                + ".affectedWorlds", Arrays.asList("all"))));
+                limitsLimitBundles.add(limitBundle);
             }
         }
-        Collections.sort(limitsWarpLimits);
 
         // Timers
         timersEnabled = config.getBoolean("timers.enabled");
@@ -172,25 +161,15 @@ public class WarpSettings implements Reloadable {
         timersWarmupNotify = config.getBoolean("timers.warmUpNotify");
         timersAbortOnMove = config.getBoolean("timers.abortOnMove");
         timersAbortOnDamage = config.getBoolean("timers.abortOnDamage");
-        ConfigurationSection configuredCooldowns = config.getConfigurationSection("timers.cooldowns");
-        for (String key : configuredCooldowns.getKeys(false)) {
+        ConfigurationSection configuredTimes = config.getConfigurationSection("timers.configured-timers");
+        for (String key : configuredTimes.getKeys(false)) {
+            TimeBundle timeBundle = new TimeBundle(key, configuredTimes.getConfigurationSection(key));
             if (key.equals("default")) {
-                timersDefaultCooldown = new Time(key, configuredCooldowns.getDouble(key));
+                timersDefaultTimeBundle = timeBundle;
             } else {
-                timersCooldowns.add(new Time(key, configuredCooldowns.getDouble(key)));
+                timersTimeBundles.add(timeBundle);
             }
         }
-        Collections.sort(timersCooldowns);
-
-        ConfigurationSection configuredWarmups = config.getConfigurationSection("timers.warmups");
-        for (String key : configuredWarmups.getKeys(false)) {
-            if (key.equals("default")) {
-                timersDefaultWarmup = new Time(key, configuredWarmups.getDouble(key));
-            } else {
-                timersWarmups.add(new Time(key, configuredWarmups.getDouble(key)));
-            }
-        }
-        Collections.sort(timersWarmups);
 
         // Economy
         economyEnabled = config.getBoolean("economy.enabled");
@@ -198,26 +177,12 @@ public class WarpSettings implements Reloadable {
 
         ConfigurationSection configuredFees = config.getConfigurationSection("economy.fees");
         for (String key : configuredFees.getKeys(false)) {
-            WarpFees fees = new WarpFees(key, configuredFees.getDouble(key + ".accept", 0),
-                    configuredFees.getDouble(key + ".assets", 0),
-                    configuredFees.getDouble(key + ".create", 0), configuredFees.getDouble(key
-                            + ".create-private", 0), configuredFees.getDouble(key + ".delete", 0),
-                    configuredFees.getDouble(key + ".give", 0), configuredFees.getDouble(key + ".help", 0),
-                    configuredFees.getDouble(key + ".info", 0), configuredFees.getDouble(key + ".invite", 0),
-                    configuredFees.getDouble(key + ".list", 0), configuredFees.getDouble(key + ".point", 0),
-                    configuredFees.getDouble(key + ".private", 0), configuredFees.getDouble(key + ".public",
-                            0), configuredFees.getDouble(key + ".search", 0), configuredFees.getDouble(key
-                            + ".uninvite", 0), configuredFees.getDouble(key + ".update", 0),
-                    configuredFees.getDouble(key + ".warp-player", 0), configuredFees.getDouble(key
-                            + ".warp-sign-create", 0), configuredFees.getDouble(key + ".warp-sign-use", 0),
-                    configuredFees.getDouble(key + ".warp-to", 0), configuredFees.getDouble(key + ".welcome",
-                            0));
+            FeeBundle fees = new FeeBundle(key, configuredFees.getConfigurationSection(key));
             if (key.equals("default")) {
-                economyDefaultFees = fees;
+                economyDefaultFeeBundle = fees;
             } else {
-                economyFees.add(fees);
+                economyFeeBundles.add(fees);
             }
-            Collections.sort(economyFees);
         }
 
         // Dynmap

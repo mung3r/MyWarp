@@ -1,23 +1,24 @@
 package me.taylorkelly.mywarp.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
 
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.data.LimitBundle;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.Warp.Type;
-import me.taylorkelly.mywarp.data.WarpLimit;
-import me.taylorkelly.mywarp.data.WarpLimit.Limit;
 import me.taylorkelly.mywarp.data.WelcomeMessageHandler;
-import me.taylorkelly.mywarp.economy.Fee;
+import me.taylorkelly.mywarp.economy.FeeBundle.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
-import me.taylorkelly.mywarp.utils.Matcher;
 import me.taylorkelly.mywarp.utils.FormattingUtils;
+import me.taylorkelly.mywarp.utils.Matcher;
 import me.taylorkelly.mywarp.utils.PaginatedResult;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
@@ -30,12 +31,11 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.google.common.collect.ArrayTable;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
 
 /**
  * This class contains all commands that cover basic tasks. They should be
@@ -77,6 +77,7 @@ public class BasicCommands {
                 .getString("commands.delete.deleted-successful", sender, warp.getName()));
     }
 
+    //TODO add support for usage with disabled limits
     @Command(aliases = { "assets", "limits", "pstats", "pinfo" }, usage = "[player]", desc = "commands.assets.description", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
     public void showAssets(CommandContext args, final CommandSender sender) throws CommandException {
         final Player player;
@@ -94,110 +95,65 @@ public class BasicCommands {
                                         .getString("commands.assets.heading", sender, player.getName()) + " ",
                         '-'));
 
-        if (MyWarp.inst().getWarpSettings().limitsEnabled) {
-            Iterable<WarpLimit> limits = MyWarp.inst().getPermissionsManager().getAffectiveWarpLimits(player);
-            Multimap<WarpLimit, Warp> limitWarps = HashMultimap.create();
+        Table<LimitBundle, Warp.Type, SortedSet<Warp>> mappedWarps = ArrayTable.create(MyWarp.inst()
+                .getPermissionsManager().getLimitBundleManager().getAffectiveBundles(player),
+                Arrays.asList(Warp.Type.values()));
+        for (Warp warp : MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
 
-            // match warp to limits
-            for (Warp warp : MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
-
-                @Override
-                public boolean apply(Warp warp) {
-                    return warp.isCreator(player);
-                }
-
-            })) {
-                for (WarpLimit limit : limits) {
-                    if (limit.getAffectedWorlds().contains(warp.getWorld().getName())) {
-                        limitWarps.put(limit, warp);
-                    }
-                }
+            @Override
+            public boolean apply(Warp warp) {
+                return warp.isCreator(player);
             }
 
-            // get the warps stored for every existing limit
-            for (WarpLimit limit : limits) {
-                List<Warp> warps = new ArrayList<Warp>(limitWarps.get(limit));
-                Collections.sort(warps);
-
-                // match public/private warps
-                Multimap<Type, Warp> warpsPerType = Multimaps.index(warps, new Function<Warp, Type>() {
-
-                    @Override
-                    public Type apply(Warp warp) {
-                        return warp.getType();
-                    }
-
-                });
-
-                // create the strings
-                String publicEntry = MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getString("commands.assets.public-warps", sender,
-                                warpsPerType.get(Type.PUBLIC).size() + "/" + limit.getLimit(Limit.PUBLIC),
-                                CommandUtils.joinWarps(warpsPerType.get(Type.PUBLIC)));
-                String privateEntry = MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getString("commands.assets.private-warps", sender,
-                                warpsPerType.get(Type.PRIVATE).size() + "/" + limit.getLimit(Limit.PRIVATE),
-                                CommandUtils.joinWarps(warpsPerType.get(Type.PRIVATE)));
-
-                // send the messages
-                sender.sendMessage(MyWarp
-                        .inst()
-                        .getLocalizationManager()
-                        .getString(
-                                "commands.assets.total-warps",
-                                sender,
-                                Joiner.on(", ").join(limit.getAffectedWorlds()),
-                                (warpsPerType.get(Type.PRIVATE).size() + warpsPerType.get(Type.PUBLIC).size())
-                                        + "/" + limit.getLimit(Limit.TOTAL)));
-                sender.sendMessage(FormattingUtils.toList(publicEntry, privateEntry));
+        })) {
+            for (LimitBundle bundle : mappedWarps.rowKeySet()) {
+                if (!bundle.getAffectedWorlds().contains(warp.getWorld())) {
+                    continue;
+                }
+                SortedSet<Warp> storedWarps = mappedWarps.get(bundle, warp.getType());
+                if (storedWarps == null) {
+                    storedWarps = Sets.newTreeSet();
+                    mappedWarps.put(bundle, warp.getType(), storedWarps);
+                }
+                storedWarps.add(warp);
             }
-        } else {
-            SortedSet<Warp> sortedWarps = new TreeSet<Warp>();
-            sortedWarps.addAll(MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
+        }
 
-                @Override
-                public boolean apply(Warp warp) {
-                    return warp.isCreator(player);
-                }
+        for (Entry<LimitBundle, Map<Type, SortedSet<Warp>>> entry : mappedWarps.rowMap().entrySet()) {
+            SortedSet<Warp> publicWarps = entry.getValue().get(Warp.Type.PUBLIC);
+            SortedSet<Warp> privateWarps = entry.getValue().get(Warp.Type.PRIVATE);
 
-            }));
+            if (publicWarps == null) {
+                publicWarps = Sets.newTreeSet();
+            }
+            if (privateWarps == null) {
+                privateWarps = Sets.newTreeSet();
+            }
 
-            Multimap<Type, Warp> warpsPerType = Multimaps.index(sortedWarps, new Function<Warp, Type>() {
-
-                @Override
-                public Type apply(Warp warp) {
-                    return warp.getType();
-                }
-
-            });
-
+            // create the strings
             String publicEntry = MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getString("commands.assets.public-warps", sender, warpsPerType.get(Type.PUBLIC).size(),
-                            CommandUtils.joinWarps(warpsPerType.get(Type.PUBLIC)));
+                    .getString("commands.assets.public-warps", sender,
+                            publicWarps.size() + "/" + entry.getKey().getLimit(LimitBundle.Limit.PUBLIC),
+                            CommandUtils.joinWarps(publicWarps));
             String privateEntry = MyWarp
                     .inst()
                     .getLocalizationManager()
                     .getString("commands.assets.private-warps", sender,
-                            warpsPerType.get(Type.PRIVATE).size(),
-                            CommandUtils.joinWarps(warpsPerType.get(Type.PRIVATE)));
+                            privateWarps.size() + "/" + entry.getKey().getLimit(LimitBundle.Limit.PRIVATE),
+                            CommandUtils.joinWarps(privateWarps));
 
-            StrBuilder worldNames = new StrBuilder();
-            for (World world : MyWarp.server().getWorlds()) {
-                worldNames.appendSeparator(", ");
-                worldNames.append(world.getName());
-            }
-
+            // send the messages
             sender.sendMessage(MyWarp
                     .inst()
                     .getLocalizationManager()
-                    .getString("commands.assets.total-warps", sender, worldNames.toString(),
-                            (warpsPerType.values().size())));
+                    .getString(
+                            "commands.assets.total-warps",
+                            sender,
+                            CommandUtils.joinWorlds(entry.getKey().getAffectedWorlds()),
+                            (privateWarps.size() + publicWarps.size()) + "/"
+                                    + entry.getKey().getLimit(LimitBundle.Limit.TOTAL)));
             sender.sendMessage(FormattingUtils.toList(publicEntry, privateEntry));
         }
     }
@@ -222,8 +178,6 @@ public class BasicCommands {
                     }
 
                 }) : null;
-
-        // TODO throw exceptions instead of null?
 
         SortedSet<Warp> results = args.hasFlag('p') ? new TreeSet<Warp>(new Warp.PopularityComparator())
                 : new TreeSet<Warp>();
@@ -306,7 +260,7 @@ public class BasicCommands {
         }
     }
 
-    // TODO color warp names
+    // XXX color warp names
     @Command(aliases = { "search" }, flags = "p", usage = "<name>", desc = "commands.search.description", fee = Fee.SEARCH, min = 1, permissions = { "mywarp.warp.basic.search" })
     public void searchWarps(CommandContext args, final CommandSender sender) throws CommandException {
         Matcher matcher = Matcher.match(args.getJoinedStrings(0), new Predicate<Warp>() {
@@ -318,7 +272,7 @@ public class BasicCommands {
 
         });
         Warp exactMatch = matcher.getExactMatch();
-        SortedSet<Warp> matches = args.hasFlag('p') ? matcher.getMatches(new Warp.PopularityComparator())
+        Collection<Warp> matches = args.hasFlag('p') ? matcher.getMatches(new Warp.PopularityComparator())
                 : matcher.getMatches();
 
         if (exactMatch == null && matches.isEmpty()) {
@@ -412,6 +366,7 @@ public class BasicCommands {
         infos.append(MyWarp.inst().getLocalizationManager().getString("commands.info.created-by", sender));
         infos.append(" ");
         infos.append(ChatColor.WHITE);
+        // REVIEW also show the UUID?
         infos.append(warp.getCreator().getName());
         if (sender instanceof Player && warp.isCreator((Player) sender)) {
             infos.append(" ");
@@ -441,6 +396,8 @@ public class BasicCommands {
             infos.append(" ");
             infos.append(ChatColor.WHITE);
 
+            // TODO use Ordering.natural().onResultsOf(new Function<UUID,
+            // String>(){...}.sortedCopy(warp.getInvitedPlayerIds());
             Set<UUID> invitedPlayerIds = warp.getInvitedPlayerIds();
             if (invitedPlayerIds.isEmpty()) {
                 infos.append("-");
@@ -463,7 +420,7 @@ public class BasicCommands {
             infos.append(" ");
             infos.append(ChatColor.WHITE);
 
-            SortedSet<String> invitedGroups = new TreeSet<String>(warp.getInvitedGroups());
+            List<String> invitedGroups = Ordering.natural().sortedCopy(warp.getInvitedGroups());
             if (invitedGroups.isEmpty()) {
                 infos.append("-");
             } else {

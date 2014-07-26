@@ -43,12 +43,13 @@ timers:
   warmUpNotify: true
   abortOnMove: false
   abortOnDamage: false
-  cooldowns:
-    default: 15
-    user: 30
-  warmups:
-    default: 15
-    user: 30
+  configured-timers:
+    default:
+      cooldown: 15
+      warmup: 15
+    user:
+      cooldown: 30
+      warmup: 30
 economy:
   enabled: false
   informAfterTransaction: true

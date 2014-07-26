@@ -13,7 +13,7 @@ import me.taylorkelly.mywarp.dataconnections.migrators.DataConnectionMigrator;
 import me.taylorkelly.mywarp.dataconnections.migrators.DataMigrator;
 import me.taylorkelly.mywarp.dataconnections.migrators.LegacyMySQLMigrator;
 import me.taylorkelly.mywarp.dataconnections.migrators.LegacySQLiteMigrator;
-import me.taylorkelly.mywarp.economy.Fee;
+import me.taylorkelly.mywarp.economy.FeeBundle.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
@@ -154,7 +154,8 @@ public class AdminCommands {
         Player invitee = CommandUtils.matchPlayer(sender, args.getString(0));
         Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(1));
 
-        warp.teleport(invitee, false);
+        warp.teleport(invitee);
+        // REVIEW message if teleport was not successful?
         sender.sendMessage(MyWarp
                 .inst()
                 .getLocalizationManager()

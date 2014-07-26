@@ -3,9 +3,9 @@ package me.taylorkelly.mywarp.dataconnections;
 import java.util.Collection;
 import java.util.UUID;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import me.taylorkelly.mywarp.data.Warp;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * A connection to a data-source.
@@ -41,14 +41,15 @@ public interface DataConnection {
     public ListenableFuture<Collection<Warp>> getWarps();
 
     /**
-     * Adds the given group to the invited groups for the given warp.
+     * Adds the given groupId to the list of invited groupIdss for the given
+     * warp.
      * 
      * @param warp
      *            the warp
-     * @param group
-     *            the identifier of the group
+     * @param groupId
+     *            the ID of the group
      */
-    public void inviteGroup(Warp warp, String group);
+    public void inviteGroup(Warp warp, String groupId);
 
     /**
      * Adds the given playerId to the invited playerIds for the given players.
@@ -61,14 +62,15 @@ public interface DataConnection {
     public void invitePlayer(Warp warp, UUID playerId);
 
     /**
-     * Removes the given group from the invited groups for the given warp.
+     * Removes the given groupId from the list of invited groupIds for the given
+     * warp.
      * 
      * @param warp
      *            the warp
-     * @param group
-     *            the group identifier
+     * @param groupId
+     *            the ID of the group
      */
-    public void uninviteGroup(Warp warp, String group);
+    public void uninviteGroup(Warp warp, String groupId);
 
     /**
      * Removes the given playerId from the invited playerIds for the given warp

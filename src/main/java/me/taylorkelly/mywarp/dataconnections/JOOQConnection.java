@@ -149,20 +149,18 @@ public class JOOQConnection implements DataConnection {
                         .select(WARP.NAME, c.PLAYER_, WARP.TYPE, WARP.X, WARP.Y, WARP.Z, WARP.YAW,
                                 WARP.PITCH, WORLD.WORLD_, WARP.VISITS, WARP.WELCOME_MESSAGE, PLAYER.PLAYER_,
                                 GROUP.GROUP_)
-                        .from(WARP
-                                .join(WORLD).on(WARP.WORLD_ID.eq(WORLD.WORLD_ID))
-                        .join(c).on(WARP.PLAYER_ID.eq(c.PLAYER_ID))
-                        .leftOuterJoin(WARP2PLAYER).on(WARP2PLAYER.WARP_ID.eq(WARP.WARP_ID))
-                        .leftOuterJoin(PLAYER).on(WARP2PLAYER.PLAYER_ID.eq(PLAYER.PLAYER_ID)))
-                        .leftOuterJoin(WARP2GROUP).on(WARP2GROUP.WARP_ID.eq(WARP.WARP_ID))
-                        .leftOuterJoin(GROUP).on(WARP2GROUP.GROUP_ID.eq(GROUP.GROUP_ID))
-                        .fetch().intoGroups(WARP.NAME);
+                        .from(WARP.join(WORLD).on(WARP.WORLD_ID.eq(WORLD.WORLD_ID)).join(c)
+                                .on(WARP.PLAYER_ID.eq(c.PLAYER_ID)).leftOuterJoin(WARP2PLAYER)
+                                .on(WARP2PLAYER.WARP_ID.eq(WARP.WARP_ID)).leftOuterJoin(PLAYER)
+                                .on(WARP2PLAYER.PLAYER_ID.eq(PLAYER.PLAYER_ID))).leftOuterJoin(WARP2GROUP)
+                        .on(WARP2GROUP.WARP_ID.eq(WARP.WARP_ID)).leftOuterJoin(GROUP)
+                        .on(WARP2GROUP.GROUP_ID.eq(GROUP.GROUP_ID)).fetch().intoGroups(WARP.NAME);
 
                 // create warp-instances from the results
                 Collection<Warp> ret = new ArrayList<Warp>(groupedResults.size());
                 for (Result<Record13<String, UUID, Type, Double, Double, Double, Float, Float, UUID, UInteger, String, UUID, String>> result : groupedResults
                         .values()) {
-                    //XXX move code into a pretty helper method
+                    // XXX move code into a pretty helper method
                     Warp warp = new Warp(result.getValue(0, WARP.NAME), result.getValue(0, c.PLAYER_), result
                             .getValue(0, WARP.TYPE), result.getValue(0, WARP.X), result.getValue(0, WARP.Y),
                             result.getValue(0, WARP.Z), result.getValue(0, WARP.YAW), result.getValue(0,
@@ -236,8 +234,8 @@ public class JOOQConnection implements DataConnection {
                 WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
                 GroupRecord groupRecord = create.fetchOne(GROUP, GROUP.GROUP_.eq(groupId));
 
-                create.delete(WARP2GROUP).where(
-                        WARP2GROUP.WARP_ID.eq(warpRecord.getWarp_id()).and(
+                create.delete(WARP2GROUP)
+                        .where(WARP2GROUP.WARP_ID.eq(warpRecord.getWarp_id()).and(
                                 WARP2GROUP.GROUP_ID.eq(groupRecord.getGroup_id()))).execute();
             }
 
@@ -254,8 +252,8 @@ public class JOOQConnection implements DataConnection {
                 WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
                 PlayerRecord playerRecord = create.fetchOne(PLAYER, PLAYER.PLAYER_.eq(player));
 
-                create.delete(WARP2PLAYER).where(
-                        WARP2PLAYER.WARP_ID.eq(warpRecord.getWarp_id()).and(
+                create.delete(WARP2PLAYER)
+                        .where(WARP2PLAYER.WARP_ID.eq(warpRecord.getWarp_id()).and(
                                 WARP2PLAYER.PLAYER_ID.eq(playerRecord.getPlayer_id()))).execute();
             }
 

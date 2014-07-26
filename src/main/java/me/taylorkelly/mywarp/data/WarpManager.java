@@ -1,15 +1,14 @@
 package me.taylorkelly.mywarp.data;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Nullable;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp.Type;
-import me.taylorkelly.mywarp.data.WarpLimit.Limit;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -17,12 +16,10 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 
 /**
  * A warp-manager represents a warp-network. Each warp within this network is
  * unique.
- * 
  */
 public class WarpManager {
 
@@ -30,10 +27,6 @@ public class WarpManager {
      * This map stores all warps managed by this manager under their name.
      */
     private final Map<String, Warp> warpMap = new HashMap<String, Warp>();
-
-    public enum BuildWarp {
-        ALLOW, DENY_TOTAL, DENY_PRIVATE, DENY_PUBLIC
-    }
 
     // public WarpManager(Collection<Warp> innitialWarps) {
     // populate(innitialWarps);
@@ -209,64 +202,5 @@ public class WarpManager {
             }
         }
         return ret;
-    }
-
-    public BuildWarp canAddWarp(final Player player, final World world, boolean newlyBuild, final Type type) {
-        if ((!newlyBuild || MyWarp.inst().getPermissionsManager()
-                .hasPermission(player, "mywarp.limit.disobey." + world.getName() + ".total"))
-                && MyWarp
-                        .inst()
-                        .getPermissionsManager()
-                        .hasPermission(player,
-                                "mywarp.limit.disobey." + world.getName() + "." + type.getPermissionSuffix())) {
-            return BuildWarp.ALLOW;
-        }
-        WarpLimit limit = MyWarp.inst().getPermissionsManager().getWarpLimit(player);
-        final List<String> affectedWorlds = new ArrayList<String>();
-        for (World affectedWorld : limit.getAffectedWorlds()) {
-            // only count warps on worlds the player cannot disobey limits on
-            if (!MyWarp
-                    .inst()
-                    .getPermissionsManager()
-                    .hasPermission(
-                            player,
-                            "mywarp.limit.disobey." + affectedWorld.getName() + "."
-                                    + type.getPermissionSuffix())) {
-                affectedWorlds.add(affectedWorld.getName());
-            }
-        }
-        Collection<Warp> totalWarps = getWarps(new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isCreator(player) && warp.isType(type);
-            }
-
-        });
-
-        if (newlyBuild && atLeast(totalWarps, limit.getLimit(Limit.TOTAL))) {
-            return BuildWarp.DENY_TOTAL;
-        }
-
-        if (atLeast(Collections2.filter(totalWarps, new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isType(type);
-            }
-
-        }), limit.getLimit(type))) {
-            switch (type) {
-            case PUBLIC:
-                return BuildWarp.DENY_PUBLIC;
-            case PRIVATE:
-                return BuildWarp.DENY_PRIVATE;
-            }
-        }
-        return BuildWarp.ALLOW;
-    }
-
-    private <T> boolean atLeast(Iterable<T> iterable, int count) {
-        return Iterables.size(Iterables.limit(iterable, count)) == count;
     }
 }

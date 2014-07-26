@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import com.google.common.base.Preconditions;
-
 import me.taylorkelly.mywarp.MyWarp;
+
+import com.google.common.base.Preconditions;
 
 /**
  * A custom implementation of {@link java.util.ResourceBundle.Control} for

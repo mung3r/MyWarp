@@ -2,7 +2,7 @@ package me.taylorkelly.mywarp.commands;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.economy.Fee;
+import me.taylorkelly.mywarp.economy.FeeBundle;
 import me.taylorkelly.mywarp.timer.WarpCooldown;
 import me.taylorkelly.mywarp.timer.WarpWarmup;
 import me.taylorkelly.mywarp.utils.CommandUtils;
@@ -24,59 +24,42 @@ public class RootCommands {
     public void warpTo(CommandContext args, Player sender) throws CommandException {
         // first check the economy
         if (MyWarp.inst().getWarpSettings().economyEnabled) {
-            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(Fee.WARP_TO);
+            FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(sender);
 
-            if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
-                throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getString("economy.cannot-afford", sender, fee));
+            if (!fees.hasAtLeast(sender, FeeBundle.Fee.WARP_TO)) {
+                return;
             }
         }
 
         Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(0));
-        if (MyWarp.inst().getWarpSettings().timersEnabled) {
-            if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getUniqueId(), WarpCooldown.class)) {
+        if (MyWarp.inst().getWarpSettings().timersEnabled
+                && !MyWarp.inst().getTimerManager().canDisobey(sender)) {
+            if (MyWarp.inst().getTimerManager().hasRunningTimer(sender.getUniqueId(), WarpCooldown.class)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString(
                                 "commands.warp-to.cooldown.active",
                                 sender,
-                                MyWarp.inst().getTimerFactory()
+                                MyWarp.inst().getTimerManager()
                                         .getRemainingSeconds(sender.getUniqueId(), WarpCooldown.class)));
             }
 
-            if (MyWarp.inst().getTimerFactory().hasRunningTimer(sender.getUniqueId(), WarpWarmup.class)) {
+            if (MyWarp.inst().getTimerManager().hasRunningTimer(sender.getUniqueId(), WarpWarmup.class)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString(
                                 "commands.warp-to.warmup.active",
                                 sender,
-                                MyWarp.inst().getTimerFactory()
+                                MyWarp.inst().getTimerManager()
                                         .getRemainingSeconds(sender.getUniqueId(), WarpWarmup.class)));
             }
 
-            if (MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.warmup.disobey")) {
-                warp.teleport(sender, true);
-
-                if (!MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.cooldown.disobey")) {
-                    MyWarp.inst()
-                            .getTimerFactory()
-                            .registerNewTimer(
-                                    new WarpCooldown(MyWarp.inst().getTimerFactory(), sender, MyWarp.inst()
-                                            .getPermissionsManager().getCooldown(sender)));
-                }
-                return;
-            }
-
-            MyWarp.inst()
-                    .getTimerFactory()
-                    .registerNewTimer(
-                            new WarpWarmup(MyWarp.inst().getTimerFactory(), sender, warp, MyWarp.inst()
-                                    .getPermissionsManager().getWarmup(sender)));
+            MyWarp.inst().getTimerManager().registerNewTimer(new WarpWarmup(sender, warp));
 
         } else {
-            warp.teleport(sender, true);
+            warp.teleport(sender, FeeBundle.Fee.WARP_TO);
         }
     }
 }

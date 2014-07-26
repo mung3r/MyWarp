@@ -99,10 +99,8 @@ public class DynmapMarkers implements Markers {
     }
 
     private String warpLabel(Warp warp) {
-        return warp.replaceWarpMacros(
-                MyWarp.inst().getLocalizationManager()
-                        .getString("dynmap.marker", MyWarp.inst().getWarpSettings().localizationDefLocale),
-                null);
+        return warp.replacePlaceholders(MyWarp.inst().getLocalizationManager()
+                .getString("dynmap.marker", MyWarp.inst().getWarpSettings().localizationDefLocale));
 
     }
 }

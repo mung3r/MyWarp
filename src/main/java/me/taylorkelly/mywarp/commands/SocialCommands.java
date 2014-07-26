@@ -5,7 +5,7 @@ import java.util.UUID;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.Warp.Type;
-import me.taylorkelly.mywarp.economy.Fee;
+import me.taylorkelly.mywarp.economy.FeeBundle.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
 import me.taylorkelly.mywarp.utils.commands.Command;
@@ -53,7 +53,7 @@ public class SocialCommands {
                     .getString("commands.give.givee-limits", sender, givee.getName()));
         }
 
-        if (warp.getCreatorId() == givee.getUniqueId()) {
+        if (warp.isCreator(givee)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getString("commands.give.is-owner", sender, givee.getName()));
         }

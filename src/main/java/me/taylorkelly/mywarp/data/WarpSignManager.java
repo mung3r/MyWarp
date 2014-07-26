@@ -1,7 +1,7 @@
 package me.taylorkelly.mywarp.data;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.economy.Fee;
+import me.taylorkelly.mywarp.economy.FeeBundle;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -125,15 +125,10 @@ public class WarpSignManager implements Listener {
         }
 
         if (MyWarp.inst().getWarpSettings().economyEnabled) {
-            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(player)
-                    .getFee(Fee.WARP_SIGN_USE);
-            if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
-                player.sendMessage(ChatColor.RED
-                        + MyWarp.inst().getLocalizationManager()
-                                .getString("economy.cannot-afford", player, fee));
+            FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player);
+            if (!fees.hasAtLeast(player, FeeBundle.Fee.WARP_SIGN_USE)) {
                 return;
             }
-            MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
         }
 
         // workaround for BUKKIT-4365
@@ -142,12 +137,12 @@ public class WarpSignManager implements Listener {
 
                 @Override
                 public void run() {
-                    warp.teleport(player, false);
+                    warp.teleport(player, FeeBundle.Fee.WARP_SIGN_USE);
                 }
 
             }, 2L);
         } else {
-            warp.teleport(player, false);
+            warp.teleport(player, FeeBundle.Fee.WARP_SIGN_USE);
         }
 
     }
@@ -186,15 +181,11 @@ public class WarpSignManager implements Listener {
         }
 
         if (MyWarp.inst().getWarpSettings().economyEnabled) {
-            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(player)
-                    .getFee(Fee.WARP_SIGN_CREATE);
-            if (!MyWarp.inst().getEconomyLink().canAfford(player, fee)) {
-                player.sendMessage(ChatColor.RED
-                        + MyWarp.inst().getLocalizationManager()
-                                .getString("economy.cannot-afford", player, fee));
+            FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player);
+            if (!fees.hasAtLeast(player, FeeBundle.Fee.WARP_SIGN_CREATE)) {
                 return false;
             }
-            MyWarp.inst().getEconomyLink().withdrawSender(player, fee);
+            fees.withdraw(player, FeeBundle.Fee.WARP_SIGN_CREATE);
         }
 
         // get the right spelling (case) out of the config

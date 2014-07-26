@@ -18,10 +18,23 @@ import org.bukkit.entity.LivingEntity;
 public class SafeTeleport {
 
     /**
-     * The individual teleport-status
+     * The status of a teleport.
      */
     public static enum TeleportStatus {
-        NONE, ORIGINAL_LOC, SAFE_LOC,
+        /**
+         * The entity has not been teleported, e.g. because no safe location in
+         * the given margins could be found.
+         */
+        NONE,
+        /**
+         * The entity has been teleported to the original location.
+         */
+        ORIGINAL_LOC,
+        /**
+         * The entity has been teleported, but to a safe location within the
+         * given margins.
+         */
+        SAFE_LOC,
     };
 
     /**

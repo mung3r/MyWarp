@@ -12,7 +12,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.economy.Fee;
+import me.taylorkelly.mywarp.economy.FeeBundle;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -166,13 +166,19 @@ public class CommandsManager {
 
         // if economy support is enabled we need to check if the sender can
         // afford using the command
-        if (MyWarp.inst().getWarpSettings().economyEnabled && cmd.fee() != Fee.NONE) {
-            double fee = MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(cmd.fee());
-
-            if (!MyWarp.inst().getEconomyLink().canAfford(sender, fee)) {
-                throw new CommandException(MyWarp.inst().getLocalizationManager()
-                        .getString("economy.cannot-afford", sender, fee));
+        FeeBundle fees = null;
+        if (MyWarp.inst().getWarpSettings().economyEnabled && cmd.fee() != FeeBundle.Fee.NONE) {
+            fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(sender);
+            if (!fees.hasAtLeast(sender, cmd.fee())) {
+                return;
             }
+            // double fee =
+            // MyWarp.inst().getPermissionsManager().getFeeBundle(sender).getFee(cmd.fee());
+            //
+            // if (!MyWarp.inst().getEconomyLink().has(sender, fee)) {
+            // throw new CommandException(MyWarp.inst().getLocalizationManager()
+            // .getString("economy.cannot-afford", sender, fee));
+            // }
         }
         Object instance = instances.get(method);
 
@@ -186,13 +192,17 @@ public class CommandsManager {
         // if economy support is enabled whitdraw the sender - at this point the
         // command should have been executed without any errors
         // (see CommandException)
-        if (MyWarp.inst().getWarpSettings().economyEnabled && cmd.fee() != Fee.NONE) {
-
-            MyWarp.inst()
-                    .getEconomyLink()
-                    .withdrawSender(sender,
-                            MyWarp.inst().getPermissionsManager().getEconomyPrices(sender).getFee(cmd.fee()));
+        if (fees != null) {
+            fees.withdraw(sender, cmd.fee());
         }
+        // if (MyWarp.inst().getWarpSettings().economyEnabled && cmd.fee() !=
+        // Fee.NONE) {
+        //
+        // MyWarp.inst()
+        // .getEconomyLink()
+        // .withdraw(sender,
+        // MyWarp.inst().getPermissionsManager().getFeeBundle(sender).getFee(cmd.fee()));
+        // }
     }
 
     /**

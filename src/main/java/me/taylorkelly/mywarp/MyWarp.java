@@ -14,12 +14,12 @@ import me.taylorkelly.mywarp.dataconnections.MySQLConnection;
 import me.taylorkelly.mywarp.dataconnections.SQLiteConnection;
 import me.taylorkelly.mywarp.economy.EconomyLink;
 import me.taylorkelly.mywarp.economy.VaultLink;
-import me.taylorkelly.mywarp.localization.LocalizationManager;
 import me.taylorkelly.mywarp.localization.LocalizationException;
+import me.taylorkelly.mywarp.localization.LocalizationManager;
 import me.taylorkelly.mywarp.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.markers.Markers;
 import me.taylorkelly.mywarp.permissions.PermissionsManager;
-import me.taylorkelly.mywarp.timer.TimerFactory;
+import me.taylorkelly.mywarp.timer.TimerManager;
 import me.taylorkelly.mywarp.utils.commands.CommandsManager;
 import net.milkbowl.vault.economy.Economy;
 
@@ -72,7 +72,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     /**
      * The timer-factory
      */
-    private TimerFactory timerFactory;
+    private TimerManager timerManager;
 
     /**
      * The warp-manager
@@ -190,13 +190,13 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets the timer-factory, necessary for all tasks involving per-object
-     * timers (warmups, cooldowns...)
+     * Gets the timer-manager, that manages all per-object timers (warmups,
+     * cooldowns...)
      * 
-     * @return the timer-factory
+     * @return the timer-manager
      */
-    public TimerFactory getTimerFactory() {
-        return timerFactory;
+    public TimerManager getTimerManager() {
+        return timerManager;
     }
 
     /**
@@ -306,9 +306,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         }
 
         // setup the core functions
-        permissionsManager = new PermissionsManager();
         warpManager = new WarpManager();
-
         setupPlugin();
     }
 
@@ -319,11 +317,11 @@ public class MyWarp extends JavaPlugin implements Reloadable {
      */
     private void setupPlugin() {
         // register dynamic permissions
-        permissionsManager.registerPermissions();
+        permissionsManager = new PermissionsManager();
 
         // initialize timers
         if (getWarpSettings().timersEnabled) {
-            timerFactory = new TimerFactory();
+            timerManager = new TimerManager();
         }
 
         // initialize EconomySupport
@@ -347,6 +345,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         }
 
         // initialize Dynmap support
+        // TODO fix order, the manager needs a working warp-manager
         if (getWarpSettings().dynmapEnabled) {
             Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
             if (dynmap != null && dynmap.isEnabled()) {
@@ -377,9 +376,9 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     public void reload() {
         // unload old stuff from the server
         HandlerList.unregisterAll(this);
-        // TODO make permissionManager reloadable
+        // REVIEW make permissionManager reloadable
         permissionsManager.unregisterPermissions();
-        // TODO move into warpManager?
+        // REVIEW move into warpManager?
         warpManager.clear();
 
         // load new stuff
