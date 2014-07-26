@@ -20,6 +20,7 @@
 /bin
 /dist
 /manifest.mf
+dependency-reduced-pom.xml 
 
 # Mac filesystem dust
 .DS_Store
