@@ -12,6 +12,9 @@ import org.dynmap.markers.MarkerSet;
 
 import com.google.common.base.Predicate;
 
+/**
+ * Sets location-markers for public warps on the map provided by Dynmap
+ */
 public class DynmapMarkers implements Markers {
 
     private final MarkerAPI markerAPI;
@@ -22,6 +25,12 @@ public class DynmapMarkers implements Markers {
     private static final String MARKER_ID = "mywarp.warp.";
     private static final String ICON_ID = "mywarp_warp-32";
 
+    /**
+     * Initializes this instance with the given dynmap-plugin.
+     * 
+     * @param dynmapPlugin
+     *            the running dynmap instance to use
+     */
     public DynmapMarkers(DynmapCommonAPI dynmapPlugin) {
         markerAPI = dynmapPlugin.getMarkerAPI();
 
@@ -60,47 +69,66 @@ public class DynmapMarkers implements Markers {
             }
 
         })) {
-            addWarp(warp);
+            addMarker(warp);
         }
     }
 
     @Override
-    public void addWarp(Warp warp) {
-        markerSet.createMarker(MARKER_ID + warp.getName(), warpLabel(warp), true, warp.getWorld().getName(),
+    public void addMarker(Warp warp) {
+        markerSet.createMarker(getMarkerId(warp), getLabel(warp), true, warp.getWorld().getName(),
                 warp.getX(), warp.getY(), warp.getZ(), markerIcon, false);
     }
 
     @Override
-    public void updateWarp(Warp warp) {
-        Marker marker = getMatchingMarker(MARKER_ID + warp.getName());
-
+    public void updateMarker(Warp warp) {
+        if (warp.getType() != Warp.Type.PUBLIC) {
+            return;
+        }
+        Marker marker = markerSet.findMarker(getMarkerId(warp));
         if (marker != null) {
             marker.setLocation(warp.getWorld().getName(), warp.getX(), warp.getY(), warp.getZ());
-            marker.setLabel(warpLabel(warp));
+            marker.setLabel(getLabel(warp));
         }
     }
 
     @Override
-    public void deleteWarp(Warp warp) {
-        Marker marker = getMatchingMarker(MARKER_ID + warp.getName());
-
+    public void deleteMarker(Warp warp) {
+        Marker marker = markerSet.findMarker(getMarkerId(warp));
         if (marker != null) {
             marker.deleteMarker();
         }
     }
 
-    private Marker getMatchingMarker(String id) {
-        for (Marker marker : markerSet.getMarkers()) {
-            if (marker.getMarkerID().equals(id)) {
-                return marker;
-            }
-        }
-        return null;
+    /**
+     * Gets the ID for the marker of the given warp.
+     * 
+     * @param warp
+     *            the warp
+     * @return the unique ID of the marker for the given warp
+     */
+    private String getMarkerId(Warp warp) {
+        return MARKER_ID + warp.getName();
     }
 
-    private String warpLabel(Warp warp) {
+    /**
+     * Gets the label for the given warp.
+     * 
+     * @param warp
+     *            the warp
+     * @return the label for this warp
+     */
+    private String getLabel(Warp warp) {
         return warp.replacePlaceholders(MyWarp.inst().getLocalizationManager()
                 .getString("dynmap.marker", MyWarp.inst().getWarpSettings().localizationDefLocale));
 
+    }
+
+    @Override
+    public void handleTypeChange(Warp warp) {
+        if (warp.getType() == Warp.Type.PUBLIC) {
+            addMarker(warp);
+        } else {
+            deleteMarker(warp);
+        }
     }
 }

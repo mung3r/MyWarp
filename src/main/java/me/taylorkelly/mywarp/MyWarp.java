@@ -1,12 +1,10 @@
 package me.taylorkelly.mywarp;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import me.taylorkelly.mywarp.commands.RootCommands;
-import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.WarpManager;
 import me.taylorkelly.mywarp.data.WarpSignManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnection;
@@ -316,12 +314,25 @@ public class MyWarp extends JavaPlugin implements Reloadable {
      * setup correctly before executing this method.
      */
     private void setupPlugin() {
+        // block the main thread until the warps are loaded
+        try {
+            warpManager.populate(getDataConnection().getWarps().get());
+            logger().info(warpManager.getLoadedWarpNumber() + " warps loaded.");
+        } catch (Exception e) {
+            MyWarp.logger().log(Level.SEVERE, "Failed to load warps from database.", e);
+        }
+
         // register dynamic permissions
         permissionsManager = new PermissionsManager();
 
         // initialize timers
         if (getWarpSettings().timersEnabled) {
             timerManager = new TimerManager();
+        }
+
+        // initialize warp-signs
+        if (getWarpSettings().warpSignsEnabled) {
+            getServer().getPluginManager().registerEvents(new WarpSignManager(), this);
         }
 
         // initialize EconomySupport
@@ -345,7 +356,6 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         }
 
         // initialize Dynmap support
-        // TODO fix order, the manager needs a working warp-manager
         if (getWarpSettings().dynmapEnabled) {
             Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
             if (dynmap != null && dynmap.isEnabled()) {
@@ -355,28 +365,13 @@ public class MyWarp extends JavaPlugin implements Reloadable {
                 getWarpSettings().dynmapEnabled = false;
             }
         }
-
-        // register events
-        if (getWarpSettings().warpSignsEnabled) {
-            getServer().getPluginManager().registerEvents(new WarpSignManager(), this);
-        }
-
-        // block the main thread until the warps are loaded
-        // REVIEW chain this loading instead of blocking the main thread?
-        try {
-            Collection<Warp> warps = getDataConnection().getWarps().get();
-            warpManager.populate(warps);
-            logger().info(warpManager.getLoadedWarpNumber() + " warps loaded.");
-        } catch (Exception e) {
-            MyWarp.logger().log(Level.SEVERE, "Failed to load warps from database.", e);
-        }
     }
 
     @Override
     public void reload() {
         // unload old stuff from the server
         HandlerList.unregisterAll(this);
-        // REVIEW make permissionManager reloadable
+        // REVIEW make permissionManager reloadable?
         permissionsManager.unregisterPermissions();
         // REVIEW move into warpManager?
         warpManager.clear();

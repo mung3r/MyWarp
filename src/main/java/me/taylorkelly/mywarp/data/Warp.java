@@ -683,6 +683,10 @@ public class Warp implements Comparable<Warp> {
         this.creatorId = creatorId;
 
         MyWarp.inst().getDataConnection().updateCreator(this);
+
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+            MyWarp.inst().getMarkers().updateMarker(this);
+        }
     }
 
     /**
@@ -702,8 +706,8 @@ public class Warp implements Comparable<Warp> {
 
         MyWarp.inst().getDataConnection().updateLocation(this);
 
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled && type == Type.PUBLIC) {
-            MyWarp.inst().getMarkers().updateWarp(this);
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+            MyWarp.inst().getMarkers().updateMarker(this);
         }
     }
 
@@ -717,7 +721,16 @@ public class Warp implements Comparable<Warp> {
     public void setType(Type type) {
         this.type = type;
 
-        MyWarp.inst().getDataConnection().updateType(this);
+        MyWarp.inst().getMarkers().updateMarker(this);
+
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+            if (type == Type.PUBLIC) {
+                MyWarp.inst().getMarkers().addMarker(this);
+            } else {
+                MyWarp.inst().getMarkers().deleteMarker(this);
+            }
+        }
+
     }
 
     /**
@@ -728,6 +741,10 @@ public class Warp implements Comparable<Warp> {
         visits++;
 
         MyWarp.inst().getDataConnection().updateVisits(this);
+
+        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+            MyWarp.inst().getMarkers().updateMarker(this);
+        }
     }
 
     /**
