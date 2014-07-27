@@ -1,6 +1,6 @@
 package me.taylorkelly.mywarp.dataconnections;
 
-import static me.taylorkelly.mywarp.dataconnections.jooq.Tables.*;
+import static me.taylorkelly.mywarp.dataconnections.generated.Tables.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,11 +16,11 @@ import java.util.logging.Level;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.Warp.Type;
-import me.taylorkelly.mywarp.dataconnections.jooq.tables.Player;
-import me.taylorkelly.mywarp.dataconnections.jooq.tables.records.GroupRecord;
-import me.taylorkelly.mywarp.dataconnections.jooq.tables.records.PlayerRecord;
-import me.taylorkelly.mywarp.dataconnections.jooq.tables.records.WarpRecord;
-import me.taylorkelly.mywarp.dataconnections.jooq.tables.records.WorldRecord;
+import me.taylorkelly.mywarp.dataconnections.generated.tables.Player;
+import me.taylorkelly.mywarp.dataconnections.generated.tables.records.GroupRecord;
+import me.taylorkelly.mywarp.dataconnections.generated.tables.records.PlayerRecord;
+import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord;
+import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WorldRecord;
 
 import org.jooq.DSLContext;
 import org.jooq.Record13;

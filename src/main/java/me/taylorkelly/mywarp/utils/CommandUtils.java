@@ -25,6 +25,8 @@ import com.google.common.base.Predicate;
  */
 public class CommandUtils {
 
+    private static final int WARP_NAME_LENGTH = 32;
+
     /**
      * Gets a warp, matching the given name-filter, that is viewable by the
      * given command-sender.
@@ -299,7 +301,6 @@ public class CommandUtils {
      *             if the name cannot be used for a new warp
      */
     public static void checkWarpname(CommandSender sender, String name) throws CommandException {
-        // TODO add maximum character number
         if (MyWarp.inst().getWarpManager().warpExists(name)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getString("commands.utils.warp-exists", sender, name));
@@ -307,6 +308,10 @@ public class CommandUtils {
         if (MyWarp.inst().getCommandsManager().hasSubCommand("mywarp", name)) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getString("commands.utils.name-is-cmd", sender, name));
+        }
+        if (name.length() > WARP_NAME_LENGTH) {
+            throw new CommandException(MyWarp.inst().getLocalizationManager()
+                    .getString("commands.utils.name-too-long", sender, WARP_NAME_LENGTH));
         }
     }
 

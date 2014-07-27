@@ -154,12 +154,23 @@ public class AdminCommands {
         Player invitee = CommandUtils.matchPlayer(sender, args.getString(0));
         Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(1));
 
-        warp.teleport(invitee);
-        // REVIEW message if teleport was not successful?
-        sender.sendMessage(MyWarp
-                .inst()
-                .getLocalizationManager()
-                .getString("commands.warp-player.teleport-successful", sender, invitee.getName(),
-                        warp.getName()));
+        switch(warp.teleport(invitee)) {
+        case NONE:
+            sender.sendMessage(MyWarp
+                    .inst()
+                    .getLocalizationManager()
+                    .getString("commands.warp-player.teleport-failed", sender, invitee.getName(),
+                            warp.getName()));
+            break;
+        case ORIGINAL_LOC:
+        case SAFE_LOC:
+            sender.sendMessage(MyWarp
+                    .inst()
+                    .getLocalizationManager()
+                    .getString("commands.warp-player.teleport-successful", sender, invitee.getName(),
+                            warp.getName()));
+            break;
+        
+        }
     }
 }

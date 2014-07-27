@@ -136,6 +136,7 @@ commands:
         &fLösche einige deiner Warps um mehr zu erstellen.
     name-is-cmd: "''&f{0}&c'' ist äquivalent mit einem Kommando und kann nicht als Name benutzt werden."
     warp-exists: "Ein Warp namens ''&f{0}&c'' existiert bereits."
+    name-too-long: "Der Name eines Warps darf maximal {0, number, integer} Zeichen enthalten."
     warp-non-existent: "Es existiert kein Warp namens ''{0}''."
     warp-suggestion: "Es existiert kein Warp namens ''{0}''. Meintest du ''&f{1}&c''?"
   use-permission: "Dir fehlen die Rechte, um dieses Kommando zu nutzen."
@@ -152,6 +153,7 @@ commands:
   warp-player:
     description: "Teleportiert &7<Spieler>&f zu &7<Name>&f, wenn du den Warp besuchen kannst."
     teleport-successful: "&bDu hast {0} zu ''{1}'' teleportiert."
+    teleport-failed: "&bDu hast versucht, {0} zu ''{1}'' teleportieren, aber der Warp ist unerreichbar."
   welcome:
     changed-successful: |
       &bDie neue Willkommensnachricht für ''{0}'' lautet:

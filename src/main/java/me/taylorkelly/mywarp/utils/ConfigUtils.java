@@ -17,6 +17,8 @@ import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import com.google.common.base.Charsets;
+
 /**
  * Bundles various utilities used when working with yaml configuration files
  */
@@ -44,7 +46,7 @@ public class ConfigUtils {
         BufferedReader bufferedReader = null;
 
         try {
-            reader = forceEncoding ? new InputStreamReader(stream, "UTF-8") : new InputStreamReader(stream);
+            reader = forceEncoding ? new InputStreamReader(stream, Charsets.UTF_8) : new InputStreamReader(stream);
             bufferedReader = new BufferedReader(reader);
             StrBuilder builder = new StrBuilder();
             String line = null;

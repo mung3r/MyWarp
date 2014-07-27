@@ -135,6 +135,7 @@ commands:
         You have reached your maximum of warps &e({0, number, integer})&c.
         &fDelete some of your warps to create more.
     name-is-cmd: "''&f{0}&c'' is equivalent to a command and cannot be used as a name."
+    name-too-long: "Warp names can only contain {0, number, integer} characters."
     warp-exists: "A warp called ''&f{0}&c'' already exists."
     warp-non-existent: "No such warp ''{0}''."
     warp-suggestion: "No such warp ''{0}''. Did you mean ''&f{1}&c''?"
@@ -152,6 +153,7 @@ commands:
   warp-player:
     description: "Warps &7<player>&f to &7<name>&f if you may visit it."
     teleport-successful: "&bYou have teleported {0} to ''{1}''."
+    teleport-failed: "&bYou tried to teleport {0} to ''{1}'', but this warp is inaccessible."
   welcome:
     changed-successful: |
       &bChanged welcome message for ''{0}'' to:

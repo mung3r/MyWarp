@@ -199,7 +199,6 @@ public class Warp implements Comparable<Warp> {
      * @param player
      *            the player
      */
-    // REVIEW modify compass item, add metadata?
     public void asCompassTarget(Player player) {
         Location loc = createLocation();
         if (loc != null) {
