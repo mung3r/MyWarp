@@ -22,7 +22,7 @@ public class TimerManager {
      * @return true if the given sender can disobey timers
      */
     public boolean canDisobey(CommandSender sender) {
-        return !MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.timer.disobey");
+        return MyWarp.inst().getPermissionsManager().hasPermission(sender, "mywarp.timer.disobey");
     }
 
     /**

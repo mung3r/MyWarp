@@ -117,19 +117,16 @@ permissions:
   mywarp.warp.world.currentworld:
     description: Can warp inside of worlds but not across them
     default: op
-  mywarp.cooldown.disobey:
+  mywarp.timer.disobey:
     description: Can disobey any cooldown
     default: op
-  mywarp.warmup.disobey:
-    description: Can disobey any warmup
-    default: op
-  mywarp.warmup.disobey.dmgabort:
+  mywarp.timer.disobey.dmgabort:
     description: Can take damage while warming up
     default: op
-  mywarp.warmup.disobey.moveabort:
-    description: Can move damage while warming up
+  mywarp.timer.disobey.moveabort:
+    description: Can move while warming up
     default: op
-  mywarp.economy.free:
+  mywarp.economy.disobey:
     description: Is never charged anywhere.
     default: op
   mywarp.limit.disobey.*:
@@ -194,4 +191,5 @@ permissions:
       mywarp.warp.*: true
       mywarp.admin.*: true
       mywarp.limit.disobey.*: true
-      mywarp.economy.free: true
+      mywarp.economy.disobey: true
+      mywarp.timer.disobey: true
