@@ -4,10 +4,9 @@ import static me.taylorkelly.mywarp.dataconnections.generated.Tables.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -23,7 +22,7 @@ import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WorldRecord;
 
 import org.jooq.DSLContext;
-import org.jooq.Record13;
+import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.types.UInteger;
 
@@ -108,11 +107,11 @@ public class JOOQConnection implements DataConnection {
                 }
                 record.setWorld_id(worldRecord.getWorld_id());
 
+                record.setCreation_date(warp.getCreationDate());
                 record.setVisits(UInteger.valueOf(warp.getVisits()));
                 record.setWelcome_message(warp.getWelcomeMessage());
 
-                // TODO actually use timestamp & fee
-                record.setCreation_date(new Timestamp(Calendar.getInstance().getTime().getTime()));
+                // TODO actually use fee
                 record.setFee(0.0);
 
                 record.store();
@@ -145,10 +144,10 @@ public class JOOQConnection implements DataConnection {
 
                 // query the database and group results by name - each map-entry
                 // contains all values for one single warp
-                Map<String, Result<Record13<String, UUID, Type, Double, Double, Double, Float, Float, UUID, UInteger, String, UUID, String>>> groupedResults = create
+                Map<String, Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String, UUID, String>>> groupedResults = create
                         .select(WARP.NAME, c.PLAYER_, WARP.TYPE, WARP.X, WARP.Y, WARP.Z, WARP.YAW,
-                                WARP.PITCH, WORLD.WORLD_, WARP.VISITS, WARP.WELCOME_MESSAGE, PLAYER.PLAYER_,
-                                GROUP.GROUP_)
+                                WARP.PITCH, WORLD.WORLD_, WARP.CREATION_DATE, WARP.VISITS,
+                                WARP.WELCOME_MESSAGE, PLAYER.PLAYER_, GROUP.GROUP_)
                         .from(WARP.join(WORLD).on(WARP.WORLD_ID.eq(WORLD.WORLD_ID)).join(c)
                                 .on(WARP.PLAYER_ID.eq(c.PLAYER_ID)).leftOuterJoin(WARP2PLAYER)
                                 .on(WARP2PLAYER.WARP_ID.eq(WARP.WARP_ID)).leftOuterJoin(PLAYER)
@@ -158,16 +157,17 @@ public class JOOQConnection implements DataConnection {
 
                 // create warp-instances from the results
                 Collection<Warp> ret = new ArrayList<Warp>(groupedResults.size());
-                for (Result<Record13<String, UUID, Type, Double, Double, Double, Float, Float, UUID, UInteger, String, UUID, String>> result : groupedResults
+                for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String, UUID, String>> result : groupedResults
                         .values()) {
                     // XXX move code into a pretty helper method
                     Warp warp = new Warp(result.getValue(0, WARP.NAME), result.getValue(0, c.PLAYER_), result
                             .getValue(0, WARP.TYPE), result.getValue(0, WARP.X), result.getValue(0, WARP.Y),
                             result.getValue(0, WARP.Z), result.getValue(0, WARP.YAW), result.getValue(0,
                                     WARP.PITCH), result.getValue(0, WORLD.WORLD_), result.getValue(0,
-                                    WARP.VISITS).intValue(), result.getValue(0, WARP.WELCOME_MESSAGE),
-                            Collections2.filter(result.getValues(PLAYER.PLAYER_), Predicates.notNull()),
-                            Collections2.filter(result.getValues(GROUP.GROUP_), Predicates.notNull()));
+                                    WARP.CREATION_DATE), result.getValue(0, WARP.VISITS).intValue(), result
+                                    .getValue(0, WARP.WELCOME_MESSAGE), Collections2.filter(
+                                    result.getValues(PLAYER.PLAYER_), Predicates.notNull()), Collections2
+                                    .filter(result.getValues(GROUP.GROUP_), Predicates.notNull()));
                     ret.add(warp);
                 }
 

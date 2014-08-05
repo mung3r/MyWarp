@@ -77,7 +77,7 @@ public class BasicCommands {
                 .getString("commands.delete.deleted-successful", sender, warp.getName()));
     }
 
-    //TODO add support for usage with disabled limits
+    // TODO add support for usage with disabled limits
     @Command(aliases = { "assets", "limits", "pstats", "pinfo" }, usage = "[player]", desc = "commands.assets.description", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
     public void showAssets(CommandContext args, final CommandSender sender) throws CommandException {
         final Player player;
@@ -381,7 +381,7 @@ public class BasicCommands {
         infos.append(ChatColor.WHITE);
         infos.append(Math.round(warp.getX()));
         infos.append(", ");
-        infos.append(warp.getY());
+        infos.append(Math.round(warp.getY()));
         infos.append(", ");
         infos.append(Math.round(warp.getZ()));
         infos.append(" ");
@@ -430,10 +430,13 @@ public class BasicCommands {
         }
 
         infos.append(ChatColor.GRAY);
-        infos.append(MyWarp.inst().getLocalizationManager().getString("commands.info.visits", sender));
-        infos.append(" ");
-        infos.append(ChatColor.WHITE);
-        infos.append(warp.getVisits());
+        infos.append(MyWarp.inst().getLocalizationManager()
+                .getString("commands.info.creation-date", sender, warp.getCreationDate()));
+        infos.appendNewLine();
+
+        infos.append(ChatColor.GRAY);
+        infos.append(MyWarp.inst().getLocalizationManager()
+                .getString("commands.info.visits", sender, warp.getVisits(), warp.getVisitsPerDay()));
 
         sender.sendMessage(infos.toString());
     }

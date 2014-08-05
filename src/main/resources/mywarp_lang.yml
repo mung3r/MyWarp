@@ -58,13 +58,14 @@ commands:
   info:
     created-by: "Created by:"
     created-by-you: "(that is you!)"
+    creation-date: "Created on: §f{0,date,medium}"
     description: "Gives you all available information about &7<name>."
     heading: "Information about ''{0}'':"
     invited-groups: "Invited groups:"
     invited-players: "Invited players:"
     in-world: "(in ''{0}'')"
     location: "Location:"
-    visits: "Visits:"
+    visits: "Visits: §f{0,number,integer} ({1,number,#.###} visits per day)"
   library:
     flag-already-set: "Value flag ''{0}'' is already given."
     flag-no-value: "No value was specified for the ''{0}'' flag."

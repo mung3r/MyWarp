@@ -1,6 +1,7 @@
 package me.taylorkelly.mywarp.dataconnections.migrators;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -95,7 +96,7 @@ public abstract class LegacyMigrator {
             }
             Warp w = new Warp(record.value1(), lookup.get(record.value2()), type, record.value4(),
                     record.value5(), record.value6(), record.value7(), record.value8(), worldId,
-                    record.value10(), record.value11(), invitedPlayerIds, invitedGroups);
+                    new Date(), record.value10(), record.value11(), invitedPlayerIds, invitedGroups);
             ret.add(w);
         }
         return ret;

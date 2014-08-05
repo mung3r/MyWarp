@@ -13,26 +13,26 @@ public class UUIDBinaryConverter implements Converter<byte[], UUID> {
     private static final long serialVersionUID = 713212664614712270L;
 
     @Override
-    public UUID from(byte[] data) {
-        if (data == null) {
+    public UUID from(byte[] databaseObject) {
+        if (databaseObject == null) {
             return null;
         }
 
-        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(databaseObject);
         long mostSignificant = byteBuffer.getLong();
         long leastSignificant = byteBuffer.getLong();
         return new UUID(mostSignificant, leastSignificant);
     }
 
     @Override
-    public byte[] to(UUID data) {
-        if (data == null) {
+    public byte[] to(UUID userObject) {
+        if (userObject == null) {
             return null;
         }
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
-        byteBuffer.putLong(data.getMostSignificantBits());
-        byteBuffer.putLong(data.getLeastSignificantBits());
+        byteBuffer.putLong(userObject.getMostSignificantBits());
+        byteBuffer.putLong(userObject.getLeastSignificantBits());
         return byteBuffer.array();
     }
 

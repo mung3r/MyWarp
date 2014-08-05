@@ -3,9 +3,11 @@ package me.taylorkelly.mywarp.data;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
@@ -29,6 +31,8 @@ import com.google.common.collect.ComparisonChain;
  * A warp.
  */
 public class Warp implements Comparable<Warp> {
+
+    private static final double GRAVITY_CONSTANT = 0.8;
 
     /**
      * The type of a warp.
@@ -86,12 +90,20 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
-     * A custom comparator that sorts warps based on their visits-count.
+     * A custom comparator that orders warps by there popularity: popular warps
+     * come first, unpopular last.
      */
     public static class PopularityComparator implements Comparator<Warp> {
+
         @Override
         public int compare(Warp w1, Warp w2) {
-            return ComparisonChain.start().compare(w1.visits, w2.visits).compare(w1.name, w2.name).result();
+            // Warps with a higher popularity score are preferred over warps
+            // with lower score. If the score is equal, newer warps are
+            // preferred over older warps. If both warps were created at the
+            // same millisecond, the alphabetically first is preferred.
+            return ComparisonChain.start().compare(w2.getPopularityScore(), w1.getPopularityScore())
+                    .compare(w2.creationDate.getTime(), w1.creationDate.getTime()).compare(w1.name, w2.name)
+                    .result();
         }
     }
 
@@ -107,6 +119,7 @@ public class Warp implements Comparable<Warp> {
     private volatile float pitch;
     private volatile UUID worldId;
 
+    private final Date creationDate;
     private volatile int visits;
     private volatile String welcomeMessage;
     private final Set<UUID> invitedPlayerIds = new HashSet<UUID>();
@@ -133,6 +146,8 @@ public class Warp implements Comparable<Warp> {
      *            the location's pitch
      * @param worldId
      *            the UUID of the location's world
+     * @param creationDate
+     *            the date this warp was created
      * @param visits
      *            the visit count
      * @param welcomeMessage
@@ -143,8 +158,8 @@ public class Warp implements Comparable<Warp> {
      *            a collection that includes all invited group names
      */
     public Warp(String name, UUID creatorId, Type type, double x, double y, double z, float yaw, float pitch,
-            UUID worldId, int visits, String welcomeMessage, Collection<UUID> inivtedPlayerIds,
-            Collection<String> invitedGroups) {
+            UUID worldId, Date creationDate, int visits, String welcomeMessage,
+            Collection<UUID> inivtedPlayerIds, Collection<String> invitedGroups) {
         this.name = name;
         this.creatorId = creatorId;
         this.type = type;
@@ -154,6 +169,7 @@ public class Warp implements Comparable<Warp> {
         this.yaw = yaw;
         this.pitch = pitch;
         this.worldId = worldId;
+        this.creationDate = creationDate;
         this.visits = visits;
         this.welcomeMessage = welcomeMessage;
         this.invitedPlayerIds.addAll(inivtedPlayerIds);
@@ -186,6 +202,7 @@ public class Warp implements Comparable<Warp> {
         this.worldId = loc.getWorld().getUID();
 
         this.visits = 0;
+        this.creationDate = new Date();
         this.welcomeMessage = MyWarp
                 .inst()
                 .getLocalizationManager()
@@ -582,6 +599,14 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
+     * @return the creationDate
+     */
+    public Date getCreationDate() {
+        // date is mutable, so we return a copy
+        return new Date(creationDate.getTime());
+    }
+
+    /**
      * Gets this warp's visits number
      * 
      * @return the number of times this warp has been visited
@@ -723,11 +748,7 @@ public class Warp implements Comparable<Warp> {
         MyWarp.inst().getMarkers().updateMarker(this);
 
         if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
-            if (type == Type.PUBLIC) {
-                MyWarp.inst().getMarkers().addMarker(this);
-            } else {
-                MyWarp.inst().getMarkers().deleteMarker(this);
-            }
+            MyWarp.inst().getMarkers().handleTypeChange(this);
         }
 
     }
@@ -756,6 +777,38 @@ public class Warp implements Comparable<Warp> {
         this.welcomeMessage = welcomeMessage;
 
         MyWarp.inst().getDataConnection().updateWelcomeMessage(this);
+    }
+
+    /**
+     * Gets this warp's popularity score. The score is influenced by the number
+     * of visits a warp received since it was created, while newer warps receive
+     * a better score than older warps.
+     * 
+     * @return the popularity score of this warp
+     */
+    private double getPopularityScore() {
+        // a basic implementation of the hacker news ranking algorithm detailed
+        // at http://amix.dk/blog/post/19574: Older warps receive lower scores
+        // due to the influence of the gravity constant.
+        double daysExisting = (System.currentTimeMillis() - creationDate.getTime()) / 86400000.0;
+        return visits / Math.pow(daysExisting, GRAVITY_CONSTANT);
+    }
+
+    /**
+     * Gets the average visits number per day, from the point this warp was
+     * created until now.
+     * 
+     * @return the average number of visits per day
+     */
+    public double getVisitsPerDay() {
+        // this method might not be 100% exact (considering leap seconds), but
+        // within the current Java API there are no alternatives
+        long daysSinceCreation = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis()
+                - creationDate.getTime());
+        if (daysSinceCreation <= 0) {
+            return visits;
+        }
+        return visits / daysSinceCreation;
     }
 
     @Override
