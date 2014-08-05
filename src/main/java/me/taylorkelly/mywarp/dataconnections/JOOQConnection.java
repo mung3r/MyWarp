@@ -157,17 +157,16 @@ public class JOOQConnection implements DataConnection {
 
                 // create warp-instances from the results
                 Collection<Warp> ret = new ArrayList<Warp>(groupedResults.size());
-                for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String, UUID, String>> result : groupedResults
+                for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String, UUID, String>> r : groupedResults
                         .values()) {
                     // XXX move code into a pretty helper method
-                    Warp warp = new Warp(result.getValue(0, WARP.NAME), result.getValue(0, c.PLAYER_), result
-                            .getValue(0, WARP.TYPE), result.getValue(0, WARP.X), result.getValue(0, WARP.Y),
-                            result.getValue(0, WARP.Z), result.getValue(0, WARP.YAW), result.getValue(0,
-                                    WARP.PITCH), result.getValue(0, WORLD.WORLD_), result.getValue(0,
-                                    WARP.CREATION_DATE), result.getValue(0, WARP.VISITS).intValue(), result
+                    Warp warp = new Warp(r.getValue(0, WARP.NAME), r.getValue(0, c.PLAYER_), r.getValue(0,
+                            WARP.TYPE), r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z),
+                            r.getValue(0, WARP.YAW), r.getValue(0, WARP.PITCH), r.getValue(0, WORLD.WORLD_),
+                            r.getValue(0, WARP.CREATION_DATE), r.getValue(0, WARP.VISITS).intValue(), r
                                     .getValue(0, WARP.WELCOME_MESSAGE), Collections2.filter(
-                                    result.getValues(PLAYER.PLAYER_), Predicates.notNull()), Collections2
-                                    .filter(result.getValues(GROUP.GROUP_), Predicates.notNull()));
+                                    r.getValues(PLAYER.PLAYER_), Predicates.notNull()), Collections2.filter(
+                                    r.getValues(GROUP.GROUP_), Predicates.notNull()));
                     ret.add(warp);
                 }
 

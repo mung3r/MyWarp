@@ -3,8 +3,6 @@ package me.taylorkelly.mywarp.dataconnections.migrators;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -16,9 +14,11 @@ import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import org.jooq.DSLContext;
 import org.jooq.Record13;
 import org.jooq.Result;
-import org.jooq.impl.DSL;
+
+import static org.jooq.impl.DSL.*;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -43,32 +43,19 @@ public abstract class LegacyMigrator {
     public Collection<Warp> migrateLegacyWarps(DSLContext create, String tableName)
             throws DataConnectionException {
         Result<Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String, String>> results = create
-                .select(DSL.fieldByName(String.class, "name"), DSL.fieldByName(String.class, "creator"),
-                        DSL.fieldByName(Boolean.class, "publicAll"),
-
-                        DSL.fieldByName(Double.class, "x"), DSL.fieldByName(Double.class, "y"),
-                        DSL.fieldByName(Double.class, "z"),
-
-                        DSL.fieldByName(Float.class, "yaw"), DSL.fieldByName(Float.class, "pitch"),
-                        DSL.fieldByName(String.class, "world"),
-
-                        DSL.fieldByName(Integer.class, "visits"),
-                        DSL.fieldByName(String.class, "welcomeMessage"),
-
-                        DSL.fieldByName(String.class, "permissions"),
-
-                        DSL.fieldByName(String.class, "groupPermissions")).from(DSL.tableByName(tableName))
-                .fetch();
+                .select(fieldByName(String.class, "name"), fieldByName(String.class, "creator"),
+                        fieldByName(Boolean.class, "publicAll"), fieldByName(Double.class, "x"),
+                        fieldByName(Double.class, "y"), fieldByName(Double.class, "z"),
+                        fieldByName(Float.class, "yaw"), fieldByName(Float.class, "pitch"),
+                        fieldByName(String.class, "world"), fieldByName(Integer.class, "visits"),
+                        fieldByName(String.class, "welcomeMessage"),
+                        fieldByName(String.class, "permissions"),
+                        fieldByName(String.class, "groupPermissions")).from(tableByName(tableName)).fetch();
 
         // TODO don't split this string twice
-        List<String> playerNames = results.getValues("creator", String.class);
+        Set<String> playerNames = new HashSet<String>(results.getValues("creator", String.class));
         for (String invitedPlayers : results.getValues("permissions", String.class)) {
-            for (String invitedPlayer : splitter.split(invitedPlayers)) {
-                if (playerNames.contains(invitedPlayer)) {
-                    continue;
-                }
-                playerNames.add(invitedPlayer);
-            }
+            Iterables.addAll(playerNames, splitter.split(invitedPlayers));
         }
 
         UUIDFetcher fetcher = new UUIDFetcher(playerNames);
@@ -82,21 +69,19 @@ public abstract class LegacyMigrator {
 
         Set<Warp> ret = new HashSet<Warp>(results.size());
 
-        for (Iterator<Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String, String>> it = results
-                .iterator(); it.hasNext();) {
-            Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String, String> record = it
-                    .next();
-            UUID worldId = MyWarp.server().getWorld(record.value9()).getUID();
-            Warp.Type type = record.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
-            Collection<String> invitedGroups = Sets.newHashSet(splitter.split(record.value13()));
+        for (Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String, String> r : results) {
+            //TODO add validation for missing values
+            UUID worldId = MyWarp.server().getWorld(r.value9()).getUID();
+            Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
+            Set<String> invitedGroups = Sets.newHashSet(splitter.split(r.value13()));
 
-            Collection<UUID> invitedPlayerIds = new HashSet<UUID>();
-            for (String invitedPlayer : splitter.split(record.value12())) {
+            Set<UUID> invitedPlayerIds = new HashSet<UUID>();
+            for (String invitedPlayer : splitter.split(r.value12())) {
                 invitedPlayerIds.add(lookup.get(invitedPlayer));
             }
-            Warp w = new Warp(record.value1(), lookup.get(record.value2()), type, record.value4(),
-                    record.value5(), record.value6(), record.value7(), record.value8(), worldId,
-                    new Date(), record.value10(), record.value11(), invitedPlayerIds, invitedGroups);
+            Warp w = new Warp(r.value1(), lookup.get(r.value2()), type, r.value4(),
+                    r.value5(), r.value6(), r.value7(), r.value8(), worldId, new Date(),
+                    r.value10(), r.value11(), invitedPlayerIds, invitedGroups);
             ret.add(w);
         }
         return ret;
