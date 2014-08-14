@@ -1,7 +1,9 @@
 package me.taylorkelly.mywarp.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -76,7 +78,6 @@ public class BasicCommands {
                 .getString("commands.delete.deleted-successful", sender, warp.getName()));
     }
 
-    // TODO add support for usage with disabled limits
     @Command(aliases = { "assets", "limits", "pstats", "pinfo" }, usage = "[player]", desc = "commands.assets.description", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
     public void showAssets(CommandContext args, final CommandSender sender) throws CommandException {
         final Player player;
@@ -94,9 +95,10 @@ public class BasicCommands {
                                         .getString("commands.assets.heading", sender, player.getName()) + " ",
                         '-'));
 
-        Table<LimitBundle, Warp.Type, SortedSet<Warp>> mappedWarps = ArrayTable.create(MyWarp.inst()
-                .getPermissionsManager().getLimitBundleManager().getAffectiveBundles(player),
-                Arrays.asList(Warp.Type.values()));
+        Table<LimitBundle, Warp.Type, SortedSet<Warp>> mappedWarps = ArrayTable.create(
+                MyWarp.inst().getSettings().isLimitsEnabled() ? MyWarp.inst().getPermissionsManager()
+                        .getLimitBundleManager().getAffectiveBundles(player) : Arrays.asList(MyWarp.inst()
+                        .getSettings().getLimitsDefaultLimitBundle()), Arrays.asList(Warp.Type.values()));
         for (Warp warp : MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
 
             @Override
@@ -106,7 +108,7 @@ public class BasicCommands {
 
         })) {
             for (LimitBundle bundle : mappedWarps.rowKeySet()) {
-                if (!bundle.getAffectedWorlds().contains(warp.getWorld())) {
+                if (!bundle.isGlobal() && !bundle.getAffectedWorlds().contains(warp.getWorld())) {
                     continue;
                 }
                 SortedSet<Warp> storedWarps = mappedWarps.get(bundle, warp.getType());
@@ -121,6 +123,7 @@ public class BasicCommands {
         for (Entry<LimitBundle, Map<Type, SortedSet<Warp>>> entry : mappedWarps.rowMap().entrySet()) {
             SortedSet<Warp> publicWarps = entry.getValue().get(Warp.Type.PUBLIC);
             SortedSet<Warp> privateWarps = entry.getValue().get(Warp.Type.PRIVATE);
+            LimitBundle bundle = entry.getKey();
 
             if (publicWarps == null) {
                 publicWarps = Sets.newTreeSet();
@@ -129,18 +132,18 @@ public class BasicCommands {
                 privateWarps = Sets.newTreeSet();
             }
 
-            // create the strings
             String publicEntry = MyWarp
                     .inst()
                     .getLocalizationManager()
                     .getString("commands.assets.public-warps", sender,
-                            publicWarps.size() + "/" + entry.getKey().getLimit(LimitBundle.Limit.PUBLIC),
+                            toLimitMax(publicWarps.size(), bundle.getLimit(LimitBundle.Limit.PUBLIC)),
                             CommandUtils.joinWarps(publicWarps));
+
             String privateEntry = MyWarp
                     .inst()
                     .getLocalizationManager()
                     .getString("commands.assets.private-warps", sender,
-                            privateWarps.size() + "/" + entry.getKey().getLimit(LimitBundle.Limit.PRIVATE),
+                            toLimitMax(privateWarps.size(), bundle.getLimit(LimitBundle.Limit.PRIVATE)),
                             CommandUtils.joinWarps(privateWarps));
 
             // send the messages
@@ -150,11 +153,20 @@ public class BasicCommands {
                     .getString(
                             "commands.assets.total-warps",
                             sender,
-                            CommandUtils.joinWorlds(entry.getKey().getAffectedWorlds()),
-                            (privateWarps.size() + publicWarps.size()) + "/"
-                                    + entry.getKey().getLimit(LimitBundle.Limit.TOTAL)));
+                            CommandUtils.joinWorlds(bundle.getAffectedWorlds()),
+                            toLimitMax(publicWarps.size() + privateWarps.size(),
+                                    bundle.getLimit(LimitBundle.Limit.TOTAL))));
             sender.sendMessage(FormattingUtils.toList(publicEntry, privateEntry));
         }
+    }
+
+    private String toLimitMax(int count, int limitMax) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(count);
+        if (MyWarp.inst().getSettings().isLimitsEnabled()) {
+            builder.append('/').append(limitMax);
+        }
+        return builder.toString();
     }
 
     @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "commands.list.description", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
@@ -228,7 +240,7 @@ public class BasicCommands {
                 last.append("@(");
                 last.append(Math.round(warp.getX()));
                 last.append(", ");
-                last.append(warp.getY());
+                last.append(Math.round(warp.getY()));
                 last.append(", ");
                 last.append(Math.round(warp.getZ()));
                 last.append(")");
@@ -395,20 +407,16 @@ public class BasicCommands {
             infos.append(" ");
             infos.append(ChatColor.WHITE);
 
-            // TODO use Ordering.natural().onResultsOf(new Function<UUID,
-            // String>(){...}.sortedCopy(warp.getInvitedPlayerIds());
             Set<UUID> invitedPlayerIds = warp.getInvitedPlayerIds();
             if (invitedPlayerIds.isEmpty()) {
                 infos.append("-");
             } else {
-                SortedSet<String> invitedPlayerNames = new TreeSet<String>();
+                List<String> invitedPlayerNames = new ArrayList<String>();
                 for (UUID playerId : invitedPlayerIds) {
-                    // FIXME investigate this bug.
                     String name = MyWarp.server().getOfflinePlayer(playerId).getName();
-                    name = (name == null) ? "unknown-uuid:" + playerId.toString() : name;
-
                     invitedPlayerNames.add(name);
                 }
+                Collections.sort(invitedPlayerNames);
                 infos.appendWithSeparators(invitedPlayerNames, ", ");
             }
             infos.appendNewLine();
