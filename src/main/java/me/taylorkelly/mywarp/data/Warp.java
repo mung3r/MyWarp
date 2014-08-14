@@ -359,13 +359,15 @@ public class Warp implements Comparable<Warp> {
      */
     public TeleportStatus teleport(Player player, FeeBundle.Fee fee) {
         TeleportStatus status = teleport(player);
-        switch (status) {
-        case NONE:
-            break;
-        case ORIGINAL_LOC:
-        case SAFE_LOC:
-            MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player)
-                    .withdraw(player, fee);
+        if (MyWarp.inst().isEconomySetup()) {
+            switch (status) {
+            case NONE:
+                break;
+            case ORIGINAL_LOC:
+            case SAFE_LOC:
+                MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player)
+                        .withdraw(player, fee);
+            }
         }
         return status;
     }

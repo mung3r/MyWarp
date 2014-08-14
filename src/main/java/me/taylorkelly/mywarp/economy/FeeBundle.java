@@ -14,7 +14,7 @@ public class FeeBundle extends AbstractValueBundle {
      * The different types of fees.
      */
     public enum Fee {
-        ACCEPT, ASSETS, CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE, LIST, NONE, POINT, PRIVATE, PUBLIC, SEARCH, UNINVITE, UPDATE, WARP_PLAYER, WARP_SIGN_CREATE, WARP_SIGN_USE, WARP_TO, WELCOME
+        ASSETS, CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE, LIST, NONE, POINT, PRIVATE, PUBLIC, SEARCH, UNINVITE, UPDATE, WARP_PLAYER, WARP_SIGN_CREATE, WARP_SIGN_USE, WARP_TO, WELCOME
     }
 
     /**
@@ -27,8 +27,6 @@ public class FeeBundle extends AbstractValueBundle {
      * 
      * @param identifier
      *            the unique identifier
-     * @param acceptFee
-     *            used when accepting a given warp
      * @param assetsFee
      *            used when listing a player's warps with limits
      * @param createFee
@@ -70,14 +68,13 @@ public class FeeBundle extends AbstractValueBundle {
      * @param welcomeFee
      *            used when the welcome message is changed
      */
-    public FeeBundle(String identifier, double acceptFee, double assetsFee, double createFee,
-            double createPrivateFee, double deleteFee, double giveFee, double helpFee, double infoFee,
-            double inviteFee, double listFee, double pointFee, double privatizeFee, double publicizeFee,
-            double searchFee, double uninviteFee, double updateFee, double warpPlayerFee,
-            double warpSignCreateFee, double warpSignUseFee, double warpFee, double welcomeFee) {
+    public FeeBundle(String identifier, double assetsFee, double createFee, double createPrivateFee,
+            double deleteFee, double giveFee, double helpFee, double infoFee, double inviteFee,
+            double listFee, double pointFee, double privatizeFee, double publicizeFee, double searchFee,
+            double uninviteFee, double updateFee, double warpPlayerFee, double warpSignCreateFee,
+            double warpSignUseFee, double warpFee, double welcomeFee) {
         super(identifier);
 
-        fees.put(Fee.ACCEPT, acceptFee);
         fees.put(Fee.ASSETS, assetsFee);
         fees.put(Fee.CREATE, createFee);
         fees.put(Fee.CREATE_PRIVATE, createPrivateFee);

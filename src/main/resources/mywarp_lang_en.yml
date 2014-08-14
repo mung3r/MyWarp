@@ -1,10 +1,6 @@
 # This file MUST be encoded with 'UTF-8' or special characters will not be displayed correctly.
 # On Windows you MUST NOT use the preinstalled Notepad, but a program like Notepad++ (www.notepad-plus-plus.org) to edit the file.
 commands:
-  accept:
-    accepted-successful: "&bYou are now the owner of ''{0}''."
-    description: "Accepts a warp that has been given to you by another player."
-    nothing-to-accept: "There is no warp to accept."
   assets:
     description: "Lists all warps owned by the [player] together with the corresponding warp-limit."
     heading: "{0}'s Warps"
@@ -28,8 +24,10 @@ commands:
     asked-successful: "&bYou have asked {0} to accept ''{1}'' as his own."
     description: "Gives your warp &7<name>&f to &7<player>&f. Use [-d] to give the warp directly and [-f] to ignore warp limits (if enabled)."
     givee-limits: "{0} already owns as much warps as possible. The player has to delete at least one warp in order to receive this one."
-    givee-message: "&b{0} wants to give you ''{1}''. Use '&f/warp accept&b' to accept."
     given-successful: "&bYou have given ''{0}'' to {1}."
+    givee-owner: |
+      &b{0} has given you ''{1}''.
+      &fIf you''d like to get more informations about it, use: &c/warp info {1}&f.
     is-owner: "{0} is already the owner."
   help:
     description: "Displays the help menu."
@@ -156,14 +154,7 @@ commands:
     teleport-successful: "&bYou have teleported {0} to ''{1}''."
     teleport-failed: "&bYou tried to teleport {0} to ''{1}'', but this warp is inaccessible."
   welcome:
-    changed-successful: |
-      &bChanged welcome message for ''{0}'' to:
-      &7&o{1}
     description: "Changes the welcome message of &7<name>&f. You will be ask to enter the welcome message afterwards."
-    enter: |
-      &bEnter the new welcome message for ''{0}''.
-      &fUse ''&7#none&f'' to disable it and ''&7#cancel&f'' to abort.
-    removed-successful: "&bYou have removed the welcome message from ''{0}''."
 dynmap:
   marker: "<b>%warp%</b></br><i>Created by %creator%</i>"
 economy:
@@ -186,3 +177,17 @@ warp-signs:
   create-warp-permission: "&cYou do not have permission to create a warp sign to ''{0}''."
   use-permission: "&cYou do not have permission to use warp signs."
   use-warp-permission: "&cYou do not have permission to warp to ''{0}''."
+welcome-message-conversation:
+  changed-successful: |
+    &bChanged welcome message for ''{0}'' to:
+    &7&o{1}
+  enter-message: |
+    &bEnter the new welcome message for ''{0}''.
+    &fUse ''{1}'' to remove it or ''{2}'' to abort. You have {3,number} seconds.
+  removed-successful: "&bYou have removed the welcome message from ''{0}''."
+warp-acceptance-conversation:
+  accepted-successful: "&bYou are now the owner of ''{0}''."
+  declined-successful: "&bYou have declined."
+  want-to-accept: |
+    &b{0} wants to give you ''{1}''. Do you want to accept it?
+    &fHint: Use ''{2}'' to accept or ''{3}'' to decline. You have {4,number} seconds.

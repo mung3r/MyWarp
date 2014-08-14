@@ -78,9 +78,6 @@ permissions:
   mywarp.warp.soc.give:
     description: Can give your /warp
     default: op
-  mywarp.warp.soc.accept:
-    description: Can accept given warps
-    default: op
   mywarp.warp.soc.give.force:
     description: Can give your /warp and ignore limits
     default: op
@@ -162,7 +159,6 @@ permissions:
   mywarp.warp.soc.*:
     description: Social /warp commands
     children:
-      mywarp.warp.soc.accept: true
       mywarp.warp.soc.give: true
       mywarp.warp.soc.give.direct: true
       mywarp.warp.soc.give.force: true

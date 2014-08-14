@@ -1,20 +1,16 @@
 package me.taylorkelly.mywarp.commands;
 
-import java.util.UUID;
-
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.Warp.Type;
 import me.taylorkelly.mywarp.economy.FeeBundle.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
-import me.taylorkelly.mywarp.utils.TempConcurrentHashMap;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 /**
  * This class contains all commands that cover social tasks. They should be
@@ -22,8 +18,6 @@ import org.bukkit.entity.Player;
  * 
  */
 public class SocialCommands {
-
-    private TempConcurrentHashMap<UUID, Warp> givenWarps = new TempConcurrentHashMap<UUID, Warp>();
 
     @Command(aliases = { "give" }, usage = "<player> <name>", desc = "commands.give.description", fee = Fee.GIVE, min = 2, flags = "df", permissions = { "mywarp.warp.soc.give" })
     public void giveWarp(CommandContext args, CommandSender sender) throws CommandException {
@@ -59,40 +53,24 @@ public class SocialCommands {
         }
 
         if (args.hasFlag('d')) {
+            // give the warp directly
             warp.setCreatorId(givee.getUniqueId());
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("commands.give.given-successful", sender, warp.getName(), givee.getName()));
 
             if (givee.getPlayer() != null) {
                 givee.getPlayer().sendMessage(
-                        MyWarp.inst().getLocalizationManager()
-                                .getString("commands.accept.accepted-successful", sender, warp.getName()));
+                        MyWarp.inst()
+                                .getLocalizationManager()
+                                .getString("commands.give.givee-owner", sender, sender.getName(),
+                                        warp.getName()));
             }
         } else {
-            // ask givee if he wants to accept the warp
-            givenWarps.put(givee.getUniqueId(), warp);
-            givee.getPlayer().sendMessage(
-                    MyWarp.inst()
-                            .getLocalizationManager()
-                            .getString("commands.give.givee-message", sender, warp.getName(),
-                                    sender.getName(), warp.getName()));
+            // ask givee to accept the warp and act accordingly
+            WarpAcceptanceConversation.initiate(givee.getPlayer(), warp, sender);
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("commands.give.asked-successful", sender, givee.getName(), warp.getName()));
         }
-    }
-
-    @Command(aliases = { "accept" }, usage = "", desc = "commands.accept.description", fee = Fee.ACCEPT, max = 0, permissions = { "mywarp.warp.soc.accept" })
-    public void acceptGivenWarp(CommandContext args, Player sender) throws CommandException {
-        if (!givenWarps.containsKey(sender.getName())) {
-            throw new CommandException(MyWarp.inst().getLocalizationManager()
-                    .getString("commands.accept.nothing-to-accept", sender));
-        }
-        Warp warp = givenWarps.get(sender.getUniqueId());
-        warp.setCreatorId(sender.getUniqueId());
-        givenWarps.remove(sender.getName());
-
-        sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getString("commands.accept.accepted-successful", sender, warp.getName()));
     }
 
     @Command(aliases = { "invite" }, usage = "<player> <name>", desc = "commands.invite.description", fee = Fee.INVITE, min = 2, permissions = { "mywarp.warp.soc.invite" })

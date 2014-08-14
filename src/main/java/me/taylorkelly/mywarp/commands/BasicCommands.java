@@ -14,7 +14,6 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.LimitBundle;
 import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.data.Warp.Type;
-import me.taylorkelly.mywarp.data.WelcomeMessageHandler;
 import me.taylorkelly.mywarp.economy.FeeBundle.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.FormattingUtils;
@@ -304,7 +303,7 @@ public class BasicCommands {
     public void setWarpWelcome(CommandContext args, Player sender) throws CommandException {
         Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
 
-        WelcomeMessageHandler.initiateWelcomeMessageChange(sender, warp);
+        WelcomeMessageConversation.initiate(sender, warp);
     }
 
     @Command(aliases = { "help" }, usage = "#", desc = "commands.help.description", fee = Fee.HELP, max = 1, permissions = { "mywarp.warp.basic.help" })

@@ -1,10 +1,6 @@
 # This file MUST be encoded with 'UTF-8' or special characters will not be displayed correctly.
 # On Windows you MUST NOT use the preinstalled Notepad, but a program like Notepad++ (www.notepad-plus-plus.org) to edit the file.
 commands:
-  accept:
-    accepted-successful: "&b''{0}'' gehört nun dir."
-    description: "Akzeptiert einen Warp, den ein anderer Spieler an dich abgeben möchte."
-    nothing-to-accept: "Es gibt keinen Warp, der akzeptiert werden könnte."
   assets:
     description: "Listet alle Warps des angegebenen [Spielers] zusammen mit dem entsprechenden Limit auf."
     heading: "{0}s Warps"
@@ -28,8 +24,10 @@ commands:
     asked-successful: "&bDu hast {0} gebeten, ''{1}'' als sein Eigen zu akzeptieren."
     description: "Gibt &7<Name>&f an &7<Spieler>&f ab. Nutze [-d], um den Warp direkt abzugeben und [-f], um Limits zu ignorieren (falls aktiviert)."
     givee-limits: "{0} besitzt bereits das mögliche Maximum an Warps. Der Spieler muss einen Warp löschen, um diesen erhalten zu können."
-    givee-message: "&b{0} möchte ''{1}'' an dich abgeben. Nutze '&f/warp accept&b', um den Warp zu akzeptieren."
     given-successful: "&bDu hast ''{0}'' an {1} abgegeben."
+    givee-owner: |
+      &b{0} hat ''{1}'' an dich abgegeben.
+      &Wenn du mehr Informationen über den Warp möchtest, nutze: &c/warp info {0}&f.
     is-owner: "{0} ist bereits der Besitzer."
   help:
     description: "Zeigt das Hilfemenü an."
@@ -156,14 +154,7 @@ commands:
     teleport-successful: "&bDu hast {0} zu ''{1}'' teleportiert."
     teleport-failed: "&bDu hast versucht, {0} zu ''{1}'' teleportieren, aber der Warp ist unerreichbar."
   welcome:
-    changed-successful: |
-      &bDie neue Willkommensnachricht für ''{0}'' lautet:
-      &7&o{1}
     description: "Ändert die Willkommensnachricht von &7<Name>&f. Du wirst anschließend separat nach der neuen Willkommensnachricht gefragt."
-    enter: |
-      &bGib die neue Willkommensnachricht für ''{0}'' ein.
-      &fNutze ''&7#none&f'' um sie zu löschen und um ''&7#cancel&f'' abzubrechen.
-    removed-successful: "&bDu hast die Willkommensnachricht von ''{0}'' entfernt."
 dynmap:
   marker: "<b>%warp%</b></br><i>Erstellt von %creator%</i>"
 economy:
@@ -186,3 +177,17 @@ warp-signs:
   create-warp-permission: "&cDir fehlen die Rechte, um ein Warp-Schild zu ''{0}'' zu erstellen."
   use-permission: "&cDir fehlen die Rechte, um Warp-Schilder zu nutzen."
   use-warp-permission: "&cDir fehlen die Rechte, um dich zu ''{0}'' zu warpen."
+welcome-message-conversation:
+ changed-successful: |
+   &bDie neue Willkommensnachricht für ''{0}'' lautet:
+   &7&o{1}
+ enter-message: |
+   &bGib die neue Willkommensnachricht für ''{0}'' ein.
+   &fNutze ''{1}'' um sie zu löschen oder um ''{2}'' abzubrechen. Du hast {3,number} Sekunden.
+ removed-successful: "&bDu hast die Willkommensnachricht von ''{0}'' entfernt."
+warp-acceptance-conversation:
+  accepted-successful: "&bDu bist der neue besitzer von ''{0}''."
+  declined-successful: "&bDu hast abgelehnt."
+  want-to-accept: |
+    &b{0} möchte ''{1}'' an dich abgeben. Möchtest du den Warp akzeptieren?
+    &fHinweis: Nutze ''{2}'' um zu akzeptieren oder ''{3}'' um abzulehnen. Du hast {4,number} Sekunden.

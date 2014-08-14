@@ -48,7 +48,6 @@ economy:
   informAfterTransaction: true
   defaultFee:
     assets: 0
-    accept: 0
     create: 25
     createPrivate: 25
     delete: 25

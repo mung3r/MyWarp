@@ -298,15 +298,14 @@ public class BukkitSettings implements Settings {
      * @return a fee-bundle out of the given values
      */
     private FeeBundle toFeeBundle(String identifier, ConfigurationSection values) {
-        return new FeeBundle(identifier, values.getDouble("accept", 0), values.getDouble("assets", 0),
-                values.getDouble("create", 0), values.getDouble("createPrivate", 0), values.getDouble(
-                        "delete", 0), values.getDouble("give", 0), values.getDouble("help", 0),
-                values.getDouble("info", 0), values.getDouble("invite", 0), values.getDouble("list", 0),
-                values.getDouble("point", 0), values.getDouble("private", 0), values.getDouble("public", 0),
-                values.getDouble("search", 0), values.getDouble("uninvite", 0),
-                values.getDouble("update", 0), values.getDouble("warpPlayer", 0), values.getDouble(
-                        "warpSignCreate", 0), values.getDouble("warpSignUse", 0), values.getDouble("warpTo",
-                        0), values.getDouble("welcome", 0));
+        return new FeeBundle(identifier, values.getDouble("assets", 0), values.getDouble("create", 0),
+                values.getDouble("createPrivate", 0), values.getDouble("delete", 0), values.getDouble("give",
+                        0), values.getDouble("help", 0), values.getDouble("info", 0), values.getDouble(
+                        "invite", 0), values.getDouble("list", 0), values.getDouble("point", 0),
+                values.getDouble("private", 0), values.getDouble("public", 0), values.getDouble("search", 0),
+                values.getDouble("uninvite", 0), values.getDouble("update", 0), values.getDouble(
+                        "warpPlayer", 0), values.getDouble("warpSignCreate", 0), values.getDouble(
+                        "warpSignUse", 0), values.getDouble("warpTo", 0), values.getDouble("welcome", 0));
     }
 
     @Override
