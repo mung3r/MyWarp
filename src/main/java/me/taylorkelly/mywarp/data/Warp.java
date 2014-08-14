@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.FeeBundle;
-import me.taylorkelly.mywarp.safety.SafeTeleport;
-import me.taylorkelly.mywarp.safety.SafeTeleport.TeleportStatus;
+import me.taylorkelly.mywarp.safety.TeleportManager;
+import me.taylorkelly.mywarp.safety.TeleportManager.TeleportStatus;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -207,7 +207,7 @@ public class Warp implements Comparable<Warp> {
                 .inst()
                 .getLocalizationManager()
                 .getString("warp.default-welcome-message",
-                        MyWarp.inst().getWarpSettings().localizationDefLocale);
+                        MyWarp.inst().getSettings().getLocalizationDefaultLocale());
     }
 
     /**
@@ -247,11 +247,10 @@ public class Warp implements Comparable<Warp> {
     public boolean isUsable(Entity entity) {
         if (entity instanceof Player) {
             Player player = (Player) entity;
-            if (MyWarp.inst().getWarpSettings().controlWorldAccess) {
-                World loadedWorld = MyWarp.server().getWorld(worldId);
+            if (MyWarp.inst().getSettings().isControlWorldAccess()) {
+                World loadedWorld = getWorld();
                 if (loadedWorld != null
-                        && !MyWarp.inst().getPermissionsManager()
-                                .canAccessWorld((Player) player, MyWarp.server().getWorld(worldId))) {
+                        && !MyWarp.inst().getPermissionsManager().canAccessWorld(player, loadedWorld)) {
                     return false;
 
                 }
@@ -309,7 +308,7 @@ public class Warp implements Comparable<Warp> {
             return TeleportStatus.NONE;
         }
 
-        TeleportStatus status = SafeTeleport.safeTeleport(entity, loc);
+        TeleportStatus status = TeleportManager.safeTeleport(entity, loc);
 
         switch (status) {
         case ORIGINAL_LOC:
@@ -708,7 +707,7 @@ public class Warp implements Comparable<Warp> {
 
         MyWarp.inst().getDataConnection().updateCreator(this);
 
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+        if (MyWarp.inst().isMarkerSetup()) {
             MyWarp.inst().getMarkers().updateMarker(this);
         }
     }
@@ -730,7 +729,7 @@ public class Warp implements Comparable<Warp> {
 
         MyWarp.inst().getDataConnection().updateLocation(this);
 
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+        if (MyWarp.inst().isMarkerSetup()) {
             MyWarp.inst().getMarkers().updateMarker(this);
         }
     }
@@ -747,10 +746,9 @@ public class Warp implements Comparable<Warp> {
 
         MyWarp.inst().getMarkers().updateMarker(this);
 
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+        if (MyWarp.inst().isMarkerSetup()) {
             MyWarp.inst().getMarkers().handleTypeChange(this);
         }
-
     }
 
     /**
@@ -762,7 +760,7 @@ public class Warp implements Comparable<Warp> {
 
         MyWarp.inst().getDataConnection().updateVisits(this);
 
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+        if (MyWarp.inst().isMarkerSetup()) {
             MyWarp.inst().getMarkers().updateMarker(this);
         }
     }

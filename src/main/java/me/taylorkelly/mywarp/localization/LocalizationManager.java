@@ -119,8 +119,8 @@ public class LocalizationManager implements Reloadable {
      * @return the locale
      */
     private Locale getCommandSenderLocale(CommandSender sender) {
-        Locale locale = MyWarp.inst().getWarpSettings().localizationDefLocale;
-        if (MyWarp.inst().getWarpSettings().localizationPerPlayer && sender instanceof Player) {
+        Locale locale = MyWarp.inst().getSettings().getLocalizationDefaultLocale();
+        if (MyWarp.inst().getSettings().isLocalizationPerPlayer() && sender instanceof Player) {
             try {
                 String mcLocale = getLanguage((Player) sender);
                 if (localeCache.containsKey(mcLocale)) {

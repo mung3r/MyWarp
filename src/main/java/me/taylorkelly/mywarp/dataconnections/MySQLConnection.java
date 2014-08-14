@@ -34,11 +34,11 @@ public class MySQLConnection {
      * created asynchronous, the returned CheckedFuture either contains the
      * ready-to-use connection or throws a {@link DataConnectionException}.
      * 
-     * @param host
-     *            the host of the MySQL server
+     * @param hostAdress
+     *            the host adress of the MySQL server
      * @param port
      *            the port the MySQL server listens to
-     * @param database
+     * @param databaseName
      *            the name of the MySQL database to use
      * @param user
      *            the MySQL user to use
@@ -49,8 +49,8 @@ public class MySQLConnection {
      *            updates, if necessary
      * @return a CheckedFuture containing a valid, setup connection
      */
-    public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final String host,
-            final int port, final String database, final String user, final String password,
+    public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final String hostAdress,
+            final int port, final String databaseName, final String user, final String password,
             final boolean controlDBLayout) {
         final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
                 .newSingleThreadExecutor());
@@ -59,7 +59,7 @@ public class MySQLConnection {
 
             @Override
             public DataConnection call() throws DataConnectionException {
-                String dsn = "jdbc:mysql://" + host + ":" + port + "/" + database;
+                String dsn = "jdbc:mysql://" + hostAdress + ":" + port + "/" + databaseName;
 
                 Connection conn;
                 try {

@@ -1,17 +1,14 @@
 package me.taylorkelly.mywarp.economy;
 
 import java.util.EnumMap;
-
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.permissions.valuebundles.ValueBundle;
+import me.taylorkelly.mywarp.permissions.valuebundles.AbstractValueBundle;
 
 /**
  * A bundle that stores economy-fees.
  */
-public class FeeBundle extends ValueBundle {
+public class FeeBundle extends AbstractValueBundle {
 
     /**
      * The different types of fees.
@@ -24,26 +21,6 @@ public class FeeBundle extends ValueBundle {
      * Stores the fees under their identifier
      */
     private EnumMap<Fee, Double> fees = new EnumMap<Fee, Double>(Fee.class);
-
-    /**
-     * Initializes this fee-bundle.
-     * 
-     * @param identifier
-     *            the unique identifier
-     * @param config
-     *            the configuration-section that contains all values for this
-     *            bundle
-     */
-    public FeeBundle(String identifier, ConfigurationSection config) {
-        this(identifier, config.getDouble("accept", 0), config.getDouble("assets", 0), config.getDouble(
-                "create", 0), config.getDouble("create-private", 0), config.getDouble("delete", 0), config
-                .getDouble("give", 0), config.getDouble("help", 0), config.getDouble("info", 0), config
-                .getDouble("invite", 0), config.getDouble("list", 0), config.getDouble("point", 0), config
-                .getDouble("private", 0), config.getDouble("public", 0), config.getDouble("search", 0),
-                config.getDouble("uninvite", 0), config.getDouble("update", 0), config.getDouble(
-                        "warp-player", 0), config.getDouble("warp-sign-create", 0), config.getDouble(
-                        "warp-sign-use", 0), config.getDouble("warp-to", 0), config.getDouble("welcome", 0));
-    }
 
     /**
      * Initializes this fee-bundle.
@@ -164,6 +141,11 @@ public class FeeBundle extends ValueBundle {
     @Override
     protected String getBasePermission() {
         return "mywarp.economy";
+    }
+
+    @Override
+    public String toString() {
+        return "FeeBundle [getIdentifier()=" + getIdentifier() + ", fees=" + fees + "]";
     }
 
 }

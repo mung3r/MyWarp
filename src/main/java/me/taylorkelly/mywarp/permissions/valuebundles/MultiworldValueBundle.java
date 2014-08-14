@@ -1,36 +1,37 @@
 package me.taylorkelly.mywarp.permissions.valuebundles;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.World;
+
 import com.google.common.collect.ImmutableSet;
 
 /**
  * A value-bundle implementation that allows storing values for a set of
  * different worlds instead of globally.
  */
-public abstract class MultiworldValueBundle extends ValueBundle {
+public abstract class MultiworldValueBundle extends AbstractValueBundle {
 
-    private final Set<String> affectedWorlds;
+    protected final ImmutableSet<String> affectedWorlds;
 
     /**
      * Initializes this bundle with the given identifier and the given world
-     * names. The bundle will only affect the given worlds, or, if none are
-     * given, default to all worlds. The identifier should be unique.
+     * names. The bundle will only affect the given worlds.
      * 
      * @param identifier
      *            the identifier
      * @param worldNames
-     *            a collection of names of world that the bundle should affect
+     *            an iterable containing the names of worlds that the bundle
+     *            should affect. Can be <code>null</code> to affect all worlds.
      */
-    public MultiworldValueBundle(String identifier, Collection<String> worldNames) {
+    public MultiworldValueBundle(String identifier, @Nullable Iterable<String> worldNames) {
         super(identifier);
-        if (!worldNames.isEmpty()) {
+        if (worldNames != null) {
             affectedWorlds = ImmutableSet.copyOf(worldNames);
         } else {
             // the limit is global!

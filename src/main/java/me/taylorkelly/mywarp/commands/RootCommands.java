@@ -23,7 +23,7 @@ public class RootCommands {
     @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "commands.warp-to.description", min = 1, permissions = { "mywarp.warp.basic.warp" })
     public void warpTo(CommandContext args, Player sender) throws CommandException {
         // first check the economy
-        if (MyWarp.inst().getWarpSettings().economyEnabled) {
+        if (MyWarp.inst().isEconomySetup()) {
             FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(sender);
 
             if (!fees.hasAtLeast(sender, FeeBundle.Fee.WARP_TO)) {
@@ -32,7 +32,7 @@ public class RootCommands {
         }
 
         Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(0));
-        if (MyWarp.inst().getWarpSettings().timersEnabled
+        if (MyWarp.inst().getSettings().isTimersEnabled()
                 && !MyWarp.inst().getTimerManager().canDisobey(sender)) {
             if (MyWarp.inst().getTimerManager().hasRunningTimer(sender.getUniqueId(), WarpCooldown.class)) {
                 throw new CommandException(MyWarp

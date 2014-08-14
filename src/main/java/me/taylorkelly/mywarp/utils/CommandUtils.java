@@ -130,7 +130,7 @@ public class CommandUtils {
         if (warp == null) {
             Warp match = matcher.getMatch();
 
-            if (MyWarp.inst().getWarpSettings().dynamicsSuggestWarps && match != null) {
+            if (MyWarp.inst().getSettings().isDynamicsSuggestWarps() && match != null) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
                         .getString("commands.utils.warp-suggestion", sender, nameFilter, match.getName()));
             } else {
@@ -157,7 +157,7 @@ public class CommandUtils {
      */
     public static void checkLimits(CommandSender sender, boolean newlyBuild, Type type)
             throws CommandException {
-        if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
+        if (!MyWarp.inst().getSettings().isLimitsEnabled() || !(sender instanceof Player)) {
             return;
         }
         final Player player = (Player) sender;
@@ -215,7 +215,7 @@ public class CommandUtils {
      * @return true if this action would not violate the limits of the sender
      */
     public static boolean checkPlayerLimits(CommandSender sender, World world, Type type) {
-        if (!MyWarp.inst().getWarpSettings().limitsEnabled || !(sender instanceof Player)) {
+        if (!MyWarp.inst().getSettings().isLimitsEnabled() || !(sender instanceof Player)) {
             return true;
         }
         final Player player = (Player) sender;

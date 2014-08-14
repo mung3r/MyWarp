@@ -24,6 +24,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -85,7 +86,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     /**
      * The parsed plugin-configuration
      */
-    private WarpSettings warpSettings;
+    private Settings settings;
 
     /**
      * Constructs the instance
@@ -148,7 +149,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
      * Gets the {@link EconomyLink} service if it exists, this method should be
      * used for economic actions.
      * 
-     * This method can return null.
+     * This method can return null. Use {@link #isEconomySetup()} to check if
+     * the economy link is setup and usable before accessing the link directly.
      * 
      * @return the economy link
      */
@@ -169,7 +171,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
      * Gets the {@link Markers} service, this method provides access to all
      * marker-APIs in use
      * 
-     * This method can return null.
+     * This method can return null. Use {@link #isMarkerSetup()} to check if the
+     * Marker service is setup and usable before accessing the link directly.
      * 
      * @return the markers
      */
@@ -207,13 +210,13 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets MyWarp's {@link WarpSettings}, and therefore provides direct access
-     * to the settings
+     * Gets MyWarp's {@link BukkitSettings}, and therefore provides direct
+     * access to the settings
      * 
      * @return the warp settings
      */
-    public WarpSettings getWarpSettings() {
-        return warpSettings;
+    public Settings getSettings() {
+        return settings;
     }
 
     /**
@@ -255,7 +258,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     public void onEnable() {
 
         // setup the configurations
-        warpSettings = new WarpSettings();
+        settings = new BukkitSettings(new File(getDataFolder(), "config.yml"),
+                YamlConfiguration.loadConfiguration(getTextResource("config.yml")));
 
         // initialize the command manager and register all used commands
         commandsManager = new CommandsManager();
@@ -277,10 +281,10 @@ public class MyWarp extends JavaPlugin implements Reloadable {
 
         // initialize the database connection
         ListenableFuture<DataConnection> futureConnection;
-        if (getWarpSettings().mysqlEnabled) {
-            futureConnection = MySQLConnection.getConnection(getWarpSettings().mysqlHost,
-                    getWarpSettings().mysqlPort, getWarpSettings().mysqlDatabase,
-                    getWarpSettings().mysqlUsername, getWarpSettings().mysqlPassword, true);
+        if (getSettings().isMysqlEnabled()) {
+            futureConnection = MySQLConnection.getConnection(getSettings().getMysqlHostAdress(),
+                    getSettings().getMysqlPort(), getSettings().getMysqlDatabaseName(), getSettings()
+                            .getMysqlUsername(), getSettings().getMysqlPassword(), true);
         } else {
             futureConnection = SQLiteConnection.getConnection(new File(getDataFolder(), "mywarps.db"), true);
         }
@@ -288,8 +292,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
             // block main thread until we have a connection
             dataConnection = futureConnection.get();
         } catch (Exception e) {
-            logger().severe(
-                    "Could not establish database connection (" + e.getMessage() + "). Disabling MyWarp.");
+            logger().log(Level.SEVERE, "Could not establish database connection. Disabling MyWarp.", e);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -298,7 +301,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         try {
             localizationManager = new LocalizationManager();
         } catch (LocalizationException e) {
-            logger().log(Level.SEVERE, "Failed to acces bundled localization files. Disabling MyWarp.", e);
+            logger().log(Level.SEVERE, "Failed to access bundled localization files. Disabling MyWarp.", e);
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -326,17 +329,18 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         permissionsManager = new PermissionsManager();
 
         // initialize timers
-        if (getWarpSettings().timersEnabled) {
+        if (getSettings().isTimersEnabled()) {
             timerManager = new TimerManager();
         }
 
         // initialize warp-signs
-        if (getWarpSettings().warpSignsEnabled) {
-            getServer().getPluginManager().registerEvents(new WarpSignManager(), this);
+        if (getSettings().isWarpSignsEnabled()) {
+            getServer().getPluginManager().registerEvents(
+                    new WarpSignManager(getSettings().getWarpSignsIdentifiers()), this);
         }
 
         // initialize EconomySupport
-        if (getWarpSettings().economyEnabled) {
+        if (getSettings().isEconomyEnabled()) {
             try {
                 RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
                         .getRegistration(net.milkbowl.vault.economy.Economy.class);
@@ -346,25 +350,40 @@ public class MyWarp extends JavaPlugin implements Reloadable {
                 // economy provider class is not present
                 logger().severe(
                         "Failed to hook into Vault (EconomyProviderClass not available). Disabling Economy support.");
-                getWarpSettings().economyEnabled = false;
             } catch (NullPointerException e) {
                 // economy provider is not registered
                 logger().severe(
                         "Failed to hook into Vault (" + e.getMessage() + "). Disabling Economy support.");
-                getWarpSettings().economyEnabled = false;
             }
         }
 
         // initialize Dynmap support
-        if (getWarpSettings().dynmapEnabled) {
+        if (getSettings().isDynmapEnabled()) {
             Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
             if (dynmap != null && dynmap.isEnabled()) {
                 markers = new DynmapMarkers((DynmapCommonAPI) dynmap);
             } else {
                 logger().severe("Failed to hook into Dynmap. Disabling Dynmap support.");
-                getWarpSettings().dynmapEnabled = false;
             }
         }
+    }
+
+    /**
+     * Returns whether the economy-link is setup and usable.
+     * 
+     * @return true if the economy-link is set up
+     */
+    public boolean isEconomySetup() {
+        return economyLink != null;
+    }
+
+    /**
+     * Returns whether Markers are setup and usable.
+     * 
+     * @return true if Markers are set up
+     */
+    public boolean isMarkerSetup() {
+        return markers != null;
     }
 
     @Override
@@ -377,8 +396,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         warpManager.clear();
 
         // load new stuff
-        getWarpSettings().reload();
-        getLocalizationManager().reload();
+        settings.reload();
+        localizationManager.reload();
         setupPlugin();
     }
 }

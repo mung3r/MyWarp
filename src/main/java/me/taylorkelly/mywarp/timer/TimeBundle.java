@@ -3,14 +3,12 @@ package me.taylorkelly.mywarp.timer;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.bukkit.configuration.ConfigurationSection;
-
-import me.taylorkelly.mywarp.permissions.valuebundles.ValueBundle;
+import me.taylorkelly.mywarp.permissions.valuebundles.AbstractValueBundle;
 
 /**
  * A bundle that stores times for timers.
  */
-public class TimeBundle extends ValueBundle {
+public class TimeBundle extends AbstractValueBundle {
 
     /**
      * The different types of times.
@@ -20,19 +18,6 @@ public class TimeBundle extends ValueBundle {
     }
 
     private Map<Time, Double> times = new EnumMap<Time, Double>(Time.class);
-
-    /**
-     * Initializes this time-bundle.
-     * 
-     * @param identifier
-     *            the unique identifier
-     * @param config
-     *            the configuration-section that contains all values for this
-     *            bundle
-     */
-    public TimeBundle(String identifier, ConfigurationSection config) {
-        this(identifier, config.getDouble("cooldown"), config.getDouble("warmup"));
-    }
 
     /**
      * Initializes this limit-bundle.
@@ -75,6 +60,11 @@ public class TimeBundle extends ValueBundle {
     @Override
     protected String getBasePermission() {
         return "mywarp.timer";
+    }
+
+    @Override
+    public String toString() {
+        return "TimeBundle [getIdentifier()=" + getIdentifier() + ", times=" + times + "]";
     }
 
 }

@@ -1,5 +1,7 @@
 package me.taylorkelly.mywarp.data;
 
+import java.util.TreeSet;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.FeeBundle;
 
@@ -17,10 +19,19 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.Attachable;
 
+import com.google.common.collect.Iterables;
+
 /**
- * Manages warp-signs
+ * Manages warp signs
  */
 public class WarpSignManager implements Listener {
+
+    private final TreeSet<String> identifiers;
+
+    public WarpSignManager(Iterable<String> identifiers) {
+        this.identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+        Iterables.addAll(this.identifiers, identifiers);
+    }
 
     /**
      * Called whenever a sign is changed
@@ -124,7 +135,7 @@ public class WarpSignManager implements Listener {
             return;
         }
 
-        if (MyWarp.inst().getWarpSettings().economyEnabled) {
+        if (MyWarp.inst().isEconomySetup()) {
             FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player);
             if (!fees.hasAtLeast(player, FeeBundle.Fee.WARP_SIGN_USE)) {
                 return;
@@ -180,7 +191,7 @@ public class WarpSignManager implements Listener {
             return false;
         }
 
-        if (MyWarp.inst().getWarpSettings().economyEnabled) {
+        if (MyWarp.inst().isEconomySetup()) {
             FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player);
             if (!fees.hasAtLeast(player, FeeBundle.Fee.WARP_SIGN_CREATE)) {
                 return false;
@@ -191,7 +202,7 @@ public class WarpSignManager implements Listener {
         // get the right spelling (case) out of the config
         String line = sign.getLine(1);
         line = line.substring(1, line.length() - 1);
-        sign.setLine(1, "[" + MyWarp.inst().getWarpSettings().warpSignsIdentifiers.ceiling(line) + "]");
+        sign.setLine(1, "[" + identifiers.ceiling(line) + "]");
 
         player.sendMessage(MyWarp.inst().getLocalizationManager()
                 .getString("warp-signs.created-successful", player));
@@ -218,9 +229,7 @@ public class WarpSignManager implements Listener {
      * @return true if the sign is a warp sign, false if not
      */
     public boolean isSignWarp(String[] lines) {
-        return lines[1].startsWith("[")
-                && lines[1].endsWith("]")
-                && MyWarp.inst().getWarpSettings().warpSignsIdentifiers.contains(lines[1].substring(1,
-                        lines[1].length() - 1));
+        return lines[1].startsWith("[") && lines[1].endsWith("]")
+                && identifiers.contains(lines[1].substring(1, lines[1].length() - 1));
     }
 }

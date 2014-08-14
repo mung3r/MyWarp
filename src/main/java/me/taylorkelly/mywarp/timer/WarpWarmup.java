@@ -38,16 +38,16 @@ public class WarpWarmup extends TimerAction<UUID> {
     protected void run(TimerManager timerManager, Plugin plugin) {
         Player player = MyWarp.server().getPlayer(type);
 
-        if (MyWarp.inst().getWarpSettings().timersWarmupNotify) {
+        if (MyWarp.inst().getSettings().isTimersWarmupNotifyOnStart()) {
             player.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("commands.warp-to.warmup.started", player, warp.getName(), duration / 20));
         }
 
-        if (MyWarp.inst().getWarpSettings().timersAbortOnDamage) {
+        if (MyWarp.inst().getSettings().isTimersWarmupAbortOnDamage()) {
             new HealthCheck(player.getHealth()).runTaskTimer(MyWarp.inst(), 20 * CHECK_FREQUENCY,
                     20 * CHECK_FREQUENCY);
         }
-        if (MyWarp.inst().getWarpSettings().timersAbortOnMove) {
+        if (MyWarp.inst().getSettings().isTimersWarmupAbortOnMove()) {
             new MovementCheck(player.getLocation()).runTaskTimer(MyWarp.inst(), 20 * CHECK_FREQUENCY,
                     20 * CHECK_FREQUENCY);
         }
@@ -61,7 +61,7 @@ public class WarpWarmup extends TimerAction<UUID> {
             return;
         }
 
-        if (MyWarp.inst().getWarpSettings().economyEnabled) {
+        if (MyWarp.inst().isEconomySetup()) {
             FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player);
             if (!fees.hasAtLeast(player, FeeBundle.Fee.WARP_TO)) {
                 return;

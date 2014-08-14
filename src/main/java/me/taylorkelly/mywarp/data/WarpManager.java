@@ -58,7 +58,7 @@ public class WarpManager {
         warpMap.put(warp.getName(), warp);
         MyWarp.inst().getDataConnection().addWarp(warp);
 
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled && warp.getType() == Type.PUBLIC) {
+        if (MyWarp.inst().isMarkerSetup() && warp.getType() == Type.PUBLIC) {
             MyWarp.inst().getMarkers().addMarker(warp);
         }
     }
@@ -73,7 +73,7 @@ public class WarpManager {
         warpMap.remove(warp.getName());
         MyWarp.inst().getDataConnection().deleteWarp(warp);
 
-        if (MyWarp.inst().getWarpSettings().dynmapEnabled) {
+        if (MyWarp.inst().isMarkerSetup()) {
             MyWarp.inst().getMarkers().deleteMarker(warp);
         }
     }

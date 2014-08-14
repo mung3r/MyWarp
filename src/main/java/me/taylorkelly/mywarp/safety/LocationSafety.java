@@ -5,7 +5,7 @@ import org.bukkit.Location;
 /**
  * Provides an algorithm to search for a safe-location.
  */
-public class SafeLocation {
+public class LocationSafety {
 
     /**
      * Gets the first safe location found in a cube of the given

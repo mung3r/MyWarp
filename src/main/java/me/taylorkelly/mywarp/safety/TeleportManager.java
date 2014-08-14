@@ -15,7 +15,7 @@ import org.bukkit.entity.LivingEntity;
 /**
  * Provides and manages several methods to teleport entity to safe locations
  */
-public class SafeTeleport {
+public class TeleportManager {
 
     /**
      * The status of a teleport.
@@ -54,9 +54,9 @@ public class SafeTeleport {
         if (isNotFullHeight(l.getBlock().getType())) {
             l.add(0, 1, 0);
         }
-        if (MyWarp.inst().getWarpSettings().safetyEnabled) {
-            Location safe = SafeLocation.getSafeLocation(l,
-                    MyWarp.inst().getWarpSettings().safetySearchRadius);
+        if (MyWarp.inst().getSettings().isSafetyEnabled()) {
+            Location safe = LocationSafety.getSafeLocation(l,
+                    MyWarp.inst().getSettings().getSafetySearchRadius());
             if (safe == null) {
                 return TeleportStatus.NONE;
             }
@@ -134,7 +134,7 @@ public class SafeTeleport {
 
         // teleport horses if enabled
         Entity vehicle = null;
-        if (MyWarp.inst().getWarpSettings().safetyTeleportHorses && entity.getVehicle() instanceof Horse
+        if (MyWarp.inst().getSettings().isTeleportTamedHorses() && entity.getVehicle() instanceof Horse
                 && ((Horse) entity.getVehicle()).isTamed()) {
             vehicle = entity.getVehicle();
         }
@@ -142,7 +142,7 @@ public class SafeTeleport {
 
         // teleport leashed entities if enabled
         List<LivingEntity> leashedEntities = null;
-        if (MyWarp.inst().getWarpSettings().safetyTeleportLeashed) {
+        if (MyWarp.inst().getSettings().isTeleportLeashedEntities()) {
             leashedEntities = new ArrayList<LivingEntity>();
             for (Entity leashed : entity.getNearbyEntities(10, 7, 10)) {
                 if (!(leashed instanceof LivingEntity)) {
@@ -156,12 +156,12 @@ public class SafeTeleport {
             }
         }
 
-        if (MyWarp.inst().getWarpSettings().warpEffect) {
+        if (MyWarp.inst().getSettings().isShowTeleportEffect()) {
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
             from.getWorld().playEffect(from, Effect.SMOKE, 4);
         }
-        if (MyWarp.inst().getWarpSettings().loadChunks
+        if (MyWarp.inst().getSettings().isPreloadChunks()
                 && !to.getWorld().isChunkLoaded(to.getBlockX(), to.getBlockZ())) {
             to.getWorld().refreshChunk(to.getBlockX(), to.getBlockZ());
         }

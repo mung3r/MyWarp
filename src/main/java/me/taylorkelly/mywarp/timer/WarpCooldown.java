@@ -24,7 +24,7 @@ public class WarpCooldown extends TimerAction<UUID> {
 
     @Override
     public void action() {
-        if (MyWarp.inst().getWarpSettings().timersCooldownNotify) {
+        if (MyWarp.inst().getSettings().isTimersCooldownNotifyOnFinish()) {
             Player player = MyWarp.server().getPlayer(type);
 
             if (player != null) {

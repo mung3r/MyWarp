@@ -57,14 +57,14 @@ public class PermissionsManager implements PermissionsHandler {
 
         // setup value-bundles
         feeBundleManager = new SimpleValueBundleManager<FeeBundle>(this,
-                MyWarp.inst().getWarpSettings().economyFeeBundles,
-                MyWarp.inst().getWarpSettings().economyDefaultFeeBundle);
+                MyWarp.inst().getSettings().getEconomyConfiguredFeeBundles(),
+                MyWarp.inst().getSettings().getEconomyDefaultFeeBundle());
         timeBundleManager = new SimpleValueBundleManager<TimeBundle>(this,
-                MyWarp.inst().getWarpSettings().timersTimeBundles,
-                MyWarp.inst().getWarpSettings().timersDefaultTimeBundle);
+                MyWarp.inst().getSettings().getTimersConfiguredTimeBundles(),
+                MyWarp.inst().getSettings().getTimersDefaultTimeBundle());
         limitBundleManager = new MultiworldValueBundleManager<LimitBundle>(this, MyWarp.inst()
-                .getWarpSettings().limitsLimitBundles,
-                MyWarp.inst().getWarpSettings().limitsDefaultLimitBundle) {
+                .getSettings().getLimitsConfiguredLimitBundles(),
+                MyWarp.inst().getSettings().getLimitsDefaultLimitBundle()) {
             @Override
             protected void registerPermissions(PermissionsManager manager) {
                 // mywarp.limit.[IDENTIFIER]

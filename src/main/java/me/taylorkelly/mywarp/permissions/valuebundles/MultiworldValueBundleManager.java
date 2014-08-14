@@ -9,6 +9,7 @@ import me.taylorkelly.mywarp.permissions.PermissionsManager;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
@@ -32,10 +33,16 @@ public class MultiworldValueBundleManager<T extends MultiworldValueBundle> exten
      *            all non-default bundles that a player can optionally have
      * @param defaultBundle
      *            the default bundle that acts as a fallback whenever none of
-     *            the more specific bundles applies
+     *            the more specific bundles applies. This bundle is enforced to
+     *            be global.
+     * @throws IllegalArgumentException
+     *             if the defaultBundle is not global.
      */
     public MultiworldValueBundleManager(PermissionsManager manager, Iterable<T> bundles, T defaultBundle) {
         super(manager, bundles, defaultBundle);
+        Preconditions.checkArgument(defaultBundle.isGlobal(), "The given defaultBundle %s is not global.",
+                defaultBundle);
+
     }
 
     /**

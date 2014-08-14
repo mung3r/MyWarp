@@ -10,7 +10,7 @@ import org.bukkit.permissions.PermissionDefault;
 import com.google.common.collect.ImmutableSortedSet;
 
 /**
- * A ValueBundlemanager manages instances of value-bundles that all represent
+ * A ValueBundleManager manages instances of value-bundles that all represent
  * the same value-type within the program logic. It acts as a storage and
  * provides additional methods to get the bundle needed.
  * 

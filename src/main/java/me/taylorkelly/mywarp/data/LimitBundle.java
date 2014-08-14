@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.permissions.valuebundles.MultiworldValueBundle;
 
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Predicate;
@@ -73,21 +74,23 @@ public class LimitBundle extends MultiworldValueBundle {
     private final Map<Limit, Integer> limits = new EnumMap<Limit, Integer>(Limit.class);
 
     /**
-     * Initializes this limit-bundle.
+     * Initializes this limit-bundle as global. It will affect all worlds.
      * 
      * @param identifier
      *            the unique identifier
-     * @param config
-     *            the configuration-section that contains all values for this
-     *            bundle
+     * @param totalLimit
+     *            the total limit
+     * @param publicLimit
+     *            the public limit
+     * @param privateLimit
+     *            the private limit
      */
-    public LimitBundle(String identifier, ConfigurationSection config) {
-        this(identifier, config.getInt("totalLimit"), config.getInt("publicLimit"), config
-                .getInt("privateLimit"), config.getStringList("affectedWorlds"));
+    public LimitBundle(String identifier, int totalLimit, int publicLimit, int privateLimit) {
+        this(identifier, totalLimit, publicLimit, privateLimit, null);
     }
 
     /**
-     * Initializes this limit-bundle.
+     * Initializes this limit-bundle. It will affect all given worlds.
      * 
      * @param identifier
      *            the unique identifier
@@ -98,11 +101,11 @@ public class LimitBundle extends MultiworldValueBundle {
      * @param privateLimit
      *            the private limit
      * @param affectedWorlds
-     *            a collection of worlds that should be affected by this bundle
-     *            - if the collection is empty, the limit affects all worlds
+     *            a collection of worlds that should be affected by this bundle.
+     *            Can be null to affect all worlds.
      */
     public LimitBundle(String identifier, int totalLimit, int publicLimit, int privateLimit,
-            Collection<String> affectedWorlds) {
+            @Nullable Iterable<String> affectedWorlds) {
         super(identifier, affectedWorlds);
         limits.put(LimitBundle.Limit.TOTAL, totalLimit);
         limits.put(LimitBundle.Limit.PUBLIC, publicLimit);
@@ -185,4 +188,9 @@ public class LimitBundle extends MultiworldValueBundle {
         return "mywarp.limit";
     }
 
+    @Override
+    public String toString() {
+        return "LimitBundle [getIdentifier()=" + getIdentifier() + ", limits=" + limits + ", affectedWorlds="
+                + affectedWorlds + "]";
+    }
 }

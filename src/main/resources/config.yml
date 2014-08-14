@@ -1,110 +1,82 @@
 settings:
   controlWorldAccess: false
-  loadChunks: false
-  warpEffect: true
+  preloadChunks: false
+  teleportHorses: true
+  teleportLeashed: false
+  showTeleportEffect: true
 dynamics:
   suggestWarps: true
-mysql:
-  enabled: false
-  host: 'localhost'
-  port: 3306
-  database: 'minecraft'
-  username: 'root'
-  password: 'password'
 localization:
   defaultLocale: en_US
   perPlayer: true
-warpSafety:
+teleportSafety:
   enabled: true
   searchRadius: 5
-  teleportHorses: true
-  teleportLeashed: false
 warpSigns:
   enabled: true
   identifiers:
   - MyWarp
   - Warp
+mysql:
+  enabled: false
+  host: 'localhost'
+  port: 3306
+  database: 'minecraft'
+  username: 'username'
+  password: 'password'
 limits:
   enabled: true
-  configured-limits:
-    default:
-      totalLimit: 15
-      publicLimit: 5
-      privateLimit: 10
-    user:
-      totalLimit: 8
-      publicLimit: 4
-      privateLimit: 4
-      affectedWorlds:
-      - test-world
+  defaultLimit:
+    totalLimit: 15
+    publicLimit: 5
+    privateLimit: 10
+  configuredLimits: []
 timers:
   enabled: false
-  coolDownNotify: false
-  warmUpNotify: true
-  abortOnMove: false
-  abortOnDamage: false
-  configured-timers:
-    default:
-      cooldown: 15
-      warmup: 15
-    user:
-      cooldown: 30
-      warmup: 30
+  warpCooldown:
+    notifyOnFinish: false
+  warpWarmup:
+    abortOnDamage: false
+    abortOnMove: false
+    notifyOnStart: true
+  defaultTimer:
+    warpCooldown: 15
+    warpWarmup: 15
+  configuredTimers: []
 economy:
   enabled: false
   informAfterTransaction: true
-  fees:
-    default:
-      assets: 0
-      accept: 0
-      create: 25
-      create-private: 25
-      delete: 25
-      give: 25
-      help: 0
-      info: 0
-      invite: 25
-      list: 0
-      point: 25
-      private: 25
-      public: 25
-      search: 0
-      uninvite: 25
-      update: 25
-      warp-player: 25
-      warp-sign-create: 25
-      warp-sign-use: 25
-      warp-to: 25
-      welcome: 25
-    user:
-      assets: 0
-      accept: 25
-      create: 50
-      create-private: 50
-      delete: 50
-      give: 25
-      help: 0
-      info: 0
-      invite: 25
-      list: 0
-      point: 25
-      private: 25
-      public: 25
-      search: 0
-      uninvite: 25
-      update: 50
-      warp-player: 50
-      warp-sign-create: 25
-      warp-sign-use: 25
-      warp-to: 50
-      welcome: 25
+  defaultFee:
+    assets: 0
+    accept: 0
+    create: 25
+    createPrivate: 25
+    delete: 25
+    give: 25
+    help: 0
+    info: 0
+    invite: 25
+    list: 0
+    point: 25
+    private: 25
+    public: 25
+    search: 0
+    uninvite: 25
+    update: 25
+    warpPlayer: 25
+    warpSignCreate: 25
+    warpSignUse: 25
+    warpTo: 25
+    welcome: 25
+  configuredFees: []
 dynmap:
   enabled: false
   layer:
     displayName: 'MyWarp'
-    hideByDefault: false
+    hiddenByDefault: false
     priority: 10
   marker:
-    showLabel: false
     iconID: 'mywarp_warp-32'
     minZoom: 0
+    showLabel: false
+    minZoom: 

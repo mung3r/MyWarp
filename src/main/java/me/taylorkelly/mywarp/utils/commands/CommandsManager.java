@@ -167,7 +167,7 @@ public class CommandsManager {
         // if economy support is enabled we need to check if the sender can
         // afford using the command
         FeeBundle fees = null;
-        if (MyWarp.inst().getWarpSettings().economyEnabled && cmd.fee() != FeeBundle.Fee.NONE) {
+        if (MyWarp.inst().isEconomySetup() && cmd.fee() != FeeBundle.Fee.NONE) {
             fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(sender);
             if (!fees.hasAtLeast(sender, cmd.fee())) {
                 return;

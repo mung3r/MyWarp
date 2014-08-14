@@ -61,7 +61,7 @@ public abstract class ManagedLink implements EconomyLink {
                     + MyWarp.inst().getLocalizationManager().getString("economy.unknown-exception", sender));
             return false;
         }
-        if (MyWarp.inst().getWarpSettings().economyInformAfterTransaction) {
+        if (MyWarp.inst().getSettings().isEconomyInformAfterTransaction()) {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("economy.transaction-complete", sender, amount));
         }
