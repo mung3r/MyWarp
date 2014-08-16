@@ -60,7 +60,7 @@ public class LegacySQLiteMigrator extends LegacyMigrator implements DataMigrator
                             throw new DataConnectionException("Failed to connect to the database.", e);
                         }
 
-                        DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+                        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
                         Collection<Warp> ret = null;
                         try {
                             ret = migrateLegacyWarps(create, TABLE_NAME);
