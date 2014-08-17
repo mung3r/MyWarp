@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.FeeBundle;
+import me.taylorkelly.mywarp.markers.Markers;
 import me.taylorkelly.mywarp.safety.TeleportManager;
 import me.taylorkelly.mywarp.safety.TeleportManager.TeleportStatus;
 
@@ -429,6 +430,10 @@ public class Warp implements Comparable<Warp> {
         invitedGroups.add(groupId);
 
         MyWarp.inst().getDataConnection().inviteGroup(this, groupId);
+
+        if (MyWarp.inst().isMarkerSetup()) {
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.INVITED_GROUPS);
+        }
     }
 
     /**
@@ -442,6 +447,10 @@ public class Warp implements Comparable<Warp> {
         invitedPlayerIds.add(playerId);
 
         MyWarp.inst().getDataConnection().invitePlayer(this, playerId);
+
+        if (MyWarp.inst().isMarkerSetup()) {
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.INVITED_PLAYERS);
+        }
     }
 
     /**
@@ -456,6 +465,10 @@ public class Warp implements Comparable<Warp> {
         invitedGroups.remove(groupId);
 
         MyWarp.inst().getDataConnection().uninviteGroup(this, groupId);
+
+        if (MyWarp.inst().isMarkerSetup()) {
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.INVITED_GROUPS);
+        }
     }
 
     /**
@@ -470,6 +483,10 @@ public class Warp implements Comparable<Warp> {
         invitedPlayerIds.remove(playerId);
 
         MyWarp.inst().getDataConnection().uninvitePlayer(this, playerId);
+
+        if (MyWarp.inst().isMarkerSetup()) {
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.INVITED_PLAYERS);
+        }
     }
 
     /**
@@ -710,7 +727,7 @@ public class Warp implements Comparable<Warp> {
         MyWarp.inst().getDataConnection().updateCreator(this);
 
         if (MyWarp.inst().isMarkerSetup()) {
-            MyWarp.inst().getMarkers().updateMarker(this);
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.CREATOR);
         }
     }
 
@@ -732,7 +749,7 @@ public class Warp implements Comparable<Warp> {
         MyWarp.inst().getDataConnection().updateLocation(this);
 
         if (MyWarp.inst().isMarkerSetup()) {
-            MyWarp.inst().getMarkers().updateMarker(this);
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.LOCATION);
         }
     }
 
@@ -746,10 +763,8 @@ public class Warp implements Comparable<Warp> {
     public void setType(Type type) {
         this.type = type;
 
-        MyWarp.inst().getMarkers().updateMarker(this);
-
         if (MyWarp.inst().isMarkerSetup()) {
-            MyWarp.inst().getMarkers().handleTypeChange(this);
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.TYPE);
         }
     }
 
@@ -763,7 +778,7 @@ public class Warp implements Comparable<Warp> {
         MyWarp.inst().getDataConnection().updateVisits(this);
 
         if (MyWarp.inst().isMarkerSetup()) {
-            MyWarp.inst().getMarkers().updateMarker(this);
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.VISITS);
         }
     }
 
@@ -777,6 +792,10 @@ public class Warp implements Comparable<Warp> {
         this.welcomeMessage = welcomeMessage;
 
         MyWarp.inst().getDataConnection().updateWelcomeMessage(this);
+
+        if (MyWarp.inst().isMarkerSetup()) {
+            MyWarp.inst().getMarkers().updateMarker(this, Markers.UpdateType.WELCOME_MESSAGE);
+        }
     }
 
     /**

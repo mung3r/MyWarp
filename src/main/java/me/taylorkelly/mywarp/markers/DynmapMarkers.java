@@ -22,7 +22,7 @@ public class DynmapMarkers implements Markers {
     private MarkerSet markerSet;
 
     private static final String LABEL_ID = "mywarp.warps";
-    private static final String MARKER_ID = "mywarp.warp.";
+    private static final String MARKER_ID = "mywarp.warp";
     private static final String ICON_ID = "mywarp_warp-32";
 
     /**
@@ -50,8 +50,8 @@ public class DynmapMarkers implements Markers {
         // create the label
         markerSet = markerAPI.getMarkerSet(LABEL_ID);
         if (markerSet == null) {
-            markerSet = markerAPI.createMarkerSet(LABEL_ID,
-                    MyWarp.inst().getSettings().getDynmapLayerDisplayName(), null, false);
+            markerSet = markerAPI.createMarkerSet(LABEL_ID, MyWarp.inst().getSettings()
+                    .getDynmapLayerDisplayName(), null, false);
         } else {
             markerSet.setMarkerSetLabel(MyWarp.inst().getSettings().getDynmapLayerDisplayName());
         }
@@ -75,28 +75,33 @@ public class DynmapMarkers implements Markers {
 
     @Override
     public void addMarker(Warp warp) {
-        markerSet.createMarker(getMarkerId(warp), getLabel(warp), true, warp.getWorld().getName(),
+        if (!warp.isType(Warp.Type.PUBLIC)) {
+            return;
+        }
+        markerSet.createMarker(toMarkerId(warp), toLabelHtml(warp), true, warp.getWorld().getName(),
                 warp.getX(), warp.getY(), warp.getZ(), markerIcon, false);
     }
 
     @Override
-    public void updateMarker(Warp warp) {
-        if (warp.getType() != Warp.Type.PUBLIC) {
-            return;
-        }
-        Marker marker = markerSet.findMarker(getMarkerId(warp));
-        if (marker != null) {
-            marker.setLocation(warp.getWorld().getName(), warp.getX(), warp.getY(), warp.getZ());
-            marker.setLabel(getLabel(warp));
-        }
-    }
-
-    @Override
     public void deleteMarker(Warp warp) {
-        Marker marker = markerSet.findMarker(getMarkerId(warp));
+        Marker marker = markerSet.findMarker(toMarkerId(warp));
         if (marker != null) {
             marker.deleteMarker();
         }
+    }
+
+    /**
+     * Gets the label for the given warp.
+     * 
+     * @see Warp#replacePlaceholders(String)
+     * @param warp
+     *            the warp
+     * @return the label for this warp
+     */
+    private String toLabelHtml(Warp warp) {
+        return warp.replacePlaceholders(MyWarp.inst().getLocalizationManager()
+                .getString("dynmap.marker", MyWarp.inst().getSettings().getLocalizationDefaultLocale()));
+
     }
 
     /**
@@ -106,29 +111,61 @@ public class DynmapMarkers implements Markers {
      *            the warp
      * @return the unique ID of the marker for the given warp
      */
-    private String getMarkerId(Warp warp) {
-        return MARKER_ID + warp.getName();
+    private String toMarkerId(Warp warp) {
+        return MARKER_ID + "." + warp.getName();
     }
 
     /**
-     * Gets the label for the given warp.
+     * Updates the label of the given warp's marker.
      * 
      * @param warp
      *            the warp
-     * @return the label for this warp
      */
-    private String getLabel(Warp warp) {
-        return warp.replacePlaceholders(MyWarp.inst().getLocalizationManager()
-                .getString("dynmap.marker", MyWarp.inst().getSettings().getLocalizationDefaultLocale()));
+    private void updateLabel(Warp warp) {
+        if (!warp.isType(Warp.Type.PUBLIC)) {
+            return;
+        }
+        Marker marker = markerSet.findMarker(toMarkerId(warp));
+        if (marker != null) {
+            marker.setLabel(toLabelHtml(warp), true);
+        }
+    }
 
+    /**
+     * Updates the location of the given warp's marker.
+     * 
+     * @param warp
+     *            the warp
+     */
+    private void updateLocation(Warp warp) {
+        if (!warp.isType(Warp.Type.PUBLIC)) {
+            return;
+        }
+        Marker marker = markerSet.findMarker(toMarkerId(warp));
+        if (marker != null) {
+            marker.setLocation(warp.getWorld().getName(), warp.getX(), warp.getY(), warp.getZ());
+        }
     }
 
     @Override
-    public void handleTypeChange(Warp warp) {
-        if (warp.getType() == Warp.Type.PUBLIC) {
-            addMarker(warp);
-        } else {
-            deleteMarker(warp);
+    public void updateMarker(Warp warp, UpdateType type) {
+        switch (type) {
+        case CREATOR:
+        case VISITS:
+            updateLabel(warp);
+            break;
+        case LOCATION:
+            updateLocation(warp);
+            break;
+        case TYPE:
+            if (warp.isType(Warp.Type.PUBLIC)) {
+                addMarker(warp);
+            } else {
+                deleteMarker(warp);
+            }
+            break;
+        default:
+            break;
         }
     }
 }
