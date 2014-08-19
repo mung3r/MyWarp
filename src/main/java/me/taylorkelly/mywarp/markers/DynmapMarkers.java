@@ -2,15 +2,13 @@ package me.taylorkelly.mywarp.markers;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp;
-import me.taylorkelly.mywarp.data.Warp.Type;
+import me.taylorkelly.mywarp.utils.WarpUtils;
 
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
-
-import com.google.common.base.Predicate;
 
 /**
  * Sets location-markers for public warps on the map provided by Dynmap
@@ -61,14 +59,7 @@ public class DynmapMarkers implements Markers {
         markerSet.setMinZoom(MyWarp.inst().getSettings().getDynmapMarkerMinZoom());
 
         // add all public warps
-        for (Warp warp : MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isType(Type.PUBLIC);
-            }
-
-        })) {
+        for (Warp warp : MyWarp.inst().getWarpManager().getWarps(WarpUtils.isType(Warp.Type.PUBLIC))) {
             addMarker(warp);
         }
     }

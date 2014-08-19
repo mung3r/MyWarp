@@ -829,10 +829,4 @@ public class Warp implements Comparable<Warp> {
         }
         return visits / daysSinceCreation;
     }
-
-    @Override
-    public String toString() {
-        return "Warp [name=" + name + ", creatorId=" + creatorId + ", type=" + type + ", x=" + x + ", y=" + y
-                + ", z=" + z + ", yaw=" + yaw + ", pitch=" + pitch + ", worldId=" + worldId + "]";
-    }
 }

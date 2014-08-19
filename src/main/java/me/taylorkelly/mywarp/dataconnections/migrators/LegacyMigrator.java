@@ -70,7 +70,7 @@ public abstract class LegacyMigrator {
         Set<Warp> ret = new HashSet<Warp>(results.size());
 
         for (Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String, String> r : results) {
-            //TODO add validation for missing values
+            // TODO add validation for missing values
             UUID worldId = MyWarp.server().getWorld(r.value9()).getUID();
             Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
             Set<String> invitedGroups = Sets.newHashSet(splitter.split(r.value13()));
@@ -79,9 +79,9 @@ public abstract class LegacyMigrator {
             for (String invitedPlayer : splitter.split(r.value12())) {
                 invitedPlayerIds.add(lookup.get(invitedPlayer));
             }
-            Warp w = new Warp(r.value1(), lookup.get(r.value2()), type, r.value4(),
-                    r.value5(), r.value6(), r.value7(), r.value8(), worldId, new Date(),
-                    r.value10(), r.value11(), invitedPlayerIds, invitedGroups);
+            Warp w = new Warp(r.value1(), lookup.get(r.value2()), type, r.value4(), r.value5(), r.value6(),
+                    r.value7(), r.value8(), worldId, new Date(), r.value10(), r.value11(), invitedPlayerIds,
+                    invitedGroups);
             ret.add(w);
         }
         return ret;

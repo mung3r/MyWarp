@@ -24,7 +24,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 public class MySQLConnection {
 
     /**
-     * Enforce factory usage.
+     * Block initialization of this class.
      */
     private MySQLConnection() {
     }
@@ -49,9 +49,9 @@ public class MySQLConnection {
      *            updates, if necessary
      * @return a CheckedFuture containing a valid, setup connection
      */
-    public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final String hostAdress,
-            final int port, final String databaseName, final String user, final String password,
-            final boolean controlDBLayout) {
+    public static CheckedFuture<DataConnection, DataConnectionException> getConnection(
+            final String hostAdress, final int port, final String databaseName, final String user,
+            final String password, final boolean controlDBLayout) {
         final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
                 .newSingleThreadExecutor());
 

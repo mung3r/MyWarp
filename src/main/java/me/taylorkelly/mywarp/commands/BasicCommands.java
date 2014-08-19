@@ -21,6 +21,7 @@ import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.FormattingUtils;
 import me.taylorkelly.mywarp.utils.Matcher;
 import me.taylorkelly.mywarp.utils.PaginatedResult;
+import me.taylorkelly.mywarp.utils.WarpUtils;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
 import me.taylorkelly.mywarp.utils.commands.CommandException;
@@ -99,14 +100,7 @@ public class BasicCommands {
                 MyWarp.inst().getSettings().isLimitsEnabled() ? MyWarp.inst().getPermissionsManager()
                         .getLimitBundleManager().getAffectiveBundles(player) : Arrays.asList(MyWarp.inst()
                         .getSettings().getLimitsDefaultLimitBundle()), Arrays.asList(Warp.Type.values()));
-        for (Warp warp : MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isCreator(player);
-            }
-
-        })) {
+        for (Warp warp : MyWarp.inst().getWarpManager().getWarps(WarpUtils.isCreator(player))) {
             for (LimitBundle bundle : mappedWarps.rowKeySet()) {
                 if (!bundle.isGlobal() && !bundle.getAffectedWorlds().contains(warp.getWorld())) {
                     continue;
@@ -172,23 +166,9 @@ public class BasicCommands {
     @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "commands.list.description", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
     public void listWarps(final CommandContext args, final CommandSender sender) throws CommandException {
         final OfflinePlayer creator = args.hasFlag('c') ? MyWarp.inst().getWarpManager()
-                .getMatchingCreator(args.getFlag('c'), new Predicate<Warp>() {
-
-                    @Override
-                    public boolean apply(Warp warp) {
-                        return warp.isViewable(sender);
-                    }
-
-                }) : null;
+                .getMatchingCreator(args.getFlag('c'), WarpUtils.isViewable(sender)) : null;
         final World world = args.hasFlag('w') ? MyWarp.inst().getWarpManager()
-                .getMatchingWorld(args.getFlag('w'), new Predicate<Warp>() {
-
-                    @Override
-                    public boolean apply(Warp warp) {
-                        return warp.isViewable(sender);
-                    }
-
-                }) : null;
+                .getMatchingWorld(args.getFlag('w'), WarpUtils.isViewable(sender)) : null;
 
         SortedSet<Warp> results = args.hasFlag('p') ? new TreeSet<Warp>(new Warp.PopularityComparator())
                 : new TreeSet<Warp>();
@@ -274,14 +254,7 @@ public class BasicCommands {
     // XXX color warp names
     @Command(aliases = { "search" }, flags = "p", usage = "<name>", desc = "commands.search.description", fee = Fee.SEARCH, min = 1, permissions = { "mywarp.warp.basic.search" })
     public void searchWarps(CommandContext args, final CommandSender sender) throws CommandException {
-        Matcher matcher = Matcher.match(args.getJoinedStrings(0), new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isViewable(sender);
-            }
-
-        });
+        Matcher matcher = Matcher.match(args.getJoinedStrings(0), WarpUtils.isViewable(sender));
         Warp exactMatch = matcher.getExactMatch();
         Collection<Warp> matches = args.hasFlag('p') ? matcher.getMatches(new Warp.PopularityComparator())
                 : matcher.getMatches();

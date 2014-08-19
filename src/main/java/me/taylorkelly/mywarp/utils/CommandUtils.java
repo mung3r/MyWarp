@@ -18,6 +18,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * This class bundles all methods that are only used to simplify certain task
@@ -26,6 +27,12 @@ import com.google.common.base.Predicate;
 public class CommandUtils {
 
     private static final int WARP_NAME_LENGTH = 32;
+
+    /**
+     * Block initialization of this class.
+     */
+    private CommandUtils() {
+    }
 
     /**
      * Gets a warp, matching the given name-filter, that is viewable by the
@@ -43,14 +50,7 @@ public class CommandUtils {
      *             given criteria
      */
     public static Warp getViewableWarp(final CommandSender sender, String nameFilter) throws CommandException {
-        return getWarp(sender, nameFilter, new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isViewable(sender);
-            }
-
-        });
+        return getWarp(sender, nameFilter, WarpUtils.isViewable(sender));
     }
 
     /**
@@ -69,14 +69,8 @@ public class CommandUtils {
      *             given criteria
      */
     public static Warp getUsableWarp(final CommandSender sender, String nameFilter) throws CommandException {
-        return getWarp(sender, nameFilter, new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return sender instanceof Entity && warp.isUsable((Entity) sender);
-            }
-
-        });
+        return getWarp(sender, nameFilter, sender instanceof Entity ? WarpUtils.isUsable((Entity) sender)
+                : Predicates.<Warp> alwaysTrue());
     }
 
     /**
@@ -96,14 +90,7 @@ public class CommandUtils {
      */
     public static Warp getModifiableWarp(final CommandSender sender, String nameFilter)
             throws CommandException {
-        return getWarp(sender, nameFilter, new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isModifiable(sender);
-            }
-
-        });
+        return getWarp(sender, nameFilter, WarpUtils.isModifiable(sender));
     }
 
     /**
@@ -165,14 +152,7 @@ public class CommandUtils {
         LimitBundle limitBundle = MyWarp.inst().getPermissionsManager().getLimitBundleManager()
                 .getBundle(player);
 
-        Collection<Warp> warps = MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isCreator(player);
-            }
-
-        });
+        Collection<Warp> warps = MyWarp.inst().getWarpManager().getWarps(WarpUtils.isCreator(player));
 
         if (newlyBuild && limitBundle.exceedsLimit(Limit.TOTAL, player, player.getWorld(), warps)) {
             throw new CommandException(MyWarp
@@ -222,14 +202,7 @@ public class CommandUtils {
 
         LimitBundle limitBundle = MyWarp.inst().getPermissionsManager().getLimitBundleManager()
                 .getBundle(player);
-        Collection<Warp> warps = MyWarp.inst().getWarpManager().getWarps(new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isCreator(player);
-            }
-
-        });
+        Collection<Warp> warps = MyWarp.inst().getWarpManager().getWarps(WarpUtils.isCreator(player));
 
         return !limitBundle.exceedsLimit(Limit.TOTAL, player, world, warps)
                 && !limitBundle.exceedsLimit(type.getLimit(), player, world, warps);

@@ -57,6 +57,12 @@ public class FormattingUtils {
             .put(FORMATTING_CHAR, 0).build();
 
     /**
+     * Block initialization of this class.
+     */
+    private FormattingUtils() {
+    }
+
+    /**
      * Gets the width of the given string. Formating codes are ignored.
      * 
      * @param str

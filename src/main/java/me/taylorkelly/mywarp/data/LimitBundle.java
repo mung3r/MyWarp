@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.permissions.valuebundles.MultiworldValueBundle;
+import me.taylorkelly.mywarp.utils.WarpUtils;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -36,25 +37,11 @@ public class LimitBundle extends MultiworldValueBundle {
         /**
          * The private limit (accounts only private warps).
          */
-        PRIVATE(new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.getType() == Warp.Type.PRIVATE;
-            }
-
-        }, "private"),
+        PRIVATE(WarpUtils.isType(Warp.Type.PRIVATE), "private"),
         /**
          * The public limit (accounts only public warps).
          */
-        PUBLIC(new Predicate<Warp>() {
-
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.getType() == Warp.Type.PUBLIC;
-            }
-
-        }, "public");
+        PUBLIC(WarpUtils.isType(Warp.Type.PUBLIC), "public");
 
         private final Predicate<Warp> condition;
         private final String permissionSuffix;

@@ -23,6 +23,12 @@ public class WelcomeMessageConversation {
     private static final int TIMEOUT = 30;
 
     /**
+     * Block initialization of this class.
+     */
+    private WelcomeMessageConversation() {
+    }
+
+    /**
      * The custom conversation factory
      */
     private static final ConversationFactory conversationFactory = new ConversationFactory(MyWarp.inst())
@@ -42,8 +48,7 @@ public class WelcomeMessageConversation {
         Map<Object, Object> initialSessionData = new HashMap<Object, Object>();
         initialSessionData.put(Warp.class, warp);
 
-        conversationFactory.withInitialSessionData(initialSessionData)
-                .buildConversation(player).begin();
+        conversationFactory.withInitialSessionData(initialSessionData).buildConversation(player).begin();
     }
 
     /**

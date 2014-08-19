@@ -22,6 +22,12 @@ public class WarpAcceptanceConversation {
     private static final int TIMEOUT = 30;
 
     /**
+     * Block initialization of this class.
+     */
+    private WarpAcceptanceConversation() {
+    }
+
+    /**
      * The custom conversation factory
      */
     private static final ConversationFactory conversationFactory = new ConversationFactory(MyWarp.inst())
@@ -43,8 +49,7 @@ public class WarpAcceptanceConversation {
         initialSessionData.put(Warp.class, warp);
         initialSessionData.put(String.class, sender.getName());
 
-        conversationFactory.withInitialSessionData(initialSessionData)
-                .buildConversation(player).begin();
+        conversationFactory.withInitialSessionData(initialSessionData).buildConversation(player).begin();
     }
 
     /**
@@ -56,7 +61,7 @@ public class WarpAcceptanceConversation {
         public String getPromptText(ConversationContext context) {
             Warp warp = (Warp) context.getSessionData(Warp.class);
             String senderName = (String) context.getSessionData(String.class);
-            //TODO Add a way to get informations about the warp.
+            // TODO Add a way to get informations about the warp.
             return MyWarp
                     .inst()
                     .getLocalizationManager()

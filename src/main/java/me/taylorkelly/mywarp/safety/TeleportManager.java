@@ -55,8 +55,8 @@ public class TeleportManager {
             l.add(0, 1, 0);
         }
         if (MyWarp.inst().getSettings().isSafetyEnabled()) {
-            Location safe = LocationSafety.getSafeLocation(l,
-                    MyWarp.inst().getSettings().getSafetySearchRadius());
+            Location safe = LocationSafety.getSafeLocation(l, MyWarp.inst().getSettings()
+                    .getSafetySearchRadius());
             if (safe == null) {
                 return TeleportStatus.NONE;
             }

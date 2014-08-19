@@ -25,6 +25,12 @@ import com.google.common.base.Charsets;
 public class ConfigUtils {
 
     /**
+     * Block initialization of this class.
+     */
+    private ConfigUtils() {
+    }
+
+    /**
      * Gets the FileConfiguration from the given InputStream.
      * 
      * @param stream
@@ -46,7 +52,8 @@ public class ConfigUtils {
         BufferedReader bufferedReader = null;
 
         try {
-            reader = forceEncoding ? new InputStreamReader(stream, Charsets.UTF_8) : new InputStreamReader(stream);
+            reader = forceEncoding ? new InputStreamReader(stream, Charsets.UTF_8) : new InputStreamReader(
+                    stream);
             bufferedReader = new BufferedReader(reader);
             StrBuilder builder = new StrBuilder();
             String line = null;

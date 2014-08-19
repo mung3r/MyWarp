@@ -154,7 +154,7 @@ public class AdminCommands {
         Player invitee = CommandUtils.matchPlayer(sender, args.getString(0));
         Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(1));
 
-        switch(warp.teleport(invitee)) {
+        switch (warp.teleport(invitee)) {
         case NONE:
             sender.sendMessage(MyWarp
                     .inst()
@@ -170,7 +170,7 @@ public class AdminCommands {
                     .getString("commands.warp-player.teleport-successful", sender, invitee.getName(),
                             warp.getName()));
             break;
-        
+
         }
     }
 }

@@ -25,7 +25,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 public class SQLiteConnection {
 
     /**
-     * Enforce factory usage.
+     * Block initialization of this class.
      */
     private SQLiteConnection() {
     }
@@ -48,6 +48,7 @@ public class SQLiteConnection {
                 .newSingleThreadExecutor());
 
         ListenableFuture<DataConnection> futureConnection = executor.submit(new Callable<DataConnection>() {
+
 
 
 
