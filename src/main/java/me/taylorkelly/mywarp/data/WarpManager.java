@@ -10,6 +10,7 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.data.Warp.Type;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -49,7 +50,9 @@ public class WarpManager {
      *            the type
      */
     public void addWarp(String name, Player player, Type type) {
-        addWarp(new Warp(name, player, type));
+        Location loc = player.getLocation();
+        addWarp(new Warp(name, player.getUniqueId(), type, loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(),
+                loc.getPitch(), loc.getWorld().getUID()));
     }
 
     // REVIEW Is this method needed? Are there better alternatives for multiple

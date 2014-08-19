@@ -26,7 +26,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import static com.google.common.base.Preconditions.*;
+
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Iterables;
 
 /**
  * A warp.
@@ -154,61 +157,63 @@ public class Warp implements Comparable<Warp> {
      * @param welcomeMessage
      *            the welcome message
      * @param inivtedPlayerIds
-     *            a collection that contains all invited player UUIDs
+     *            an iterable that contains all invited player UUIDs
      * @param invitedGroups
-     *            a collection that includes all invited group names
+     *            an iterable that includes all invited group names
      */
     public Warp(String name, UUID creatorId, Type type, double x, double y, double z, float yaw, float pitch,
             UUID worldId, Date creationDate, int visits, String welcomeMessage,
-            Collection<UUID> inivtedPlayerIds, Collection<String> invitedGroups) {
-        this.name = name;
-        this.creatorId = creatorId;
-        this.type = type;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-        this.worldId = worldId;
-        this.creationDate = creationDate;
-        this.visits = visits;
-        this.welcomeMessage = welcomeMessage;
-        this.invitedPlayerIds.addAll(inivtedPlayerIds);
-        this.invitedGroups.addAll(invitedGroups);
+            Iterable<UUID> inivtedPlayerIds, Iterable<String> invitedGroups) {
+        this.name = checkNotNull(name);
+        this.creatorId = checkNotNull(creatorId);
+        this.type = checkNotNull(type);
+        this.x = checkNotNull(x);
+        this.y = checkNotNull(y);
+        this.z = checkNotNull(z);
+        this.yaw = checkNotNull(yaw);
+        this.pitch = checkNotNull(pitch);
+        this.worldId = checkNotNull(worldId);
+        this.creationDate = checkNotNull(creationDate);
+        this.visits = checkNotNull(visits);
+        this.welcomeMessage = checkNotNull(welcomeMessage);
+        checkNotNull(invitedPlayerIds);
+        checkArgument(Iterables.contains(inivtedPlayerIds, null));
+        Iterables.addAll(this.invitedPlayerIds, invitedPlayerIds);
+        checkNotNull(invitedGroups);
+        checkArgument(Iterables.contains(invitedGroups, null));
+        Iterables.addAll(this.invitedGroups, invitedGroups);
     }
 
     /**
-     * Creates a new warp of the given name, the given type and creator at the
-     * creators current location.
+     * Creates a new Warp with the given values.
      * 
      * @param name
      *            the name
-     * @param creator
-     *            the creator
+     * @param creatorId
+     *            the UUID of the player who created this warp
      * @param type
      *            the type
+     * @param x
+     *            the x-coordinate
+     * @param y
+     *            the y-coordinate
+     * @param z
+     *            the z-coordinate
+     * @param yaw
+     *            the location's yaw
+     * @param pitch
+     *            the location's pitch
+     * @param worldId
+     *            the UUID of the location's world
      */
-    protected Warp(String name, Player creator, Type type) {
-        this.name = name;
-        this.creatorId = creator.getUniqueId();
-        this.type = type;
-
-        Location loc = creator.getLocation();
-
-        this.x = loc.getX();
-        this.y = loc.getY();
-        this.z = loc.getZ();
-        this.yaw = loc.getYaw();
-        this.pitch = loc.getPitch();
-        this.worldId = loc.getWorld().getUID();
-
-        this.visits = 0;
-        this.creationDate = new Date();
-        this.welcomeMessage = MyWarp
+    public Warp(String name, UUID creatorId, Type type, double x, double y, double z, float yaw, float pitch,
+            UUID worldId) {
+        this(name, creatorId, type, x, y, z, yaw, pitch, worldId, new Date(), 0, MyWarp
                 .inst()
                 .getLocalizationManager()
                 .getString("warp.default-welcome-message",
-                        MyWarp.inst().getSettings().getLocalizationDefaultLocale());
+                        MyWarp.inst().getSettings().getLocalizationDefaultLocale()), new HashSet<UUID>(),
+                new HashSet<String>());
     }
 
     /**
