@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.data;
 
 import java.util.TreeSet;
@@ -22,19 +40,26 @@ import org.bukkit.material.Attachable;
 import com.google.common.collect.Iterables;
 
 /**
- * Manages warp signs
+ * Manages warp signs.
  */
 public class WarpSignManager implements Listener {
 
     private final TreeSet<String> identifiers;
 
+    /**
+     * Initializes this manager using the given identifiers. A sign acts as warp
+     * sign if it has one of these identifiers in the second line.
+     * 
+     * @param identifiers
+     *            the identifiers
+     */
     public WarpSignManager(Iterable<String> identifiers) {
         this.identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         Iterables.addAll(this.identifiers, identifiers);
     }
 
     /**
-     * Called whenever a sign is changed
+     * Called whenever a sign is changed.
      * 
      * @param event
      *            the event
@@ -50,7 +75,7 @@ public class WarpSignManager implements Listener {
     }
 
     /**
-     * Called whenever a player interacts with a block
+     * Called whenever a player interacts with a block.
      * 
      * @param event
      *            the event

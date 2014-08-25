@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.commands;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -15,51 +33,61 @@ import org.bukkit.entity.Player;
 
 /**
  * This class contains all root-level commands annotated by the
- * {@link NestedCommand} annotation
+ * {@link NestedCommand} annotation.
  */
 public class RootCommands {
 
+    /**
+     * Warps the player to a warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param player
+     *            the player who initiated this command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @NestedCommand({ AdminCommands.class, BasicCommands.class, SocialCommands.class })
     @Command(aliases = { "warp", "mv", "mywarp" }, usage = "<name>", desc = "commands.warp-to.description", min = 1, permissions = { "mywarp.warp.basic.warp" })
-    public void warpTo(CommandContext args, Player sender) throws CommandException {
+    public void warpTo(CommandContext args, Player player) throws CommandException {
         // first check the economy
         if (MyWarp.inst().isEconomySetup()) {
-            FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(sender);
+            FeeBundle fees = MyWarp.inst().getPermissionsManager().getFeeBundleManager().getBundle(player);
 
-            if (!fees.hasAtLeast(sender, FeeBundle.Fee.WARP_TO)) {
+            if (!fees.hasAtLeast(player, FeeBundle.Fee.WARP_TO)) {
                 return;
             }
         }
 
-        Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(0));
+        Warp warp = CommandUtils.getUsableWarp(player, args.getJoinedStrings(0));
         if (MyWarp.inst().getSettings().isTimersEnabled()
-                && !MyWarp.inst().getTimerManager().canDisobey(sender)) {
-            if (MyWarp.inst().getTimerManager().hasRunningTimer(sender.getUniqueId(), WarpCooldown.class)) {
+                && !MyWarp.inst().getTimerManager().canDisobey(player)) {
+            if (MyWarp.inst().getTimerManager().hasRunningTimer(player.getUniqueId(), WarpCooldown.class)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString(
                                 "commands.warp-to.cooldown.active",
-                                sender,
+                                player,
                                 MyWarp.inst().getTimerManager()
-                                        .getRemainingSeconds(sender.getUniqueId(), WarpCooldown.class)));
+                                        .getRemainingSeconds(player.getUniqueId(), WarpCooldown.class)));
             }
 
-            if (MyWarp.inst().getTimerManager().hasRunningTimer(sender.getUniqueId(), WarpWarmup.class)) {
+            if (MyWarp.inst().getTimerManager().hasRunningTimer(player.getUniqueId(), WarpWarmup.class)) {
                 throw new CommandException(MyWarp
                         .inst()
                         .getLocalizationManager()
                         .getString(
                                 "commands.warp-to.warmup.active",
-                                sender,
+                                player,
                                 MyWarp.inst().getTimerManager()
-                                        .getRemainingSeconds(sender.getUniqueId(), WarpWarmup.class)));
+                                        .getRemainingSeconds(player.getUniqueId(), WarpWarmup.class)));
             }
 
-            MyWarp.inst().getTimerManager().registerNewTimer(new WarpWarmup(sender, warp));
+            MyWarp.inst().getTimerManager().registerNewTimer(new WarpWarmup(player, warp));
 
         } else {
-            warp.teleport(sender, FeeBundle.Fee.WARP_TO);
+            warp.teleport(player, FeeBundle.Fee.WARP_TO);
         }
     }
 }

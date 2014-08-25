@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.commands;
 
 import java.util.ArrayList;
@@ -46,30 +64,60 @@ import com.google.common.collect.Table;
  */
 public class BasicCommands {
 
+    /**
+     * Creates a private warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param player
+     *            the player who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "pcreate", "pset" }, usage = "<name>", desc = "commands.create-private.description", fee = Fee.CREATE_PRIVATE, min = 1, permissions = { "mywarp.warp.basic.createprivate" })
-    public void createPrivateWarp(CommandContext args, Player sender) throws CommandException {
+    public void createPrivateWarp(CommandContext args, Player player) throws CommandException {
         String name = args.getJoinedStrings(0);
 
-        CommandUtils.checkLimits(sender, true, Type.PRIVATE);
-        CommandUtils.checkWarpname(sender, name);
+        CommandUtils.checkLimits(player, true, Type.PRIVATE);
+        CommandUtils.checkWarpname(player, name);
 
-        MyWarp.inst().getWarpManager().addWarp(name, sender, Type.PRIVATE);
-        sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getString("commands.create-private.created-successful", sender, name));
+        MyWarp.inst().getWarpManager().addWarp(name, player, Type.PRIVATE);
+        player.sendMessage(MyWarp.inst().getLocalizationManager()
+                .getString("commands.create-private.created-successful", player, name));
     }
 
+    /**
+     * Creates a public warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param player
+     *            the player who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "create", "set" }, usage = "<name>", desc = "commands.create.description", fee = Fee.CREATE, min = 1, permissions = { "mywarp.warp.basic.createpublic" })
-    public void createPublicWarp(CommandContext args, Player sender) throws CommandException {
+    public void createPublicWarp(CommandContext args, Player player) throws CommandException {
         String name = args.getJoinedStrings(0);
 
-        CommandUtils.checkLimits(sender, true, Type.PUBLIC);
-        CommandUtils.checkWarpname(sender, name);
+        CommandUtils.checkLimits(player, true, Type.PUBLIC);
+        CommandUtils.checkWarpname(player, name);
 
-        MyWarp.inst().getWarpManager().addWarp(name, sender, Type.PUBLIC);
-        sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getString("commands.create.created-successful", sender, name));
+        MyWarp.inst().getWarpManager().addWarp(name, player, Type.PUBLIC);
+        player.sendMessage(MyWarp.inst().getLocalizationManager()
+                .getString("commands.create.created-successful", player, name));
     }
 
+    /**
+     * Removes a specific warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "delete", "remove" }, usage = "<name>", desc = "commands.delete.description", fee = Fee.DELETE, min = 1, permissions = { "mywarp.warp.basic.delete" })
     public void deleteWarp(CommandContext args, CommandSender sender) throws CommandException {
         Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
@@ -79,6 +127,16 @@ public class BasicCommands {
                 .getString("commands.delete.deleted-successful", sender, warp.getName()));
     }
 
+    /**
+     * Displays the assets (warps ordered by limit and world) of a player.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "assets", "limits", "pstats", "pinfo" }, usage = "[player]", desc = "commands.assets.description", fee = Fee.ASSETS, max = 1, permissions = { "mywarp.warp.basic.assets" })
     public void showAssets(CommandContext args, final CommandSender sender) throws CommandException {
         final Player player;
@@ -154,6 +212,16 @@ public class BasicCommands {
         }
     }
 
+    /**
+     * Returns a string representation of the given values, e.g.
+     * <code>4/10</code>. {@code limitMax} is only added if limits are enabled.
+     * 
+     * @param count
+     *            the count
+     * @param limitMax
+     *            the limit maximum
+     * @return a readable string
+     */
     private String toLimitMax(int count, int limitMax) {
         StringBuilder builder = new StringBuilder();
         builder.append(count);
@@ -163,6 +231,16 @@ public class BasicCommands {
         return builder.toString();
     }
 
+    /**
+     * Lists warps.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "list", "alist" }, flags = "c:pw:", usage = "[-c creator] [-w world]", desc = "commands.list.description", fee = Fee.LIST, max = 1, permissions = { "mywarp.warp.basic.list" })
     public void listWarps(final CommandContext args, final CommandSender sender) throws CommandException {
         final OfflinePlayer creator = args.hasFlag('c') ? MyWarp.inst().getWarpManager()
@@ -236,22 +314,41 @@ public class BasicCommands {
         }
     }
 
+    /**
+     * Points the compass of the player to a warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param player
+     *            the player who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "point" }, usage = "[name]", desc = "commands.point.description", fee = Fee.POINT, permissions = { "mywarp.warp.basic.compass" })
-    public void pointToWarp(CommandContext args, Player sender) throws CommandException {
+    public void pointToWarp(CommandContext args, Player player) throws CommandException {
         if (args.argsLength() == 0) {
-            sender.setCompassTarget(sender.getWorld().getSpawnLocation());
-            sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getString("commands.point.reset", sender));
+            player.setCompassTarget(player.getWorld().getSpawnLocation());
+            player.sendMessage(MyWarp.inst().getLocalizationManager()
+                    .getString("commands.point.reset", player));
         } else {
-            Warp warp = CommandUtils.getUsableWarp(sender, args.getJoinedStrings(0));
-            warp.asCompassTarget(sender);
+            Warp warp = CommandUtils.getUsableWarp(player, args.getJoinedStrings(0));
+            warp.asCompassTarget(player);
 
-            sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                    .getString("commands.point.set", sender, warp.getName()));
+            player.sendMessage(MyWarp.inst().getLocalizationManager()
+                    .getString("commands.point.set", player, warp.getName()));
         }
     }
 
-    // XXX color warp names
+    /**
+     * Searches for warps.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "search" }, flags = "p", usage = "<name>", desc = "commands.search.description", fee = Fee.SEARCH, min = 1, permissions = { "mywarp.warp.basic.search" })
     public void searchWarps(CommandContext args, final CommandSender sender) throws CommandException {
         Matcher matcher = Matcher.match(args.getJoinedStrings(0), WarpUtils.isViewable(sender));
@@ -263,6 +360,7 @@ public class BasicCommands {
             sender.sendMessage(MyWarp.inst().getLocalizationManager()
                     .getString("commands.search.no-matches", sender, args.getJoinedStrings(0)));
         } else {
+            // REVIEW color warp names?
             sender.sendMessage(ChatColor.GOLD
                     + MyWarp.inst().getLocalizationManager()
                             .getString("commands.search.heading", sender, args.getJoinedStrings(0)));
@@ -284,13 +382,34 @@ public class BasicCommands {
 
     }
 
+    /**
+     * Changes the welcome-message of a warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param player
+     *            the player who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "welcome" }, usage = "<name>", desc = "commands.welcome.description", fee = Fee.WELCOME, min = 1, permissions = { "mywarp.warp.basic.welcome" })
-    public void setWarpWelcome(CommandContext args, Player sender) throws CommandException {
-        Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
+    public void setWarpWelcome(CommandContext args, Player player) throws CommandException {
+        Warp warp = CommandUtils.getModifiableWarp(player, args.getJoinedStrings(0));
 
-        WelcomeMessageConversation.initiate(sender, warp);
+        WelcomeMessageConversation.initiate(player, warp);
     }
 
+    /**
+     * Displays the command-help that lists all commands available for the
+     * sender.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "help" }, usage = "#", desc = "commands.help.description", fee = Fee.HELP, max = 1, permissions = { "mywarp.warp.basic.help" })
     public void showHelp(final CommandContext args, CommandSender sender) throws CommandException {
         PaginatedResult<Command> cmdList = new PaginatedResult<Command>(MyWarp.inst()
@@ -323,15 +442,35 @@ public class BasicCommands {
         }
     }
 
+    /**
+     * Updates the location of a warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param player
+     *            the player who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "update" }, usage = "<name>", desc = "commands.update.description", fee = Fee.UPDATE, min = 1, permissions = { "mywarp.warp.basic.update" })
-    public void updateWarp(CommandContext args, Player sender) throws CommandException {
-        Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
+    public void updateWarp(CommandContext args, Player player) throws CommandException {
+        Warp warp = CommandUtils.getModifiableWarp(player, args.getJoinedStrings(0));
 
-        warp.setLocation(sender.getLocation());
-        sender.sendMessage(MyWarp.inst().getLocalizationManager()
-                .getString("commands.update.update-successful", sender, warp.getName()));
+        warp.setLocation(player.getLocation());
+        player.sendMessage(MyWarp.inst().getLocalizationManager()
+                .getString("commands.update.update-successful", player, warp.getName()));
     }
 
+    /**
+     * Displays information about a warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "info", "stats" }, usage = "<name>", desc = "commands.info.description", fee = Fee.INFO, min = 1, permissions = { "mywarp.warp.basic.info" })
     public void showWarpInfo(CommandContext args, CommandSender sender) throws CommandException {
         Warp warp = CommandUtils.getViewableWarp(sender, args.getJoinedStrings(0));

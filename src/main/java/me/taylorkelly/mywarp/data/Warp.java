@@ -1,6 +1,23 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.data;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -66,7 +83,7 @@ public class Warp implements Comparable<Warp> {
          * 
          * @param color
          *            the color representation
-         * @param limitBundle
+         * @param limit
          *            the corresponding limit
          */
         private Type(ChatColor color, LimitBundle.Limit limit) {
@@ -320,6 +337,7 @@ public class Warp implements Comparable<Warp> {
         case ORIGINAL_LOC:
         case SAFE_LOC:
             incraseVisists();
+            break;
         case NONE:
             break;
         }
@@ -329,7 +347,7 @@ public class Warp implements Comparable<Warp> {
     /**
      * Teleports the given player to this warp and sends the applicable message.
      * 
-     * @param player
+     * @param player the player
      * @return the status of the teleport
      */
     public TeleportStatus teleport(Player player) {
@@ -401,7 +419,7 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
-     * Returns whether the given offline player is invited to this warp
+     * Returns whether the given offline player is invited to this warp.
      * 
      * @param player
      *            the player
@@ -413,7 +431,7 @@ public class Warp implements Comparable<Warp> {
 
     /**
      * Returns whether the permission-group identified by the given ID is
-     * invited to this warp
+     * invited to this warp.
      * 
      * @param groupId
      *            the ID of the group
@@ -595,7 +613,7 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
-     * Gets this warp's name
+     * Gets this warp's name.
      * 
      * @return the name of this warp
      */
@@ -604,7 +622,7 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
-     * Gets this warp's pitch
+     * Gets this warp's pitch.
      * 
      * @return the pitch of this warp
      */
@@ -613,7 +631,7 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
-     * Gets this warp's type
+     * Gets this warp's type.
      * 
      * @return the type of this warp
      */
@@ -630,7 +648,7 @@ public class Warp implements Comparable<Warp> {
     }
 
     /**
-     * Gets this warp's visits number
+     * Gets this warp's visits number.
      * 
      * @return the number of times this warp has been visited
      */
@@ -791,7 +809,7 @@ public class Warp implements Comparable<Warp> {
      * Sets the welcome-message of this warp to the given one. This method will
      * also attempt to update this warp via the active data-connection.
      * 
-     * @param welcomeMessage
+     * @param welcomeMessage the new welcome-message
      */
     public void setWelcomeMessage(String welcomeMessage) {
         this.welcomeMessage = welcomeMessage;

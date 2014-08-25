@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp;
 
 import java.io.File;
@@ -35,10 +53,13 @@ import org.dynmap.DynmapCommonAPI;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * The MyWarp plugin implementation.
+ */
 public class MyWarp extends JavaPlugin implements Reloadable {
 
     /**
-     * The plugin instance for MyWarp
+     * The plugin instance for MyWarp.
      */
     private static MyWarp instance;
 
@@ -49,47 +70,47 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     private CommandsManager commandsManager;
 
     /**
-     * The connection to the configured data-source
+     * The connection to the configured data-source.
      */
     private DataConnection dataConnection;
 
     /**
-     * The economy Link in use
+     * The economy Link in use.
      */
     private EconomyLink economyLink;
 
     /**
-     * The language-manger
+     * The language-manger.
      */
     private LocalizationManager localizationManager;
 
     /**
-     * Represents the marker API in use
+     * Represents the marker API in use.
      */
     private Markers markers;
 
     /**
-     * The timer-factory
+     * The timer-factory.
      */
     private TimerManager timerManager;
 
     /**
-     * The warp-manager
+     * The warp-manager.
      */
     private WarpManager warpManager;
 
     /**
-     * the permissions-manage that handles all permission-related tasks
+     * The permissions-manage that handles all permission-related tasks.
      */
     private PermissionsManager permissionsManager;
 
     /**
-     * The parsed plugin-configuration
+     * The parsed plugin-configuration.
      */
     private Settings settings;
 
     /**
-     * Constructs the instance
+     * Constructs the instance.
      */
     public MyWarp() {
         super();
@@ -98,7 +119,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Returns the plugin's instance
+     * Returns the plugin's instance.
      * 
      * @return the plugin's instance
      */
@@ -107,7 +128,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Return the plugin's logger
+     * Return the plugin's logger.
      * 
      * @return the logger
      */
@@ -116,7 +137,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Returns the server instance that runs this plugin
+     * Returns the server instance that runs this plugin.
      * 
      * @return the server instance
      */
@@ -125,7 +146,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets MyWarp's {@link CommandsManager}
+     * Gets MyWarp's commands-manager.
      * 
      * @return the commands-manager
      */
@@ -134,8 +155,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets MyWarp's active {@link DataConnection} that provides access to the
-     * active data-source.
+     * Gets MyWarp's active data-connection that provides access to the active
+     * data-source.
      * 
      * This method may return null if the connection is not yet setup.
      * 
@@ -146,8 +167,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets the {@link EconomyLink} service if it exists, this method should be
-     * used for economic actions.
+     * Gets the economy-link service if it exists, this method should be used
+     * for economic actions.
      * 
      * This method can return null. Use {@link #isEconomySetup()} to check if
      * the economy link is setup and usable before accessing the link directly.
@@ -159,7 +180,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets MyWarp's {@link LocalizationManager}, that handles all translations
+     * Gets MyWarp's localization-manager, that handles all translations.
      * 
      * @return the language manager
      */
@@ -181,8 +202,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets MyWarp's {@link PermissionsManager}, this method should be used for
-     * tasks involving direct permission-access
+     * Gets MyWarp's permissions-Manager, this method should be used for tasks
+     * involving direct permission-access.
      * 
      * @return the permissions manager
      */
@@ -192,7 +213,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
 
     /**
      * Gets the timer-manager, that manages all per-object timers (warmups,
-     * cooldowns...)
+     * cooldowns...).
      * 
      * @return the timer-manager
      */
@@ -201,7 +222,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Returns the warp-manager that holds all warps
+     * Returns the warp-manager that holds all warps.
      * 
      * @return the warp manager
      */
@@ -210,8 +231,7 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     }
 
     /**
-     * Gets MyWarp's {@link BukkitSettings}, and therefore provides direct
-     * access to the settings
+     * Gets MyWarp's settings which provides direct access to the configuration.
      * 
      * @return the warp settings
      */
@@ -219,16 +239,20 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         return settings;
     }
 
-    /**
-     * Called on command-execution
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.bukkit.plugin.java.JavaPlugin#onCommand(CommandSender, Command, String, String[])
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         return getCommandsManager().handleBukkitCommand(sender, command, commandLabel, args);
     }
 
-    /**
-     * Called when the plugin is disabled
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.bukkit.plugin.java.JavaPlugin#onDisable()
      */
     @Override
     public void onDisable() {
@@ -251,8 +275,10 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         instance = null;
     }
 
-    /**
-     * Called when the plugin is enabled
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.bukkit.plugin.java.JavaPlugin#onEnable()
      */
     @Override
     public void onEnable() {

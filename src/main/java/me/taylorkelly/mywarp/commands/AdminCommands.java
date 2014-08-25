@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.commands;
 
 import java.io.File;
@@ -32,6 +50,16 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class AdminCommands {
 
+    /**
+     * Imports warps from an additional datasource.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "import" }, usage = "<sqlite path/to/db|mysql host port database user password|legacy-sqlite path/to/db|legacy-mysql host port database user password table-name>", desc = "commands.import.description", min = 2, max = 7, flags = "f", permissions = { "mywarp.admin.import" })
     public void importWarps(final CommandContext args, final CommandSender sender) throws CommandException {
         DataMigrator migrator;
@@ -142,13 +170,31 @@ public class AdminCommands {
         });
     }
 
+    /**
+     * Reloads the plugin.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     */
     @Command(aliases = { "reload" }, usage = "", desc = "commands.reload.description", max = 0, permissions = { "mywarp.admin.reload" })
-    public void reload(CommandContext args, CommandSender sender) throws CommandException {
+    public void reload(CommandContext args, CommandSender sender) {
         MyWarp.inst().reload();
         sender.sendMessage(MyWarp.inst().getLocalizationManager()
                 .getString("commands.reload.reload-message", sender));
     }
 
+    /**
+     * Teleports a player to a warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "player" }, usage = "<player> <name>", desc = "commands.warp-player.description", fee = Fee.WARP_PLAYER, min = 2, permissions = { "mywarp.admin.warpto" })
     public void warpPlayer(CommandContext args, CommandSender sender) throws CommandException {
         Player invitee = CommandUtils.matchPlayer(sender, args.getString(0));

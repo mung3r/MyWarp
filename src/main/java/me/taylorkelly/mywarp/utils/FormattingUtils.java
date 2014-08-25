@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.utils;
 
 import java.util.Map;
@@ -17,17 +35,17 @@ import com.google.common.collect.ImmutableMap;
  * supported characters in Minecraft have changed, but these changes are not
  * covered!
  */
-public class FormattingUtils {
+public final class FormattingUtils {
 
     /**
      * The horizontal width of a chat line in vanilla Minecraft.
      */
-    private final static int CHAT_WIDTH = 318; // 325
+    private static final int CHAT_WIDTH = 318; // 325
 
     /**
      * The character used to indicate formatting-codes.
      */
-    private final static char FORMATTING_CHAR = '§';
+    private static final char FORMATTING_CHAR = '§';
 
     /**
      * A map that stores supported characters and their width in the Minecraft
@@ -35,7 +53,7 @@ public class FormattingUtils {
      * Minecraft versions. It does not include most unicode characters that are
      * supported today!
      */
-    private static final Map<Character, Integer> CHAR_WIDTHS = ImmutableMap.<Character, Integer> builder()
+    private static final Map<Character, Integer> CHAR_WIDTHS = ImmutableMap.<Character, Integer>builder()
             .put(' ', 4).put('!', 2).put('"', 5).put('#', 6).put('$', 6).put('%', 6).put('&', 6).put('\'', 3)
             .put('(', 5).put(')', 5).put('*', 5).put('+', 6).put(',', 2).put('-', 6).put('.', 2).put('/', 6)
             .put('0', 6).put('1', 6).put('2', 6).put('3', 6).put('4', 6).put('5', 6).put('6', 6).put('7', 6)
@@ -93,7 +111,7 @@ public class FormattingUtils {
     }
 
     /**
-     * Calls {@link #padRight(String, char)} using a space as padding character
+     * Calls {@link #padRight(String, char)} using a space as padding character.
      * 
      * @param str
      *            the string
@@ -105,7 +123,7 @@ public class FormattingUtils {
 
     /**
      * Calls {@link #padRight(String, char, int)} using the chat width as
-     * paddedWidth
+     * paddedWidth.
      * 
      * @param str
      *            the string
@@ -135,7 +153,7 @@ public class FormattingUtils {
     }
 
     /**
-     * Calls {@link #paddingLeft(String, char)} using a space as padding char
+     * Calls {@link #paddingLeft(String, char)} using a space as padding char.
      * 
      * @param str
      *            the string
@@ -147,7 +165,7 @@ public class FormattingUtils {
 
     /**
      * Calls {@link #padLeft(String, char, int)} using the chat width as
-     * paddedWidth
+     * paddedWidth.
      * 
      * @param str
      *            the string
@@ -177,7 +195,7 @@ public class FormattingUtils {
     }
 
     /**
-     * Calls {@link #center(String, char)} using a space as padding character
+     * Calls {@link #center(String, char)} using a space as padding character.
      * 
      * @param str
      *            the string
@@ -189,7 +207,7 @@ public class FormattingUtils {
 
     /**
      * Calls {@link #center(String, char, int)} using the chat width as
-     * paddedWidth
+     * paddedWidth.
      * 
      * @param str
      *            the string
@@ -220,7 +238,7 @@ public class FormattingUtils {
     }
 
     /**
-     * Calls {@link #trim(String, int)} using the chat width as trimmedWidth
+     * Calls {@link #trim(String, int)} using the chat width as trimmedWidth.
      * 
      * @param str
      *            the string to trim
@@ -258,7 +276,7 @@ public class FormattingUtils {
 
     /**
      * Calls {@link #twoColumnAlign(String, String, char)} using a space as
-     * padding char
+     * padding char.
      * 
      * @param leftColumn
      *            the contents of the left column
@@ -324,7 +342,7 @@ public class FormattingUtils {
     }
 
     /**
-     * Calls {@link #toList(char, String...)} using a '-' as list character
+     * Calls {@link #toList(char, String...)} using a '-' as list character.
      * 
      * @param entries
      *            the list's entries
@@ -336,7 +354,7 @@ public class FormattingUtils {
 
     /**
      * Calls {@link #toList(char, int, String...)} using the chat width as
-     * totalWidth
+     * totalWidth.
      * 
      * @param listChar
      *            the character that will be displayed as bullet point before

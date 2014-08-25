@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.permissions;
 
 import java.util.HashSet;
@@ -10,6 +28,7 @@ import me.taylorkelly.mywarp.permissions.valuebundles.MultiworldValueBundleManag
 import me.taylorkelly.mywarp.permissions.valuebundles.SimpleValueBundleManager;
 import me.taylorkelly.mywarp.timer.TimeBundle;
 
+import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -19,32 +38,32 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 /**
- * Manages PermissionHandlers and individual permissions
+ * Manages PermissionHandlers and individual permissions.
  */
 public class PermissionsManager implements PermissionsHandler {
 
     /**
-     * A set that contains all manually registered permissions
+     * A set that contains all manually registered permissions.
      */
     private final Set<Permission> registeredPermissions = new HashSet<Permission>();
 
     /**
-     * The permissions-handler
+     * The permissions-handler.
      */
     private final PermissionsHandler handler;
 
     /**
-     * The fee-bundle-manager
+     * The fee-bundle-manager.
      */
     private final SimpleValueBundleManager<FeeBundle> feeBundleManager;
 
     /**
-     * The time-bundle-manager
+     * The time-bundle-manager.
      */
     private final SimpleValueBundleManager<TimeBundle> timeBundleManager;
 
     /**
-     * The limit-bundle-manager
+     * The limit-bundle-manager.
      */
     private final MultiworldValueBundleManager<LimitBundle> limitBundleManager;
 
@@ -102,7 +121,7 @@ public class PermissionsManager implements PermissionsHandler {
 
     /**
      * Returns whether the given player may access warps in the given world from
-     * his current location
+     * his current location.
      * 
      * @param player
      *            the player
@@ -196,6 +215,8 @@ public class PermissionsManager implements PermissionsHandler {
                 return new VaultHandler(permissionProvider.getProvider());
             }
         } catch (NoClassDefFoundError e) {
+            // the class is not in the classpath (perhaps Vault is
+            // not installed), so we continue.
         }
 
         Plugin checkPlugin;
@@ -216,7 +237,7 @@ public class PermissionsManager implements PermissionsHandler {
             MyWarp.logger()
                     .info("Using GroupManager v" + checkPlugin.getDescription().getVersion()
                             + " for group support");
-            return new GroupManagerHandler(checkPlugin);
+            return new GroupManagerHandler((GroupManager) checkPlugin);
         }
 
         checkPlugin = MyWarp.server().getPluginManager().getPlugin("PermissionsEx");

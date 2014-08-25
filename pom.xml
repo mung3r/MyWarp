@@ -3,8 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.taylorkelly</groupId>
     <artifactId>mywarp</artifactId>
-    <version>2.6.6-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <!-- Fix encoding warnings -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <!-- Project information -->
     <name>MyWarp</name>
@@ -28,17 +33,19 @@
         <tag>master</tag>
     </scm>
 
-    <properties> <!-- Fix encoding warnings -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/TheE/MyWarp/issues</url>
+    </issueManagement>
 
+    <!-- Dependencies -->
     <repositories>
         <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public/</url>
         </repository>
 
-        <repository> <!-- Holds most permissions plugins -->
+        <repository>
             <id>thee140-cloudbees-release</id>
             <url>http://repository-thee140.forge.cloudbees.com/release/</url>
             <releases>
@@ -61,68 +68,76 @@
     </repositories>
 
     <dependencies>
-        <dependency> <!-- Bukkit implementation -->
+        <!-- Bukkit implementation -->
+        <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.7.9-R0.2</version>
         </dependency>
 
-        <dependency><!-- Dynmap API -->
+        <!-- Used for database communication -->
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+
+        <!-- Dynmap API -->
+        <dependency>
             <groupId>us.dynmap</groupId>
             <artifactId>DynmapCoreAPI</artifactId>
             <version>1.9.4</version>
+            <scope>provided</scope>
         </dependency>
 
-        <dependency> <!-- Part of the permission support -->
+        <!-- Part of the permission support -->
+        <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.4</version>
             <scope>provided</scope>
         </dependency>
 
-        <dependency> <!-- Part of the permission support -->
+        <!-- Part of the permission support -->
+        <dependency>
             <groupId>org.anjocaido</groupId>
             <artifactId>essentialsgroupmanager</artifactId>
             <version>2.10.1</version>
         </dependency>
 
-        <dependency> <!-- Part of the permission support -->
+        <!-- Part of the permission support -->
+        <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>permissionsex</artifactId>
             <version>1.19.6</version>
         </dependency>
 
-        <dependency> <!-- Part of the permission support -->
+        <!-- Part of the permission support -->
+        <dependency>
             <groupId>de.bananaco</groupId>
             <artifactId>bpermissions</artifactId>
             <version>2.10.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-            <version>3.4.1</version>
         </dependency>
     </dependencies>
 
     <build>
         <defaultGoal>install</defaultGoal>
-        <finalName>${project.name}</finalName>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>${basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>plugin.yml</include>
                     <include>config.yml</include>
+                    <include>plugin.yml</include>
                     <include>mywarp_warp-32.png</include>
                 </includes>
             </resource>
             <resource> <!-- Language files -->
-                <targetPath>lang/</targetPath>
-                <filtering>true</filtering>
                 <directory>${basedir}/src/main/resources/</directory>
+                <filtering>true</filtering>
+                <targetPath>lang/</targetPath>
                 <includes>
                     <include>mywarp_lang*.yml</include>
                 </includes>
@@ -133,17 +148,39 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>2.5</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.1</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
                     <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.12.1</version>
+                <executions>
+                    <execution>
+                        <id>verify-style</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <propertyExpansion>basedir=${basedir}</propertyExpansion>
+                    <configLocation>${basedir}/src/main/build/checkstyle.xml</configLocation>
+                    <!-- Don't check files generated by JOOQ -->
+                    <!-- Exclude the UUIDFetcher that will be removed soon -->
+                    <excludes>**/generated/**/*,**/UUIDFetcher.java</excludes>
                 </configuration>
             </plugin>
 
@@ -163,6 +200,12 @@
                                     <include>org.jooq:jooq</include>
                                 </includes>
                             </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.jooq</pattern>
+                                    <shadedPattern>me.taylorkelly.mywarp.internal.jooq</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>

@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.timer;
 
 import org.bukkit.command.CommandSender;
@@ -7,7 +25,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
 /**
- * The TimerFactory manages running timers
+ * The TimerFactory manages running timers.
  */
 public class TimerManager {
 
@@ -28,6 +46,8 @@ public class TimerManager {
     /**
      * Registers a new timer. This method will start the timer right away.
      * 
+     * @param <T>
+     *            the type of the timer
      * @param timer
      *            the timer
      */
@@ -46,6 +66,8 @@ public class TimerManager {
      * Cancels the timer running for the given identifier of the given
      * class-type, if any.
      * 
+     * @param <T>
+     *            the type of the timer
      * @param identifier
      *            the object the timer runs for
      * @param clazz
@@ -54,7 +76,7 @@ public class TimerManager {
      */
     public <T> boolean cancelTimer(T identifier, Class<? extends TimerAction<T>> clazz) {
         TimerAction<?> timer = timers.remove(identifier, clazz);
-        if (timers == null) {
+        if (timer == null) {
             return false;
         }
         timer.cancel();
@@ -65,6 +87,8 @@ public class TimerManager {
      * Checks if the given object has a identifier of the given class-type
      * running.
      * 
+     * @param <T>
+     *            the type of the timer
      * @param identifier
      *            the object the timer runs for
      * @param clazz
@@ -79,6 +103,8 @@ public class TimerManager {
      * Gets the ticks remaining until the timer for the given identifier of the
      * given class-type is executed. Returns 0 if not timer is running.
      * 
+     * @param <T>
+     *            the type of the timer
      * @param identifier
      *            the object the timer runs for
      * @param clazz
@@ -97,6 +123,8 @@ public class TimerManager {
      * Gets the remaining seconds until the timer for the given identifier of
      * the given class-type is executed. Will return 0 if not timer is running.
      * 
+     * @param <T>
+     *            the type of the timer
      * @param identifier
      *            the object the timer runs for
      * @param clazz
@@ -113,6 +141,8 @@ public class TimerManager {
      * Removes the timer for the given object, identified by the given
      * class-type from the underlying Table. This method is called only by a
      * TimerAction when it ends itself and <b>must not be used</b> otherwise.
+     * 
+     * * @param <T> the type of the timer
      * 
      * @param identifier
      *            the object the timer runs for

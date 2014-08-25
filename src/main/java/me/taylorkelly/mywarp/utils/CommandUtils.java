@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.utils;
 
 import java.util.Collection;
@@ -70,7 +88,7 @@ public class CommandUtils {
      */
     public static Warp getUsableWarp(final CommandSender sender, String nameFilter) throws CommandException {
         return getWarp(sender, nameFilter, sender instanceof Entity ? WarpUtils.isUsable((Entity) sender)
-                : Predicates.<Warp> alwaysTrue());
+                : Predicates.<Warp>alwaysTrue());
     }
 
     /**
@@ -305,12 +323,20 @@ public class CommandUtils {
         StrBuilder ret = new StrBuilder();
         for (Warp warp : warps) {
             ret.appendSeparator(", ");
-            // XXX color warp names
             ret.append(warp.getName());
         }
         return ret.toString();
     }
 
+    /**
+     * Joins all worlds in the given collection in one string, separated by
+     * <code>", "</code>.
+     * 
+     * @param worlds
+     *            a collection of worlds
+     * @return a string with all world-names or <code>-</code> if the collection
+     *         was empty
+     */
     public static String joinWorlds(Collection<World> worlds) {
         if (worlds.isEmpty()) {
             return "-";

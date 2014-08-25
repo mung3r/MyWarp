@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.timer;
 
 import java.util.UUID;
@@ -73,12 +91,19 @@ public class WarpWarmup extends TimerAction<UUID> {
     }
 
     /**
-     * Runnable that checks if the player moves
+     * Runnable that checks if the player moves.
      */
     private class MovementCheck extends PlayerCheck {
 
         private final Location originalLoc;
 
+        /**
+         * Initializes the check with the given location. A player may not move
+         * away from it.
+         * 
+         * @param originalLoc
+         *            the original location
+         */
         public MovementCheck(Location originalLoc) {
             this.originalLoc = originalLoc;
         }
@@ -100,12 +125,19 @@ public class WarpWarmup extends TimerAction<UUID> {
     }
 
     /**
-     * Runnable that checks if the player loses any health
+     * Runnable that checks if the player loses any health.
      */
     private class HealthCheck extends PlayerCheck {
 
         private final double originalHealth;
 
+        /**
+         * Initialzes this check with the given health amount. The checked
+         * player may not have less health than this.
+         * 
+         * @param originalHealth
+         *            the original health
+         */
         public HealthCheck(double originalHealth) {
             this.originalHealth = originalHealth;
         }
@@ -126,10 +158,17 @@ public class WarpWarmup extends TimerAction<UUID> {
     }
 
     /**
-     * An abstract runnable that runs checks on a player
+     * An abstract runnable that runs checks on a player.
      */
     private abstract class PlayerCheck extends BukkitRunnable {
 
+        /**
+         * Returns whether the underling action should be cancelled.
+         * 
+         * @param player
+         *            the player who is checked
+         * @return true if the action should be cancelled
+         */
         public abstract boolean cancelAction(Player player);
 
         @Override

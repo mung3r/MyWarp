@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.dataconnections;
 
 import static me.taylorkelly.mywarp.dataconnections.generated.Tables.*;
@@ -44,12 +62,14 @@ public class JOOQConnection implements DataConnection {
 
     /**
      * Creates this JOOQConnection using the given DSLContext with the given
-     * connection.
+     * connection, using the given executor to run all tasks.
      * 
      * @param create
      *            the DSLContext to use
      * @param conn
      *            the Connection to use
+     * @param executor
+     *            the executor that runs all taks
      */
     protected JOOQConnection(DSLContext create, Connection conn, ListeningExecutorService executor) {
         this.create = create;

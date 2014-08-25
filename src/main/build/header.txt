@@ -16,19 +16,3 @@
  * You should have received a copy of the GNU General Public License
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
-package me.taylorkelly.mywarp.permissions;
-
-import org.bukkit.entity.Player;
-
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
-/**
- * Handler for PermissionsEx.
- */
-public class PermissionsExHandler implements PermissionsHandler {
-
-    @Override
-    public boolean playerHasGroup(Player player, String group) {
-        return PermissionsEx.getPermissionManager().getUser(player.getName()).inGroup(group, player.getWorld().getName());
-    }
-}

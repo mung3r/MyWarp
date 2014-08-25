@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.commands;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -19,6 +37,16 @@ import org.bukkit.command.CommandSender;
  */
 public class SocialCommands {
 
+    /**
+     * Gives a warp to a player.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "give" }, usage = "<player> <name>", desc = "commands.give.description", fee = Fee.GIVE, min = 2, flags = "df", permissions = { "mywarp.warp.soc.give" })
     public void giveWarp(CommandContext args, CommandSender sender) throws CommandException {
         // check flag permissions first because anything else depends on them
@@ -73,6 +101,16 @@ public class SocialCommands {
         }
     }
 
+    /**
+     * Invites a player or a group to a player.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "invite" }, usage = "<player> <name>", desc = "commands.invite.description", fee = Fee.INVITE, min = 2, permissions = { "mywarp.warp.soc.invite" })
     public void inviteToWarp(CommandContext args, CommandSender sender) throws CommandException {
         Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(1));
@@ -138,6 +176,16 @@ public class SocialCommands {
 
     }
 
+    /**
+     * Privatizes a warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "private" }, usage = "<name>", desc = "commands.private.description", fee = Fee.PRIVATE, min = 1, permissions = { "mywarp.warp.soc.private" })
     public void privatizeWarp(CommandContext args, CommandSender sender) throws CommandException {
         Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
@@ -152,6 +200,16 @@ public class SocialCommands {
                 .getString("commands.private.privatized", sender, warp.getName()));
     }
 
+    /**
+     * Publicizes a warp.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "public" }, usage = "<name>", desc = "commands.public.description", fee = Fee.PUBLIC, min = 1, permissions = { "mywarp.warp.soc.public" })
     public void publicizeWarp(CommandContext args, CommandSender sender) throws CommandException {
         Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(0));
@@ -166,6 +224,16 @@ public class SocialCommands {
                 .getString("commands.public.publicized", sender, warp.getName()));
     }
 
+    /**
+     * Unnvites a player or a group to a player.
+     * 
+     * @param args
+     *            the command-arguments
+     * @param sender
+     *            the sender who initiated the command
+     * @throws CommandException
+     *             if the command is cancelled
+     */
     @Command(aliases = { "uninvite" }, usage = "<player> <name>", desc = "commands.uninvite.description", fee = Fee.UNINVITE, min = 2, permissions = { "mywarp.warp.soc.uninvite" })
     public void uninviteFromWarp(CommandContext args, CommandSender sender) throws CommandException {
         Warp warp = CommandUtils.getModifiableWarp(sender, args.getJoinedStrings(1));

@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp;
 
 import java.util.List;
@@ -17,7 +35,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if world access should be controlled
      */
-    public boolean isControlWorldAccess();
+    boolean isControlWorldAccess();
 
     /**
      * Returns whether currently unloaded chunks should be loaded manually
@@ -25,7 +43,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if chunks should be loaded before
      */
-    public boolean isPreloadChunks();
+    boolean isPreloadChunks();
 
     /**
      * Returns whether horses ridden by the entity who is teleported, should be
@@ -33,7 +51,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if ridden horses should be teleported too
      */
-    public boolean isTeleportTamedHorses();
+    boolean isTeleportTamedHorses();
 
     /**
      * Returns whether entities who are leashed by the entity who is teleported,
@@ -41,7 +59,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if leashed entities should be teleported too
      */
-    public boolean isTeleportLeashedEntities();
+    boolean isTeleportLeashedEntities();
 
     /**
      * Returns whether an effect should be shown at the location of entities who
@@ -49,7 +67,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if the effect should be shown
      */
-    public boolean isShowTeleportEffect();
+    boolean isShowTeleportEffect();
 
     /**
      * Returns whether warps should be suggested base on popularity when
@@ -57,56 +75,56 @@ public interface Settings extends Reloadable {
      * 
      * @return true if warps should be suggested
      */
-    public boolean isDynamicsSuggestWarps();//
+    boolean isDynamicsSuggestWarps();
 
     /**
      * Returns whether MySQL is enabled.
      * 
      * @return true if MySQL is enabled
      */
-    public boolean isMysqlEnabled();//
+    boolean isMysqlEnabled();
 
     /**
      * Gets the address of the host the MySQL serve runs on.
      * 
      * @return the MySQL host address
      */
-    public String getMysqlHostAdress();//
+    String getMysqlHostAdress();
 
     /**
-     * Gets the port the MySQL server runs on
+     * Gets the port the MySQL server runs on.
      * 
      * @return the MySQL port
      */
-    public int getMysqlPort();//
+    int getMysqlPort();
 
     /**
-     * Gets the name of the database where all of MyWarps tables are stored
+     * Gets the name of the database where all of MyWarps tables are stored.
      * 
      * @return the database name
      */
-    public String getMysqlDatabaseName();//
+    String getMysqlDatabaseName();
 
     /**
-     * Gets the username of the MySQL user
+     * Gets the username of the MySQL user.
      * 
      * @return the username
      */
-    public String getMysqlUsername();//
+    String getMysqlUsername();
 
     /**
-     * Gets the password of the MySQL user
+     * Gets the password of the MySQL user.
      * 
      * @return the password
      */
-    public String getMysqlPassword();//
+    String getMysqlPassword();
 
     /**
      * Gets the default locale.
      * 
      * @return the default locale
      */
-    public Locale getLocalizationDefaultLocale();//
+    Locale getLocalizationDefaultLocale();
 
     /**
      * Returns whether localizations should be resolved individually per player
@@ -114,7 +132,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if localizations are per player
      */
-    public boolean isLocalizationPerPlayer();//
+    boolean isLocalizationPerPlayer();
 
     /**
      * Returns whether safety checks for teleports are enabled.
@@ -122,56 +140,56 @@ public interface Settings extends Reloadable {
      * @return true if the location's safety should be checked before
      *         teleporting an entity
      */
-    public boolean isSafetyEnabled();//
+    boolean isSafetyEnabled();
 
     /**
      * Gets the radius that is used to search a safe location.
      * 
      * @return the search radius
      */
-    public int getSafetySearchRadius();//
+    int getSafetySearchRadius();
 
     /**
      * Returns whether warp signs are enabled.
      * 
      * @return true if warp signs are enabled
      */
-    public boolean isWarpSignsEnabled();//
+    boolean isWarpSignsEnabled();
 
     /**
      * Gets all identifiers for warp signs.
      * 
      * @return all warp sign identifiers
      */
-    public List<String> getWarpSignsIdentifiers();//
+    List<String> getWarpSignsIdentifiers();
 
     /**
      * Returns whether warp creation limits are enabled.
      * 
      * @return true if limits are enabled
      */
-    public boolean isLimitsEnabled();
+    boolean isLimitsEnabled();
 
     /**
      * Gets the default limit-bundle.
      * 
      * @return the default limit-bundle.
      */
-    public LimitBundle getLimitsDefaultLimitBundle();
+    LimitBundle getLimitsDefaultLimitBundle();
 
     /**
      * Gets a list of additional configured limit-bundles.
      * 
      * @return all configured limit-bundles
      */
-    public List<LimitBundle> getLimitsConfiguredLimitBundles();
+    List<LimitBundle> getLimitsConfiguredLimitBundles();
 
     /**
      * Returns whether timers are enabled.
      * 
      * @return true if timers are enabled
      */
-    public boolean isTimersEnabled();
+    boolean isTimersEnabled();
 
     /**
      * Returns whether the warp-cooldown should notify users when they have
@@ -179,7 +197,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if users should be notified
      */
-    public boolean isTimersCooldownNotifyOnFinish();
+    boolean isTimersCooldownNotifyOnFinish();
 
     /**
      * Returns whether the warp-warmup should be aborted if the users takes any
@@ -187,7 +205,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if the warp-warmuo should be aborted
      */
-    public boolean isTimersWarmupAbortOnDamage();
+    boolean isTimersWarmupAbortOnDamage();
 
     /**
      * Returns whether the warp-warmup should be aborted if the user moves while
@@ -195,7 +213,7 @@ public interface Settings extends Reloadable {
      * 
      * @return true if the warp-warmup should be aborted
      */
-    public boolean isTimersWarmupAbortOnMove();
+    boolean isTimersWarmupAbortOnMove();
 
     /**
      * Returns whether the warp-warmup should notify users when the warmup
@@ -203,28 +221,28 @@ public interface Settings extends Reloadable {
      * 
      * @return true if users should be notified
      */
-    public boolean isTimersWarmupNotifyOnStart();
+    boolean isTimersWarmupNotifyOnStart();
 
     /**
      * Gets the default time-bundle.
      * 
      * @return the default time-bundle
      */
-    public TimeBundle getTimersDefaultTimeBundle();
+    TimeBundle getTimersDefaultTimeBundle();
 
     /**
      * Gets a list of all additional configured time-bundles.
      * 
      * @return all configured time-bundles
      */
-    public List<TimeBundle> getTimersConfiguredTimeBundles();
+    List<TimeBundle> getTimersConfiguredTimeBundles();
 
     /**
      * Returns whether economy support is enabled.
      * 
      * @return true if economy support is enabled
      */
-    public boolean isEconomyEnabled();//
+    boolean isEconomyEnabled();
 
     /**
      * Returns whether the economy link should inform users after successful
@@ -232,35 +250,35 @@ public interface Settings extends Reloadable {
      * 
      * @return true if users should be informed after a transaction
      */
-    public boolean isEconomyInformAfterTransaction();//
+    boolean isEconomyInformAfterTransaction();
 
     /**
      * Gets the default fee-bundle.
      * 
      * @return the default fee-bundle.
      */
-    public FeeBundle getEconomyDefaultFeeBundle();
+    FeeBundle getEconomyDefaultFeeBundle();
 
     /**
      * Gets a list of additional configured fee-bundles.
      * 
      * @return all configured fee-bundles
      */
-    public List<FeeBundle> getEconomyConfiguredFeeBundles();
+    List<FeeBundle> getEconomyConfiguredFeeBundles();
 
     /**
      * Returns whether Dynmap should be used as marker-service.
      * 
      * @return true if Dynmap should be used
      */
-    public boolean isDynmapEnabled();//
+    boolean isDynmapEnabled();
 
     /**
      * Gets the display name of the layer that stores MyWarp's markers.
      * 
      * @return the layer's display name
      */
-    public String getDynmapLayerDisplayName();//
+    String getDynmapLayerDisplayName();
 
     /**
      * Returns whether the layer that stores MyWarp's markers is hidden by
@@ -268,21 +286,21 @@ public interface Settings extends Reloadable {
      * 
      * @return true if the layer is hidden by default
      */
-    public boolean isDynmapLayerHiddenByDefault();//
+    boolean isDynmapLayerHiddenByDefault();
 
     /**
      * Gets the priority of the layer that stores MyWarp's markers.
      * 
      * @return the layer's priority
      */
-    public int getDynmapLayerPriority();//
+    int getDynmapLayerPriority();
 
     /**
      * Gets the Dynmap identifier of the icon that is used for MyWarp's markers.
      * 
      * @return the icon's identifier
      */
-    public String getDynmapMarkerIconID();//
+    String getDynmapMarkerIconID();
 
     /**
      * Gets the minimal zoom level that must be meat to display MyWarp's
@@ -290,13 +308,13 @@ public interface Settings extends Reloadable {
      * 
      * @return the minimal zoom level
      */
-    public int getDynmapMarkerMinZoom();//
+    int getDynmapMarkerMinZoom();
 
     /**
      * Returns whether MyWarp's markers should show a label by default.
      * 
      * @return true if the label is visible by default
      */
-    public boolean isDynmapMarkerShowLable();//
+    boolean isDynmapMarkerShowLable();
 
 }

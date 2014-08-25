@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.localization;
 
 import java.io.File;
@@ -25,7 +43,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 /**
- * The central manager for all localizations uses through the plugin
+ * A manager for localization files.
  */
 public class LocalizationManager implements Reloadable {
 
@@ -36,7 +54,7 @@ public class LocalizationManager implements Reloadable {
     private final Map<String, Locale> localeCache = new HashMap<String, Locale>();
 
     /**
-     * The resourceBundleControl-object for our ResourceBundles
+     * The resourceBundleControl-object for our ResourceBundles.
      */
     private final ResourceBundleControl resourceBundleControl = new ResourceBundleControl();
 
@@ -63,6 +81,7 @@ public class LocalizationManager implements Reloadable {
                 try {
                     bundled.close();
                 } catch (IOException e) {
+                    //we cannot do anything, so this can be ignored for now.
                 }
             }
             // ...and update them!
@@ -203,15 +222,17 @@ public class LocalizationManager implements Reloadable {
      * @param p
      *            the player
      * @return the used locale as string
-     * @throws IllegalArgumentException
      * @throws IllegalAccessException
-     * @throws SecurityException
+     *             if the underlying reflection fails
      * @throws NoSuchFieldException
+     *             if the underlying reflection fails
      * @throws InvocationTargetException
+     *             if the underlying reflection fails
      * @throws NoSuchMethodException
+     *             if the underlying reflection fails
      */
-    private String getLanguage(Player p) throws IllegalArgumentException, IllegalAccessException,
-            SecurityException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
+    private String getLanguage(Player p) throws IllegalAccessException, NoSuchFieldException,
+            InvocationTargetException, NoSuchMethodException {
         Object minecraftHandle = p.getClass().getMethod("getHandle").invoke(p);
         Field localeField = minecraftHandle.getClass().getDeclaredField("locale");
         localeField.setAccessible(true);

@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.utils;
 
 import java.io.File;
@@ -85,7 +103,7 @@ public class FancyYamlConfiguration extends YamlConfiguration {
      * @throws IllegalArgumentException
      *             Thrown if file is null
      */
-    public static FancyYamlConfiguration loadConfiguration(File file) {
+    public static FancyYamlConfiguration loadConfiguration(File file) throws IllegalArgumentException {
         Validate.notNull(file, "File cannot be null");
 
         FancyYamlConfiguration config = new FancyYamlConfiguration();
@@ -93,6 +111,7 @@ public class FancyYamlConfiguration extends YamlConfiguration {
         try {
             config.load(file);
         } catch (FileNotFoundException ex) {
+            // following bukkit's logic here...
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
         } catch (InvalidConfigurationException ex) {
@@ -116,7 +135,8 @@ public class FancyYamlConfiguration extends YamlConfiguration {
      * @throws IllegalArgumentException
      *             Thrown if stream is null
      */
-    public static FancyYamlConfiguration loadConfiguration(InputStream stream) {
+    public static FancyYamlConfiguration loadConfiguration(InputStream stream)
+            throws IllegalArgumentException {
         Validate.notNull(stream, "Stream cannot be null");
 
         FancyYamlConfiguration config = new FancyYamlConfiguration();
@@ -132,8 +152,13 @@ public class FancyYamlConfiguration extends YamlConfiguration {
         return config;
     }
 
-    // This will be included in snakeyaml 1.10, but until then we have to do it
-    // manually.
+    /**
+     * A fancy dumper that allows reading and writing <code>|</code> for
+     * formatted, multiline strings.
+     * 
+     * This will be included in snakeyaml 1.10, but until then we have to do it
+     * manually.
+     */
     private class FancyDumperOptions extends DumperOptions {
         @Override
         public DumperOptions.ScalarStyle calculateScalarStyle(ScalarAnalysis analysis,

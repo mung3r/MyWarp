@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.data;
 
 import java.util.ArrayList;
@@ -22,7 +40,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
 /**
- * A bundle that stores warp creation limits
+ * A bundle that stores warp creation limits.
  */
 public class LimitBundle extends MultiworldValueBundle {
 
@@ -33,7 +51,7 @@ public class LimitBundle extends MultiworldValueBundle {
         /**
          * The total limit (accounts all warps).
          */
-        TOTAL(Predicates.<Warp> alwaysTrue(), "total"),
+        TOTAL(Predicates.<Warp>alwaysTrue(), "total"),
         /**
          * The private limit (accounts only private warps).
          */
@@ -49,8 +67,11 @@ public class LimitBundle extends MultiworldValueBundle {
         /**
          * Initializes this Limit.
          * 
-         * @param check
-         *            the corresponding build-warp
+         * @param condition
+         *            the condition a warp must met to be counted under this
+         *            limit
+         * @param permissionSuffix
+         *            the permission-suffix that checks for this limit will use
          */
         private Limit(Predicate<Warp> condition, String permissionSuffix) {
             this.condition = condition;
@@ -103,6 +124,7 @@ public class LimitBundle extends MultiworldValueBundle {
      * Returns whether the given iterable contains has least the given number of
      * entries.
      * 
+     * @param <T> the type of the objects
      * @param iterable
      *            the iterable to check
      * @param count

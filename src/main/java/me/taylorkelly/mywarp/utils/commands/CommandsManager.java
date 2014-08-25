@@ -1,3 +1,21 @@
+/**
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.taylorkelly.mywarp.utils.commands;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +37,9 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+/**
+ * The commands manager handles parsing and execution of commands.
+ */
 public class CommandsManager {
 
     /**
@@ -35,7 +56,7 @@ public class CommandsManager {
     private HashMap<Method, Object> instances = new HashMap<Method, Object>();
 
     /**
-     * Stores the injector
+     * Stores the injector.
      */
     private Injector injector;
 
@@ -51,8 +72,8 @@ public class CommandsManager {
      * because it is either the same or a superclass or superinterface of the
      * command sender that is specified in the given command.
      * 
-     * @param command
-     *            the command to check
+     * @param method
+     *            the method to check
      * @param sender
      *            the sender the check
      * @return true if the command sender can execute the command
@@ -73,9 +94,13 @@ public class CommandsManager {
      * 
      * @param sender
      *            the sender of the command
+     * @param topCmdName
+     *            the name or alias of the root command
      * @param fullArgs
      *            the full arguments given when executing the command
      * @throws CommandException
+     *             when conditions defined for this command (flags,
+     *             argument-count, permissions...) are not met
      */
     private void execute(CommandSender sender, String topCmdName, String[] fullArgs) throws CommandException {
         Method method = commands.get(null).get(topCmdName);
@@ -107,8 +132,8 @@ public class CommandsManager {
      * @param fullArgs
      *            all arguments given when executing the command
      * @throws CommandException
-     *             When conditions defined for this command (flags,
-     *             argument-count, permissions...) are not met.
+     *             when conditions defined for this command (flags,
+     *             argument-count, permissions...) are not met
      */
     private void executeMethod(Method method, CommandSender sender, int level, String[] fullArgs)
             throws CommandException {
@@ -367,7 +392,7 @@ public class CommandsManager {
                     + MyWarp.inst().getLocalizationManager().getString("commands.use-permission", sender));
         } catch (CommandUsageException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
-            sender.sendMessage(e.getUsage());
+            sender.sendMessage(e.getCorrectUsage());
         } catch (CommandException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
         }
@@ -450,6 +475,7 @@ public class CommandsManager {
      * @param sender
      *            the CommandSender that caused this invocation process
      * @throws CommandException
+     *             if thrown be the executed method
      */
     private void invokeMethod(Method method, Object instance, Object[] methodArgs, CommandSender sender)
             throws CommandException {
