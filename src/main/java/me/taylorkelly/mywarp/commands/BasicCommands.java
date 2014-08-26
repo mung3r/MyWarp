@@ -38,7 +38,7 @@ import me.taylorkelly.mywarp.economy.FeeBundle.Fee;
 import me.taylorkelly.mywarp.utils.CommandUtils;
 import me.taylorkelly.mywarp.utils.FormattingUtils;
 import me.taylorkelly.mywarp.utils.Matcher;
-import me.taylorkelly.mywarp.utils.PaginatedResult;
+import me.taylorkelly.mywarp.utils.StringPaginator;
 import me.taylorkelly.mywarp.utils.WarpUtils;
 import me.taylorkelly.mywarp.utils.commands.Command;
 import me.taylorkelly.mywarp.utils.commands.CommandContext;
@@ -51,6 +51,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Ordering;
@@ -267,13 +268,14 @@ public class BasicCommands {
             }
 
         }));
+        
+        StringPaginator<Warp> paginator = StringPaginator.of(results, MyWarp.inst().getLocalizationManager()
+                .getColorlessString("commands.list.heading", sender));
 
-        PaginatedResult<Warp> warpList = new PaginatedResult<Warp>(MyWarp.inst().getLocalizationManager()
-                .getColorlessString("commands.list.heading", sender)
-                + ", ") {
+        paginator.withMapping(new Function<Warp, String>() {
 
             @Override
-            public String format(Warp warp, CommandSender sender) {
+            public String apply(Warp warp) {
                 // 'name'(+) by player
                 StringBuilder first = new StringBuilder();
                 first.append("'");
@@ -304,10 +306,10 @@ public class BasicCommands {
                 last.append(")");
                 return (FormattingUtils.twoColumnAlign(first.toString(), last.toString()));
             }
-        };
 
+        });
         try {
-            warpList.display(sender, results, args.getInteger(0, 1));
+            paginator.displayPage(sender, args.getInteger(0, 1));
         } catch (NumberFormatException e) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getString("commands.invalid-number", sender, args.getCommandString()));
@@ -411,14 +413,16 @@ public class BasicCommands {
      *             if the command is cancelled
      */
     @Command(aliases = { "help" }, usage = "#", desc = "commands.help.description", fee = Fee.HELP, max = 1, permissions = { "mywarp.warp.basic.help" })
-    public void showHelp(final CommandContext args, CommandSender sender) throws CommandException {
-        PaginatedResult<Command> cmdList = new PaginatedResult<Command>(MyWarp.inst()
-                .getLocalizationManager().getColorlessString("commands.help.heading", sender)
-                + ", ", MyWarp.inst().getLocalizationManager()
-                .getColorlessString("commands.help.note", sender)) {
+    public void showHelp(final CommandContext args, final CommandSender sender) throws CommandException {
+        StringPaginator<Command> paginator = StringPaginator.of(MyWarp.inst().getCommandsManager()
+                .getUsableCommands(sender, "warp"), MyWarp.inst().getLocalizationManager()
+                .getColorlessString("commands.help.heading", sender));
+        paginator.withNote(MyWarp.inst().getLocalizationManager()
+                .getColorlessString("commands.help.note", sender));
+        paginator.withMapping(new Function<Command, String>() {
 
             @Override
-            public String format(Command cmd, CommandSender sender) {
+            public String apply(Command cmd) {
                 // /root sub|sub [flags] <args>
                 StrBuilder ret = new StrBuilder();
                 ret.append(ChatColor.GOLD);
@@ -431,11 +435,10 @@ public class BasicCommands {
                 ret.append(MyWarp.inst().getCommandsManager().getArguments(cmd, sender));
                 return (ret.toString());
             }
-        };
 
+        });
         try {
-            cmdList.display(sender, MyWarp.inst().getCommandsManager().getUsableCommands(sender, "warp"),
-                    args.getInteger(0, 1));
+            paginator.displayPage(sender, args.getInteger(0, 1));
         } catch (NumberFormatException e) {
             throw new CommandException(MyWarp.inst().getLocalizationManager()
                     .getString("commands.invalid-number", sender, args.getCommandString()));

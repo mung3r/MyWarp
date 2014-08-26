@@ -194,10 +194,10 @@ public class Warp implements Comparable<Warp> {
         this.visits = checkNotNull(visits);
         this.welcomeMessage = checkNotNull(welcomeMessage);
         checkNotNull(invitedPlayerIds);
-        checkArgument(Iterables.contains(inivtedPlayerIds, null));
+        checkArgument(!Iterables.contains(inivtedPlayerIds, null));
         Iterables.addAll(this.invitedPlayerIds, invitedPlayerIds);
         checkNotNull(invitedGroups);
-        checkArgument(Iterables.contains(invitedGroups, null));
+        checkArgument(!Iterables.contains(invitedGroups, null));
         Iterables.addAll(this.invitedGroups, invitedGroups);
     }
 
