@@ -47,7 +47,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.FileUtil;
 import org.dynmap.DynmapCommonAPI;
 
 import com.google.common.base.Preconditions;
@@ -291,20 +290,6 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         // initialize the command manager and register all used commands
         commandsManager = new CommandsManager();
         getCommandsManager().register(RootCommands.class);
-
-        // rename extremely old sqlite-database file - this needs to be done
-        // before creating the database connection
-        File newDatabase = new File(getDataFolder(), "warps.db");
-        File oldDatabase = new File("homes-warps.db");
-        if (!newDatabase.exists() && oldDatabase.exists()) {
-            if (!FileUtil.copy(oldDatabase, newDatabase)) {
-                logger().severe(
-                        "Failed to copy " + oldDatabase.getName() + "to " + newDatabase.getName()
-                                + ", the old database will be ignored!");
-            } else {
-                logger().info("Your old SQlite database has been copied to the new format.");
-            }
-        }
 
         // initialize the database connection
         ListenableFuture<DataConnection> futureConnection;
