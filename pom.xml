@@ -68,18 +68,23 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>3.0</version>
+        </dependency>
+
         <!-- Bukkit implementation -->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.7.9-R0.2</version>
-        </dependency>
-
-        <!-- Used for database communication -->
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-            <version>3.4.1</version>
         </dependency>
 
         <!-- Dynmap API -->
@@ -134,7 +139,12 @@
                     <include>mywarp_warp-32.png</include>
                 </includes>
             </resource>
-            <resource> <!-- Language files -->
+            <resource> <!-- database migration scripts -->
+                <targetPath>migrations/</targetPath>
+                <filtering>false</filtering>
+                <directory>${basedir}/src/main/resources/migrations/</directory>
+            </resource>
+            <resource> <!-- localization files -->
                 <directory>${basedir}/src/main/resources/</directory>
                 <filtering>true</filtering>
                 <targetPath>lang/</targetPath>
@@ -198,12 +208,17 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.jooq:jooq</include>
+                                    <include>org.flywaydb:flyway-core</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>org.jooq</pattern>
                                     <shadedPattern>me.taylorkelly.mywarp.internal.jooq</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.flywaydb</pattern>
+                                    <shadedPattern>me.taylorkelly.mywarp.internal.flyway</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

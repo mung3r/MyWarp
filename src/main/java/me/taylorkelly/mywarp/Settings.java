@@ -85,25 +85,11 @@ public interface Settings extends Reloadable {
     boolean isMysqlEnabled();
 
     /**
-     * Gets the address of the host the MySQL serve runs on.
+     * Gets data source name of the MySQL server.
      * 
-     * @return the MySQL host address
+     * @return the MySQL server's dsn
      */
-    String getMysqlHostAdress();
-
-    /**
-     * Gets the port the MySQL server runs on.
-     * 
-     * @return the MySQL port
-     */
-    int getMysqlPort();
-
-    /**
-     * Gets the name of the database where all of MyWarps tables are stored.
-     * 
-     * @return the database name
-     */
-    String getMysqlDatabaseName();
+    String getMysqlDsn();
 
     /**
      * Gets the username of the MySQL user.

@@ -19,9 +19,7 @@ warpSigns:
   - Warp
 mysql:
   enabled: false
-  host: 'localhost'
-  port: 3306
-  database: 'minecraft'
+  dsn: 'jdbc:mysql://localhost/mywarp'
   username: 'username'
   password: 'password'
 limits:
@@ -78,4 +76,4 @@ dynmap:
     iconID: 'mywarp_warp-32'
     minZoom: 0
     showLabel: false
-    minZoom: 
+    minZoom:

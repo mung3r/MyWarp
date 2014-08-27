@@ -60,11 +60,10 @@ public class AdminCommands {
      * @throws CommandException
      *             if the command is cancelled
      */
-    @Command(aliases = { "import" }, usage = "<sqlite path/to/db|mysql host port database user password|legacy-sqlite path/to/db|legacy-mysql host port database user password table-name>", desc = "commands.import.description", min = 2, max = 7, flags = "f", permissions = { "mywarp.admin.import" })
+    @Command(aliases = { "import" }, usage = "<sqlite path/to/db|mysql dsn user password|legacy-sqlite path/to/db|legacy-mysql host port database user password table-name>", desc = "commands.import.description", min = 2, max = 7, flags = "f", permissions = { "mywarp.admin.import" })
     public void importWarps(final CommandContext args, final CommandSender sender) throws CommandException {
         DataMigrator migrator;
-        // at this point things get messy - the current command manager is
-        // pushed over its boundaries
+        // everything is below is a horrible mess
         if (args.getString(0).equalsIgnoreCase("legacy-mysql")) {
             if (args.argsLength() != 7) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
@@ -91,7 +90,7 @@ public class AdminCommands {
             }
             try {
                 migrator = new DataConnectionMigrator(MySQLConnection.getConnection(args.getString(1),
-                        args.getInteger(2), args.getString(3), args.getString(4), args.getString(5), false));
+                        args.getString(2), args.getString(3), false));
             } catch (NumberFormatException e) {
                 throw new CommandException(MyWarp.inst().getLocalizationManager()
                         .getString("commands.invalid-number", sender, args.getCommandString()));

@@ -242,7 +242,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     /*
      * (non-Javadoc)
      * 
-     * @see org.bukkit.plugin.java.JavaPlugin#onCommand(CommandSender, Command, String, String[])
+     * @see org.bukkit.plugin.java.JavaPlugin#onCommand(CommandSender, Command,
+     * String, String[])
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
@@ -308,9 +309,8 @@ public class MyWarp extends JavaPlugin implements Reloadable {
         // initialize the database connection
         ListenableFuture<DataConnection> futureConnection;
         if (getSettings().isMysqlEnabled()) {
-            futureConnection = MySQLConnection.getConnection(getSettings().getMysqlHostAdress(),
-                    getSettings().getMysqlPort(), getSettings().getMysqlDatabaseName(), getSettings()
-                            .getMysqlUsername(), getSettings().getMysqlPassword(), true);
+            futureConnection = MySQLConnection.getConnection(getSettings().getMysqlDsn(), getSettings()
+                    .getMysqlUsername(), getSettings().getMysqlPassword(), true);
         } else {
             futureConnection = SQLiteConnection.getConnection(new File(getDataFolder(), "mywarps.db"), true);
         }

@@ -158,18 +158,8 @@ public class BukkitSettings implements Settings {
     }
 
     @Override
-    public String getMysqlHostAdress() {
-        return config.getString("mysql.host");
-    }
-
-    @Override
-    public int getMysqlPort() {
-        return config.getInt("mysql.port");
-    }
-
-    @Override
-    public String getMysqlDatabaseName() {
-        return config.getString("mysql.database");
+    public String getMysqlDsn() {
+        return config.getString("mysql.dsn");
     }
 
     @Override
