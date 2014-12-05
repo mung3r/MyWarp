@@ -251,6 +251,12 @@ public class MyWarp extends JavaPlugin implements Reloadable {
     @Override
     public void onEnable() {
 
+        //create the data folder
+        File dataFolder = this.getDataFolder();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
         // setup the configurations
         warpSettings = new WarpSettings();
 
