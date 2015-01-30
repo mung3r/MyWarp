@@ -123,8 +123,6 @@ public class BukkitFeeProvider implements FeeProvider {
          *            used when a warp is publicized
          * @param publicizeFee
          *            used when a warp is privatized
-         * @param searchFee
-         *            used when the search-command is accessed
          * @param uninviteFee
          *            used when uninviting users or groups
          * @param updateFee
@@ -142,7 +140,7 @@ public class BukkitFeeProvider implements FeeProvider {
          */
         public FeeBundle(String identifier, double assetsFee, double createFee, double createPrivateFee,
                 double deleteFee, double giveFee, double helpFee, double infoFee, double inviteFee,
-                double listFee, double pointFee, double privatizeFee, double publicizeFee, double searchFee,
+                double listFee, double pointFee, double privatizeFee, double publicizeFee,
                 double uninviteFee, double updateFee, double warpPlayerFee, double warpSignCreateFee,
                 double warpSignUseFee, double warpFee, double welcomeFee) {
             super(identifier, "mywarp.economy"); // NON-NLS
@@ -159,7 +157,6 @@ public class BukkitFeeProvider implements FeeProvider {
             fees.put(FeeType.POINT, pointFee);
             fees.put(FeeType.PRIVATE, privatizeFee);
             fees.put(FeeType.PUBLIC, publicizeFee);
-            fees.put(FeeType.SEARCH, searchFee);
             fees.put(FeeType.UNINVITE, uninviteFee);
             fees.put(FeeType.UPDATE, updateFee);
             fees.put(FeeType.WARP_PLAYER, warpPlayerFee);

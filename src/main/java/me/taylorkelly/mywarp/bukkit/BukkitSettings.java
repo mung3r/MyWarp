@@ -380,7 +380,7 @@ public class BukkitSettings implements Settings {
                 // NON-NLS NON-NLS
                         "invite", 0), values.getDouble("list", 0), values.getDouble("point", 0), // NON-NLS
                 // NON-NLS NON-NLS
-                values.getDouble("private", 0), values.getDouble("public", 0), values.getDouble("search", 0), // NON-NLS
+                values.getDouble("private", 0), values.getDouble("public", 0),
                 // NON-NLS NON-NLS
                 values.getDouble("uninvite", 0), values.getDouble("update", 0), values.getDouble(
                 // NON-NLS NON-NLS

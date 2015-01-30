@@ -25,7 +25,6 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.commands.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.bukkit.commands.printer.InfoPrinter;
-import me.taylorkelly.mywarp.bukkit.util.CommandUtils;
 import me.taylorkelly.mywarp.bukkit.util.FormattingUtils;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.IllegalCommandSenderException;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition;
@@ -33,7 +32,6 @@ import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
 import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.bukkit.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -92,6 +90,8 @@ public class InformativeCommands {
      *            the page to display
      * @param creator
      *            the optional creator
+     * @param name
+     *            the optional name
      * @param world
      *            the optional world
      */
@@ -99,12 +99,16 @@ public class InformativeCommands {
     @Require("mywarp.warp.basic.list")
     @Billable(FeeType.LIST)
     public void list(final Actor actor, @Optional("1") int page, @Switch('c') final String creator,
-            @Switch('w') final String world) {
+            @Switch('n') final String name, @Switch('w') final String world) {
 
         Predicate<Warp> predicate = new Predicate<Warp>() {
 
             @Override
             public boolean apply(Warp input) {
+                if (name != null && !StringUtils.containsIgnoreCase(input.getName(), name)) {
+                    return false;
+                }
+
                 if (creator != null) {
                     com.google.common.base.Optional<String> creatorName = input.getCreator().getName();
                     if (creatorName.isPresent()
@@ -183,38 +187,5 @@ public class InformativeCommands {
     @Billable(FeeType.INFO)
     public void info(Actor actor, @Condition(Type.VIEWABLE) Warp warp) {
         new InfoPrinter(warp).print(actor);
-    }
-
-    /**
-     * Searches for Warps.
-     * 
-     * @param actor
-     *            the Actor
-     * @param query
-     *            the query
-     */
-    @Command(aliases = { "search" }, desc = "search.description")
-    @Require("mywarp.warp.basic.search")
-    @Billable(FeeType.SEARCH)
-    public void searchWarps(Actor actor, String query) {
-        MatchList matchList = MyWarp.getInstance().getWarpManager()
-                .getMatchingWarps(query, WarpUtils.isViewable(actor));
-
-        if (matchList.isEmpty()) {
-            actor.sendError(MESSAGES.getString("search.no-matches", query));
-            return;
-        }
-
-        actor.sendMessage(MESSAGES.getString("search.heading", query));
-
-        com.google.common.base.Optional<Warp> exactMatch = matchList.getExactMatch();
-        if (exactMatch.isPresent()) {
-            actor.sendMessage(MESSAGES.getString("search.exact-heading", exactMatch.get().getName()));
-        }
-        List<Warp> matches = matchList.getMatches();
-        if (!matches.isEmpty()) {
-            actor.sendMessage(MESSAGES.getString("search.partial-heading", matches.size(),
-                    CommandUtils.joinWarps(matches)));
-        }
     }
 }
