@@ -1,6 +1,6 @@
-name: MyWarp
+name: ${project.name}
 version: ${project.version}
-description: Provides the ability to create private and public warp points that can be shared with other players in various ways.
+description: ${project.description}
 authors:
   - tkelly
   - flames
@@ -14,7 +14,7 @@ softdepend:
   - GroupManager
   - Vault
 website: ${project.url}
-main: me.taylorkelly.mywarp.MyWarp
+main: me.taylorkelly.mywarp.bukkit.MyWarpPlugin
 commands:
   warp:
     aliases: ['mywarp', 'mw']
@@ -41,13 +41,13 @@ permissions:
     default: op
   mywarp.warp.basic.assets:
     description: Warps and limits can be listed
-    default: op 
+    default: op
   mywarp.warp.basic.assets.other:
     description: Warps and limits of other players can be listed
-    default: op 
+    default: op
   mywarp.warp.basic.compass:
     description: Compass can be used
-    default: op 
+    default: op
   mywarp.warp.basic.createprivate:
     description: Allowed to create private warps
     default: op
@@ -56,7 +56,7 @@ permissions:
     default: op
   mywarp.warp.basic.delete:
     description: Can delete warps
-    default: op 
+    default: op
   mywarp.warp.basic.help:
     description: Help can be used
     default: op
@@ -71,7 +71,7 @@ permissions:
     default: op
   mywarp.warp.basic.update:
     description: Allowed to update warps
-    default: op 
+    default: op
   mywarp.warp.basic.welcome:
     description: Can change the welcome message
     default: op
@@ -98,7 +98,7 @@ permissions:
     default: op
   mywarp.warp.soc.private:
     description: Disallow anyone to use your /warp
-    default: op  
+    default: op
   mywarp.warp.soc.public:
     description: Allow anyone to use your /warp
     default: op

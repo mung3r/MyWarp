@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -18,79 +18,33 @@
  */
 package me.taylorkelly.mywarp.timer;
 
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
 /**
- * Represents an action that is scheduled to be executed after some time.
+ * An action that is executed after a timer finishes.
  * 
  * @param <T>
- *            the type that this action is active for
+ *            the type of the subject the timer runs on
  */
-public abstract class TimerAction<T> extends BukkitRunnable {
+public abstract class TimerAction<T> implements Runnable {
 
-    private TimerManager timerManager;
-
-    protected final T type;
-
-    protected final long duration;
-
-    protected final long startTime = System.currentTimeMillis();
+    private final T timedSuject;
 
     /**
-     * Initializes the timer-action.
+     * Creates an instance.
      * 
-     * @param type
-     *            the type-instance
-     * @param duration
-     *            the duration of the timer in ticks
+     * @param timedSubject
+     *            the instance the timer runs on
      */
-    public TimerAction(T type, Long duration) {
-        this.type = type;
-        this.duration = duration;
+    public TimerAction(T timedSubject) {
+        this.timedSuject = timedSubject;
     }
 
     /**
-     * Gets the ticks remaining until this action is executed.
-     * 
-     * @return the remaining ticks
+     * Gets the instance the timer runs on.
+     *
+     * @return the instance
      */
-    public long getRemainingTicks() {
-        // duration (20 ticks per sec) - runTime in milli-sec (1000 per sec)
-        return duration - ((System.currentTimeMillis() - startTime) / 50);
-    }
-
-    /**
-     * The action executed once the timer finishes.
-     */
-    public abstract void action();
-
-    @Override
-    public void cancel() {
-        timerManager.remove(type, getClass());
-        super.cancel();
-    }
-
-    @Override
-    public void run() {
-        timerManager.remove(type, getClass());
-        action();
-    }
-
-    /**
-     * Runs this action. This method is automatically called when the action is
-     * submitted via {@link TimerManager#registerNewTimer(TimerAction)}.
-     * 
-     * It <b>must never</b> be called manually!
-     * 
-     * @param timerManager
-     *            the timerFactory that manages this TimerAction
-     * @param plugin
-     *            the plugin that runs this TimerAction
-     */
-    protected void run(TimerManager timerManager, Plugin plugin) {
-        this.timerManager = timerManager;
-        this.runTaskLater(plugin, duration);
+    public T getTimedSuject() {
+        return timedSuject;
     }
 
 }

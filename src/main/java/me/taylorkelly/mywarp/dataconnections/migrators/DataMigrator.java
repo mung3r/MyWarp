@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -20,7 +20,7 @@ package me.taylorkelly.mywarp.dataconnections.migrators;
 
 import java.util.Collection;
 
-import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -32,7 +32,7 @@ public interface DataMigrator {
     /**
      * Gets all warps from the underlying data-source and cleans up afterwards.
      * 
-     * @return a ListanbleFuture containing a COllection of all loaded warps.
+     * @return a ListanbleFuture containing a Collection of all loaded warps.
      */
     ListenableFuture<Collection<Warp>> getWarps();
 

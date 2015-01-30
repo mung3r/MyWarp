@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -19,396 +19,360 @@
 package me.taylorkelly.mywarp;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.ResourceBundle;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.taylorkelly.mywarp.commands.RootCommands;
-import me.taylorkelly.mywarp.data.WarpManager;
-import me.taylorkelly.mywarp.data.WarpSignManager;
 import me.taylorkelly.mywarp.dataconnections.DataConnection;
+import me.taylorkelly.mywarp.dataconnections.EventConnectionBridge;
 import me.taylorkelly.mywarp.dataconnections.MySQLConnection;
 import me.taylorkelly.mywarp.dataconnections.SQLiteConnection;
-import me.taylorkelly.mywarp.economy.EconomyLink;
-import me.taylorkelly.mywarp.economy.VaultLink;
-import me.taylorkelly.mywarp.localization.LocalizationException;
-import me.taylorkelly.mywarp.localization.LocalizationManager;
-import me.taylorkelly.mywarp.markers.DynmapMarkers;
-import me.taylorkelly.mywarp.markers.Markers;
-import me.taylorkelly.mywarp.permissions.PermissionsManager;
-import me.taylorkelly.mywarp.timer.TimerManager;
-import me.taylorkelly.mywarp.utils.commands.CommandsManager;
-import net.milkbowl.vault.economy.Economy;
+import me.taylorkelly.mywarp.economy.DummyEconomyManager;
+import me.taylorkelly.mywarp.economy.EconomyManager;
+import me.taylorkelly.mywarp.economy.SimpleEconomyManager;
+import me.taylorkelly.mywarp.limits.DummyLimitManager;
+import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.limits.SimpleLimitManager;
+import me.taylorkelly.mywarp.safety.TeleportService;
+import me.taylorkelly.mywarp.timer.DurationProvider;
+import me.taylorkelly.mywarp.timer.TimerService;
+import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.profile.ProfileService;
+import me.taylorkelly.mywarp.warp.EventWarpManager;
+import me.taylorkelly.mywarp.warp.Warp;
 
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.dynmap.DynmapCommonAPI;
-
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * The MyWarp plugin implementation.
+ * Entry point and container for a working MyWarp implementation.
  */
-public class MyWarp extends JavaPlugin implements Reloadable {
+public class MyWarp {
 
-    /**
-     * The plugin instance for MyWarp.
-     */
+    private static final Logger LOG = Logger.getLogger(MyWarp.class.getName());
+
     private static MyWarp instance;
 
-    /**
-     * The commands manager, which handles all commands together with arguments,
-     * flags etc.
-     */
-    private CommandsManager commandsManager;
+    private final EventWarpManager warpManager;
+    private final Platform platform;
+    private final TeleportService teleportService;
 
-    /**
-     * The connection to the configured data-source.
-     */
     private DataConnection dataConnection;
+    private EconomyManager economyManager;
+    private LimitManager limitManager;
 
     /**
-     * The economy Link in use.
+     * Creates an instance of MyWarp, running on the given Platform.
+     * 
+     * @param platform
+     *            the Platform MyWarp runs on
+     * @throws MyWarpException
+     *             if the initialization fail and MyWarp is unable to continue
      */
-    private EconomyLink economyLink;
+    public MyWarp(Platform platform) throws MyWarpException {
+        this.platform = platform;
 
-    /**
-     * The language-manger.
-     */
-    private LocalizationManager localizationManager;
+        // setup dataConnection
+        ListenableFuture<DataConnection> futureConnection;
+        if (getSettings().isMysqlEnabled()) {
+            futureConnection = MySQLConnection.getConnection(getSettings().getMysqlDsn(), getSettings()
+                    .getMysqlUsername(), getSettings().getMysqlPassword(), true);
+        } else {
+            futureConnection = SQLiteConnection.getConnection(
+                    new File(platform.getDataFolder(), "mywarp.db"), true);
+        }
+        try {
+            dataConnection = futureConnection.get();
+        } catch (InterruptedException e) {
+            throw new MyWarpException(
+                    "Failed to get a connection to the database as the process was interrupted.", e);
+        } catch (ExecutionException e) {
+            throw new MyWarpException("Failed to get a connection to the database.", e.getCause());
+        }
 
-    /**
-     * Represents the marker API in use.
-     */
-    private Markers markers;
+        // setup the warpManager
+        warpManager = new EventWarpManager(new EventConnectionBridge(dataConnection));
 
-    /**
-     * The timer-factory.
-     */
-    private TimerManager timerManager;
+        // setup TeleportService
+        teleportService = new TeleportService();
 
-    /**
-     * The warp-manager.
-     */
-    private WarpManager warpManager;
-
-    /**
-     * The permissions-manage that handles all permission-related tasks.
-     */
-    private PermissionsManager permissionsManager;
-
-    /**
-     * The parsed plugin-configuration.
-     */
-    private Settings settings;
-
-    /**
-     * Constructs the instance.
-     */
-    public MyWarp() {
-        super();
+        // setup the rest of the plugin
+        setupPlugin();
 
         instance = this;
     }
 
     /**
-     * Returns the plugin's instance.
+     * Gets the static instance of MyWarp.
      * 
-     * @return the plugin's instance
+     * @return the running MyWarp instance
+     * @throws IllegalStateException
+     *             if MyWarp has not yet been initialized
      */
-    public static MyWarp inst() {
+    // REVIEW remove singleton logic?
+    public static MyWarp getInstance() throws IllegalStateException {
+        Preconditions.checkState(instance != null, "MyWarp is not yet initialized."); // NON-NLS
         return instance;
     }
 
     /**
-     * Return the plugin's logger.
-     * 
-     * @return the logger
+     * Sets up the plugin.
      */
-    public static Logger logger() {
-        return instance.getLogger();
+    private void setupPlugin() {
+        // setup the limitManager
+        if (platform.getSettings().isLimitsEnabled()) {
+            limitManager = new SimpleLimitManager(platform.getLimitProvider(), warpManager);
+        } else {
+            limitManager = new DummyLimitManager(warpManager);
+        }
+
+        // setup the economyManager
+        try {
+            if (platform.getSettings().isEconomyEnabled()) {
+                economyManager = new SimpleEconomyManager(platform.getFeeProvider(),
+                        platform.getEconomyService());
+            } else {
+                economyManager = new DummyEconomyManager();
+            }
+        } catch (UnsupportedOperationException e) {
+            economyManager = new DummyEconomyManager();
+        }
+
+        // Populate the warpManager when the warps are loaded. The callback is
+        // executed in the server thread.
+        LOG.info("Loading warps..."); // NON-NLS
+        Futures.addCallback(getDataConnection().getWarps(), new FutureCallback<Collection<Warp>>() {
+
+            @Override
+            public void onSuccess(Collection<Warp> result) {
+                warpManager.populate(result);
+                LOG.info(warpManager.getSize() + " warps loaded."); // NON-NLS
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.log(Level.SEVERE, "Failed to load warps from the database.", t); // NON-NLS
+            }
+
+        }, getServerExecutor());
+
     }
 
     /**
-     * Returns the server instance that runs this plugin.
-     * 
-     * @return the server instance
+     * Reloads MyWarp.
      */
-    public static Server server() {
-        return instance.getServer();
+    public void reload() {
+        // cleanup
+        warpManager.clear();
+        DynamicMessages.clearCache();
+
+        // setup new stuff
+        platform.reload();
+        setupPlugin();
     }
 
     /**
-     * Gets MyWarp's commands-manager.
-     * 
-     * @return the commands-manager
+     * Unloads MyWarp. Using this method will effectively shutdown MyWarp. If
+     * its called, the platform running MyWarp <b>must</b> unload or deactivate
+     * MyWarp too or things will get ugly.
      */
-    public CommandsManager getCommandsManager() {
-        return commandsManager;
+    public void unload() {
+        if (dataConnection != null) {
+            dataConnection.close();
+        }
     }
 
     /**
-     * Gets MyWarp's active data-connection that provides access to the active
-     * data-source.
+     * Gets the DataConnection of this MyWarp instance.
      * 
-     * This method may return null if the connection is not yet setup.
-     * 
-     * @return the connection manager
+     * @return the DataConnection
      */
     public DataConnection getDataConnection() {
         return dataConnection;
     }
 
     /**
-     * Gets the economy-link service if it exists, this method should be used
-     * for economic actions.
+     * Gets the WarpManager of this MyWarp instance.
      * 
-     * This method can return null. Use {@link #isEconomySetup()} to check if
-     * the economy link is setup and usable before accessing the link directly.
-     * 
-     * @return the economy link
+     * @return the WarpManager
      */
-    public EconomyLink getEconomyLink() {
-        return economyLink;
-    }
-
-    /**
-     * Gets MyWarp's localization-manager, that handles all translations.
-     * 
-     * @return the language manager
-     */
-    public LocalizationManager getLocalizationManager() {
-        return localizationManager;
-    }
-
-    /**
-     * Gets the {@link Markers} service, this method provides access to all
-     * marker-APIs in use
-     * 
-     * This method can return null. Use {@link #isMarkerSetup()} to check if the
-     * Marker service is setup and usable before accessing the link directly.
-     * 
-     * @return the markers
-     */
-    public Markers getMarkers() {
-        return markers;
-    }
-
-    /**
-     * Gets MyWarp's permissions-Manager, this method should be used for tasks
-     * involving direct permission-access.
-     * 
-     * @return the permissions manager
-     */
-    public PermissionsManager getPermissionsManager() {
-        return permissionsManager;
-    }
-
-    /**
-     * Gets the timer-manager, that manages all per-object timers (warmups,
-     * cooldowns...).
-     * 
-     * @return the timer-manager
-     */
-    public TimerManager getTimerManager() {
-        return timerManager;
-    }
-
-    /**
-     * Returns the warp-manager that holds all warps.
-     * 
-     * @return the warp manager
-     */
-    public WarpManager getWarpManager() {
+    public EventWarpManager getWarpManager() {
         return warpManager;
     }
 
     /**
-     * Gets MyWarp's settings which provides direct access to the configuration.
+     * Gets the TeleportService.
      * 
-     * @return the warp settings
+     * @return the TeleportService
+     */
+    public TeleportService getTeleportService() {
+        return teleportService;
+    }
+
+    /**
+     * Gets the EconomyManager. Calling this method will always return valid
+     * EconomyManager implementation, if economy support is disabled on the
+     * configuration file, the returned EconomyManager will handle this
+     * internally and fail quietly.
+     * 
+     * @return the EconomyManager
+     */
+    public EconomyManager getEconomyManager() {
+        return economyManager;
+    }
+
+    /**
+     * Gets the LimitManager. Calling this method will always return valid
+     * LimitManager implementation, if limit support is disabled on the
+     * configuration file, the returned LimitManager will handle this internally
+     * and fail quietly.
+     * 
+     * @return the LimitManager
+     */
+    public LimitManager getLimitManager() {
+        return limitManager;
+    }
+
+    /**
+     * Gets the Platform running MyWarp.
+     * 
+     * @return the Platform
+     */
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    /**
+     * Gets the ProfileService.
+     * 
+     * @return the ProfileService
+     */
+    public ProfileService getProfileService() {
+        return platform.getProfileService();
+    }
+
+    /**
+     * Gets the Settings of this MyWarp instance.
+     * 
+     * @return the Settings
      */
     public Settings getSettings() {
-        return settings;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.bukkit.plugin.java.JavaPlugin#onCommand(CommandSender, Command,
-     * String, String[])
-     */
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-        return getCommandsManager().handleBukkitCommand(sender, command, commandLabel, args);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.bukkit.plugin.java.JavaPlugin#onDisable()
-     */
-    @Override
-    public void onDisable() {
-        // close all open database connections
-        if (getDataConnection() != null) {
-            getDataConnection().close();
-        }
-        // remove cached resource bundles
-        if (localizationManager != null) {
-            localizationManager.reload();
-        }
-        // unregister dynamic permissions
-        if (permissionsManager != null) {
-            permissionsManager.unregisterPermissions();
-        }
-        // cancel all pending tasks
-        getServer().getScheduler().cancelTasks(this);
-
-        // null the static instance to prevent memory leaks
-        instance = null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.bukkit.plugin.java.JavaPlugin#onEnable()
-     */
-    @Override
-    public void onEnable() {
-
-        // setup the configurations
-        settings = new BukkitSettings(new File(getDataFolder(), "config.yml"),
-                YamlConfiguration.loadConfiguration(getTextResource("config.yml")));
-
-        // initialize the command manager and register all used commands
-        commandsManager = new CommandsManager();
-        getCommandsManager().register(RootCommands.class);
-
-        // initialize the database connection
-        ListenableFuture<DataConnection> futureConnection;
-        if (getSettings().isMysqlEnabled()) {
-            futureConnection = MySQLConnection.getConnection(getSettings().getMysqlDsn(), getSettings()
-                    .getMysqlUsername(), getSettings().getMysqlPassword(), true);
-        } else {
-            futureConnection = SQLiteConnection.getConnection(new File(getDataFolder(), "mywarps.db"), true);
-        }
-        try {
-            // block main thread until we have a connection
-            dataConnection = futureConnection.get();
-        } catch (Exception e) {
-            logger().log(Level.SEVERE, "Could not establish database connection. Disabling MyWarp.", e);
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        // initialize language support
-        try {
-            localizationManager = new LocalizationManager();
-        } catch (LocalizationException e) {
-            logger().log(Level.SEVERE, "Failed to access bundled localization files. Disabling MyWarp.", e);
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        // setup the core functions
-        warpManager = new WarpManager();
-        setupPlugin();
+        return platform.getSettings();
     }
 
     /**
-     * This method setups non-core functions of the plugin (put short, this
-     * functions can be enabled/disabled at runtime). Core functions MUST be
-     * setup correctly before executing this method.
+     * Gets the ResourceBundle.Control implementation used by this Platform.
+     * 
+     * @return the ResourceBundle.Control
      */
-    private void setupPlugin() {
-        // block the main thread until the warps are loaded
-        try {
-            warpManager.populate(getDataConnection().getWarps().get());
-            logger().info(warpManager.getLoadedWarpNumber() + " warps loaded.");
-        } catch (Exception e) {
-            MyWarp.logger().log(Level.SEVERE, "Failed to load warps from database.", e);
-        }
-
-        // register dynamic permissions
-        permissionsManager = new PermissionsManager();
-
-        // initialize timers
-        if (getSettings().isTimersEnabled()) {
-            timerManager = new TimerManager();
-        }
-
-        // initialize warp-signs
-        if (getSettings().isWarpSignsEnabled()) {
-            getServer().getPluginManager().registerEvents(
-                    new WarpSignManager(getSettings().getWarpSignsIdentifiers()), this);
-        }
-
-        // initialize EconomySupport
-        if (getSettings().isEconomyEnabled()) {
-            try {
-                RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
-                        .getRegistration(net.milkbowl.vault.economy.Economy.class);
-                Preconditions.checkNotNull(economyProvider, "EconomyProvider cannnot be null.");
-                economyLink = new VaultLink(economyProvider);
-            } catch (NoClassDefFoundError e) {
-                // economy provider class is not present
-                logger().severe(
-                        "Failed to hook into Vault (EconomyProviderClass not available). Disabling Economy support.");
-            } catch (NullPointerException e) {
-                // economy provider is not registered
-                logger().severe(
-                        "Failed to hook into Vault (" + e.getMessage() + "). Disabling Economy support.");
-            }
-        }
-
-        // initialize Dynmap support
-        if (getSettings().isDynmapEnabled()) {
-            Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
-            if (dynmap != null && dynmap.isEnabled()) {
-                markers = new DynmapMarkers((DynmapCommonAPI) dynmap);
-            } else {
-                logger().severe("Failed to hook into Dynmap. Disabling Dynmap support.");
-            }
-        }
+    public ResourceBundle.Control getResourceBundleControl() {
+        return platform.getResourceBundleControl();
     }
 
     /**
-     * Returns whether the economy-link is setup and usable.
+     * Gets the DurationProvider.
      * 
-     * @return true if the economy-link is set up
+     * @return the DurationProvider
      */
-    public boolean isEconomySetup() {
-        return economyLink != null;
+    public DurationProvider getDurationProvider() {
+        return platform.getDurationProvider();
     }
 
     /**
-     * Returns whether Markers are setup and usable.
+     * Gets the TimerService.
      * 
-     * @return true if Markers are set up
+     * @return the TimerService
      */
-    public boolean isMarkerSetup() {
-        return markers != null;
+    public TimerService getTimerService() {
+        return platform.getTimerService();
     }
 
-    @Override
-    public void reload() {
-        // unload old stuff from the server
-        HandlerList.unregisterAll(this);
-        // REVIEW make permissionManager reloadable?
-        permissionsManager.unregisterPermissions();
-        // REVIEW move into warpManager?
-        warpManager.clear();
-
-        // load new stuff
-        settings.reload();
-        localizationManager.reload();
-        setupPlugin();
+    /**
+     * Gets an ImmutableSet with all worlds currently loaded on the server.
+     * 
+     * @return an ImmutableSet with all loaded worlds
+     */
+    public ImmutableSet<LocalWorld> getLoadedWorlds() {
+        return platform.getLoadedWorlds();
     }
+
+    /**
+     * Gets an Optional containing the loaded world of the given name, if such a
+     * world exists.
+     * 
+     * @param name
+     *            the name of the world
+     * @return an Optional containing the loaded world
+     */
+    public Optional<LocalWorld> getLoadedWorld(String name) {
+        return platform.getLoadedWorld(name);
+    }
+
+    /**
+     * Gets an Optional containing the loaded world of the unique identifier, if
+     * such a world exists.
+     * 
+     * @param uniqueId
+     *            the unique identifier of the world
+     * @return an Optional containing the loaded world
+     */
+    public Optional<LocalWorld> getLoadedWorld(UUID uniqueId) {
+        return platform.getLoadedWorld(uniqueId);
+    }
+
+    /**
+     * Gets an Optional containing the online player of the given name, if such
+     * a player exists.
+     * 
+     * @param name
+     *            the name of the player
+     * @return an Optional containing the player
+     */
+    public Optional<LocalPlayer> getOnlinePlayer(String name) {
+        return platform.getOnlinePlayer(name);
+    }
+
+    /**
+     * Gets an Optional containing the online player of the given UUID, if such
+     * a player exists.
+     * 
+     * @param identifier
+     *            the identifier of the player
+     * @return an Optional containing the player
+     */
+    public Optional<LocalPlayer> getOnlinePlayer(UUID identifier) {
+        return platform.getOnlinePlayer(identifier);
+    }
+
+    /**
+     * Gets an Optional containing the online player of the given Profile, if
+     * such a player exists.
+     * 
+     * @param profile
+     *            the Profile of the player
+     * @return an Optional containing the player
+     */
+    public Optional<LocalPlayer> getOnlinePlayer(Profile profile) {
+        return getOnlinePlayer(profile.getUniqueId());
+    }
+
+    /**
+     * Get an Executor that executes given Runnables in the main server-thread
+     * ('synchronous').
+     * 
+     * @return the Executor
+     */
+    public Executor getServerExecutor() {
+        return platform.getServerExecutor();
+    }
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -80,8 +80,8 @@ public class MySQLConnection {
 
                     flyway.setDataSource(dsn, user, password);
                     flyway.setClassLoader(getClass().getClassLoader());
-                    flyway.setLocations("migrations/mysql");
-                    flyway.setSchemas("mywarp");
+                    flyway.setLocations("migrations/mysql"); // NON-NLS
+                    flyway.setSchemas("mywarp"); // NON-NLS
 
                     try {
                         flyway.migrate();

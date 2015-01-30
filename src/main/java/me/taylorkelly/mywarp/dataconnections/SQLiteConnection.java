@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -71,7 +71,7 @@ public class SQLiteConnection {
 
             @Override
             public DataConnection call() throws DataConnectionException {
-                String dsn = "jdbc:sqlite://" + database.getAbsolutePath();
+                String dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
                 try {
                     // Manually load SQLite driver. DriveManager is unable to
                     // identify it as the driver does not follow JDBC 4.0
@@ -86,7 +86,7 @@ public class SQLiteConnection {
 
                     flyway.setDataSource(dsn, null, null);
                     flyway.setClassLoader(getClass().getClassLoader());
-                    flyway.setLocations("migrations/sqlite");
+                    flyway.setLocations("migrations/sqlite"); // NON-NLS
 
                     try {
                         flyway.migrate();
@@ -104,6 +104,7 @@ public class SQLiteConnection {
 
                 // the database scheme can be configured by users
                 Settings settings = new Settings().withRenderSchema(false);
+
                 DSLContext create = DSL.using(conn, SQLDialect.SQLITE, settings);
 
                 return new JOOQConnection(create, conn, executor);

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -19,9 +19,9 @@
 package me.taylorkelly.mywarp.dataconnections;
 
 import java.util.Collection;
-import java.util.UUID;
 
-import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -44,12 +44,12 @@ public interface DataConnection {
     void addWarp(Warp warp);
 
     /**
-     * Deletes the given warp from the underlying data-source.
+     * Removes the given warp from the underlying data-source.
      * 
      * @param warp
      *            the warp
      */
-    void deleteWarp(Warp warp);
+    void removeWarp(Warp warp);
 
     /**
      * Gets all warps from the underlying data-source.
@@ -70,14 +70,15 @@ public interface DataConnection {
     void inviteGroup(Warp warp, String groupId);
 
     /**
-     * Adds the given playerId to the invited playerIds for the given players.
+     * Adds the given player-profile to the invited player-profiles for the
+     * given warp.
      * 
      * @param warp
      *            the warp
-     * @param playerId
-     *            the player-id
+     * @param playerProfile
+     *            the player-profile
      */
-    void invitePlayer(Warp warp, UUID playerId);
+    void invitePlayer(Warp warp, Profile playerProfile);
 
     /**
      * Removes the given groupId from the list of invited groupIds for the given
@@ -91,14 +92,15 @@ public interface DataConnection {
     void uninviteGroup(Warp warp, String groupId);
 
     /**
-     * Removes the given playerId from the invited playerIds for the given warp.
+     * Removes the given player-profile from the invited player-profiles for the
+     * given warp.
      * 
      * @param warp
      *            the warp
-     * @param playerId
-     *            the player-id
+     * @param playerProfile
+     *            the profile of the player
      */
-    void uninvitePlayer(Warp warp, UUID playerId);
+    void uninvitePlayer(Warp warp, Profile playerProfile);
 
     /**
      * Updates the creator of the given warp.

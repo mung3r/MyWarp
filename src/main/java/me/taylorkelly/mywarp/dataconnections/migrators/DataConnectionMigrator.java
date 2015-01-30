@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -20,8 +20,8 @@ package me.taylorkelly.mywarp.dataconnections.migrators;
 
 import java.util.Collection;
 
-import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.dataconnections.DataConnection;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.FutureCallback;
@@ -38,8 +38,8 @@ public class DataConnectionMigrator implements DataMigrator {
 
     /**
      * Initializes this migrator with the given data-connection. Every further
-     * action that directly involves the data-connection waits at least until the
-     * data-connection is ready.
+     * action that directly involves the data-connection waits at least until
+     * the data-connection is ready.
      * 
      * @param futureConnection
      *            the connection, wrapped in a listenable-future
@@ -56,8 +56,7 @@ public class DataConnectionMigrator implements DataMigrator {
                     @Override
                     public ListenableFuture<Collection<Warp>> apply(DataConnection conn) {
                         storedConn = conn;
-                        ListenableFuture<Collection<Warp>> ret = conn.getWarps();
-                        return ret;
+                        return conn.getWarps();
                     }
 
                 });

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -48,7 +48,6 @@ public class UUIDBinaryConverter implements Converter<byte[], UUID> {
         if (userObject == null) {
             return null;
         }
-
         ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
         byteBuffer.putLong(userObject.getMostSignificantBits());
         byteBuffer.putLong(userObject.getLeastSignificantBits());

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -20,15 +20,12 @@ package me.taylorkelly.mywarp;
 
 import java.util.List;
 import java.util.Locale;
-import me.taylorkelly.mywarp.data.LimitBundle;
-import me.taylorkelly.mywarp.economy.FeeBundle;
-import me.taylorkelly.mywarp.timer.TimeBundle;
 
 /**
  * This interface provides all user-configurable values for MyWarp.
  * Implementations are expected to be immutable.
  */
-public interface Settings extends Reloadable {
+public interface Settings {
 
     /**
      * Returns whether the world access should be controlled directly by MyWarp.
@@ -157,20 +154,6 @@ public interface Settings extends Reloadable {
     boolean isLimitsEnabled();
 
     /**
-     * Gets the default limit-bundle.
-     * 
-     * @return the default limit-bundle.
-     */
-    LimitBundle getLimitsDefaultLimitBundle();
-
-    /**
-     * Gets a list of additional configured limit-bundles.
-     * 
-     * @return all configured limit-bundles
-     */
-    List<LimitBundle> getLimitsConfiguredLimitBundles();
-
-    /**
      * Returns whether timers are enabled.
      * 
      * @return true if timers are enabled
@@ -210,20 +193,6 @@ public interface Settings extends Reloadable {
     boolean isTimersWarmupNotifyOnStart();
 
     /**
-     * Gets the default time-bundle.
-     * 
-     * @return the default time-bundle
-     */
-    TimeBundle getTimersDefaultTimeBundle();
-
-    /**
-     * Gets a list of all additional configured time-bundles.
-     * 
-     * @return all configured time-bundles
-     */
-    List<TimeBundle> getTimersConfiguredTimeBundles();
-
-    /**
      * Returns whether economy support is enabled.
      * 
      * @return true if economy support is enabled
@@ -237,20 +206,6 @@ public interface Settings extends Reloadable {
      * @return true if users should be informed after a transaction
      */
     boolean isEconomyInformAfterTransaction();
-
-    /**
-     * Gets the default fee-bundle.
-     * 
-     * @return the default fee-bundle.
-     */
-    FeeBundle getEconomyDefaultFeeBundle();
-
-    /**
-     * Gets a list of additional configured fee-bundles.
-     * 
-     * @return all configured fee-bundles
-     */
-    List<FeeBundle> getEconomyConfiguredFeeBundles();
 
     /**
      * Returns whether Dynmap should be used as marker-service.

@@ -1,0 +1,172 @@
+/*
+ * Copyright (C) 2011 - 2014, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
+package me.taylorkelly.mywarp.bukkit.util;
+
+import java.util.concurrent.TimeUnit;
+
+import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
+import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.IllegalCommandSenderException;
+import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.NoSuchPlayerException;
+import me.taylorkelly.mywarp.bukkit.util.ProfileBinding.NoSuchProfileException;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.NoSuchWarpException;
+import me.taylorkelly.mywarp.util.NoSuchWorldException;
+import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.warp.Warp;
+
+import org.apache.commons.lang.text.StrBuilder;
+import org.bukkit.ChatColor;
+
+import com.google.common.base.Optional;
+import com.sk89q.intake.CommandException;
+import com.sk89q.intake.parametric.handler.ExceptionConverterHelper;
+import com.sk89q.intake.parametric.handler.ExceptionMatch;
+
+/**
+ * Converts specific Exceptions into human readable {@link CommandException}s.
+ */
+public class ExceptionConverter extends ExceptionConverterHelper {
+
+    private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME); // NON-NLS
+
+    /**
+     * Converts a {@link NoSuchPlayerException} to a human readable
+     * {@link CommandException}.
+     *
+     * @param e
+     *            the NoSuchPlayerException
+     * @throws CommandException
+     *             the wrapped exception
+     */
+    @ExceptionMatch
+    public void convert(NoSuchPlayerException e) throws CommandException {
+        throw new CommandException(MESSAGES.getString("exception.no-such-player", e.getQuery()), e);
+    }
+
+    /**
+     * Converts a {@link NoSuchProfileException} to a human readable
+     * {@link CommandException}.
+     *
+     * @param e
+     *            the NoSuchProfileException
+     * @throws CommandException
+     *             the wrapped exception
+     */
+    @ExceptionMatch
+    public void convert(NoSuchProfileException e) throws CommandException {
+        throw new CommandException(MESSAGES.getString("exception.no-such-profile", e.getQuery()), e);
+    }
+
+    /**
+     * Converts a {@link NoSuchWarpException} to a human readable
+     * {@link CommandException}.
+     *
+     * @param e
+     *            the NoSuchWarpException
+     * @throws CommandException
+     *             the wrapped exception
+     */
+    @ExceptionMatch
+    public void convert(NoSuchWarpException e) throws CommandException {
+        Optional<Warp> match = e.getMatches().getMatch(new Warp.PopularityComparator());
+
+        StrBuilder builder = new StrBuilder();
+        builder.append(MESSAGES.getString("exception.no-such-warp", e.getQuery()));
+
+        if (match.isPresent()) {
+            builder.appendNewLine();
+            builder.append(ChatColor.GRAY);
+            builder.append(MESSAGES.getString("exception.no-such-warp.suggestion", match.get().getName()));
+        }
+
+        throw new CommandException(builder.toString());
+    }
+
+    /**
+     * Converts a {@link LimitExceededException} to a human readable
+     * {@link CommandException}.
+     *
+     * @param e
+     *            the LimitExceededException
+     * @throws CommandException
+     *             the wrapped exception
+     */
+    @ExceptionMatch
+    public void convert(LimitExceededException e) throws CommandException {
+        StrBuilder builder = new StrBuilder();
+
+        switch (e.getExceededLimit()) {
+        case TOTAL:
+            builder.append(MESSAGES.getString("exception.limit-exceeded.total", e.getLimitMaximum()));
+            break;
+        case PRIVATE:
+            builder.append(MESSAGES.getString("exception.limit-exceeded.private", e.getLimitMaximum()));
+            break;
+        case PUBLIC:
+            builder.append(MESSAGES.getString("exception.limit-exceeded.public", e.getLimitMaximum()));
+            break;
+        }
+        builder.appendNewLine();
+        builder.append(MESSAGES.getString("exception.limit-exceeded.delete-warps"));
+
+        throw new CommandException(builder.toString());
+    }
+
+    /**
+     * Converts a {@link TimerRunningException} to a human readable
+     * {@link CommandException}.
+     *
+     * @param e
+     *            the TimerRunningException
+     * @throws CommandException
+     *             the wrapped exception
+     */
+    @ExceptionMatch
+    public void convert(TimerRunningException e) throws CommandException {
+        throw new CommandException(MESSAGES.getString("exception.timer-running",
+                e.getDurationLeft().get(TimeUnit.SECONDS)));
+    }
+
+    /**
+     * Converts a {@link IllegalCommandSenderException} to a human readable
+     * {@link CommandException}.
+     *
+     * @param e
+     *            the IllegalCommandSenderException
+     * @throws CommandException
+     *             the wrapped exception
+     */
+    @ExceptionMatch
+    public void convert(IllegalCommandSenderException e) throws CommandException {
+        throw new CommandException(MESSAGES.getString("exception.illegal-command-sender"));
+    }
+
+    /**
+     * Converts a {@link NoSuchWorldException} to a human readable
+     * {@link CommandException}.
+     *
+     * @param e
+     *            the NoSuchWorldException
+     * @throws CommandException
+     *             the wrapped exception
+     */
+    @ExceptionMatch
+    public void convert(NoSuchWorldException e) throws CommandException {
+        throw new CommandException(MESSAGES.getString("exception.no-such-world", e.getWorldRepresentation()));
+    }
+}

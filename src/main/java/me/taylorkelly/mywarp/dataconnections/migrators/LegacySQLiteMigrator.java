@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -25,10 +25,10 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -42,9 +42,10 @@ import com.google.common.util.concurrent.ListenableFutureTask;
  */
 public class LegacySQLiteMigrator extends LegacyMigrator implements DataMigrator {
 
-    private final String dsn;
+    private static final Logger LOG = Logger.getLogger(LegacySQLiteMigrator.class.getName());
+    private static final String TABLE_NAME = "warpTable"; // NON-NLS
 
-    private static final String TABLE_NAME = "warpTable";
+    private final String dsn;
 
     /**
      * Initiates this LegacySQLiteMigrator.
@@ -53,7 +54,7 @@ public class LegacySQLiteMigrator extends LegacyMigrator implements DataMigrator
      *            the database file
      */
     public LegacySQLiteMigrator(final File database) {
-        this.dsn = "jdbc:sqlite://" + database.getAbsolutePath();
+        this.dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
     }
 
     @Override
@@ -86,8 +87,7 @@ public class LegacySQLiteMigrator extends LegacyMigrator implements DataMigrator
                             try {
                                 conn.close();
                             } catch (SQLException e) {
-                                MyWarp.logger().log(Level.WARNING, "Failed to close import SQL connection.",
-                                        e);
+                                LOG.log(Level.WARNING, "Failed to close import SQL connection.", e); // NON-NLS
                             }
                         }
 

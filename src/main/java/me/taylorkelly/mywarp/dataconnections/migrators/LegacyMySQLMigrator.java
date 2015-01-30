@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -24,10 +24,10 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.data.Warp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -41,23 +41,18 @@ import com.google.common.util.concurrent.ListenableFutureTask;
  */
 public class LegacyMySQLMigrator extends LegacyMigrator implements DataMigrator {
 
+    private static final Logger LOG = Logger.getLogger(LegacyMySQLMigrator.class.getName());
+
     private final String dsn;
-
     private final String user;
-
     private final String password;
-
     private final String tableName;
 
     /**
      * Initiates this LegacyMySQLMigrator.
      * 
-     * @param host
-     *            the host of the MySQL server
-     * @param port
-     *            the port the MySQL server listens to
-     * @param database
-     *            the name of the MySQL database to use
+     * @param dsn
+     *            the dsn of the database
      * @param user
      *            the MySQL user to use
      * @param password
@@ -65,9 +60,9 @@ public class LegacyMySQLMigrator extends LegacyMigrator implements DataMigrator 
      * @param tableName
      *            the name of the table that contains the data
      */
-    public LegacyMySQLMigrator(final String host, final int port, final String database, final String user,
-            final String password, final String tableName) {
-        this.dsn = "jdbc:mysql://" + host + ":" + port + "/" + database;
+    public LegacyMySQLMigrator(final String dsn, final String user, final String password,
+            final String tableName) {
+        this.dsn = dsn;
         this.user = user;
         this.password = password;
         this.tableName = tableName;
@@ -95,8 +90,7 @@ public class LegacyMySQLMigrator extends LegacyMigrator implements DataMigrator 
                             try {
                                 conn.close();
                             } catch (SQLException e) {
-                                MyWarp.logger().log(Level.WARNING, "Failed to close import SQL connection.",
-                                        e);
+                                LOG.log(Level.WARNING, "Failed to close import SQL connection.", e); // NON-NLS
                             }
                         }
 

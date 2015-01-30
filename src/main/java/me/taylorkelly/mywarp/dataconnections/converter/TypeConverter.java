@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2011 - 2014, MyWarp team and contributors
  *
  * This file is part of MyWarp.
@@ -18,13 +18,14 @@
  */
 package me.taylorkelly.mywarp.dataconnections.converter;
 
-import me.taylorkelly.mywarp.data.Warp;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import org.jooq.impl.EnumConverter;
 import org.jooq.types.UByte;
 
 /**
- * Converts {@link UByte} to {@link me.taylorkelly.mywarp.data.Warp.Type} and back.
+ * Converts {@link UByte} to {@link me.taylorkelly.mywarp.warp.Warp.Type} and
+ * back.
  */
 public class TypeConverter extends EnumConverter<UByte, Warp.Type> {
 
