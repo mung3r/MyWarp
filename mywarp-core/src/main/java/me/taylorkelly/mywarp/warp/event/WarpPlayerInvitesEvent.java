@@ -30,8 +30,8 @@ public class WarpPlayerInvitesEvent extends WarpInvitesEvent {
   private final Profile profile;
 
   /**
-   * Constructs this event for the given Warp, indicating that the player of the given Profile now
-   * has the given InvitationStatus.
+   * Constructs this event for the given Warp, indicating that the player of the given Profile now has the given
+   * InvitationStatus.
    *
    * @param warp             the warp
    * @param invitationStatus the InvitationStatus of the player

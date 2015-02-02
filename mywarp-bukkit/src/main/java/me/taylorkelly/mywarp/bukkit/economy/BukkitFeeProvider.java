@@ -33,10 +33,9 @@ import java.util.EnumMap;
 import java.util.SortedSet;
 
 /**
- * Provides fees when running on Bukkit. The actual fees are stored in {@link FeeBundle}s managed by
- * this provider. <p> Players either need to have a specific permission of a certain bundle or they
- * fall under a default bundle. If a player has the permission for more than one bundle, the
- * alphabetically first bundle will be used. </p>
+ * Provides fees when running on Bukkit. The actual fees are stored in {@link FeeBundle}s managed by this provider. <p>
+ * Players either need to have a specific permission of a certain bundle or they fall under a default bundle. If a
+ * player has the permission for more than one bundle, the alphabetically first bundle will be used. </p>
  */
 public class BukkitFeeProvider implements FeeProvider {
 
@@ -46,18 +45,16 @@ public class BukkitFeeProvider implements FeeProvider {
   /**
    * Initializes this provider.
    *
-   * @param configuredFees the configured FeeBundles that are assigned to a player via a specific
-   *                       permission
-   * @param defaultFees    the default FeeBundle that acts as a fallback if a player has none of the
-   *                       specific permissions
+   * @param configuredFees the configured FeeBundles that are assigned to a player via a specific permission
+   * @param defaultFees    the default FeeBundle that acts as a fallback if a player has none of the specific
+   *                       permissions
    */
   public BukkitFeeProvider(Iterable<FeeBundle> configuredFees, FeeBundle defaultFees) {
     this.configuredFees = ImmutableSortedSet.copyOf(configuredFees);
     this.defaultFees = defaultFees;
 
     for (ValueBundle bundle : configuredFees) {
-      BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(),
-                                                                     PermissionDefault.FALSE));
+      BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(), PermissionDefault.FALSE));
     }
   }
 
@@ -113,13 +110,11 @@ public class BukkitFeeProvider implements FeeProvider {
      * @param warpFee           used when a users warps to a warp
      * @param welcomeFee        used when the welcome message is changed
      */
-    public FeeBundle(String identifier, double assetsFee, double createFee, double createPrivateFee,
-                     double deleteFee, double giveFee, double helpFee, double infoFee,
-                     double inviteFee,
-                     double listFee, double pointFee, double privatizeFee, double publicizeFee,
-                     double uninviteFee, double updateFee, double warpPlayerFee,
-                     double warpSignCreateFee,
-                     double warpSignUseFee, double warpFee, double welcomeFee) {
+    public FeeBundle(String identifier, double assetsFee, double createFee, double createPrivateFee, double deleteFee,
+                     double giveFee, double helpFee, double infoFee, double inviteFee, double listFee, double pointFee,
+                     double privatizeFee, double publicizeFee, double uninviteFee, double updateFee,
+                     double warpPlayerFee, double warpSignCreateFee, double warpSignUseFee, double warpFee,
+                     double welcomeFee) {
       super(identifier, "mywarp.economy"); // NON-NLS
 
       fees.put(FeeType.ASSETS, assetsFee);

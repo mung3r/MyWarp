@@ -86,8 +86,7 @@ public final class BukkitAdapter {
     }
     Player loadedPlayer = Bukkit.getPlayer(player.getProfile().getUniqueId());
     if (loadedPlayer == null) {
-      throw new IllegalArgumentException(
-          "Cannot find a loaded player for " + player + "in Bukkit.");
+      throw new IllegalArgumentException("Cannot find a loaded player for " + player + "in Bukkit.");
     }
     return loadedPlayer;
   }

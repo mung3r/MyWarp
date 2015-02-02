@@ -55,24 +55,24 @@ public class SimpleWarp implements Warp {
   private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
   private final String name;
+  private final Date creationDate;
+  private final Set<Profile> invitedPlayers;
+  private final Set<String> invitedGroups;
   private volatile Profile creator;
   private volatile Warp.Type type;
   private volatile UUID worldIdentifier;
   private volatile Vector3 position;
   private volatile EulerDirection rotation;
-  private final Date creationDate;
   private volatile int visits;
   private volatile String welcomeMessage;
-  private final Set<Profile> invitedPlayers;
-  private final Set<String> invitedGroups;
 
   /**
    * Creates a warp from the given Builder.
    *
    * @param builder the Builder
    * @throws NullPointerException     if any of the Builder's fields is {@code null}
-   * @throws IllegalArgumentException if the Builder's {@code invitedPlayerIds} or {@code
-   *                                  invitedGroups} contains {@code null}
+   * @throws IllegalArgumentException if the Builder's {@code invitedPlayerIds} or {@code invitedGroups} contains {@code
+   *                                  null}
    */
   SimpleWarp(WarpBuilder builder) {
     this.name = checkNotNull(builder.getName());
@@ -144,8 +144,9 @@ public class SimpleWarp implements Warp {
 
   @Override
   public TeleportStatus teleport(LocalEntity entity) {
-    TeleportStatus status = MyWarp.getInstance().getTeleportService()
-        .safeTeleport(entity, getWorld(), position, rotation);
+    TeleportStatus
+        status =
+        MyWarp.getInstance().getTeleportService().safeTeleport(entity, getWorld(), position, rotation);
 
     switch (status) {
       case ORIGINAL_LOC:
@@ -262,10 +263,8 @@ public class SimpleWarp implements Warp {
     str = StringUtils.replace(str, "%warp%", name); // NON-NLS
     str = StringUtils.replace(str, "%visits%", Integer.toString(visits)); // NON-NLS
 
-    str =
-        StringUtils.replace(str, "%loc%",
-                            "(" + position.getFloorX() + ", " + position.getFloorY() // NON-NLS
-                            + ", " + position.getFloorZ() + ")"); // NON-NLS
+    str = StringUtils.replace(str, "%loc%", "(" + position.getFloorX() + ", " + position.getFloorY() // NON-NLS
+                                            + ", " + position.getFloorZ() + ")"); // NON-NLS
     str = StringUtils.replace(str, "%getWorld()%", getWorld().getName()); // NON-NLS
 
     return str;
@@ -279,6 +278,11 @@ public class SimpleWarp implements Warp {
   @Override
   public Profile getCreator() {
     return creator;
+  }
+
+  @Override
+  public void setCreator(Profile creator) {
+    this.creator = creator;
   }
 
   @Override
@@ -302,6 +306,11 @@ public class SimpleWarp implements Warp {
   }
 
   @Override
+  public void setType(Warp.Type type) {
+    this.type = type;
+  }
+
+  @Override
   public Date getCreationDate() {
     // date is mutable, so we return a copy
     return new Date(creationDate.getTime());
@@ -318,13 +327,13 @@ public class SimpleWarp implements Warp {
   }
 
   @Override
-  public String getParsedWelcomeMessage(LocalPlayer forWhom) {
-    return replacePlaceholders(welcomeMessage, forWhom);
+  public void setWelcomeMessage(String welcomeMessage) {
+    this.welcomeMessage = welcomeMessage;
   }
 
   @Override
-  public void setCreator(Profile creator) {
-    this.creator = creator;
+  public String getParsedWelcomeMessage(LocalPlayer forWhom) {
+    return replacePlaceholders(welcomeMessage, forWhom);
   }
 
   @Override
@@ -335,23 +344,11 @@ public class SimpleWarp implements Warp {
   }
 
   @Override
-  public void setType(Warp.Type type) {
-    this.type = type;
-  }
-
-  @Override
-  public void setWelcomeMessage(String welcomeMessage) {
-    this.welcomeMessage = welcomeMessage;
-  }
-
-  @Override
   public double getPopularityScore() {
     // a basic implementation of the hacker news ranking algorithm detailed
     // at http://amix.dk/blog/post/19574: Older warps receive lower scores
     // due to the influence of the gravity constant.
-    double
-        daysExisting =
-        (System.currentTimeMillis() - creationDate.getTime()) / (1000 * 60 * 60 * 24L);
+    double daysExisting = (System.currentTimeMillis() - creationDate.getTime()) / (1000 * 60 * 60 * 24L);
     return visits / Math.pow(daysExisting, GRAVITY_CONSTANT);
   }
 
@@ -359,8 +356,7 @@ public class SimpleWarp implements Warp {
   public double getVisitsPerDay() {
     // this method might not be 100% exact (considering leap seconds), but
     // within the current Java API there are no alternatives
-    long daysSinceCreation = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis()
-                                                          - creationDate.getTime());
+    long daysSinceCreation = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - creationDate.getTime());
     if (daysSinceCreation <= 0) {
       return visits;
     }

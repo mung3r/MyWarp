@@ -38,8 +38,8 @@ public class DataConnectionMigrator implements DataMigrator {
   private DataConnection storedConn;
 
   /**
-   * Initializes this migrator with the given data-connection. Every further action that directly
-   * involves the data-connection waits at least until the data-connection is ready.
+   * Initializes this migrator with the given data-connection. Every further action that directly involves the
+   * data-connection waits at least until the data-connection is ready.
    *
    * @param futureConnection the connection, wrapped in a listenable-future
    */
@@ -49,22 +49,22 @@ public class DataConnectionMigrator implements DataMigrator {
 
   @Override
   public ListenableFuture<Collection<Warp>> getWarps() {
-    ListenableFuture<Collection<Warp>> futureWarps = Futures.chain(futureConnection,
-                                                                   new Function<DataConnection, ListenableFuture<Collection<Warp>>>() {
+    ListenableFuture<Collection<Warp>>
+        futureWarps =
+        Futures.chain(futureConnection, new Function<DataConnection, ListenableFuture<Collection<Warp>>>() {
 
-                                                                     @Override
-                                                                     public ListenableFuture<Collection<Warp>> apply(
-                                                                         DataConnection conn) {
-                                                                       storedConn = conn;
-                                                                       return conn.getWarps();
-                                                                     }
+          @Override
+          public ListenableFuture<Collection<Warp>> apply(DataConnection conn) {
+            storedConn = conn;
+            return conn.getWarps();
+          }
 
-                                                                   });
+        });
     // of the function above fails the database connection remains open
     Futures.addCallback(futureWarps, new FutureCallback<Collection<Warp>>() {
 
       @Override
-      public void onFailure(Throwable t) {
+      public void onFailure(Throwable throwable) {
         if (storedConn != null) {
           storedConn.close();
         }

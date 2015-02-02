@@ -29,9 +29,9 @@ import java.util.UUID;
 public interface ProfileService {
 
   /**
-   * Gets the Profile of the given unique ID. If the service is unable to find a name matching the
-   * unique ID, the returned Profile will not have a name value and calls to {@link
-   * Profile#getName()} may fail. <p> Implementations must be thread-safe! </p>
+   * Gets the Profile of the given unique ID. If the service is unable to find a name matching the unique ID, the
+   * returned Profile will not have a name value and calls to {@link Profile#getName()} may fail. <p> Implementations
+   * must be thread-safe! </p>
    *
    * @param uniqueId the unique ID
    * @return the corresponding Profile

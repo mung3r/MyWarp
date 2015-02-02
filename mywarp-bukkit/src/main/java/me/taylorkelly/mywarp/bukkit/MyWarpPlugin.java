@@ -82,9 +82,7 @@ import java.util.logging.Level;
  */
 public class MyWarpPlugin extends JavaPlugin {
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final File bundleFolder = new File(getDataFolder(), "lang");
   private final ResourceBundle.Control control = new ResourceBundle.Control() {
@@ -134,19 +132,16 @@ public class MyWarpPlugin extends JavaPlugin {
     adapter = new BukkitAdapter(profileService, groupResolverManager);
 
     // setup the configurations
-    settings = new BukkitSettings(new File(getDataFolder(), "config.yml"),
-                                  YamlConfiguration
-                                      .loadConfiguration(getTextResource("config.yml")),
-                                  adapter); // NON-NLS
+    settings =
+        new BukkitSettings(new File(getDataFolder(), "config.yml"),
+                           YamlConfiguration.loadConfiguration(getTextResource("config.yml")), adapter); // NON-NLS
 
     try {
       mywarp = new MyWarp(new BukkitPlatform(this));
     } catch (MyWarpException e) {
-      getLogger()
-          .log(Level.SEVERE,
-               "A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be disabled.",
-               // NON-NLS
-               e);
+      getLogger().log(Level.SEVERE,
+                      "A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be "
+                      + "disabled.", e);
       Bukkit.getPluginManager().disablePlugin(this);
       return;
     }
@@ -158,7 +153,6 @@ public class MyWarpPlugin extends JavaPlugin {
     ExceptionConverter exceptionConverter = new ExceptionConverter();
     PlayerBinding playerBinding = new PlayerBinding();
     WarpBinding warpBinding = new WarpBinding();
-    UsageCommands usageCommands = new UsageCommands();
 
     ParametricBuilder builder = new ParametricBuilder();
     builder.setAuthorizer(new ActorAuthorizer());
@@ -171,11 +165,14 @@ public class MyWarpPlugin extends JavaPlugin {
     builder.addInvokeListener(new EconomyInvokeHandler());
     builder.addInvokeListener(new I18nInvokeHandler());
 
+    UsageCommands usageCommands = new UsageCommands();
+
     // @formatter:off
     dispatcher = new CommandGraph().builder(builder)
             .commands()
               .registerMethods(usageCommands)
-              .group(new WarpDispatcher(exceptionConverter, playerBinding, warpBinding, usageCommands), "warp", "mywarp", "mw") //NON-NLS NON-NLS NON-NLS
+              .group(new WarpDispatcher(exceptionConverter, playerBinding, warpBinding, usageCommands), "warp",
+                     "mywarp", "mw") //NON-NLS NON-NLS
                 .describeAs("warp-to.description")
                 .registerMethods(new InformativeCommands())
                 .registerMethods(new ManagementCommands(welcomeEditorFactory))
@@ -221,15 +218,15 @@ public class MyWarpPlugin extends JavaPlugin {
   }
 
   /**
-   * Sets up the plugin. Calling this method will setup all functions that depend on configurations
-   * and are, by design, optional.
+   * Sets up the plugin. Calling this method will setup all functions that depend on configurations and are, by design,
+   * optional.
    */
   private void setupPlugin() {
     profileService.registerEvents(this);
 
     if (settings.isWarpSignsEnabled()) {
-      new WarpSignManager(settings.getWarpSignsIdentifiers(), MyWarp.getInstance().getWarpManager(),
-                          adapter).registerEvents(this);
+      new WarpSignManager(settings.getWarpSignsIdentifiers(), MyWarp.getInstance().getWarpManager(), adapter)
+          .registerEvents(this);
     }
 
     if (settings.isDynmapEnabled()) {
@@ -273,8 +270,7 @@ public class MyWarpPlugin extends JavaPlugin {
   }
 
   @Override
-  public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label,
-                           String[] args) {
+  public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
     // create the CommandLocals
     CommandLocals locals = new CommandLocals();
     Actor actor = wrap(sender);
@@ -298,20 +294,17 @@ public class MyWarpPlugin extends JavaPlugin {
     try {
       return dispatcher.call(builder.toString(), locals, parentCommands);
     } catch (IllegalStateException e) {
-      getLogger()
-          .log(Level.SEVERE,
-               String.format(
-                   "The command '%s' could not be executed as the underling method could not be called.",
-                   // NON-NLS
-                   cmd.toString()), e);
+      getLogger().log(Level.SEVERE, String
+          .format("The command '%s' could not be executed as the underling method could not be called.",
+                  // NON-NLS
+                  cmd.toString()), e);
       actor.sendError(MESSAGES.getString("exception.unknown"));
     } catch (InvocationCommandException e) {
       // An InvocationCommandException can only be thrown if a thrown
       // Exception is not covered by our ExceptionConverter and is
       // therefore unintended behavior.
       actor.sendError(MESSAGES.getString("exception.unknown"));
-      getLogger().log(Level.SEVERE, String.format("The command '%s' could not be executed.", cmd),
-                      e); // NON-NLS
+      getLogger().log(Level.SEVERE, String.format("The command '%s' could not be executed.", cmd), e); // NON-NLS
     } catch (CommandException e) {
       actor.sendError(e.getMessage());
       e.printStackTrace(); // DEBUG CommandException stacktrace

@@ -112,10 +112,8 @@ public class BukkitBlockType implements BlockType {
    * @return the Material of this block
    */
   private Material getBlockMaterial() {
-    return world
-        .getLoadedWorld()
-        .getBlockAt((int) position.getFloorX(), (int) position.getFloorY(),
-                    (int) position.getFloorZ()).getType();
+    return world.getLoadedWorld()
+        .getBlockAt((int) position.getFloorX(), (int) position.getFloorY(), (int) position.getFloorZ()).getType();
   }
 
 }

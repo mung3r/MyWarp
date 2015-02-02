@@ -36,10 +36,9 @@ import java.util.Map;
 import java.util.SortedSet;
 
 /**
- * Provides Durations when running on Bukkit. The actual Durations are stored in {@link
- * DurationBundle}s managed by this provider. <p> Players either need to have a specific permission
- * of a certain bundle or they fall under a default bundle. If a player has the permission for more
- * than one bundle, the alphabetically first bundle will be used. </p>
+ * Provides Durations when running on Bukkit. The actual Durations are stored in {@link DurationBundle}s managed by this
+ * provider. <p> Players either need to have a specific permission of a certain bundle or they fall under a default
+ * bundle. If a player has the permission for more than one bundle, the alphabetically first bundle will be used. </p>
  */
 public class BukkitDurationProvider implements DurationProvider {
 
@@ -49,19 +48,16 @@ public class BukkitDurationProvider implements DurationProvider {
   /**
    * Initializes this provider.
    *
-   * @param configuredDurations the configured FeeBundles that are assigned to a player via a
-   *                            specific permission
-   * @param defaultDurations    the default FeeBundle that acts as a fallback if a player has none
-   *                            of the specific permissions
+   * @param configuredDurations the configured FeeBundles that are assigned to a player via a specific permission
+   * @param defaultDurations    the default FeeBundle that acts as a fallback if a player has none of the specific
+   *                            permissions
    */
-  public BukkitDurationProvider(Iterable<DurationBundle> configuredDurations,
-                                DurationBundle defaultDurations) {
+  public BukkitDurationProvider(Iterable<DurationBundle> configuredDurations, DurationBundle defaultDurations) {
     this.configuredDurations = ImmutableSortedSet.copyOf(configuredDurations);
     this.defaultDurations = defaultDurations;
 
     for (ValueBundle bundle : configuredDurations) {
-      BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(),
-                                                                     PermissionDefault.FALSE));
+      BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(), PermissionDefault.FALSE));
     }
   }
 
@@ -103,8 +99,9 @@ public class BukkitDurationProvider implements DurationProvider {
     public DurationBundle(String identifier, Duration warpCooldown, Duration warpWarmup) {
       super(identifier, "mywarp.timer"); // NON-NLS
 
-      durations = ImmutableMap.<Class<? extends TimerAction<?>>, Duration>builder()
-          .put(WarpCooldown.class, warpCooldown).put(WarpWarmup.class, warpWarmup).build();
+      durations =
+          ImmutableMap.<Class<? extends TimerAction<?>>, Duration>builder().put(WarpCooldown.class, warpCooldown)
+              .put(WarpWarmup.class, warpWarmup).build();
     }
 
     /**

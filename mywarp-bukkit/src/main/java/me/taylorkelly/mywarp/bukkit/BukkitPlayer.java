@@ -126,29 +126,28 @@ public class BukkitPlayer extends AbstractPlayer {
           LOCALE_CACHE.put(minecraftLocale, locale);
         }
       } catch (Exception e) {
-        log.log(Level.WARNING,
-                String.format("Failed to get locale from %1$s, defaulting to %2$s.", // NON-NLS
-                              getName(), locale));
+        log.log(Level.WARNING, String.format("Failed to get locale from %1$s, defaulting to %2$s.", // NON-NLS
+                                             getName(), locale));
       }
     }
     return locale;
   }
 
   /**
-   * Attempts to get the locale used by the given player (client-side). <p> This method relies on
-   * reflection to load the minecraft-player-object through the craftbukkit-implementation and
-   * access its {@code locale} field. It may break on Minecraft or CraftBukkit updates. </p>
+   * Attempts to get the locale used by the given player (client-side). <p> This method relies on reflection to load the
+   * minecraft-player-object through the craftbukkit-implementation and access its {@code locale} field. It may break on
+   * Minecraft or CraftBukkit updates. </p>
    *
-   * @param p the player
+   * @param player the player
    * @return the used locale as string
    * @throws IllegalAccessException    if the underlying reflection fails
    * @throws NoSuchFieldException      if the underlying reflection fails
    * @throws InvocationTargetException if the underlying reflection fails
    * @throws NoSuchMethodException     if the underlying reflection fails
    */
-  private String getLanguage(Player p) throws IllegalAccessException, NoSuchFieldException,
-                                              InvocationTargetException, NoSuchMethodException {
-    Object minecraftHandle = p.getClass().getMethod("getHandle").invoke(p);
+  private String getLanguage(Player player)
+      throws IllegalAccessException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
+    Object minecraftHandle = player.getClass().getMethod("getHandle").invoke(player);
     Field localeField = minecraftHandle.getClass().getDeclaredField("locale");
     localeField.setAccessible(true);
     return (String) localeField.get(minecraftHandle);
@@ -171,8 +170,7 @@ public class BukkitPlayer extends AbstractPlayer {
 
   @Override
   public void setCompassTarget(LocalWorld world, Vector3 position) {
-    Location bukkitLoc = new Location(adapter.adapt(world), position.getX(), position.getY(),
-                                      position.getZ());
+    Location bukkitLoc = new Location(adapter.adapt(world), position.getX(), position.getY(), position.getZ());
     player.setCompassTarget(bukkitLoc);
   }
 
@@ -195,8 +193,10 @@ public class BukkitPlayer extends AbstractPlayer {
 
   @Override
   public void teleport(LocalWorld world, Vector3 position, EulerDirection rotation) {
-    Location bukkitLoc = new Location(adapter.adapt(world), position.getX(), position.getY(),
-                                      position.getZ(), rotation.getPitch(), rotation.getYaw());
+    Location
+        bukkitLoc =
+        new Location(adapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getPitch(),
+                     rotation.getYaw());
     teleportRecusive(player, bukkitLoc, true, true);
   }
 
@@ -206,8 +206,7 @@ public class BukkitPlayer extends AbstractPlayer {
    * @param teleportee          the Entity to teleport
    * @param bukkitLoc           the Location where the Entity is teleported
    * @param teleportTamedHorses whether ridden, tamed horses should be teleported too
-   * @param teleportLeashed     whether Entities leashed by the teleported Entity should be
-   *                            teleported too
+   * @param teleportLeashed     whether Entities leashed by the teleported Entity should be teleported too
    */
   private void teleportRecusive(Entity teleportee, Location bukkitLoc, boolean teleportTamedHorses,
                                 boolean teleportLeashed) {

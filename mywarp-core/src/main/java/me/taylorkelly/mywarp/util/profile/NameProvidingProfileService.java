@@ -24,9 +24,9 @@ import com.google.common.base.Optional;
 import java.util.UUID;
 
 /**
- * A ProfileService that has an additional method to get the current name of a uniqueId. By
- * combining this with an {@link me.taylorkelly.mywarp.util.profile.NameProvidingProfileService.LazyProfile}
- * implementations can create lazy profile services that query the name only when needed.
+ * A ProfileService that has an additional method to get the current name of a uniqueId. By combining this with an
+ * {@link me.taylorkelly.mywarp.util.profile.NameProvidingProfileService.LazyProfile} implementations can create lazy
+ * profile services that query the name only when needed.
  */
 public interface NameProvidingProfileService extends ProfileService {
 

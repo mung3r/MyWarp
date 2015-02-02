@@ -34,10 +34,33 @@ import java.util.Deque;
 import javax.annotation.Nullable;
 
 /**
- * Represents a limit. Implementations are expected to provide the limits for each {@link Type} and
- * a way to resolve these limits per world.
+ * Represents a limit. Implementations are expected to provide the limits for each {@link Type} and a way to resolve
+ * these limits per world.
  */
 public interface Limit {
+
+  /**
+   * Gets the maximum number of warps a user can create under the given Limit.Type.
+   *
+   * @param type the type of limit
+   * @return the maximum number of warps
+   */
+  int getLimit(Type type);
+
+  /**
+   * Gets a list of all worlds that are affected by this Limit.
+   *
+   * @return a Set with all affected worlds
+   */
+  ImmutableSet<LocalWorld> getAffectedWorlds();
+
+  /**
+   * Returns whether the given LocalWorld is affected by this Limit.
+   *
+   * @param world the world to check
+   * @return true if the given world is affected
+   */
+  boolean isAffectedWorld(LocalWorld world);
 
   /**
    * The different types limits.
@@ -63,8 +86,8 @@ public interface Limit {
     /**
      * Initializes this Limit.
      *
-     * @param parent    the parent of this Type. The parent must count all warps that are counted by
-     *                  this limit. Can be {@code null} if this Type has no parent.
+     * @param parent    the parent of this Type. The parent must count all warps that are counted by this limit. Can be
+     *                  {@code null} if this Type has no parent.
      * @param condition the condition a warp must fulfill to be counted under this limit
      */
     private Type(@Nullable Type parent, Predicate<Warp> condition) {
@@ -92,8 +115,8 @@ public interface Limit {
     }
 
     /**
-     * Gets the parents of this type recursively. The last entry in the returned Deque is the parent
-     * of this Type, the second will be the parent of the parent of this Type and so one.
+     * Gets the parents of this type recursively. The last entry in the returned Deque is the parent of this Type, the
+     * second will be the parent of the parent of this Type and so one.
      *
      * @return the parents, recursively
      */
@@ -129,28 +152,5 @@ public interface Limit {
       return player.hasPermission(perm);
     }
   }
-
-  /**
-   * Gets the maximum number of warps a user can create under the given Limit.Type.
-   *
-   * @param type the type of limit
-   * @return the maximum number of warps
-   */
-  int getLimit(Type type);
-
-  /**
-   * Gets a list of all worlds that are affected by this Limit.
-   *
-   * @return a Set with all affected worlds
-   */
-  ImmutableSet<LocalWorld> getAffectedWorlds();
-
-  /**
-   * Returns whether the given LocalWorld is affected by this Limit.
-   *
-   * @param world the world to check
-   * @return true if the given world is affected
-   */
-  boolean isAffectedWorld(LocalWorld world);
 
 }

@@ -42,16 +42,12 @@ import java.util.List;
 import java.util.Map.Entry;
 
 /**
- * Prints a certain player's assets, showing active limits and Warps sorted to the corresponding
- * limit.
+ * Prints a certain player's assets, showing active limits and Warps sorted to the corresponding limit.
  */
 public class AssetsPrinter {
 
-  private static final List<Limit.Type> DISPLAYABLE_TYPES = Arrays.asList(Limit.Type.PRIVATE,
-                                                                          Limit.Type.PUBLIC);
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final List<Limit.Type> DISPLAYABLE_TYPES = Arrays.asList(Limit.Type.PRIVATE, Limit.Type.PUBLIC);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final LocalPlayer creator;
   private final LimitManager limitManager;
@@ -85,8 +81,8 @@ public class AssetsPrinter {
   }
 
   /**
-   * Prints the given Limit to the receiver. The given Warps will be matched to the individual
-   * Limit.Types and displayed accordingly.
+   * Prints the given Limit to the receiver. The given Warps will be matched to the individual Limit.Types and displayed
+   * accordingly.
    *
    * @param receiver the Actor who is receiving this print
    * @param limit    the limit
@@ -108,23 +104,18 @@ public class AssetsPrinter {
     ImmutableMultimap<Limit.Type, Warp> index = builder.build();
 
     // ...the total limit
-    receiver.sendMessage(ChatColor.GRAY
-                         + MESSAGES
+    receiver.sendMessage(ChatColor.GRAY + MESSAGES
         .getString("assets.total", CommandUtils.joinWorlds(limit.getAffectedWorlds()),
-                   warpLimitCount(index.get(Limit.Type.TOTAL).size(),
-                                  limit.getLimit(Limit.Type.TOTAL))));
+                   warpLimitCount(index.get(Limit.Type.TOTAL).size(), limit.getLimit(Limit.Type.TOTAL))));
 
     // ... all other limits
     List<String> limitStrings = new ArrayList<String>();
     for (Limit.Type type : DISPLAYABLE_TYPES) {
       Collection<Warp> privateWarps = index.get(type);
 
-      limitStrings
-          .add(ChatColor.GOLD + MESSAGES.getString("assets." + type.lowerCaseName(), // NON-NLS
-                                                   warpLimitCount(privateWarps.size(),
-                                                                  limit.getLimit(type))) + ' '
-               + ChatColor.WHITE
-               + ChatColor.ITALIC + CommandUtils.joinWarps(privateWarps));
+      limitStrings.add(ChatColor.GOLD + MESSAGES.getString("assets." + type.lowerCaseName(), // NON-NLS
+                                                           warpLimitCount(privateWarps.size(), limit.getLimit(type)))
+                       + ' ' + ChatColor.WHITE + ChatColor.ITALIC + CommandUtils.joinWarps(privateWarps));
     }
 
     receiver.sendMessage(FormattingUtils.toList(limitStrings));

@@ -113,119 +113,99 @@ public class Keys {
 
     public static org.jooq.Identity<me.taylorkelly.mywarp.dataconnections.generated.tables.records.GroupRecord, org.jooq.types.UInteger>
         IDENTITY_GROUP =
-        createIdentity(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP.GROUP_ID);
+        createIdentity(me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP,
+                       me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP.GROUP_ID);
     public static org.jooq.Identity<me.taylorkelly.mywarp.dataconnections.generated.tables.records.PlayerRecord, org.jooq.types.UInteger>
         IDENTITY_PLAYER =
-        createIdentity(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER.PLAYER_ID);
+        createIdentity(me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER,
+                       me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER.PLAYER_ID);
     public static org.jooq.Identity<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord, org.jooq.types.UInteger>
         IDENTITY_WARP =
-        createIdentity(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.WARP_ID);
+        createIdentity(me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
+                       me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.WARP_ID);
     public static org.jooq.Identity<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WorldRecord, org.jooq.types.UInteger>
         IDENTITY_WORLD =
-        createIdentity(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD.WORLD_ID);
+        createIdentity(me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD,
+                       me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD.WORLD_ID);
   }
 
   private static class UniqueKeys0 extends org.jooq.impl.AbstractKeys {
 
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.GroupRecord>
         KEY_GROUP_PRIMARY =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP.GROUP_ID);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP.GROUP_ID);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.GroupRecord>
         KEY_GROUP_GROUP_NAME_UQ =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP.NAME);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.Group.GROUP.NAME);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.PlayerRecord>
         KEY_PLAYER_PRIMARY =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER.PLAYER_ID);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER.PLAYER_ID);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.PlayerRecord>
         KEY_PLAYER_PLAYER_UUID_UQ =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER.UUID);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.Player.PLAYER.UUID);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord>
         KEY_WARP_PRIMARY =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.WARP_ID);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.WARP_ID);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord>
         KEY_WARP_WARP_NAME_UQ =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.NAME);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.NAME);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpGroupMapRecord>
         KEY_WARP_GROUP_MAP_PRIMARY =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP.WARP_ID,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP.GROUP_ID);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP.WARP_ID,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP.GROUP_ID);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpPlayerMapRecord>
         KEY_WARP_PLAYER_MAP_PRIMARY =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP.WARP_ID,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP.PLAYER_ID);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP.WARP_ID,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP.PLAYER_ID);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WorldRecord>
         KEY_WORLD_PRIMARY =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD.WORLD_ID);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD.WORLD_ID);
     public static final org.jooq.UniqueKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WorldRecord>
         KEY_WORLD_WORLD_UUID_UQ =
-        createUniqueKey(
-            me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD.UUID);
+        createUniqueKey(me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD,
+                        me.taylorkelly.mywarp.dataconnections.generated.tables.World.WORLD.UUID);
   }
 
   private static class ForeignKeys0 extends org.jooq.impl.AbstractKeys {
 
     public static final org.jooq.ForeignKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord, me.taylorkelly.mywarp.dataconnections.generated.tables.records.PlayerRecord>
         WARP_PLAYER_ID_FK =
-        createForeignKey(
-            me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_PLAYER_PRIMARY,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.PLAYER_ID);
+        createForeignKey(me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_PLAYER_PRIMARY,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.PLAYER_ID);
     public static final org.jooq.ForeignKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord, me.taylorkelly.mywarp.dataconnections.generated.tables.records.WorldRecord>
         WARP_WORLD_ID_FK =
-        createForeignKey(
-            me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_WORLD_PRIMARY,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.WORLD_ID);
+        createForeignKey(me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_WORLD_PRIMARY,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.Warp.WARP.WORLD_ID);
     public static final org.jooq.ForeignKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpGroupMapRecord, me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord>
         WARP_GROUP_MAP_WARP_ID_FK =
-        createForeignKey(
-            me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_WARP_PRIMARY,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP.WARP_ID);
+        createForeignKey(me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_WARP_PRIMARY,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP.WARP_ID);
     public static final org.jooq.ForeignKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpGroupMapRecord, me.taylorkelly.mywarp.dataconnections.generated.tables.records.GroupRecord>
         WARP_GROUP_MAP_GROUP_ID_FK =
-        createForeignKey(
-            me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_GROUP_PRIMARY,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP.GROUP_ID);
+        createForeignKey(me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_GROUP_PRIMARY,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.WarpGroupMap.WARP_GROUP_MAP.GROUP_ID);
     public static final org.jooq.ForeignKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpPlayerMapRecord, me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord>
         WARP_PLAYER_MAP_WARP_ID_FK =
-        createForeignKey(
-            me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_WARP_PRIMARY,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP.WARP_ID);
+        createForeignKey(me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_WARP_PRIMARY,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP.WARP_ID);
     public static final org.jooq.ForeignKey<me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpPlayerMapRecord, me.taylorkelly.mywarp.dataconnections.generated.tables.records.PlayerRecord>
         WARP_PLAYER_MAP_PLAYER_ID_FK =
-        createForeignKey(
-            me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_PLAYER_PRIMARY,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP,
-            me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP.PLAYER_ID);
+        createForeignKey(me.taylorkelly.mywarp.dataconnections.generated.Keys.KEY_PLAYER_PRIMARY,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP,
+                         me.taylorkelly.mywarp.dataconnections.generated.tables.WarpPlayerMap.WARP_PLAYER_MAP.PLAYER_ID);
   }
 }

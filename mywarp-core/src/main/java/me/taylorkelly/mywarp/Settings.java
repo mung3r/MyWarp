@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * This interface provides all user-configurable values for MyWarp. Implementations are expected to
- * be immutable.
+ * This interface provides all user-configurable values for MyWarp. Implementations are expected to be immutable.
  */
 public interface Settings {
 
@@ -50,8 +49,7 @@ public interface Settings {
   boolean isTeleportTamedHorses();
 
   /**
-   * Returns whether entities who are leashed by the entity who is teleported, should be teleported
-   * too.
+   * Returns whether entities who are leashed by the entity who is teleported, should be teleported too.
    *
    * @return true if leashed entities should be teleported too
    */
@@ -65,8 +63,7 @@ public interface Settings {
   boolean isShowTeleportEffect();
 
   /**
-   * Returns whether warps should be suggested base on popularity when multiple warps match a
-   * query.
+   * Returns whether warps should be suggested base on popularity when multiple warps match a query.
    *
    * @return true if warps should be suggested
    */
@@ -164,8 +161,7 @@ public interface Settings {
   boolean isTimersCooldownNotifyOnFinish();
 
   /**
-   * Returns whether the warp-warmup should be aborted if the users takes any damage while warming
-   * up.
+   * Returns whether the warp-warmup should be aborted if the users takes any damage while warming up.
    *
    * @return true if the warp-warmuo should be aborted
    */
@@ -232,7 +228,7 @@ public interface Settings {
    *
    * @return the icon's identifier
    */
-  String getDynmapMarkerIconID();
+  String getDynmapMarkerIconId();
 
   /**
    * Gets the minimal zoom level that must be meat to display MyWarp's markers.

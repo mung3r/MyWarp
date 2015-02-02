@@ -60,38 +60,32 @@ public abstract class LegacyMigrator {
    * @return a collection of warps migrated from the given data source
    * @throws DataConnectionException if the player UUID conversion fails
    */
-  public Collection<Warp> migrateLegacyWarps(DSLContext create, String tableName)
-      throws DataConnectionException {
-    Result<Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String, String>>
+  public Collection<Warp> migrateLegacyWarps(DSLContext create, String tableName) throws DataConnectionException {
+    Result<Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String,
+        String>>
         results =
-        create
-            .select(fieldByName(String.class, "name"), fieldByName(String.class, "creator"),
-                    // NON-NLS NON-NLS
-                    fieldByName(Boolean.class, "publicAll"), fieldByName(Double.class, "x"),
-                    // NON-NLS NON-NLS
-                    fieldByName(Double.class, "y"), fieldByName(Double.class, "z"), // NON-NLS
-                    // NON-NLS
-                    fieldByName(Float.class, "yaw"), fieldByName(Float.class, "pitch"), // NON-NLS
-                    // NON-NLS
-                    fieldByName(String.class, "world"), fieldByName(Integer.class, "visits"),
-                    // NON-NLS NON-NLS
-                    fieldByName(String.class, "welcomeMessage"), // NON-NLS
-                    fieldByName(String.class, "permissions"), // NON-NLS
-                    fieldByName(String.class, "groupPermissions")).from(tableByName(tableName))
-            .fetch(); // NON-NLS
+        create.select(fieldByName(String.class, "name"), fieldByName(String.class, "creator"),
+                      // NON-NLS NON-NLS
+                      fieldByName(Boolean.class, "publicAll"), fieldByName(Double.class, "x"),
+                      // NON-NLS NON-NLS
+                      fieldByName(Double.class, "y"), fieldByName(Double.class, "z"), // NON-NLS
+                      // NON-NLS
+                      fieldByName(Float.class, "yaw"), fieldByName(Float.class, "pitch"), // NON-NLS
+                      // NON-NLS
+                      fieldByName(String.class, "world"), fieldByName(Integer.class, "visits"),
+                      // NON-NLS NON-NLS
+                      fieldByName(String.class, "welcomeMessage"), // NON-NLS
+                      fieldByName(String.class, "permissions"), // NON-NLS
+                      fieldByName(String.class, "groupPermissions")).from(tableByName(tableName)).fetch(); // NON-NLS
 
-    Set<String>
-        playerNames =
-        new HashSet<String>(results.getValues("creator", String.class)); // NON-NLS
+    Set<String> playerNames = new HashSet<String>(results.getValues("creator", String.class)); // NON-NLS
     for (String invitedPlayers : results.getValues("permissions", String.class)) { // NON-NLS
       Iterables.addAll(playerNames, splitter.split(invitedPlayers));
     }
 
     Map<String, Profile> cache = new HashMap<String, Profile>();
     for (String invitedPlayer : playerNames) {
-      Optional<Profile>
-          optionalInvited =
-          MyWarp.getInstance().getProfileService().get(invitedPlayer);
+      Optional<Profile> optionalInvited = MyWarp.getInstance().getProfileService().get(invitedPlayer);
       if (!optionalInvited.isPresent()) {
         // REVIEW log error?
         continue;
@@ -101,7 +95,8 @@ public abstract class LegacyMigrator {
 
     Set<Warp> ret = new HashSet<Warp>(results.size());
 
-    for (Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String, String> r : results) {
+    for (Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String,
+        String> r : results) {
       Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
 
       Optional<LocalWorld> optionalWorld = MyWarp.getInstance().getLoadedWorld(r.value9());
@@ -113,10 +108,7 @@ public abstract class LegacyMigrator {
       Vector3 position = new Vector3(r.value4(), r.value5(), r.value6());
       EulerDirection rotation = new EulerDirection(r.value7(), r.value8(), 0);
 
-      WarpBuilder
-          builder =
-          new WarpBuilder(r.value1(), cache.get(r.value2()), type, world, position,
-                          rotation);
+      WarpBuilder builder = new WarpBuilder(r.value1(), cache.get(r.value2()), type, world, position, rotation);
 
       // optional values
       builder.withVisits(r.value10());

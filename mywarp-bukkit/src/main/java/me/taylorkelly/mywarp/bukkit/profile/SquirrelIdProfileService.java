@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.bukkit.profile;
 
 import com.google.common.base.Optional;
-
 import com.sk89q.squirrelid.cache.HashMapCache;
 import com.sk89q.squirrelid.cache.ProfileCache;
 import com.sk89q.squirrelid.resolver.BukkitPlayerService;
@@ -44,14 +43,15 @@ import java.util.logging.Logger;
 /**
  * A ProfileService implementation that uses the SquirrelID library to lookup UUIDs.
  */
-public class SquirrelIdProfileService extends AbstractListener
-    implements NameProvidingProfileService {
+public class SquirrelIdProfileService extends AbstractListener implements NameProvidingProfileService {
 
   private static final Logger log = Logger.getLogger(SquirrelIdProfileService.class.getName());
 
   private ProfileCache cache = new HashMapCache(); // REVIEW use SQLite cache?
-  private CacheForwardingService resolver = new CacheForwardingService(new CombinedProfileService(
-      BukkitPlayerService.getInstance(), HttpRepositoryService.forMinecraft()), cache);
+  private CacheForwardingService
+      resolver =
+      new CacheForwardingService(
+          new CombinedProfileService(BukkitPlayerService.getInstance(), HttpRepositoryService.forMinecraft()), cache);
 
   @Override
   public Profile get(UUID uniqueId) {
@@ -68,9 +68,7 @@ public class SquirrelIdProfileService extends AbstractListener
     } catch (IOException e) {
       log.log(Level.SEVERE, "Failed to find UUID for '" + name + "'.", e); // NON-NLS
     } catch (InterruptedException e) {
-      log.log(Level.SEVERE,
-              "Failed to find UUID for '" + name + "' as the process was interuptted.",
-              e); // NON-NLS
+      log.log(Level.SEVERE, "Failed to find UUID for '" + name + "' as the process was interuptted.", e); // NON-NLS
       // NON-NLS
     }
     return Optional.absent();

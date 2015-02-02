@@ -46,8 +46,8 @@ public final class IterableUtils {
   }
 
   /**
-   * Returns an Optional containing the first element in iterable or {@code Optional.absend()} if
-   * the iterable is empty.
+   * Returns an Optional containing the first element in iterable or {@code Optional.absend()} if the iterable is
+   * empty.
    *
    * @param <T>      the type of entries
    * @param iterable the iterable to check

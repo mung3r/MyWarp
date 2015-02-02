@@ -36,9 +36,9 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A Warp which forwards all its method calls to another Warp. Subclasses should override one or
- * more methods to modify the behavior of the backing Warp as desired per the <a
- * href="http://en.wikipedia.org/wiki/Decorator_pattern">decorator pattern</a>.
+ * A Warp which forwards all its method calls to another Warp. Subclasses should override one or more methods to modify
+ * the behavior of the backing Warp as desired per the <a href="http://en.wikipedia.org/wiki/Decorator_pattern">decorator
+ * pattern</a>.
  */
 public abstract class ForwardingWarp extends ForwardingObject implements Warp {
 
@@ -148,6 +148,11 @@ public abstract class ForwardingWarp extends ForwardingObject implements Warp {
   }
 
   @Override
+  public void setCreator(Profile creator) {
+    delegate().setCreator(creator);
+  }
+
+  @Override
   public Set<String> getInvitedGroups() {
     return delegate().getInvitedGroups();
   }
@@ -188,6 +193,11 @@ public abstract class ForwardingWarp extends ForwardingObject implements Warp {
   }
 
   @Override
+  public void setType(Type type) {
+    delegate().setType(type);
+  }
+
+  @Override
   public Date getCreationDate() {
     return delegate().getCreationDate();
   }
@@ -203,28 +213,18 @@ public abstract class ForwardingWarp extends ForwardingObject implements Warp {
   }
 
   @Override
+  public void setWelcomeMessage(String welcomeMessage) {
+    delegate().setWelcomeMessage(welcomeMessage);
+  }
+
+  @Override
   public String getParsedWelcomeMessage(LocalPlayer forWhom) {
     return delegate().getParsedWelcomeMessage(forWhom);
   }
 
   @Override
-  public void setCreator(Profile creator) {
-    delegate().setCreator(creator);
-  }
-
-  @Override
-  public void setType(Type type) {
-    delegate().setType(type);
-  }
-
-  @Override
   public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
     delegate().setLocation(world, position, rotation);
-  }
-
-  @Override
-  public void setWelcomeMessage(String welcomeMessage) {
-    delegate().setWelcomeMessage(welcomeMessage);
   }
 
   @Override

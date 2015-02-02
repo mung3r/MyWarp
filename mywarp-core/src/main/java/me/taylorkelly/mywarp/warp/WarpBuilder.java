@@ -45,16 +45,13 @@ public class WarpBuilder {
   private final UUID worldIdentifier;
   private final Vector3 position;
   private final EulerDirection rotation;
-
+  private final Set<Profile> invitedPlayers = new HashSet<Profile>();
+  private final Set<String> invitedGroups = new HashSet<String>();
   private Date creationDate = new Date();
   private int visits;
   // REVIEW use LocaleManager.getLocale() ?
-  private String
-      welcomeMessage =
-      MESSAGES.getString("default-welcome-message", MyWarp.getInstance() // NON-NLS
-          .getSettings().getLocalizationDefaultLocale());
-  private final Set<Profile> invitedPlayers = new HashSet<Profile>();
-  private final Set<String> invitedGroups = new HashSet<String>();
+  private String welcomeMessage = MESSAGES.getString("default-welcome-message", MyWarp.getInstance() // NON-NLS
+      .getSettings().getLocalizationDefaultLocale());
 
   /**
    * Creates a Builder that will build a Warp with the given values.
@@ -81,8 +78,7 @@ public class WarpBuilder {
    * @param position        the position of the warp
    * @param rotation        the rotation of the warp
    */
-  public WarpBuilder(String name, Profile creator, Type type, UUID worldIdentifier,
-                     Vector3 position,
+  public WarpBuilder(String name, Profile creator, Type type, UUID worldIdentifier, Vector3 position,
                      EulerDirection rotation) {
     this.name = name;
     this.creator = creator;

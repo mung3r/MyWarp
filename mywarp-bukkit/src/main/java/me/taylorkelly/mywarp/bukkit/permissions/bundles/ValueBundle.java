@@ -31,8 +31,7 @@ public abstract class ValueBundle implements Comparable<ValueBundle> {
    * Creates an instance.
    *
    * @param identifier     the identifier if this individual ValueBundle
-   * @param basePermission the base permission that is identical for all bundles that bundle the
-   *                       same type of values
+   * @param basePermission the base permission that is identical for all bundles that bundle the same type of values
    */
   public ValueBundle(String identifier, String basePermission) {
     this.identifier = identifier;

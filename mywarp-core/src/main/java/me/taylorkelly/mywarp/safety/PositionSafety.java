@@ -39,8 +39,8 @@ public interface PositionSafety {
   boolean isPositionSafe(LocalWorld world, Vector3 position);
 
   /**
-   * Gets an Optional with the first safe position found within the given tolerance, starting from
-   * the given position, if such a position exits.
+   * Gets an Optional with the first safe position found within the given tolerance, starting from the given position,
+   * if such a position exits.
    *
    * @param world     the world where the position is placed it
    * @param position  the position vector

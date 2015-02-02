@@ -37,8 +37,8 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
- * Searches for {@link PropertyResourceBundle}s in a folder, before trying to resolve them from the
- * classpath. ResourceBundles are loaded using <b>UTF-8</b> file-encoding.
+ * Searches for {@link PropertyResourceBundle}s in a folder, before trying to resolve them from the classpath.
+ * ResourceBundles are loaded using <b>UTF-8</b> file-encoding.
  */
 public class FolderSourcedControl extends ResourceBundle.Control {
 
@@ -47,8 +47,8 @@ public class FolderSourcedControl extends ResourceBundle.Control {
   private final File bundleFolder;
 
   /**
-   * Initializes this instance. Resource bundles will be resolved from the given folder before
-   * falling back to the class-path.
+   * Initializes this instance. Resource bundles will be resolved from the given folder before falling back to the
+   * class-path.
    *
    * @param bundleFolder the folder
    */
@@ -65,8 +65,8 @@ public class FolderSourcedControl extends ResourceBundle.Control {
   }
 
   @Override
-  public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
-                                  boolean reload) throws IOException {
+  public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
+      throws IOException {
 
     String bundleName = toBundleName(baseName, locale);
     ResourceBundle bundle = null;

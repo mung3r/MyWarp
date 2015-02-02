@@ -40,9 +40,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
 
   private static final int ALLOWED_DISTANCE = 2;
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final Warp warp;
   private final Vector3 initialPosition;
@@ -71,17 +69,14 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
     LocaleManager.setLocale(player.getLocale());
 
     if (MyWarp.getInstance().getSettings().isEconomyEnabled()) {
-      if (MyWarp.getInstance().getEconomyManager()
-          .informativeHasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
+      if (MyWarp.getInstance().getEconomyManager().informativeHasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
         return;
       }
     }
 
     warp.teleport(player, FeeProvider.FeeType.WARP_TO);
-    Duration duration = MyWarp.getInstance().getDurationProvider()
-        .getDuration(player, WarpCooldown.class);
-    MyWarp.getInstance().getTimerService()
-        .start(player.getProfile(), duration, new WarpCooldown(player));
+    Duration duration = MyWarp.getInstance().getDurationProvider().getDuration(player, WarpCooldown.class);
+    MyWarp.getInstance().getTimerService().start(player.getProfile(), duration, new WarpCooldown(player));
   }
 
   @Override
@@ -98,12 +93,11 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnMove(LocalPlayer player) {
-    if (MyWarp.getInstance().getSettings().isTimersWarmupAbortOnMove()
-        || player.hasPermission("mywarp.warmup.disobey.moveabort")) { // NON-NLS
+    if (MyWarp.getInstance().getSettings().isTimersWarmupAbortOnMove() || player
+        .hasPermission("mywarp.warmup.disobey.moveabort")) { // NON-NLS
       return false;
     }
-    if (!(player.getPosition().distanceSquared(initialPosition) > (ALLOWED_DISTANCE
-                                                                   * ALLOWED_DISTANCE))) {
+    if (!(player.getPosition().distanceSquared(initialPosition) > (ALLOWED_DISTANCE * ALLOWED_DISTANCE))) {
       return false;
     }
     LocaleManager.setLocale(player.getLocale());
@@ -118,8 +112,8 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnDamage(LocalPlayer player) {
-    if (MyWarp.getInstance().getSettings().isTimersWarmupAbortOnDamage()
-        || player.hasPermission("mywarp.warmup.disobey.dmgabort")) { // NON-NLS
+    if (MyWarp.getInstance().getSettings().isTimersWarmupAbortOnDamage() || player
+        .hasPermission("mywarp.warmup.disobey.dmgabort")) { // NON-NLS
       return false;
     }
     if (!(player.getHealth() < initialHealth)) {

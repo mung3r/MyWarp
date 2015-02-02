@@ -49,8 +49,8 @@ public class CubicLocationSafety extends BlockSafety {
   }
 
   /**
-   * Gets an Optional the first safe position from the cube surface of the given half-edge-length
-   * centered at the given position in the given world, if such a position exits.
+   * Gets an Optional the first safe position from the cube surface of the given half-edge-length centered at the given
+   * position in the given world, if such a position exits.
    *
    * @param world          the world where the position is placed it
    * @param center         the central position vector
@@ -80,16 +80,15 @@ public class CubicLocationSafety extends BlockSafety {
   }
 
   /**
-   * Gets an Optional with the first safe position from a horizontal square with the given
-   * half-edge-length centered at the given position in the given world, if such a position exits.
+   * Gets an Optional with the first safe position from a horizontal square with the given half-edge-length centered at
+   * the given position in the given world, if such a position exits.
    *
    * @param world          the world where the position is placed it
    * @param center         the central position vector
    * @param halfEdgeLength half of the effective edge length, including the block in the center
    * @return the first safe position
    */
-  private Optional<Vector3> checkHorizontalSquare(LocalWorld world, Vector3 center,
-                                                  int halfEdgeLength) {
+  private Optional<Vector3> checkHorizontalSquare(LocalWorld world, Vector3 center, int halfEdgeLength) {
     if (isPositionSafe(world, center)) {
       return Optional.of(center);
     }
@@ -107,17 +106,15 @@ public class CubicLocationSafety extends BlockSafety {
   }
 
   /**
-   * Gets an Optional with the first safe position from the outline of horizontal square with the
-   * given half-edge-length centered at the given position in the given world, if such a position
-   * exits.
+   * Gets an Optional with the first safe position from the outline of horizontal square with the given half-edge-length
+   * centered at the given position in the given world, if such a position exits.
    *
    * @param world          the world where the position is placed it
    * @param center         the central position vector
    * @param halfEdgeLength half of the effective edge length, including the block in the center
    * @return the first safe position
    */
-  private Optional<Vector3> checkHorizontalSquareOutline(LocalWorld world, Vector3 center,
-                                                         int halfEdgeLength) {
+  private Optional<Vector3> checkHorizontalSquareOutline(LocalWorld world, Vector3 center, int halfEdgeLength) {
     int blockSteps = getEdgeLength(halfEdgeLength) - 1;
     Vector3 checkPosition = center.add(halfEdgeLength - 1, 0, halfEdgeLength - 1);
 
@@ -151,9 +148,8 @@ public class CubicLocationSafety extends BlockSafety {
   }
 
   /**
-   * Gets the edge length of a square with the given half-edge-length. The later is expected to
-   * include the block at the center, e.g. the half-edge-length '2' would result in a edge-length of
-   * '3'.
+   * Gets the edge length of a square with the given half-edge-length. The later is expected to include the block at the
+   * center, e.g. the half-edge-length '2' would result in a edge-length of '3'.
    *
    * @param halfEdgeLength half of the effective edge length, including the block in the center
    * @return the edge length

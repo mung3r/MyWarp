@@ -26,6 +26,28 @@ import me.taylorkelly.mywarp.warp.Warp;
  */
 public class WarpUpdateEvent extends WarpEvent {
 
+  private final UpdateType type;
+
+  /**
+   * Constructs this event for the given Warp with the given UpdateType.
+   *
+   * @param warp the warp
+   * @param type the type
+   */
+  public WarpUpdateEvent(Warp warp, UpdateType type) {
+    super(warp);
+    this.type = type;
+  }
+
+  /**
+   * Gets the type, indicating how exactly the Warp was updated.
+   *
+   * @return the type
+   */
+  public UpdateType getType() {
+    return type;
+  }
+
   /**
    * Represents the way a Warp was updated.
    */
@@ -50,28 +72,6 @@ public class WarpUpdateEvent extends WarpEvent {
      * The warp's welcome-message was updated.
      */
     WELCOME_MESSAGE
-  }
-
-  private final UpdateType type;
-
-  /**
-   * Constructs this event for the given Warp with the given UpdateType.
-   *
-   * @param warp the warp
-   * @param type the type
-   */
-  public WarpUpdateEvent(Warp warp, UpdateType type) {
-    super(warp);
-    this.type = type;
-  }
-
-  /**
-   * Gets the type, indicating how exactly the Warp was updated.
-   *
-   * @return the type
-   */
-  public UpdateType getType() {
-    return type;
   }
 
 }

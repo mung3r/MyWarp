@@ -27,8 +27,8 @@ import org.apache.commons.lang.text.StrBuilder;
 import java.util.Collection;
 
 /**
- * This class bundles all methods that are only used to simplify certain task when writing commands.
- * All methods should be static.
+ * This class bundles all methods that are only used to simplify certain task when writing commands. All methods should
+ * be static.
  */
 public class CommandUtils {
 

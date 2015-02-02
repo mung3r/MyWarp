@@ -47,8 +47,7 @@ public class WelcomeEditorFactory {
   private static final String REMOVE_SEQUENCE = "#none"; // NON-NLS
   private static final int TIMEOUT = 30;
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(
-      UsageCommands.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
 
   private final ConversationFactory factory;
   private final BukkitAdapter adapter;
@@ -60,14 +59,14 @@ public class WelcomeEditorFactory {
    * @param adapter the adapter
    */
   public WelcomeEditorFactory(MyWarpPlugin plugin, BukkitAdapter adapter) {
-    this.factory = new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT)
-        .withEscapeSequence(ESCAPE_SEQUENCE).withFirstPrompt(new MessageInputPrompt());
+    this.factory =
+        new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT).withEscapeSequence(ESCAPE_SEQUENCE)
+            .withFirstPrompt(new MessageInputPrompt());
     this.adapter = adapter;
   }
 
   /**
-   * Creates an welcome-editor for the given player to change the welcome-message of the given
-   * Warp.
+   * Creates an welcome-editor for the given player to change the welcome-message of the given Warp.
    *
    * @param player the LocalPlayer
    * @param warp   the Warp
@@ -77,8 +76,7 @@ public class WelcomeEditorFactory {
     initialSessionData.put(Locale.class, player.getLocale());
     initialSessionData.put(Warp.class, warp);
 
-    factory.withInitialSessionData(initialSessionData).buildConversation(adapter.adapt(player))
-        .begin();
+    factory.withInitialSessionData(initialSessionData).buildConversation(adapter.adapt(player)).begin();
   }
 
   /**
@@ -100,9 +98,9 @@ public class WelcomeEditorFactory {
     public String getPromptText(ConversationContext context) {
       Warp warp = (Warp) context.getSessionData(Warp.class);
       Locale locale = (Locale) context.getSessionData(Locale.class);
-      return ChatColor.AQUA
-             + MESSAGES.getString("welcome-message-conversation.enter-message", locale,
-                                  warp.getName(), REMOVE_SEQUENCE, ESCAPE_SEQUENCE, TIMEOUT);
+      return ChatColor.AQUA + MESSAGES
+          .getString("welcome-message-conversation.enter-message", locale, warp.getName(), REMOVE_SEQUENCE,
+                     ESCAPE_SEQUENCE, TIMEOUT);
     }
   }
 
@@ -120,15 +118,11 @@ public class WelcomeEditorFactory {
       Locale locale = (Locale) context.getSessionData(Locale.class);
 
       if (message.isEmpty()) {
-        return MESSAGES.getString("welcome-message-conversation.removed-successful", locale,
-                                  warp.getName());
+        return MESSAGES.getString("welcome-message-conversation.removed-successful", locale, warp.getName());
       }
-      return new StrBuilder()
-          .append(ChatColor.AQUA)
-          .append(MESSAGES.getString("welcome-message-conversation.changed-successful", locale,
-                                     warp.getName())).appendNewLine().append(ChatColor.ITALIC)
-          .append(message)
-          .toString();
+      return new StrBuilder().append(ChatColor.AQUA)
+          .append(MESSAGES.getString("welcome-message-conversation.changed-successful", locale, warp.getName()))
+          .appendNewLine().append(ChatColor.ITALIC).append(message).toString();
     }
 
     @Override

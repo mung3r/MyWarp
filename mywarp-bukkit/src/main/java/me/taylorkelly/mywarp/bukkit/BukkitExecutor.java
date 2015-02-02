@@ -24,8 +24,7 @@ import org.bukkit.Bukkit;
 import java.util.concurrent.Executor;
 
 /**
- * An Executor for the Bukkit plattform. Given Runnables will be called by the main server thread at
- * the next tick.
+ * An Executor for the Bukkit plattform. Given Runnables will be called by the main server thread at the next tick.
  */
 public class BukkitExecutor implements Executor {
 

@@ -35,28 +35,8 @@ public final class TeleportService {
   private final PositionSafety positionSafety = new CubicLocationSafety();
 
   /**
-   * The status of a teleport.
-   */
-  public enum TeleportStatus {
-    /**
-     * The entity has not been teleported, e.g. because no safe location in the given margins could
-     * be found.
-     */
-    NONE,
-    /**
-     * The entity has been teleported to the original location.
-     */
-    ORIGINAL_LOC,
-    /**
-     * The entity has been teleported, but to a safe location within the given margins.
-     */
-    SAFE_LOC,
-  }
-
-  /**
-   * Teleports the entity to the given position in the given world and sets his rotation to the
-   * given one if the position is safe. If not, it searches the closest safe position and teleports
-   * the entity there.
+   * Teleports the entity to the given position in the given world and sets his rotation to the given one if the
+   * position is safe. If not, it searches the closest safe position and teleports the entity there.
    *
    * @param entity   the entity to teleport
    * @param world    the world where the position is placed it
@@ -64,8 +44,7 @@ public final class TeleportService {
    * @param rotation the rotation
    * @return The resulting {@link TeleportStatus}
    */
-  public TeleportStatus safeTeleport(LocalEntity entity, LocalWorld world, Vector3 position,
-                                     EulerDirection rotation) {
+  public TeleportStatus safeTeleport(LocalEntity entity, LocalWorld world, Vector3 position, EulerDirection rotation) {
     // warp height is always the block's Y so we may need to adjust the
     // height for blocks that are smaller than one full block (steps,
     // skulls...)
@@ -73,8 +52,9 @@ public final class TeleportService {
       position = position.add(0, 1, 0);
     }
     if (MyWarp.getInstance().getSettings().isSafetyEnabled()) {
-      Optional<Vector3> safePosition = positionSafety.getSafePosition(world, position, MyWarp
-          .getInstance().getSettings().getSafetySearchRadius());
+      Optional<Vector3>
+          safePosition =
+          positionSafety.getSafePosition(world, position, MyWarp.getInstance().getSettings().getSafetySearchRadius());
       if (!safePosition.isPresent()) {
         return TeleportStatus.NONE;
       }
@@ -85,5 +65,23 @@ public final class TeleportService {
     }
     entity.teleport(world, position, rotation);
     return TeleportStatus.ORIGINAL_LOC;
+  }
+
+  /**
+   * The status of a teleport.
+   */
+  public enum TeleportStatus {
+    /**
+     * The entity has not been teleported, e.g. because no safe location in the given margins could be found.
+     */
+    NONE,
+    /**
+     * The entity has been teleported to the original location.
+     */
+    ORIGINAL_LOC,
+    /**
+     * The entity has been teleported, but to a safe location within the given margins.
+     */
+    SAFE_LOC,
   }
 }

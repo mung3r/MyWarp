@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.bukkit.util;
 
 import com.google.common.base.Optional;
-
 import com.sk89q.intake.context.CommandLocals;
 import com.sk89q.intake.parametric.ParameterException;
 import com.sk89q.intake.parametric.argument.ArgumentStack;
@@ -52,13 +51,13 @@ public class PlayerBinding extends BindingHelper {
    * @return a matching player
    * @throws NoSuchPlayerException         if no matching player was found
    * @throws ParameterException            on a parameter error
-   * @throws IllegalCommandSenderException if the binding has the {@link Sender} annotation, but the
-   *                                       Actor who used the command is not a player instance
+   * @throws IllegalCommandSenderException if the binding has the {@link Sender} annotation, but the Actor who used the
+   *                                       command is not a player instance
    */
-  @BindingMatch(type = LocalPlayer.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = true)
+  @BindingMatch(type = LocalPlayer.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers =
+      true)
   public LocalPlayer getString(ArgumentStack context, Annotation[] modifiers)
-      throws NoSuchPlayerException,
-             ParameterException, IllegalCommandSenderException {
+      throws NoSuchPlayerException, ParameterException, IllegalCommandSenderException {
 
     for (Annotation modifier : modifiers) {
       if (modifier instanceof Sender) {
@@ -70,19 +69,15 @@ public class PlayerBinding extends BindingHelper {
   }
 
   /**
-   * Gets the player who used the command with the given CommandLocals. <p> It is expected that the
-   * sender of the command is an {@link Actor} and stored in the given CommandLocals under the actor
-   * class. </p>
+   * Gets the player who used the command with the given CommandLocals. <p> It is expected that the sender of the
+   * command is an {@link Actor} and stored in the given CommandLocals under the actor class. </p>
    *
    * @param locals the CommandLocals
    * @return the player
-   * @throws ParameterException            if CommandLocals does not contain a mapping for the
-   *                                       {@link Actor} class
-   * @throws IllegalCommandSenderException if the mapping for the {@link Actor} class is not a
-   *                                       player
+   * @throws ParameterException            if CommandLocals does not contain a mapping for the {@link Actor} class
+   * @throws IllegalCommandSenderException if the mapping for the {@link Actor} class is not a player
    */
-  protected LocalPlayer getPlayer(CommandLocals locals) throws ParameterException,
-                                                               IllegalCommandSenderException {
+  protected LocalPlayer getPlayer(CommandLocals locals) throws ParameterException, IllegalCommandSenderException {
     Actor actor = locals.get(Actor.class);
     if (actor == null) {
       throw new ParameterException(
@@ -111,8 +106,8 @@ public class PlayerBinding extends BindingHelper {
   }
 
   /**
-   * Indicates that the LocalPlayer binding should be parsed from the Actor who used the command
-   * instead of resolving it from a command argument.
+   * Indicates that the LocalPlayer binding should be parsed from the Actor who used the command instead of resolving it
+   * from a command argument.
    */
   @Retention(RetentionPolicy.RUNTIME)
   @Target(ElementType.PARAMETER)
@@ -121,8 +116,8 @@ public class PlayerBinding extends BindingHelper {
   }
 
   /**
-   * Thrown when the player should be parsed from the Actor who called the command, but his Actor is
-   * not a player instance.
+   * Thrown when the player should be parsed from the Actor who called the command, but his Actor is not a player
+   * instance.
    */
   public static class IllegalCommandSenderException extends Exception {
 
@@ -164,8 +159,7 @@ public class PlayerBinding extends BindingHelper {
      * @param profile the profile of the Player
      */
     public NoSuchPlayerException(Profile profile) {
-      this(profile.getName().isPresent() ? profile.getName().get()
-                                         : profile.getUniqueId().toString());
+      this(profile.getName().isPresent() ? profile.getName().get() : profile.getUniqueId().toString());
     }
 
     /**

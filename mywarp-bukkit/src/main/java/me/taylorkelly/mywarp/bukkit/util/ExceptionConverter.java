@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.bukkit.util;
 
 import com.google.common.base.Optional;
-
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.parametric.handler.ExceptionConverterHelper;
 import com.sk89q.intake.parametric.handler.ExceptionMatch;
@@ -44,51 +43,48 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExceptionConverter extends ExceptionConverterHelper {
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
   // NON-NLS
 
   /**
    * Converts a {@link NoSuchPlayerException} to a human readable {@link CommandException}.
    *
-   * @param e the NoSuchPlayerException
+   * @param ex the NoSuchPlayerException
    * @throws CommandException the wrapped exception
    */
   @ExceptionMatch
-  public void convert(NoSuchPlayerException e) throws CommandException {
-    throw new CommandException(MESSAGES.getString("exception.no-such-player", e.getQuery()), e);
+  public void convert(NoSuchPlayerException ex) throws CommandException {
+    throw new CommandException(MESSAGES.getString("exception.no-such-player", ex.getQuery()), ex);
   }
 
   /**
    * Converts a {@link NoSuchProfileException} to a human readable {@link CommandException}.
    *
-   * @param e the NoSuchProfileException
+   * @param ex the NoSuchProfileException
    * @throws CommandException the wrapped exception
    */
   @ExceptionMatch
-  public void convert(NoSuchProfileException e) throws CommandException {
-    throw new CommandException(MESSAGES.getString("exception.no-such-profile", e.getQuery()), e);
+  public void convert(NoSuchProfileException ex) throws CommandException {
+    throw new CommandException(MESSAGES.getString("exception.no-such-profile", ex.getQuery()), ex);
   }
 
   /**
    * Converts a {@link NoSuchWarpException} to a human readable {@link CommandException}.
    *
-   * @param e the NoSuchWarpException
+   * @param ex the NoSuchWarpException
    * @throws CommandException the wrapped exception
    */
   @ExceptionMatch
-  public void convert(NoSuchWarpException e) throws CommandException {
-    Optional<Warp> match = e.getMatches().getMatch(new Warp.PopularityComparator());
+  public void convert(NoSuchWarpException ex) throws CommandException {
+    Optional<Warp> match = ex.getMatches().getMatch(new Warp.PopularityComparator());
 
     StrBuilder builder = new StrBuilder();
-    builder.append(MESSAGES.getString("exception.no-such-warp", e.getQuery()));
+    builder.append(MESSAGES.getString("exception.no-such-warp", ex.getQuery()));
 
     if (match.isPresent()) {
       builder.appendNewLine();
       builder.append(ChatColor.GRAY);
-      builder
-          .append(MESSAGES.getString("exception.no-such-warp.suggestion", match.get().getName()));
+      builder.append(MESSAGES.getString("exception.no-such-warp.suggestion", match.get().getName()));
     }
 
     throw new CommandException(builder.toString());
@@ -97,22 +93,22 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   /**
    * Converts a {@link LimitExceededException} to a human readable {@link CommandException}.
    *
-   * @param e the LimitExceededException
+   * @param ex the LimitExceededException
    * @throws CommandException the wrapped exception
    */
   @ExceptionMatch
-  public void convert(LimitExceededException e) throws CommandException {
+  public void convert(LimitExceededException ex) throws CommandException {
     StrBuilder builder = new StrBuilder();
 
-    switch (e.getExceededLimit()) {
+    switch (ex.getExceededLimit()) {
       case TOTAL:
-        builder.append(MESSAGES.getString("exception.limit-exceeded.total", e.getLimitMaximum()));
+        builder.append(MESSAGES.getString("exception.limit-exceeded.total", ex.getLimitMaximum()));
         break;
       case PRIVATE:
-        builder.append(MESSAGES.getString("exception.limit-exceeded.private", e.getLimitMaximum()));
+        builder.append(MESSAGES.getString("exception.limit-exceeded.private", ex.getLimitMaximum()));
         break;
       case PUBLIC:
-        builder.append(MESSAGES.getString("exception.limit-exceeded.public", e.getLimitMaximum()));
+        builder.append(MESSAGES.getString("exception.limit-exceeded.public", ex.getLimitMaximum()));
         break;
     }
     builder.appendNewLine();
@@ -124,35 +120,34 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   /**
    * Converts a {@link TimerRunningException} to a human readable {@link CommandException}.
    *
-   * @param e the TimerRunningException
+   * @param ex the TimerRunningException
    * @throws CommandException the wrapped exception
    */
   @ExceptionMatch
-  public void convert(TimerRunningException e) throws CommandException {
-    throw new CommandException(MESSAGES.getString("exception.timer-running",
-                                                  e.getDurationLeft().get(TimeUnit.SECONDS)));
+  public void convert(TimerRunningException ex) throws CommandException {
+    throw new CommandException(
+        MESSAGES.getString("exception.timer-running", ex.getDurationLeft().get(TimeUnit.SECONDS)));
   }
 
   /**
    * Converts a {@link IllegalCommandSenderException} to a human readable {@link CommandException}.
    *
-   * @param e the IllegalCommandSenderException
+   * @param ex the IllegalCommandSenderException
    * @throws CommandException the wrapped exception
    */
   @ExceptionMatch
-  public void convert(IllegalCommandSenderException e) throws CommandException {
+  public void convert(IllegalCommandSenderException ex) throws CommandException {
     throw new CommandException(MESSAGES.getString("exception.illegal-command-sender"));
   }
 
   /**
    * Converts a {@link NoSuchWorldException} to a human readable {@link CommandException}.
    *
-   * @param e the NoSuchWorldException
+   * @param ex the NoSuchWorldException
    * @throws CommandException the wrapped exception
    */
   @ExceptionMatch
-  public void convert(NoSuchWorldException e) throws CommandException {
-    throw new CommandException(
-        MESSAGES.getString("exception.no-such-world", e.getWorldRepresentation()));
+  public void convert(NoSuchWorldException ex) throws CommandException {
+    throw new CommandException(MESSAGES.getString("exception.no-such-world", ex.getWorldRepresentation()));
   }
 }

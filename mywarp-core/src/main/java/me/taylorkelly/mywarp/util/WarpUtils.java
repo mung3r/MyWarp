@@ -40,8 +40,8 @@ public final class WarpUtils {
   }
 
   /**
-   * Returns a predicate that evaluates to {@code true} if the warp being tested is created by
-   * player identified by the given profile.
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is created by player identified by the
+   * given profile.
    *
    * @param profile the Profile
    * @return a predicate that checks if the given warp is created by the given player
@@ -59,8 +59,7 @@ public final class WarpUtils {
   }
 
   /**
-   * Returns a predicate that evaluates to {@code true} if the warp being tested is modifiable by
-   * the given Actor.
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is modifiable by the given Actor.
    *
    * @param actor the command-sender
    * @return a predicate that checks if the given warp is modifiable by the given Actor
@@ -78,8 +77,7 @@ public final class WarpUtils {
   }
 
   /**
-   * Returns a predicate that evaluates to {@code true} if the warp being tested is of the given
-   * type.
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is of the given type.
    *
    * @param type the type
    * @return a predicate that checks if the given warp is of the given type
@@ -97,8 +95,7 @@ public final class WarpUtils {
   }
 
   /**
-   * Returns a predicate that evaluates to {@code true} if the warp being tested is usable by the
-   * given entity.
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is usable by the given entity.
    *
    * @param entity the entity
    * @return a predicate that checks if the given warp is usable by the given entity
@@ -116,8 +113,7 @@ public final class WarpUtils {
   }
 
   /**
-   * Returns a predicate that evaluates to {@code true} if the warp being tested is viewable by the
-   * given Actor.
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is viewable by the given Actor.
    *
    * @param actor the Actor
    * @return a predicate that checks if the given warp is usable by the given Actor

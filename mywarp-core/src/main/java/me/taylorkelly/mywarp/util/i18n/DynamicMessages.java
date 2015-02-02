@@ -47,6 +47,13 @@ public class DynamicMessages {
   }
 
   /**
+   * Clears the cache used by all DynamicMessages.
+   */
+  public static void clearCache() {
+    ResourceBundle.clearCache();
+  }
+
+  /**
    * Gets a translated string. <p> If no translation exits, {@code $ key} will be returned. </p>
    *
    * @param key the key
@@ -74,8 +81,7 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated and formatted string. <p> If no translation exits, {@code $ key}:args} will
-   * be returned. </p>
+   * Gets a translated and formatted string. <p> If no translation exits, {@code $ key}:args} will be returned. </p>
    *
    * @param key  the key
    * @param args the arguments
@@ -86,8 +92,7 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated and formatted string. <p> If no translation exits, {@code $ key}:args} will
-   * be returned. </p>
+   * Gets a translated and formatted string. <p> If no translation exits, {@code $ key}:args} will be returned. </p>
    *
    * @param key    the key
    * @param locale the Locale
@@ -112,14 +117,6 @@ public class DynamicMessages {
    * @return the applicable ResourceBundle
    */
   private ResourceBundle getBundle(Locale locale) {
-    return ResourceBundle
-        .getBundle(baseName, locale, MyWarp.getInstance().getResourceBundleControl());
-  }
-
-  /**
-   * Clears the cache used by all DynamicMessages.
-   */
-  public static void clearCache() {
-    ResourceBundle.clearCache();
+    return ResourceBundle.getBundle(baseName, locale, MyWarp.getInstance().getResourceBundleControl());
   }
 }

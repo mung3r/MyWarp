@@ -48,8 +48,7 @@ import org.bukkit.ChatColor;
  */
 public class ManagementCommands {
 
-  private static final DynamicMessages
-      MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final WelcomeEditorFactory welcomeEditorFactory;
 
@@ -70,17 +69,12 @@ public class ManagementCommands {
    * @throws CommandException       if the Warp could not be created
    * @throws LimitExceededException if a Limit would be exceeded by creating the warp
    */
-  @Command(aliases = {"pcreate",
-                      "pset"}, desc = "create.private.description", help = "create.private.help")
+  @Command(aliases = {"pcreate", "pset"}, desc = "create.private.description", help = "create.private.help")
   @Require("mywarp.warp.basic.createprivate")
   @Billable(FeeType.CREATE_PRIVATE)
-  public void pcreate(@Sender LocalPlayer player, String name) throws CommandException,
-                                                                      LimitExceededException {
-    addWarp(player, player.getWorld(), player.getPosition(), player.getRotation(),
-            Warp.Type.PRIVATE,
-            name);
-    player.sendMessage(
-        ChatColor.AQUA + MESSAGES.getString("create.private.created-successful", name));
+  public void pcreate(@Sender LocalPlayer player, String name) throws CommandException, LimitExceededException {
+    addWarp(player, player.getWorld(), player.getPosition(), player.getRotation(), Warp.Type.PRIVATE, name);
+    player.sendMessage(ChatColor.AQUA + MESSAGES.getString("create.private.created-successful", name));
   }
 
   /**
@@ -91,16 +85,12 @@ public class ManagementCommands {
    * @throws CommandException       if the Warp could not be created
    * @throws LimitExceededException if a Limit would be exceeded by creating the warp
    */
-  @Command(aliases = {"create",
-                      "set"}, desc = "create.public.description", help = "create.public.help")
+  @Command(aliases = {"create", "set"}, desc = "create.public.description", help = "create.public.help")
   @Require("mywarp.warp.basic.createpublic")
   @Billable(FeeType.CREATE)
-  public void create(@Sender LocalPlayer player, String name) throws CommandException,
-                                                                     LimitExceededException {
-    addWarp(player, player.getWorld(), player.getPosition(), player.getRotation(), Warp.Type.PUBLIC,
-            name);
-    player
-        .sendMessage(ChatColor.AQUA + MESSAGES.getString("create.public.created-successful", name));
+  public void create(@Sender LocalPlayer player, String name) throws CommandException, LimitExceededException {
+    addWarp(player, player.getWorld(), player.getPosition(), player.getRotation(), Warp.Type.PUBLIC, name);
+    player.sendMessage(ChatColor.AQUA + MESSAGES.getString("create.public.created-successful", name));
   }
 
   /**
@@ -115,29 +105,24 @@ public class ManagementCommands {
    * @throws CommandException       if the Warp cannot be created
    * @throws LimitExceededException if a Limit would be exceeded by creating the warp
    */
-  private void addWarp(LocalPlayer creator, LocalWorld world, Vector3 position,
-                       EulerDirection rotation,
-                       Warp.Type type, String name)
-      throws CommandException, LimitExceededException {
+  private void addWarp(LocalPlayer creator, LocalWorld world, Vector3 position, EulerDirection rotation, Warp.Type type,
+                       String name) throws CommandException, LimitExceededException {
     if (MyWarp.getInstance().getWarpManager().contains(name)) {
       throw new CommandException(MESSAGES.getString("create.warp-exists", name));
     }
     if (name.length() > WarpUtils.MAX_NAME_LENGTH) {
-      throw new CommandException(
-          MESSAGES.getString("create.name-too-long", WarpUtils.MAX_NAME_LENGTH));
+      throw new CommandException(MESSAGES.getString("create.name-too-long", WarpUtils.MAX_NAME_LENGTH));
     }
     // XXX check for existing commands
 
-    LimitManager.EvaluationResult result = MyWarp.getInstance().getLimitManager()
-        .evaluateLimit(creator, world, type.getLimit(), true);
+    LimitManager.EvaluationResult
+        result =
+        MyWarp.getInstance().getLimitManager().evaluateLimit(creator, world, type.getLimit(), true);
     if (result.exceedsLimit()) {
-      throw new LimitExceededException(result.getExceededLimit().get(),
-                                       result.getLimitMaximum().get());
+      throw new LimitExceededException(result.getExceededLimit().get(), result.getLimitMaximum().get());
     }
 
-    WarpBuilder
-        builder =
-        new WarpBuilder(name, creator.getProfile(), type, world, position, rotation);
+    WarpBuilder builder = new WarpBuilder(name, creator.getProfile(), type, world, position, rotation);
     MyWarp.getInstance().getWarpManager().add(builder.build());
   }
 
@@ -152,8 +137,7 @@ public class ManagementCommands {
   @Billable(FeeType.DELETE)
   public void delete(Actor actor, @Condition(Condition.Type.MODIFIABLE) Warp warp) {
     MyWarp.getInstance().getWarpManager().remove(warp);
-    actor.sendMessage(
-        ChatColor.AQUA + MESSAGES.getString("delete.deleted-successful", warp.getName()));
+    actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("delete.deleted-successful", warp.getName()));
   }
 
   /**
@@ -167,8 +151,7 @@ public class ManagementCommands {
   @Billable(FeeType.UPDATE)
   public void update(@Sender LocalPlayer player, @Condition(Condition.Type.MODIFIABLE) Warp warp) {
     warp.setLocation(player.getWorld(), player.getPosition(), player.getRotation());
-    player.sendMessage(
-        ChatColor.AQUA + MESSAGES.getString("update.update-successful", warp.getName()));
+    player.sendMessage(ChatColor.AQUA + MESSAGES.getString("update.update-successful", warp.getName()));
   }
 
   /**

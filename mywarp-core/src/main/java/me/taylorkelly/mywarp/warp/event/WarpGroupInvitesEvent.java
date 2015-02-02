@@ -29,8 +29,8 @@ public class WarpGroupInvitesEvent extends WarpInvitesEvent {
   private final String groupId;
 
   /**
-   * Constructs this event for the given Warp, indicating that the group of the given identifier now
-   * has the given InvitationStatus.
+   * Constructs this event for the given Warp, indicating that the group of the given identifier now has the given
+   * InvitationStatus.
    *
    * @param warp             the warp
    * @param invitationStatus the InvitationStatus of the player

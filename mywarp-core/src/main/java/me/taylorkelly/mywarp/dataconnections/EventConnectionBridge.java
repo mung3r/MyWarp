@@ -28,9 +28,8 @@ import me.taylorkelly.mywarp.warp.event.WarpRemovalEvent;
 import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
 
 /**
- * Provides a bridge between the various {@link me.taylorkelly.mywarp.warp.event.WarpEvent}
- * implementations and a {@link DataConnection}, transforming relevant events into calls on the
- * data-connection.
+ * Provides a bridge between the various {@link me.taylorkelly.mywarp.warp.event.WarpEvent} implementations and a {@link
+ * DataConnection}, transforming relevant events into calls on the data-connection.
  */
 public class EventConnectionBridge {
 

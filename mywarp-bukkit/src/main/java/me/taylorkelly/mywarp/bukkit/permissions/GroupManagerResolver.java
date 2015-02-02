@@ -40,7 +40,6 @@ public class GroupManagerResolver implements GroupResolver {
 
   @Override
   public boolean hasGroup(Player player, String group) {
-    return groupManager.getWorldsHolder().getWorldPermissions(player)
-        .inGroup(player.getName(), group);
+    return groupManager.getWorldsHolder().getWorldPermissions(player).inGroup(player.getName(), group);
   }
 }

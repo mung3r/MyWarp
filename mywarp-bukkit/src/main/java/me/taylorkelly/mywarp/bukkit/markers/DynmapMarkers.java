@@ -49,8 +49,8 @@ public class DynmapMarkers {
   private static final String ICON_ID = "mywarp_warp-32"; // NON-NLS
 
   private static final Logger log = Logger.getLogger(DynmapMarkers.class.getName());
-  private static final DynamicMessages MESSAGES = new DynamicMessages(
-      "me.taylorkelly.mywarp.lang.DynmapMarkers"); // NON-NLS
+  private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.DynmapMarkers");
+  // NON-NLS
 
   private MarkerIcon markerIcon;
   private MarkerSet markerSet;
@@ -62,18 +62,14 @@ public class DynmapMarkers {
    * @param dynmapPlugin the running Dynmap instance to use
    * @param manager      the EventWarpManager this Markers run on
    */
-  public DynmapMarkers(MyWarpPlugin plugin, DynmapCommonAPI dynmapPlugin,
-                       EventWarpManager manager) {
+  public DynmapMarkers(MyWarpPlugin plugin, DynmapCommonAPI dynmapPlugin, EventWarpManager manager) {
     MarkerAPI markerApi = dynmapPlugin.getMarkerAPI();
 
     // get Icon for all markers
-    markerIcon =
-        markerApi.getMarkerIcon(MyWarp.getInstance().getSettings().getDynmapMarkerIconID());
-    if (markerIcon == null && !MyWarp.getInstance().getSettings().getDynmapMarkerIconID()
-        .equals(ICON_ID)) {
-      log.warning(
-          "MarkerIcon '" + MyWarp.getInstance().getSettings().getDynmapMarkerIconID() // NON-NLS
-          + "' does not exist. Using the default one."); // NON-NLS
+    markerIcon = markerApi.getMarkerIcon(MyWarp.getInstance().getSettings().getDynmapMarkerIconId());
+    if (markerIcon == null && !MyWarp.getInstance().getSettings().getDynmapMarkerIconId().equals(ICON_ID)) {
+      log.warning("MarkerIcon '" + MyWarp.getInstance().getSettings().getDynmapMarkerIconId() // NON-NLS
+                  + "' does not exist. Using the default one."); // NON-NLS
       markerIcon = markerApi.getMarkerIcon(ICON_ID);
     }
     if (markerIcon == null) {
@@ -84,8 +80,9 @@ public class DynmapMarkers {
     // create the label
     markerSet = markerApi.getMarkerSet(LABEL_ID);
     if (markerSet == null) {
-      markerSet = markerApi.createMarkerSet(LABEL_ID, MyWarp.getInstance().getSettings()
-          .getDynmapLayerDisplayName(), null, false);
+      markerSet =
+          markerApi
+              .createMarkerSet(LABEL_ID, MyWarp.getInstance().getSettings().getDynmapLayerDisplayName(), null, false);
     } else {
       markerSet.setMarkerSetLabel(MyWarp.getInstance().getSettings().getDynmapLayerDisplayName());
     }
@@ -160,8 +157,7 @@ public class DynmapMarkers {
    * @see Warp#replacePlaceholders(String)
    */
   private String toLabelHtml(Warp warp) {
-    String rawLabel = MESSAGES.getString("marker", MyWarp.getInstance().getSettings()
-        .getLocalizationDefaultLocale());
+    String rawLabel = MESSAGES.getString("marker", MyWarp.getInstance().getSettings().getLocalizationDefaultLocale());
     return warp.replacePlaceholders(rawLabel);
 
   }
@@ -186,10 +182,8 @@ public class DynmapMarkers {
       return;
     }
     markerSet
-        .createMarker(toMarkerId(warp), toLabelHtml(warp), true, warp.getWorld().getName(), warp
-                          .getPosition().getX(), warp.getPosition().getY(),
-                      warp.getPosition().getZ(), markerIcon,
-                      false);
+        .createMarker(toMarkerId(warp), toLabelHtml(warp), true, warp.getWorld().getName(), warp.getPosition().getX(),
+                      warp.getPosition().getY(), warp.getPosition().getZ(), markerIcon, false);
   }
 
   /**
@@ -230,8 +224,8 @@ public class DynmapMarkers {
     }
     Marker marker = markerSet.findMarker(toMarkerId(warp));
     if (marker != null) {
-      marker.setLocation(warp.getWorld().getName(), warp.getPosition().getX(), warp.getPosition()
-          .getY(), warp.getPosition().getZ());
+      marker.setLocation(warp.getWorld().getName(), warp.getPosition().getX(), warp.getPosition().getY(),
+                         warp.getPosition().getZ());
     }
   }
 }

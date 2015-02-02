@@ -41,20 +41,20 @@ public class LocaleManager {
   }
 
   /**
-   * Sets the Locale for the Thread calling this method.
-   *
-   * @param locale the Locale
-   */
-  public static void setLocale(Locale locale) {
-    ACTIVE_LOCALE.set(locale);
-  }
-
-  /**
    * Gets the Locale for the Thread calling this method.
    *
    * @return the Locale
    */
   public static Locale getLocale() {
     return ACTIVE_LOCALE.get();
+  }
+
+  /**
+   * Sets the Locale for the Thread calling this method.
+   *
+   * @param locale the Locale
+   */
+  public static void setLocale(Locale locale) {
+    ACTIVE_LOCALE.set(locale);
   }
 }

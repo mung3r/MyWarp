@@ -41,9 +41,7 @@ import org.bukkit.ChatColor;
  */
 public class UtilityCommands {
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   /**
    * Displays the help.
@@ -94,15 +92,12 @@ public class UtilityCommands {
   public void player(Actor actor, LocalPlayer teleportee, @Condition(Type.USABLE) Warp warp) {
     switch (warp.teleport(teleportee)) {
       case NONE:
-        actor.sendError(MESSAGES.getString("warp-player.teleport-failed", teleportee.getName(),
-                                           warp.getName()));
+        actor.sendError(MESSAGES.getString("warp-player.teleport-failed", teleportee.getName(), warp.getName()));
         break;
       case ORIGINAL_LOC:
       case SAFE_LOC:
-        actor.sendMessage(ChatColor.AQUA
-                          + MESSAGES
-            .getString("warp-player.teleport-successful", teleportee.getName(),
-                       warp.getName()));
+        actor.sendMessage(ChatColor.AQUA + MESSAGES
+            .getString("warp-player.teleport-successful", teleportee.getName(), warp.getName()));
         break;
 
     }

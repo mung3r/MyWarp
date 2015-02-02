@@ -44,9 +44,7 @@ import java.util.Set;
  */
 public class InfoPrinter {
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final Warp warp;
 
@@ -70,8 +68,8 @@ public class InfoPrinter {
     // heading
     info.append(ChatColor.GOLD);
     info.append(MESSAGES.getString("info.heading",
-                                   ChatColor.getByChar(warp.getType().getColorCharacter()) + warp
-                                       .getName() + ChatColor.GOLD));
+                                   ChatColor.getByChar(warp.getType().getColorCharacter()) + warp.getName()
+                                   + ChatColor.GOLD));
     info.appendNewLine();
 
     // creator
@@ -99,8 +97,9 @@ public class InfoPrinter {
     info.append(MESSAGES.getString("info.location"));
     info.append(" ");
     info.append(ChatColor.WHITE);
-    info.append(MESSAGES.getString("info.location.position", warp.getPosition().getFloorX(), warp
-        .getPosition().getFloorY(), warp.getPosition().getFloorZ(), warp.getWorld().getName()));
+    info.append(MESSAGES
+                    .getString("info.location.position", warp.getPosition().getFloorX(), warp.getPosition().getFloorY(),
+                               warp.getPosition().getFloorZ(), warp.getWorld().getName()));
 
     info.appendNewLine();
 
@@ -149,8 +148,8 @@ public class InfoPrinter {
     info.append(MESSAGES.getString("info.creation-date", warp.getCreationDate()));
     info.append(" ");
     info.append(ChatColor.WHITE);
-    info.append(DateFormat.getDateInstance(DateFormat.DEFAULT, LocaleManager.getLocale()).format(
-        warp.getCreationDate()));
+    info.append(
+        DateFormat.getDateInstance(DateFormat.DEFAULT, LocaleManager.getLocale()).format(warp.getCreationDate()));
 
     info.appendNewLine();
 
@@ -159,8 +158,7 @@ public class InfoPrinter {
     info.append(MESSAGES.getString("info.visits"));
     info.append(" ");
     info.append(ChatColor.WHITE);
-    info.append(
-        MESSAGES.getString("info.visits.per-day", warp.getVisits(), warp.getVisitsPerDay()));
+    info.append(MESSAGES.getString("info.visits.per-day", warp.getVisits(), warp.getVisitsPerDay()));
     receiver.sendMessage(info.toString());
   }
 

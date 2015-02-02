@@ -32,8 +32,8 @@ import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
 import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent.UpdateType;
 
 /**
- * Forwards method calls to an existing Warp and posts {@link me.taylorkelly.mywarp.warp.event.WarpEvent}s
- * to an EventWarpManager.
+ * Forwards method calls to an existing Warp and posts {@link me.taylorkelly.mywarp.warp.event.WarpEvent}s to an
+ * EventWarpManager.
  */
 public class EventfullWarp extends ForwardingWarp {
 
@@ -41,8 +41,7 @@ public class EventfullWarp extends ForwardingWarp {
   private final EventWarpManager eventManager;
 
   /**
-   * Creates the instance that forwards calls to the given Warp. Events will be posted to the given
-   * EventWarpManager.
+   * Creates the instance that forwards calls to the given Warp. Events will be posted to the given EventWarpManager.
    *
    * @param warp         the Warp
    * @param eventManager the EventWarpManager

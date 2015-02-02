@@ -53,10 +53,10 @@ public final class PropertiesUtils {
   }
 
   /**
-   * Copies key-value-pairs found in the given Properties but not in the given File into it. The
-   * file is expected to exist and contain a structure readable as Properties. <p> Instead of using
-   * the sytem's default encoding, this method will use <b>UTF-8</b> to write the file. A comment
-   * about the encoding is added to the file if changes need to be saved. </p>
+   * Copies key-value-pairs found in the given Properties but not in the given File into it. The file is expected to
+   * exist and contain a structure readable as Properties. <p> Instead of using the sytem's default encoding, this
+   * method will use <b>UTF-8</b> to write the file. A comment about the encoding is added to the file if changes need
+   * to be saved. </p>
    *
    * @param file     the file that potentially has missing values
    * @param defaults the Properties that contains all values
@@ -67,19 +67,17 @@ public final class PropertiesUtils {
   }
 
   /**
-   * Copies key-value-pairs found in the given Properties but not in the given File into it. The
-   * file is not created by this method but is expected to exist and contain a structure readable as
-   * Properties. <p> Instead of using the sytem's default encoding, this method will use given one
-   * to write the file. A comment about the encoding is added to the file if changes need to be
-   * saved. </p>
+   * Copies key-value-pairs found in the given Properties but not in the given File into it. The file is not created by
+   * this method but is expected to exist and contain a structure readable as Properties. <p> Instead of using the
+   * sytem's default encoding, this method will use given one to write the file. A comment about the encoding is added
+   * to the file if changes need to be saved. </p>
    *
    * @param file     the file that potentially has missing values
    * @param defaults the Properties that contains all values
    * @param charset  the charset that should be used to read and write the file
    * @throws IOException if reading or writing the file fails for some reason
    */
-  public static void copyMissing(File file, Properties defaults, Charset charset)
-      throws IOException {
+  public static void copyMissing(File file, Properties defaults, Charset charset) throws IOException {
     Properties loaded = new Properties();
 
     InputStream inputStream;
@@ -93,8 +91,7 @@ public final class PropertiesUtils {
         try {
           reader.close();
         } catch (IOException e) {
-          log.log(Level.FINER, "Failed to close Reader for '" + file.getAbsolutePath() + "'.",
-                  e); // NON-NLS
+          log.log(Level.FINER, "Failed to close Reader for '" + file.getAbsolutePath() + "'.", e); // NON-NLS
         }
       }
     }
@@ -121,17 +118,15 @@ public final class PropertiesUtils {
           try {
             writer.close();
           } catch (IOException e) {
-            log.log(Level.FINER, "Failed to close Writer to '" + file.getAbsolutePath() + "'.",
-                    e); // NON-NLS
+            log.log(Level.FINER, "Failed to close Writer to '" + file.getAbsolutePath() + "'.", e); // NON-NLS
           }
         }
         if (outputStream != null) {
           try {
             outputStream.close();
           } catch (IOException e) {
-            log.log(Level.FINER,
-                    "Failed to close OutputStream to '" + file.getAbsolutePath() // NON-NLS
-                    + "'.", e);
+            log.log(Level.FINER, "Failed to close OutputStream to '" + file.getAbsolutePath() // NON-NLS
+                                 + "'.", e);
           }
         }
       }
@@ -140,8 +135,8 @@ public final class PropertiesUtils {
   }
 
   /**
-   * Gets the header for the given Charset. The header includes informations about the Charset and
-   * on how to edit the file.
+   * Gets the header for the given Charset. The header includes informations about the Charset and on how to edit the
+   * file.
    *
    * @param charset the Charset
    * @return the header

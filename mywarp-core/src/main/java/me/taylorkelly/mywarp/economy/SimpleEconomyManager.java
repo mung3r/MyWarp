@@ -27,15 +27,12 @@ import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 /**
- * Manages the economy tasks. <p> The SimpleEconomyManager operates on a {@link FeeProvider} that
- * provides the actual fees and a {@link EconomyService} that provides a connection with the actual
- * economy of the plattform. </p>
+ * Manages the economy tasks. <p> The SimpleEconomyManager operates on a {@link FeeProvider} that provides the actual
+ * fees and a {@link EconomyService} that provides a connection with the actual economy of the plattform. </p>
  */
 public class SimpleEconomyManager implements EconomyManager {
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages("me.taylorkelly.mywarp.lang.Economy");
+  private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.Economy");
   // NON-NLS
 
   private final FeeProvider provider;

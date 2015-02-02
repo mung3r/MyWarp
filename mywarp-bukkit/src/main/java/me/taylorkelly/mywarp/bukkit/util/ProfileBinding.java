@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.bukkit.util;
 
 import com.google.common.base.Optional;
-
 import com.sk89q.intake.parametric.ParameterException;
 import com.sk89q.intake.parametric.argument.ArgumentStack;
 import com.sk89q.intake.parametric.binding.BindingBehavior;
@@ -44,8 +43,7 @@ public class ProfileBinding extends BindingHelper {
    * @throws ParameterException     on a parameter error
    */
   @BindingMatch(type = Profile.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = false)
-  public Profile getString(ArgumentStack context)
-      throws NoSuchProfileException, ParameterException {
+  public Profile getString(ArgumentStack context) throws NoSuchProfileException, ParameterException {
     String query = context.next();
     Optional<Profile> optional = MyWarp.getInstance().getProfileService().get(query);
 
@@ -56,8 +54,8 @@ public class ProfileBinding extends BindingHelper {
   }
 
   /**
-   * Thrown when no {@link Profile} can be found for a given query. Typically this is caused by a
-   * malformed query or unavailable UUID servers.
+   * Thrown when no {@link Profile} can be found for a given query. Typically this is caused by a malformed query or
+   * unavailable UUID servers.
    */
   public static class NoSuchProfileException extends Exception {
 

@@ -41,59 +41,58 @@ import java.util.logging.Logger;
 /**
  * A migrator for legacy (pre 2.7) SQLite databases.
  */
-public class LegacySQLiteMigrator extends LegacyMigrator implements DataMigrator {
+public class LegacySqLiteMigrator extends LegacyMigrator implements DataMigrator {
 
-  private static final Logger log = Logger.getLogger(LegacySQLiteMigrator.class.getName());
+  private static final Logger log = Logger.getLogger(LegacySqLiteMigrator.class.getName());
   private static final String TABLE_NAME = "warpTable"; // NON-NLS
 
   private final String dsn;
 
   /**
-   * Initiates this LegacySQLiteMigrator.
+   * Initiates this LegacySqLiteMigrator.
    *
    * @param database the database file
    */
-  public LegacySQLiteMigrator(final File database) {
+  public LegacySqLiteMigrator(final File database) {
     this.dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
   }
 
   @Override
   public ListenableFuture<Collection<Warp>> getWarps() {
-    ListenableFutureTask<Collection<Warp>> ret = ListenableFutureTask
-        .create(new Callable<Collection<Warp>>() {
-          @Override
-          public Collection<Warp> call() throws DataConnectionException {
-            try {
-              // Manually load SQLite driver. DriveManager is
-              // unable to identify it as the driver does not
-              // follow JDBC 4.0 standards.
-              Class.forName("org.sqlite.JDBC");
-            } catch (ClassNotFoundException e) {
-              throw new DataConnectionException("Unable to find SQLite library.", e);
-            }
+    ListenableFutureTask<Collection<Warp>> ret = ListenableFutureTask.create(new Callable<Collection<Warp>>() {
+      @Override
+      public Collection<Warp> call() throws DataConnectionException {
+        try {
+          // Manually load SQLite driver. DriveManager is
+          // unable to identify it as the driver does not
+          // follow JDBC 4.0 standards.
+          Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+          throw new DataConnectionException("Unable to find SQLite library.", e);
+        }
 
-            Connection conn;
-            try {
-              conn = DriverManager.getConnection(dsn);
-            } catch (SQLException e) {
-              throw new DataConnectionException("Failed to connect to the database.", e);
-            }
+        Connection conn;
+        try {
+          conn = DriverManager.getConnection(dsn);
+        } catch (SQLException e) {
+          throw new DataConnectionException("Failed to connect to the database.", e);
+        }
 
-            DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
-            Collection<Warp> ret = null;
-            try {
-              ret = migrateLegacyWarps(create, TABLE_NAME);
-            } finally {
-              try {
-                conn.close();
-              } catch (SQLException e) {
-                log.log(Level.WARNING, "Failed to close import SQL connection.", e); // NON-NLS
-              }
-            }
-
-            return ret;
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        Collection<Warp> ret = null;
+        try {
+          ret = migrateLegacyWarps(create, TABLE_NAME);
+        } finally {
+          try {
+            conn.close();
+          } catch (SQLException e) {
+            log.log(Level.WARNING, "Failed to close import SQL connection.", e); // NON-NLS
           }
-        });
+        }
+
+        return ret;
+      }
+    });
     new Thread(ret).start();
     return ret;
   }

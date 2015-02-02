@@ -40,9 +40,9 @@ import java.util.logging.Logger;
 /**
  * A migrator for legacy (pre 2.7) MySQL databases.
  */
-public class LegacyMySQLMigrator extends LegacyMigrator implements DataMigrator {
+public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator {
 
-  private static final Logger log = Logger.getLogger(LegacyMySQLMigrator.class.getName());
+  private static final Logger log = Logger.getLogger(LegacyMySqlMigrator.class.getName());
 
   private final String dsn;
   private final String user;
@@ -50,15 +50,14 @@ public class LegacyMySQLMigrator extends LegacyMigrator implements DataMigrator 
   private final String tableName;
 
   /**
-   * Initiates this LegacyMySQLMigrator.
+   * Initiates this LegacyMySqlMigrator.
    *
    * @param dsn       the dsn of the database
    * @param user      the MySQL user to use
    * @param password  the user's password
    * @param tableName the name of the table that contains the data
    */
-  public LegacyMySQLMigrator(final String dsn, final String user, final String password,
-                             final String tableName) {
+  public LegacyMySqlMigrator(final String dsn, final String user, final String password, final String tableName) {
     this.dsn = dsn;
     this.user = user;
     this.password = password;
@@ -67,33 +66,32 @@ public class LegacyMySQLMigrator extends LegacyMigrator implements DataMigrator 
 
   @Override
   public ListenableFuture<Collection<Warp>> getWarps() {
-    ListenableFutureTask<Collection<Warp>> ret = ListenableFutureTask
-        .create(new Callable<Collection<Warp>>() {
-          @Override
-          public Collection<Warp> call() throws DataConnectionException {
-            Connection conn;
-            try {
-              conn = DriverManager.getConnection(dsn, user, password);
-            } catch (SQLException e) {
-              throw new DataConnectionException("Failed to connect to the database.", e);
-            }
+    ListenableFutureTask<Collection<Warp>> ret = ListenableFutureTask.create(new Callable<Collection<Warp>>() {
+      @Override
+      public Collection<Warp> call() throws DataConnectionException {
+        Connection conn;
+        try {
+          conn = DriverManager.getConnection(dsn, user, password);
+        } catch (SQLException e) {
+          throw new DataConnectionException("Failed to connect to the database.", e);
+        }
 
-            DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
-            Collection<Warp> ret = null;
-            try {
-              ret = migrateLegacyWarps(create, tableName);
-            } finally {
+        DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
+        Collection<Warp> ret = null;
+        try {
+          ret = migrateLegacyWarps(create, tableName);
+        } finally {
 
-              try {
-                conn.close();
-              } catch (SQLException e) {
-                log.log(Level.WARNING, "Failed to close import SQL connection.", e); // NON-NLS
-              }
-            }
-
-            return ret;
+          try {
+            conn.close();
+          } catch (SQLException e) {
+            log.log(Level.WARNING, "Failed to close import SQL connection.", e); // NON-NLS
           }
-        });
+        }
+
+        return ret;
+      }
+    });
     new Thread(ret).start();
     return ret;
   }

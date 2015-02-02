@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.bukkit.util;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-
 import com.sk89q.intake.context.CommandLocals;
 import com.sk89q.intake.parametric.ParameterException;
 import com.sk89q.intake.parametric.argument.ArgumentStack;
@@ -58,21 +57,18 @@ public class WarpBinding extends BindingHelper {
    * @throws ParameterException  on a parameter error
    */
   @BindingMatch(type = Warp.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = true)
-  public Warp getString(ArgumentStack context, Annotation[] modifiers) throws NoSuchWarpException,
-                                                                              ParameterException {
+  public Warp getString(ArgumentStack context, Annotation[] modifiers) throws NoSuchWarpException, ParameterException {
     Type conditionValue;
     try {
       conditionValue = findCondition(modifiers).value();
     } catch (NoSuchElementException e) {
-      throw new IllegalArgumentException("This Binding must be used with a Modifier annotation.",
-                                         e);
+      throw new IllegalArgumentException("This Binding must be used with a Modifier annotation.", e);
     }
 
     CommandLocals locals = context.getContext().getLocals();
     Actor actor = locals.get(Actor.class);
     if (actor == null || !(conditionValue.clazz.isAssignableFrom(actor.getClass()))) {
-      throw new IllegalArgumentException("This Binding must be used by "
-                                         + conditionValue.clazz.getName() + "s.");
+      throw new IllegalArgumentException("This Binding must be used by " + conditionValue.clazz.getName() + "s.");
     }
 
     Predicate<Warp> predicate = null;
@@ -135,6 +131,11 @@ public class WarpBinding extends BindingHelper {
     /**
      * The type of condition.
      */
+    Type value();
+
+    /**
+     * The type of condition.
+     */
     enum Type {
       /**
        * The Warp is viewable.
@@ -167,10 +168,6 @@ public class WarpBinding extends BindingHelper {
       }
     }
 
-    /**
-     * The type of condition.
-     */
-    Type value();
   }
 
   /**

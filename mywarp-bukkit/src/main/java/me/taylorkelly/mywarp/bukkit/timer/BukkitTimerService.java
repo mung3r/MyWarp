@@ -43,8 +43,7 @@ public class BukkitTimerService implements TimerService {
 
   private final Table<Object, Class<? extends TimerAction>, SelfRunningRunnable>
       runningTimers =
-      HashBasedTable
-          .create();
+      HashBasedTable.create();
   private final MyWarpPlugin plugin;
 
   /**
@@ -62,8 +61,7 @@ public class BukkitTimerService implements TimerService {
                                 "A timer of the type %s is already running for %s.", timedSubject,
                                 action.getClass()); // NON-NLS
 
-    runningTimers
-        .put(timedSubject, action.getClass(), new SelfRunningRunnable<T>(action, duration));
+    runningTimers.put(timedSubject, action.getClass(), new SelfRunningRunnable<T>(action, duration));
   }
 
   @Override
@@ -98,8 +96,7 @@ public class BukkitTimerService implements TimerService {
     private final BukkitRunnable abortingCheck;
 
     /**
-     * Creates an instance. The given Runnable will be submitted for execution after the given
-     * Duration.
+     * Creates an instance. The given Runnable will be submitted for execution after the given Duration.
      *
      * @param runnable the Runnable
      * @param duration the Duration
@@ -122,23 +119,21 @@ public class BukkitTimerService implements TimerService {
           }
 
         };
-        abortingCheck.runTaskTimer(plugin, AbortableTimerAction.CHECK_INTERVAL_TICKS,
-                                   AbortableTimerAction.CHECK_INTERVAL_TICKS);
+        abortingCheck
+            .runTaskTimer(plugin, AbortableTimerAction.CHECK_INTERVAL_TICKS, AbortableTimerAction.CHECK_INTERVAL_TICKS);
       } else {
         abortingCheck = null;
       }
     }
 
     /**
-     * Gets the time remaining until this Runnable is executed. <p> The returned Duration might not
-     * be entirely exact, since Minecraft's internal clock may run faster or slower than the
-     * real-world time. </p>
+     * Gets the time remaining until this Runnable is executed. <p> The returned Duration might not be entirely exact,
+     * since Minecraft's internal clock may run faster or slower than the real-world time. </p>
      *
      * @return the time remaining
      */
     public Duration getRemainingTime() {
-      return new Duration(durationMillis - (System.currentTimeMillis() - startMillis),
-                          TimeUnit.MILLISECONDS);
+      return new Duration(durationMillis - (System.currentTimeMillis() - startMillis), TimeUnit.MILLISECONDS);
     }
 
     @Override

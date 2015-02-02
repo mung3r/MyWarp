@@ -52,15 +52,15 @@ public class WarpSignManager extends AbstractListener {
 
   private static final int IDENTIFIER_LINE = 1;
   private static final int WARPNAME_LINE = 2;
-  private static final ImmutableSet<Material> SUPPORTED_ATTACHABLES = ImmutableSet.of(
-      Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
+  private static final ImmutableSet<Material>
+      SUPPORTED_ATTACHABLES =
+      ImmutableSet.of(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
   private static final ImmutableSet<Material>
       SUPPORTED_PLATES =
-      ImmutableSet.of(Material.WOOD_PLATE,
-                      Material.STONE_PLATE);
+      ImmutableSet.of(Material.WOOD_PLATE, Material.STONE_PLATE);
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(
-      "me.taylorkelly.mywarp.lang.WarpSignManager"); // NON-NLS-1
+  private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.WarpSignManager");
+  // NON-NLS-1
 
   private final TreeSet<String> identifiers;
   private final WarpManager manager;
@@ -177,8 +177,7 @@ public class WarpSignManager extends AbstractListener {
     }
 
     if (MyWarp.getInstance().getSettings().isEconomyEnabled()) {
-      if (MyWarp.getInstance().getEconomyManager()
-          .informativeHasAtLeast(player, FeeType.WARP_SIGN_USE)) {
+      if (MyWarp.getInstance().getEconomyManager().informativeHasAtLeast(player, FeeType.WARP_SIGN_USE)) {
         return;
       }
     }
@@ -189,8 +188,8 @@ public class WarpSignManager extends AbstractListener {
   }
 
   /**
-   * Validates a warp sign, taken from the given sign change event. This method expects that the
-   * given event belongs to a valid warp sign!
+   * Validates a warp sign, taken from the given sign change event. This method expects that the given event belongs to
+   * a valid warp sign!
    *
    * @param sign   the sign change event
    * @param player the player who created the warp sign
@@ -211,14 +210,12 @@ public class WarpSignManager extends AbstractListener {
     }
     Warp warp = optional.get();
 
-    if (!warp.isModifiable(player) && !player
-        .hasPermission("mywarp.warp.sign.create.all")) { // NON-NLS
+    if (!warp.isModifiable(player) && !player.hasPermission("mywarp.warp.sign.create.all")) { // NON-NLS
       player.sendError(MESSAGES.getString("create-warp-permission", player, name)); // NON-NLS-1
       return false;
     }
 
-    if (MyWarp.getInstance().getEconomyManager()
-        .informativeHasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
+    if (MyWarp.getInstance().getEconomyManager().informativeHasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
       return false;
     }
     MyWarp.getInstance().getEconomyManager().informativeWithdraw(player, FeeType.WARP_SIGN_CREATE);
@@ -228,8 +225,7 @@ public class WarpSignManager extends AbstractListener {
     line = line.substring(1, line.length() - 1);
     sign.setLine(IDENTIFIER_LINE, "[" + identifiers.ceiling(line) + "]");
 
-    player.sendMessage(
-        ChatColor.AQUA + MESSAGES.getString("created-successful", player)); // NON-NLS-1
+    player.sendMessage(ChatColor.AQUA + MESSAGES.getString("created-successful", player)); // NON-NLS-1
     // NON-NLS-1
     return true;
   }
@@ -252,7 +248,7 @@ public class WarpSignManager extends AbstractListener {
    */
   public boolean isSignWarp(String[] lines) {
     String identifier = lines[IDENTIFIER_LINE];
-    return identifier.startsWith("[") && identifier.endsWith("]")
-           && identifiers.contains(identifier.substring(1, identifier.length() - 1));
+    return identifier.startsWith("[") && identifier.endsWith("]") && identifiers
+        .contains(identifier.substring(1, identifier.length() - 1));
   }
 }

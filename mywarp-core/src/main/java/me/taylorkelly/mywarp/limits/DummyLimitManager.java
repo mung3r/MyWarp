@@ -32,8 +32,8 @@ import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
 /**
- * A LimitManager implementation that does absolutely nothing. Limit evaluation will always result
- * in a positive response.
+ * A LimitManager implementation that does absolutely nothing. Limit evaluation will always result in a positive
+ * response.
  */
 public class DummyLimitManager implements LimitManager {
 
@@ -49,8 +49,7 @@ public class DummyLimitManager implements LimitManager {
   }
 
   @Override
-  public EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Type type,
-                                        boolean evaluateParents) {
+  public EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Type type, boolean evaluateParents) {
     return EvaluationResult.LIMIT_MEAT;
   }
 

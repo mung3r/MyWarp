@@ -43,8 +43,7 @@ public interface TimerService {
    * @param clazz        the Class
    * @return true if the instance has a running timer
    */
-  EvaluationResult has(Object timedSubject,
-                       @SuppressWarnings("rawtypes") Class<? extends TimerAction> clazz);
+  EvaluationResult has(Object timedSubject, @SuppressWarnings("rawtypes") Class<? extends TimerAction> clazz);
 
   /**
    * Cancels the timer of the given Class that runs on the given instance directly, if any.
@@ -52,8 +51,7 @@ public interface TimerService {
    * @param timedSubject the instance the timer runs on
    * @param clazz        the Class
    */
-  void cancel(Object timedSubject,
-              @SuppressWarnings("rawtypes") Class<? extends TimerAction> clazz);
+  void cancel(Object timedSubject, @SuppressWarnings("rawtypes") Class<? extends TimerAction> clazz);
 
   /**
    * The result of an evaluation that checked whether a certain subject has a running timer.
@@ -62,13 +60,12 @@ public interface TimerService {
    */
   public static class EvaluationResult {
 
-    private final boolean timerRunning;
-    private final Optional<Duration> durationLeft;
-
     /**
      * Indicates that no timer is running.
      */
     public static final EvaluationResult NO_RUNNING_TIMER = new EvaluationResult();
+    private final boolean timerRunning;
+    private final Optional<Duration> durationLeft;
 
     /**
      * Creates an instance that indicates that no timer is running.
@@ -79,8 +76,7 @@ public interface TimerService {
     }
 
     /**
-     * Creates an instance. Use {@link #NO_RUNNING_TIMER} to get an instance that indicates that no
-     * timer is running.
+     * Creates an instance. Use {@link #NO_RUNNING_TIMER} to get an instance that indicates that no timer is running.
      *
      * @param timerRunning whether a timer is running
      * @param durationLeft the Duration left on the running Timer
@@ -100,9 +96,8 @@ public interface TimerService {
     }
 
     /**
-     * Gets an Optional containing the duration that is left on the running timer. {@link
-     * Optional#absent()} will be returned if, and only if no timer is running and {@link
-     * #isTimerRunning()} returns {@code true}.
+     * Gets an Optional containing the duration that is left on the running timer. {@link Optional#absent()} will be
+     * returned if, and only if no timer is running and {@link #isTimerRunning()} returns {@code true}.
      *
      * @return the Duration left
      */

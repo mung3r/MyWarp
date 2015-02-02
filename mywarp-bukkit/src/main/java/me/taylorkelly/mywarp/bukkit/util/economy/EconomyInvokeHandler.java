@@ -35,9 +35,9 @@ import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import java.lang.reflect.Method;
 
 /**
- * By registering this InvokeHandler at a {@link com.sk89q.intake.parametric.ParametricBuilder},
- * command methods created by this builder will require a certain fee when used if the method is
- * annotated with {@link me.taylorkelly.mywarp.bukkit.util.economy.Billable}.
+ * By registering this InvokeHandler at a {@link com.sk89q.intake.parametric.ParametricBuilder}, command methods created
+ * by this builder will require a certain fee when used if the method is annotated with {@link
+ * me.taylorkelly.mywarp.bukkit.util.economy.Billable}.
  */
 public class EconomyInvokeHandler extends AbstractInvokeListener implements InvokeHandler {
 
@@ -47,16 +47,14 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
   }
 
   @Override
-  public boolean preProcess(Object object, Method method, ParameterData[] parameters,
-                            CommandContext context, CommandLocals locals)
-      throws CommandException, ParameterException {
+  public boolean preProcess(Object object, Method method, ParameterData[] parameters, CommandContext context,
+                            CommandLocals locals) throws CommandException, ParameterException {
     return true;
   }
 
   @Override
   public boolean preInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
-                           CommandContext context, CommandLocals locals)
-      throws CommandException, ParameterException {
+                           CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
     if (!method.isAnnotationPresent(Billable.class)) {
       return true;
     }
@@ -66,14 +64,12 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
     }
 
     FeeType feeType = method.getAnnotation(Billable.class).value();
-    return MyWarp.getInstance().getEconomyManager()
-        .informativeHasAtLeast((LocalPlayer) actor, feeType);
+    return MyWarp.getInstance().getEconomyManager().informativeHasAtLeast((LocalPlayer) actor, feeType);
   }
 
   @Override
   public void postInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
-                         CommandContext context, CommandLocals locals)
-      throws CommandException, ParameterException {
+                         CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
     if (!method.isAnnotationPresent(Billable.class)) {
       return;
     }

@@ -31,7 +31,7 @@ public class ProfileBinaryConverter implements Converter<byte[], Profile> {
 
   private static final long serialVersionUID = 713212664614712270L;
 
-  private final UUIDBinaryConverter converter = new UUIDBinaryConverter();
+  private final UuidBinaryConverter converter = new UuidBinaryConverter();
 
   @Override
   public Profile from(byte[] databaseObject) {

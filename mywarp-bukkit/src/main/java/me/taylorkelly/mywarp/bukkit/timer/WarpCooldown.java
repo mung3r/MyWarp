@@ -36,9 +36,7 @@ import org.bukkit.ChatColor;
  */
 public class WarpCooldown extends TimerAction<Profile> {
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   /**
    * Initializes this WarpCooldown.

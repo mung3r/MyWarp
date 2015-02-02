@@ -23,8 +23,8 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 
 /**
- * An EconomyManager implementation that does absolutely nothing. Methods that require a return
- * value will return a positive one.
+ * An EconomyManager implementation that does absolutely nothing. Methods that require a return value will return a
+ * positive one.
  */
 public class DummyEconomyManager implements EconomyManager {
 

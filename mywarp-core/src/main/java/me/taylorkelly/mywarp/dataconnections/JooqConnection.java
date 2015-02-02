@@ -60,23 +60,23 @@ import java.util.logging.Logger;
 /**
  * The connection to a SQL database via JOOQ.
  */
-public class JOOQConnection implements DataConnection {
+public class JooqConnection implements DataConnection {
 
-  private static final Logger log = Logger.getLogger(JOOQConnection.class.getName());
+  private static final Logger log = Logger.getLogger(JooqConnection.class.getName());
 
   private final Connection conn;
   private final DSLContext create;
   private final ListeningExecutorService executor;
 
   /**
-   * Creates this JOOQConnection using the given DSLContext with the given connection, using the
-   * given executor to run all tasks.
+   * Creates this JooqConnection using the given DSLContext with the given connection, using the given executor to run
+   * all tasks.
    *
    * @param create   the DSLContext to use
    * @param conn     the Connection to use
    * @param executor the executor that runs all tasks
    */
-  protected JOOQConnection(DSLContext create, Connection conn, ListeningExecutorService executor) {
+  protected JooqConnection(DSLContext create, Connection conn, ListeningExecutorService executor) {
     this.create = create;
     this.conn = conn;
     this.executor = executor;
@@ -136,8 +136,7 @@ public class JOOQConnection implements DataConnection {
   }
 
   /**
-   * Gets the GroupRecord representing the given group identifier or creates it, if it does not yet
-   * exit.
+   * Gets the GroupRecord representing the given group identifier or creates it, if it does not yet exit.
    *
    * @param groupName the group identifier
    * @return the corresponding GroupRecord
@@ -169,8 +168,7 @@ public class JOOQConnection implements DataConnection {
   }
 
   /**
-   * Gets the WorldRecord representing the world of the given name or creates it, if it does not yet
-   * exit.
+   * Gets the WorldRecord representing the world of the given name or creates it, if it does not yet exit.
    *
    * @param worldIdentifier the unique identifier of the world
    * @return the corresponding WorldRecord
@@ -206,46 +204,46 @@ public class JOOQConnection implements DataConnection {
       @Override
       public Collection<Warp> call() {
         // Alias for the player-table to represent the warp-creator
-        Player c = PLAYER.as("c"); //NON-NLS
+        Player creatorTable = PLAYER.as("c"); //NON-NLS
 
         // query the database and group results by name - each map-entry
         // contains all values for one single warp
         // @formatter:off
-                Map<String, Result<Record14<String, Profile, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String, Profile, String>>> groupedResults = create
-                        .select(WARP.NAME, c.UUID, WARP.TYPE, WARP.X, WARP.Y, WARP.Z, WARP.YAW,
-                                WARP.PITCH, WORLD.UUID, WARP.CREATION_DATE, WARP.VISITS,
-                                WARP.WELCOME_MESSAGE, PLAYER.UUID, GROUP.NAME)
-                        .from(WARP
-                                .join(WORLD)
-                                    .on(WARP.WORLD_ID.eq(WORLD.WORLD_ID))
-                                .join(c)
-                                    .on(WARP.PLAYER_ID.eq(c.PLAYER_ID))
-                                .leftOuterJoin(WARP_PLAYER_MAP)
-                                    .on(WARP_PLAYER_MAP.WARP_ID.eq(WARP.WARP_ID))
-                                .leftOuterJoin(PLAYER)
-                                    .on(WARP_PLAYER_MAP.PLAYER_ID.eq(PLAYER.PLAYER_ID)))
-                                .leftOuterJoin(WARP_GROUP_MAP)
-                                    .on(WARP_GROUP_MAP.WARP_ID.eq(WARP.WARP_ID))
-                                .leftOuterJoin(GROUP)
-                                    .on(WARP_GROUP_MAP.GROUP_ID.eq(GROUP.GROUP_ID))
-                        .fetch().intoGroups(WARP.NAME);
-                // @formatter:on
+        Map<String, Result<Record14<String, Profile, Type, Double, Double, Double, Float, Float, UUID, Date,
+            UInteger, String, Profile, String>>> groupedResults = create
+                .select(WARP.NAME, creatorTable.UUID, WARP.TYPE, WARP.X, WARP.Y, WARP.Z, WARP.YAW,
+                        WARP.PITCH, WORLD.UUID, WARP.CREATION_DATE, WARP.VISITS,
+                        WARP.WELCOME_MESSAGE, PLAYER.UUID, GROUP.NAME)
+                .from(WARP
+                        .join(WORLD)
+                            .on(WARP.WORLD_ID.eq(WORLD.WORLD_ID))
+                        .join(creatorTable)
+                            .on(WARP.PLAYER_ID.eq(creatorTable.PLAYER_ID))
+                        .leftOuterJoin(WARP_PLAYER_MAP)
+                            .on(WARP_PLAYER_MAP.WARP_ID.eq(WARP.WARP_ID))
+                        .leftOuterJoin(PLAYER)
+                            .on(WARP_PLAYER_MAP.PLAYER_ID.eq(PLAYER.PLAYER_ID)))
+                        .leftOuterJoin(WARP_GROUP_MAP)
+                            .on(WARP_GROUP_MAP.WARP_ID.eq(WARP.WARP_ID))
+                        .leftOuterJoin(GROUP)
+                            .on(WARP_GROUP_MAP.GROUP_ID.eq(GROUP.GROUP_ID))
+                .fetch().intoGroups(WARP.NAME);
+        // @formatter:on
 
         // create warp-instances from the results
         Collection<Warp> ret = new ArrayList<Warp>(groupedResults.size());
-        for (Result<Record14<String, Profile, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String, Profile, String>> r : groupedResults
+        for (Result<Record14<String, Profile, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger,
+            String, Profile, String>> r : groupedResults
             .values()) {
-          Profile creator = r.getValue(0, c.UUID);
+          Profile creator = r.getValue(0, creatorTable.UUID);
 
-          Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(
-              0, WARP.Z));
-          EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.YAW), r.getValue(0,
-                                                                                           WARP.PITCH),
-                                                       0);
+          Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
+          EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.YAW), r.getValue(0, WARP.PITCH), 0);
 
-          WarpBuilder builder = new WarpBuilder(r.getValue(0, WARP.NAME), creator, r.getValue(0,
-                                                                                              WARP.TYPE),
-                                                r.getValue(0, WORLD.UUID), position, rotation);
+          WarpBuilder
+              builder =
+              new WarpBuilder(r.getValue(0, WARP.NAME), creator, r.getValue(0, WARP.TYPE), r.getValue(0, WORLD.UUID),
+                              position, rotation);
 
           // optional values
           builder.withCreationDate(r.getValue(0, WARP.CREATION_DATE));
@@ -317,9 +315,9 @@ public class JOOQConnection implements DataConnection {
         WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
         GroupRecord groupRecord = getOrCreateGroup(groupId);
 
-        create.delete(WARP_GROUP_MAP)
-            .where(WARP_GROUP_MAP.WARP_ID.eq(warpRecord.getWarpId()).and(
-                WARP_GROUP_MAP.GROUP_ID.eq(groupRecord.getGroupId()))).execute();
+        create.delete(WARP_GROUP_MAP).where(
+            WARP_GROUP_MAP.WARP_ID.eq(warpRecord.getWarpId()).and(WARP_GROUP_MAP.GROUP_ID.eq(groupRecord.getGroupId())))
+            .execute();
       }
 
     });
@@ -335,9 +333,9 @@ public class JOOQConnection implements DataConnection {
         WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
         PlayerRecord playerRecord = getOrCreatePlayer(profile);
 
-        create.delete(WARP_PLAYER_MAP)
-            .where(WARP_PLAYER_MAP.WARP_ID.eq(warpRecord.getWarpId()).and(
-                WARP_PLAYER_MAP.PLAYER_ID.eq(playerRecord.getPlayerId()))).execute();
+        create.delete(WARP_PLAYER_MAP).where(WARP_PLAYER_MAP.WARP_ID.eq(warpRecord.getWarpId())
+                                                 .and(WARP_PLAYER_MAP.PLAYER_ID.eq(playerRecord.getPlayerId())))
+            .execute();
       }
 
     });

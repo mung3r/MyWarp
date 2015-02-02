@@ -28,8 +28,8 @@ import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 public interface EconomyManager {
 
   /**
-   * Returns whether the given LocalPlayer has at least the amount identified by the given Fee and
-   * informs the player if he has not.
+   * Returns whether the given LocalPlayer has at least the amount identified by the given Fee and informs the player if
+   * he has not.
    *
    * @param player     the player
    * @param identifier the identifier
@@ -38,8 +38,7 @@ public interface EconomyManager {
   boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier);
 
   /**
-   * Returns whether the given LocalPlayer has at least the given amount and informs the player if
-   * he has not.
+   * Returns whether the given LocalPlayer has at least the given amount and informs the player if he has not.
    *
    * @param player the player
    * @param amount the amount
@@ -49,8 +48,7 @@ public interface EconomyManager {
   boolean informativeHasAtLeast(LocalPlayer player, double amount);
 
   /**
-   * Withdraws the given LocalPlayer with the amount identified by the given Fee and informs the
-   * player accordingly.
+   * Withdraws the given LocalPlayer with the amount identified by the given Fee and informs the player accordingly.
    *
    * @param player     the player
    * @param identifier the identifier

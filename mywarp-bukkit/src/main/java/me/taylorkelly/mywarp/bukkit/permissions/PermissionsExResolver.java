@@ -30,7 +30,6 @@ public class PermissionsExResolver implements GroupResolver {
 
   @Override
   public boolean hasGroup(Player player, String group) {
-    return PermissionsEx.getPermissionManager().getUser(player.getName())
-        .inGroup(group, player.getWorld().getName());
+    return PermissionsEx.getPermissionManager().getUser(player.getName()).inGroup(group, player.getWorld().getName());
   }
 }

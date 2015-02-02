@@ -44,8 +44,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The settings when running on Bukkit. This implementation relies on Bukkit's configuration API to
- * manage the actual configuration file.
+ * The settings when running on Bukkit. This implementation relies on Bukkit's configuration API to manage the actual
+ * configuration file.
  */
 public class BukkitSettings implements Settings {
 
@@ -65,8 +65,7 @@ public class BukkitSettings implements Settings {
    * @param defaultConfiguration the default configuration that acts as a fallback
    * @param adapter              the adapter
    */
-  public BukkitSettings(File configFile, FileConfiguration defaultConfiguration,
-                        BukkitAdapter adapter) {
+  public BukkitSettings(File configFile, FileConfiguration defaultConfiguration, BukkitAdapter adapter) {
     this.configFile = configFile;
     this.defaultConfiguration = defaultConfiguration;
     this.adapter = adapter;
@@ -84,9 +83,9 @@ public class BukkitSettings implements Settings {
         log.info(String.format("Default '%1$s' created successfully.", configFile.getName()));
 
       } catch (IOException e) {
-        log.log(Level.SEVERE, String.format(
-            "Failed to create the default configuration file ('%1$s'), using build-in defaults for all values.",
-            configFile.getAbsolutePath()), e);
+        log.log(Level.SEVERE, String
+            .format("Failed to create the default configuration file ('%1$s'), using build-in defaults for all values.",
+                    configFile.getAbsolutePath()), e);
         config = defaultConfiguration;
         return;
       }
@@ -99,9 +98,9 @@ public class BukkitSettings implements Settings {
     try {
       fileConfig.save(configFile);
     } catch (IOException e) {
-      log.log(Level.SEVERE, String.format(
-          "Failed to save configuration to '%1$s', using build-in defaults for missing values.",
-          configFile.getAbsolutePath()), e);
+      log.log(Level.SEVERE, String
+          .format("Failed to save configuration to '%1$s', using build-in defaults for missing values.",
+                  configFile.getAbsolutePath()), e);
     }
     config = fileConfig;
 
@@ -214,9 +213,7 @@ public class BukkitSettings implements Settings {
    */
   public List<LimitBundle> getLimitsConfiguredLimitBundles() {
     List<LimitBundle> ret = new ArrayList<LimitBundle>();
-    ConfigurationSection
-        configuredLimits =
-        config.getConfigurationSection("limits.configuredLimits");
+    ConfigurationSection configuredLimits = config.getConfigurationSection("limits.configuredLimits");
     if (configuredLimits == null) {
       // the section contains no values
       return ret;
@@ -282,8 +279,7 @@ public class BukkitSettings implements Settings {
    * @return the default DurationBundle
    */
   public DurationBundle getTimersDefaultDurationBundle() {
-    return toDurationBundle("default",
-                            config.getConfigurationSection("timers.defaultTimer"));
+    return toDurationBundle("default", config.getConfigurationSection("timers.defaultTimer"));
 
   }
 
@@ -294,9 +290,7 @@ public class BukkitSettings implements Settings {
    */
   public List<DurationBundle> getTimersConfiguredDurationBundles() {
     List<DurationBundle> ret = new ArrayList<DurationBundle>();
-    ConfigurationSection
-        configuredTimers =
-        config.getConfigurationSection("timers.configuredTimers");
+    ConfigurationSection configuredTimers = config.getConfigurationSection("timers.configuredTimers");
     if (configuredTimers == null) {
       // the section contains no values
       return ret;
@@ -315,10 +309,8 @@ public class BukkitSettings implements Settings {
    * @return a time-bundle out of the given values
    */
   private DurationBundle toDurationBundle(String identifier, ConfigurationSection values) {
-    return new DurationBundle(identifier, new Duration(values.getLong("warpCooldown", 0),
-                                                       TimeUnit.SECONDS),
-                              new Duration(values.getLong("warpWarmup", 0),
-                                           TimeUnit.SECONDS));
+    return new DurationBundle(identifier, new Duration(values.getLong("warpCooldown", 0), TimeUnit.SECONDS),
+                              new Duration(values.getLong("warpWarmup", 0), TimeUnit.SECONDS));
   }
 
   @Override
@@ -369,14 +361,12 @@ public class BukkitSettings implements Settings {
   private FeeBundle toFeeBundle(String identifier, ConfigurationSection values) {
     return new FeeBundle(identifier, values.getDouble("assets", 0), values.getDouble("create", 0),
                          values.getDouble("createPrivate", 0), values.getDouble("delete", 0),
-                         values.getDouble("give", 0), values.getDouble("help", 0),
-                         values.getDouble("info", 0), values.getDouble("invite", 0),
-                         values.getDouble("list", 0), values.getDouble("point", 0),
-                         values.getDouble("private", 0), values.getDouble("public", 0),
-                         values.getDouble("uninvite", 0), values.getDouble("update", 0),
-                         values.getDouble("warpPlayer", 0), values.getDouble("warpSignCreate", 0),
-                         values.getDouble("warpSignUse", 0), values.getDouble("warpTo", 0),
-                         values.getDouble("welcome", 0));
+                         values.getDouble("give", 0), values.getDouble("help", 0), values.getDouble("info", 0),
+                         values.getDouble("invite", 0), values.getDouble("list", 0), values.getDouble("point", 0),
+                         values.getDouble("private", 0), values.getDouble("public", 0), values.getDouble("uninvite", 0),
+                         values.getDouble("update", 0), values.getDouble("warpPlayer", 0),
+                         values.getDouble("warpSignCreate", 0), values.getDouble("warpSignUse", 0),
+                         values.getDouble("warpTo", 0), values.getDouble("welcome", 0));
   }
 
   @Override
@@ -400,7 +390,7 @@ public class BukkitSettings implements Settings {
   }
 
   @Override
-  public String getDynmapMarkerIconID() {
+  public String getDynmapMarkerIconId() {
     return config.getString("dynmap.marker.iconID");
   }
 

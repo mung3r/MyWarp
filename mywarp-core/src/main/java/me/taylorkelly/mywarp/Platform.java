@@ -45,8 +45,8 @@ public interface Platform {
   void reload();
 
   /**
-   * Gets the data-folder when running in this Platform. The folder is expected to exist and be
-   * read- and writable for MyWarp.
+   * Gets the data-folder when running in this Platform. The folder is expected to exist and be read- and writable for
+   * MyWarp.
    *
    * @return the data-folder
    */
@@ -109,8 +109,7 @@ public interface Platform {
   TimerService getTimerService();
 
   /**
-   * Gets an Executor that executes given Runnables in the server thread of this platform
-   * ('synchronous').
+   * Gets an Executor that executes given Runnables in the server thread of this platform ('synchronous').
    *
    * @return the Executor
    */
@@ -132,8 +131,7 @@ public interface Platform {
   Optional<LocalWorld> getLoadedWorld(String name);
 
   /**
-   * Gets an Optional containing the loaded world of the given unique identifier, if such a world
-   * exists.
+   * Gets an Optional containing the loaded world of the given unique identifier, if such a world exists.
    *
    * @param uniqueId the unique Identifier of the world
    * @return an Optional containing the loaded world
@@ -149,8 +147,7 @@ public interface Platform {
   Optional<LocalPlayer> getOnlinePlayer(String name);
 
   /**
-   * Gets an Optional containing the online player of the given identifier, if such a player
-   * exists.
+   * Gets an Optional containing the online player of the given identifier, if such a player exists.
    *
    * @param identifier the identifier of the player
    * @return an Optional containing the player

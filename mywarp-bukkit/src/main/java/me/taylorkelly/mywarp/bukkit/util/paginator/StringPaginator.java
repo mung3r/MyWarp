@@ -41,8 +41,8 @@ import java.util.Locale;
  */
 public class StringPaginator<E> {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(
-      "me.taylorkelly.mywarp.lang.StringPaginator"); // NON-NLS
+  private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.StringPaginator");
+  // NON-NLS
 
   private final String header;
   private final List<? extends E> elements;
@@ -51,6 +51,17 @@ public class StringPaginator<E> {
   private Function<E, String> mapping = (Function<E, String>) Functions.toStringFunction();
   private List<String> notes = new ArrayList<String>();
   private int entriesPerPage = 9;
+
+  /**
+   * Creates an instance.
+   *
+   * @param header   the header that will be displayed on top with page informations
+   * @param elements the elements to paginate
+   */
+  private StringPaginator(String header, List<? extends E> elements) {
+    this.header = header;
+    this.elements = elements;
+  }
 
   /**
    * Creates a Paginator of the given elements while using the given header.
@@ -89,19 +100,8 @@ public class StringPaginator<E> {
   }
 
   /**
-   * Creates an instance.
-   *
-   * @param header   the header that will be displayed on top with page informations
-   * @param elements the elements to paginate
-   */
-  private StringPaginator(String header, List<? extends E> elements) {
-    this.header = header;
-    this.elements = elements;
-  }
-
-  /**
-   * Adds a note-line. Notes will be displayed on each page, directly under the header but before
-   * the paginated content. Do not add to many notes or the content itself becomes unreadable!
+   * Adds a note-line. Notes will be displayed on each page, directly under the header but before the paginated content.
+   * Do not add to many notes or the content itself becomes unreadable!
    *
    * @param note the note
    * @return this Paginator for chaining
@@ -112,8 +112,7 @@ public class StringPaginator<E> {
   }
 
   /**
-   * Sets how many entries should be displayed on each page. The number must be higher than the
-   * amount of note lines.
+   * Sets how many entries should be displayed on each page. The number must be higher than the amount of note lines.
    *
    * @param entriesPerPage the number of entries to display on each page
    * @return this Paginator for chaining
@@ -160,8 +159,9 @@ public class StringPaginator<E> {
     private PaginatedResults(StringPaginator<E> paginator) {
       this.header = paginator.header;
       this.notes = paginator.notes;
-      this.pages = Lists.partition(Lists.transform(paginator.elements, paginator.mapping),
-                                   paginator.entriesPerPage - notes.size());
+      this.pages =
+          Lists.partition(Lists.transform(paginator.elements, paginator.mapping),
+                          paginator.entriesPerPage - notes.size());
     }
 
     /**
@@ -170,8 +170,8 @@ public class StringPaginator<E> {
      * @param page the page number
      * @return the given page as List
      * @throws NoResultsException   if there are no results that could be paginated
-     * @throws UnknownPageException if there are results that could be paginated, but no page with
-     *                              the given number exists
+     * @throws UnknownPageException if there are results that could be paginated, but no page with the given number
+     *                              exists
      */
     public List<String> getPage(int page) throws NoResultsException, UnknownPageException {
       if (pages.isEmpty()) {
@@ -198,17 +198,16 @@ public class StringPaginator<E> {
      * @param page   the page number
      * @return the given page as String
      * @throws NoResultsException   if there are no results that could be paginated
-     * @throws UnknownPageException if there are results that could be paginated, but no page with
-     *                              the given number exists
+     * @throws UnknownPageException if there are results that could be paginated, but no page with the given number
+     *                              exists
      */
-    public String getPageAsString(Locale locale, int page) throws NoResultsException,
-                                                                  UnknownPageException {
+    public String getPageAsString(Locale locale, int page) throws NoResultsException, UnknownPageException {
       return Joiner.on(System.getProperty("line.separator")).join(getPage(page)); // NON-NLS
     }
 
     /**
-     * Displays the given page to the given Actor. This method will catch checked exceptions and
-     * send the appropriate error message instead.
+     * Displays the given page to the given Actor. This method will catch checked exceptions and send the appropriate
+     * error message instead.
      *
      * @param actor the Actor
      * @param page  the page number
@@ -231,8 +230,8 @@ public class StringPaginator<E> {
      * @return the full header
      */
     private String toHeader(int page, int maxPages) {
-      return FormattingUtils.center(" " + header + " - " + MESSAGES.getString("page") + ' ' + page
-                                    + '/' + maxPages + ' ', '-');
+      return FormattingUtils
+          .center(" " + header + " - " + MESSAGES.getString("page") + ' ' + page + '/' + maxPages + ' ', '-');
     }
   }
 

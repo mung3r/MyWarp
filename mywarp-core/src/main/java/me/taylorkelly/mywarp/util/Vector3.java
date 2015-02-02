@@ -20,8 +20,7 @@
 package me.taylorkelly.mywarp.util;
 
 /**
- * Represent an immutable 3 component vector using doubles. Vectors returned by modifying methods
- * are new instances.
+ * Represent an immutable 3 component vector using doubles. Vectors returned by modifying methods are new instances.
  */
 public class Vector3 {
 
@@ -181,7 +180,5 @@ public class Vector3 {
   @Override
   public String toString() {
     return "Vector3 [x=" + x + ", y=" + y + ", z=" + z + "]"; // NON-NLS
-    // NON-NLS
-    // NON-NLS
   }
 }

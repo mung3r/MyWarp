@@ -101,33 +101,30 @@ public class BukkitPlatform implements Platform {
     try {
       RegisteredServiceProvider<Economy>
           economyProvider =
-          Bukkit.getServicesManager().getRegistration(
-              net.milkbowl.vault.economy.Economy.class);
+          Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
       if (economyProvider == null) {
-        plugin.getLogger()
-            .severe(
-                "Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable."); // NON-NLS
+        plugin.getLogger().severe(
+            "Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable."); // NON-NLS
       } else {
         return new VaultService(economyProvider, plugin.getAdapter());
       }
     } catch (NoClassDefFoundError e) {
-      plugin.getLogger()
-          .severe(
-              "Failed to hook into Vault (EconomyProviderClass not available). EconomySupport will not be avilable."); // NON-NLS
+      plugin.getLogger().severe(
+          "Failed to hook into Vault (EconomyProviderClass not available). EconomySupport will not be avilable.");
     }
     throw new UnsupportedOperationException();
   }
 
   @Override
   public FeeProvider getFeeProvider() {
-    return new BukkitFeeProvider(getSettings().getEconomyConfiguredFeeBundles(), getSettings()
-        .getEconomyDefaultFeeBundle());
+    return new BukkitFeeProvider(getSettings().getEconomyConfiguredFeeBundles(),
+                                 getSettings().getEconomyDefaultFeeBundle());
   }
 
   @Override
   public LimitProvider getLimitProvider() {
-    return new BukkitLimitProvider(getSettings().getLimitsConfiguredLimitBundles(), getSettings()
-        .getLimitsDefaultLimitBundle());
+    return new BukkitLimitProvider(getSettings().getLimitsConfiguredLimitBundles(),
+                                   getSettings().getLimitsDefaultLimitBundle());
   }
 
   @Override
@@ -168,8 +165,7 @@ public class BukkitPlatform implements Platform {
 
   @Override
   public Optional<LocalPlayer> getOnlinePlayer(String name) {
-    @SuppressWarnings("deprecation")
-    Player player = Bukkit.getPlayer(name);
+    @SuppressWarnings("deprecation") Player player = Bukkit.getPlayer(name);
     if (player != null) {
       return Optional.of(plugin.getAdapter().adapt(player));
     }

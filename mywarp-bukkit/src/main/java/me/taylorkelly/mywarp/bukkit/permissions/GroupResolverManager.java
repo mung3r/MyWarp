@@ -36,10 +36,9 @@ public class GroupResolverManager implements GroupResolver {
   private final GroupResolver resolver = setupResolver();
 
   /**
-   * Setups a GroupResolver by searching for supported plugins on the server. Vault will always take
-   * preference over other supported plugins for obvious reasons.
-   *
-   * This method will never return {@code null}, but a SuperpermsResolver instead.
+   * Setups a GroupResolver by searching for supported plugins on the server. Vault will always take preference over
+   * other supported plugins for obvious reasons. <p> This method will never return {@code null}, but a {@link
+   * me.taylorkelly.mywarp.bukkit.permissions.SuperpermsResolver} instead. </p>
    *
    * @return the created GroupResolver
    */
@@ -48,8 +47,7 @@ public class GroupResolverManager implements GroupResolver {
     try {
       RegisteredServiceProvider<net.milkbowl.vault.permission.Permission>
           permissionProvider =
-          Bukkit
-              .getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+          Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
       if (permissionProvider != null) {
         log.info("Using Vault for group support."); // NON-NLS
         return new VaultResolver(permissionProvider.getProvider());
@@ -85,8 +83,7 @@ public class GroupResolverManager implements GroupResolver {
       return new PermissionsExResolver();
     }
 
-    log.info(
-        "No supported permissions plugin found, using Superperms fallback for group support."); // NON-NLS
+    log.info("No supported permissions plugin found, using Superperms fallback for group support."); // NON-NLS
     return new SuperpermsResolver();
   }
 

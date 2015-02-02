@@ -53,8 +53,7 @@ public class LimitBundle extends ValueBundle implements Limit {
    * @param privateLimit the private limit
    * @param adapter      the adapter
    */
-  public LimitBundle(String identifier, int totalLimit, int publicLimit, int privateLimit,
-                     BukkitAdapter adapter) {
+  public LimitBundle(String identifier, int totalLimit, int publicLimit, int privateLimit, BukkitAdapter adapter) {
     this(identifier, totalLimit, publicLimit, privateLimit, null, adapter);
   }
 
@@ -65,8 +64,8 @@ public class LimitBundle extends ValueBundle implements Limit {
    * @param totalLimit     the total limit
    * @param publicLimit    the public limit
    * @param privateLimit   the private limit
-   * @param affectedWorlds an Iterable of worlds affected by this limit. Can be {@code null} if this
-   *                       limit should affect all worlds.
+   * @param affectedWorlds an Iterable of worlds affected by this limit. Can be {@code null} if this limit should affect
+   *                       all worlds.
    * @param adapter        the adapter
    */
   public LimitBundle(String identifier, int totalLimit, int publicLimit, int privateLimit,

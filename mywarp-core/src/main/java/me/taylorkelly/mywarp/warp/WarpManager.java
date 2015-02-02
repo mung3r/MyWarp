@@ -29,8 +29,7 @@ import me.taylorkelly.mywarp.util.profile.Profile;
 import java.util.Collection;
 
 /**
- * Manages Warps and provides utility methods to get certain informations based on the Warps managed
- * by it.
+ * Manages Warps and provides utility methods to get certain informations based on the Warps managed by it.
  */
 public interface WarpManager {
 
@@ -64,8 +63,7 @@ public interface WarpManager {
   boolean contains(String name);
 
   /**
-   * Gets an Optional containing the Warp of the given name managed by this manager, if such a Warp
-   * exists.
+   * Gets an Optional containing the Warp of the given name managed by this manager, if such a Warp exists.
    *
    * @param name the exact name
    * @return an Optional containing the Warp with the given name
@@ -73,9 +71,9 @@ public interface WarpManager {
   Optional<Warp> get(String name);
 
   /**
-   * Gets all Warps on this manager that fulfill the given Predicate. The returned collection is a
-   * live view, changes to one affect the other. If a live view is not needed, it may be faster to
-   * create a copy of the Warps returned by this method.
+   * Gets all Warps on this manager that fulfill the given Predicate. The returned collection is a live view, changes to
+   * one affect the other. If a live view is not needed, it may be faster to create a copy of the Warps returned by this
+   * method.
    *
    * @param predicate the predicate
    * @return all Warps that fulfill the Predicate
@@ -83,8 +81,8 @@ public interface WarpManager {
   Collection<Warp> filter(Predicate<Warp> predicate);
 
   /**
-   * Gets an Optional containing a warp's creator whose name uniquely matches the given filter
-   * within the Warps fulfilling the given Predicate ,if such a creator exists.
+   * Gets an Optional containing a warp's creator whose name uniquely matches the given filter within the Warps
+   * fulfilling the given Predicate ,if such a creator exists.
    *
    * @param filter    the filter
    * @param predicate the predicate
@@ -94,8 +92,8 @@ public interface WarpManager {
   Optional<Profile> getMatchingCreator(String filter, Predicate<Warp> predicate);
 
   /**
-   * Gets an Optional containing a warp's world whose name uniquely matches the given filter within
-   * the Warps fulfilling the given Predicate, if such a world exists.
+   * Gets an Optional containing a warp's world whose name uniquely matches the given filter within the Warps fulfilling
+   * the given Predicate, if such a world exists.
    *
    * @param filter    the filter
    * @param predicate the predicate

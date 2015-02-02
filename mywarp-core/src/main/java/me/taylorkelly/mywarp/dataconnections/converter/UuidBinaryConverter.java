@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * Converts byte arrays to {@link UUID}s and back.
  */
-public class UUIDBinaryConverter implements Converter<byte[], UUID> {
+public class UuidBinaryConverter implements Converter<byte[], UUID> {
 
   private static final long serialVersionUID = 713212664614712270L;
 

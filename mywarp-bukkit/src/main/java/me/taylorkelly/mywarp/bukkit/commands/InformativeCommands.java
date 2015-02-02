@@ -23,7 +23,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Ordering;
-
 import com.sk89q.intake.Command;
 import com.sk89q.intake.Require;
 import com.sk89q.intake.parametric.annotation.Optional;
@@ -55,23 +54,19 @@ import java.util.List;
  */
 public class InformativeCommands {
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   /**
    * Displays a player's assets.
    *
    * @param actor   the Actor
    * @param creator the LocalPlayer
-   * @throws IllegalCommandSenderException if no {@code creator} is given and the given Actor is not
-   *                                       a player
+   * @throws IllegalCommandSenderException if no {@code creator} is given and the given Actor is not a player
    */
   @Command(aliases = {"assets", "limits"}, desc = "assets.description", help = "assets.help")
   @Require("mywarp.warp.basic.assets")
   @Billable(FeeType.ASSETS)
-  public void assets(Actor actor, @Optional LocalPlayer creator)
-      throws IllegalCommandSenderException {
+  public void assets(Actor actor, @Optional LocalPlayer creator) throws IllegalCommandSenderException {
     if (creator == null) {
       if (actor instanceof LocalPlayer) {
         creator = (LocalPlayer) actor;
@@ -108,8 +103,7 @@ public class InformativeCommands {
 
         if (creator != null) {
           com.google.common.base.Optional<String> creatorName = input.getCreator().getName();
-          if (creatorName.isPresent()
-              && !StringUtils.containsIgnoreCase(creatorName.get(), creator)) {
+          if (creatorName.isPresent() && !StringUtils.containsIgnoreCase(creatorName.get(), creator)) {
             return false;
           }
         }
@@ -122,9 +116,10 @@ public class InformativeCommands {
 
     };
 
-    List<Warp> warps = Ordering.natural().sortedCopy(
-        MyWarp.getInstance().getWarpManager()
-            .filter(Predicates.<Warp>and(WarpUtils.isViewable(actor), predicate)));
+    List<Warp>
+        warps =
+        Ordering.natural().sortedCopy(
+            MyWarp.getInstance().getWarpManager().filter(Predicates.<Warp>and(WarpUtils.isViewable(actor), predicate)));
 
     Function<Warp, String> mapping = new Function<Warp, String>() {
 
@@ -167,8 +162,7 @@ public class InformativeCommands {
 
     };
 
-    StringPaginator.of(MESSAGES.getString("list.heading"), warps).withMapping(mapping).paginate()
-        .display(actor, page);
+    StringPaginator.of(MESSAGES.getString("list.heading"), warps).withMapping(mapping).paginate().display(actor, page);
   }
 
   /**

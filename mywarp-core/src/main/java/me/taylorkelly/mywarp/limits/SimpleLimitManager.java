@@ -35,9 +35,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Manages {@link Limit}s. <p> The SimpleLimitManager operates on a {@link LimitProvider} that
- * provides the actual limits and a {@link WarpManager} that holds the warps the limits apply on.
- * </p>
+ * Manages {@link Limit}s. <p> The SimpleLimitManager operates on a {@link LimitProvider} that provides the actual
+ * limits and a {@link WarpManager} that holds the warps the limits apply on. </p>
  */
 public class SimpleLimitManager implements LimitManager {
 
@@ -45,8 +44,7 @@ public class SimpleLimitManager implements LimitManager {
   private final WarpManager manager;
 
   /**
-   * Initializes this SimpleLimitManager acting on the given LimitProvider and the given
-   * WarpManager.
+   * Initializes this SimpleLimitManager acting on the given LimitProvider and the given WarpManager.
    *
    * @param provider the LimitProvider
    * @param manager  the WarpManager
@@ -57,8 +55,8 @@ public class SimpleLimitManager implements LimitManager {
   }
 
   @Override
-  public LimitManager.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world,
-                                                     Limit.Type type, boolean evaluateParents) {
+  public LimitManager.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Limit.Type type,
+                                                     boolean evaluateParents) {
     if (!type.canDisobey(creator, world)) {
 
       Iterable<Warp> filteredWarps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
@@ -80,17 +78,15 @@ public class SimpleLimitManager implements LimitManager {
   }
 
   /**
-   * Evaluates whether the given Limit.Type of the given Limit is exceeded in the given Iterable of
-   * warps. The Iterable will be overwritten and only include the warps matching the given types
-   * condition.
+   * Evaluates whether the given Limit.Type of the given Limit is exceeded in the given Iterable of warps. The Iterable
+   * will be overwritten and only include the warps matching the given types condition.
    *
    * @param limit         the limit
    * @param type          the type
    * @param filteredWarps the warps
    * @return an EvaluationResult representing the result of the evaluation
    */
-  private LimitManager.EvaluationResult evaluateLimit(Limit limit, Limit.Type type,
-                                                      Iterable<Warp> filteredWarps) {
+  private LimitManager.EvaluationResult evaluateLimit(Limit limit, Limit.Type type, Iterable<Warp> filteredWarps) {
     filteredWarps = Iterables.filter(filteredWarps, type.getCondition());
     int limitMaximum = limit.getLimit(type);
     if (IterableUtils.atLeast(filteredWarps, limitMaximum)) {

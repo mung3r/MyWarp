@@ -28,8 +28,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import me.taylorkelly.mywarp.dataconnections.DataConnection;
 import me.taylorkelly.mywarp.dataconnections.EventConnectionBridge;
-import me.taylorkelly.mywarp.dataconnections.MySQLConnection;
-import me.taylorkelly.mywarp.dataconnections.SQLiteConnection;
+import me.taylorkelly.mywarp.dataconnections.MySqlConnection;
+import me.taylorkelly.mywarp.dataconnections.SqLiteConnection;
 import me.taylorkelly.mywarp.economy.DummyEconomyManager;
 import me.taylorkelly.mywarp.economy.EconomyManager;
 import me.taylorkelly.mywarp.economy.SimpleEconomyManager;
@@ -83,17 +83,16 @@ public class MyWarp {
     // setup dataConnection
     ListenableFuture<DataConnection> futureConnection;
     if (getSettings().isMysqlEnabled()) {
-      futureConnection = MySQLConnection.getConnection(getSettings().getMysqlDsn(), getSettings()
-          .getMysqlUsername(), getSettings().getMysqlPassword(), true);
+      futureConnection =
+          MySqlConnection.getConnection(getSettings().getMysqlDsn(), getSettings().getMysqlUsername(),
+                                        getSettings().getMysqlPassword(), true);
     } else {
-      futureConnection = SQLiteConnection.getConnection(
-          new File(platform.getDataFolder(), "mywarp.db"), true);
+      futureConnection = SqLiteConnection.getConnection(new File(platform.getDataFolder(), "mywarp.db"), true);
     }
     try {
       dataConnection = futureConnection.get();
     } catch (InterruptedException e) {
-      throw new MyWarpException(
-          "Failed to get a connection to the database as the process was interrupted.", e);
+      throw new MyWarpException("Failed to get a connection to the database as the process was interrupted.", e);
     } catch (ExecutionException e) {
       throw new MyWarpException("Failed to get a connection to the database.", e.getCause());
     }
@@ -136,8 +135,7 @@ public class MyWarp {
     // setup the economyManager
     try {
       if (platform.getSettings().isEconomyEnabled()) {
-        economyManager = new SimpleEconomyManager(platform.getFeeProvider(),
-                                                  platform.getEconomyService());
+        economyManager = new SimpleEconomyManager(platform.getFeeProvider(), platform.getEconomyService());
       } else {
         economyManager = new DummyEconomyManager();
       }
@@ -157,8 +155,8 @@ public class MyWarp {
       }
 
       @Override
-      public void onFailure(Throwable t) {
-        log.log(Level.SEVERE, "Failed to load warps from the database.", t); // NON-NLS
+      public void onFailure(Throwable throwable) {
+        log.log(Level.SEVERE, "Failed to load warps from the database.", throwable); // NON-NLS
       }
 
     }, getServerExecutor());
@@ -179,8 +177,8 @@ public class MyWarp {
   }
 
   /**
-   * Unloads MyWarp. Using this method will effectively shutdown MyWarp. If its called, the platform
-   * running MyWarp <b>must</b> unload or deactivate MyWarp too or things will get ugly.
+   * Unloads MyWarp. Using this method will effectively shutdown MyWarp. If its called, the platform running MyWarp
+   * <b>must</b> unload or deactivate MyWarp too or things will get ugly.
    */
   public void unload() {
     if (dataConnection != null) {
@@ -216,9 +214,9 @@ public class MyWarp {
   }
 
   /**
-   * Gets the EconomyManager. Calling this method will always return valid EconomyManager
-   * implementation, if economy support is disabled on the configuration file, the returned
-   * EconomyManager will handle this internally and fail quietly.
+   * Gets the EconomyManager. Calling this method will always return valid EconomyManager implementation, if economy
+   * support is disabled on the configuration file, the returned EconomyManager will handle this internally and fail
+   * quietly.
    *
    * @return the EconomyManager
    */
@@ -227,9 +225,8 @@ public class MyWarp {
   }
 
   /**
-   * Gets the LimitManager. Calling this method will always return valid LimitManager
-   * implementation, if limit support is disabled on the configuration file, the returned
-   * LimitManager will handle this internally and fail quietly.
+   * Gets the LimitManager. Calling this method will always return valid LimitManager implementation, if limit support
+   * is disabled on the configuration file, the returned LimitManager will handle this internally and fail quietly.
    *
    * @return the LimitManager
    */

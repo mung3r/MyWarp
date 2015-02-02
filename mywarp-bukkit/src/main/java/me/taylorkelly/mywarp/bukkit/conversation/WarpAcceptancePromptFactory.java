@@ -46,8 +46,7 @@ public class WarpAcceptancePromptFactory {
 
   private static final int TIMEOUT = 30;
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(
-      UsageCommands.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
 
   private final ConversationFactory factory;
   private final BukkitAdapter adapter;
@@ -59,8 +58,8 @@ public class WarpAcceptancePromptFactory {
    * @param adapter the adapter
    */
   public WarpAcceptancePromptFactory(MyWarpPlugin plugin, BukkitAdapter adapter) {
-    this.factory = new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT)
-        .withFirstPrompt(new AskPlayerPrompt());
+    this.factory =
+        new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT).withFirstPrompt(new AskPlayerPrompt());
     this.adapter = adapter;
   }
 
@@ -77,13 +76,11 @@ public class WarpAcceptancePromptFactory {
     initialSessionData.put(Warp.class, warp);
     initialSessionData.put(String.class, initiator.getName());
 
-    factory.withInitialSessionData(initialSessionData).buildConversation(adapter.adapt(localPlayer))
-        .begin();
+    factory.withInitialSessionData(initialSessionData).buildConversation(adapter.adapt(localPlayer)).begin();
   }
 
   /**
-   * Asks the conversion partner if he wants to accept and calls the next prompt based on the
-   * response.
+   * Asks the conversion partner if he wants to accept and calls the next prompt based on the response.
    */
   private class AskPlayerPrompt extends BooleanPrompt {
 
@@ -94,9 +91,9 @@ public class WarpAcceptancePromptFactory {
       // XXX Add a way to get informations about the warp via InfoPrinter.
 
       Locale locale = (Locale) context.getSessionData(Locale.class);
-      return ChatColor.AQUA
-             + MESSAGES.getString("warp-acceptance-conversation.want-to-accept", locale,
-                                  initiatorName, warp.getName(), "yes", "no", TIMEOUT);
+      return ChatColor.AQUA + MESSAGES
+          .getString("warp-acceptance-conversation.want-to-accept", locale, initiatorName, warp.getName(), "yes", "no",
+                     TIMEOUT);
     }
 
     @Override
@@ -117,9 +114,8 @@ public class WarpAcceptancePromptFactory {
       warp.setCreator(adapter.adapt((Player) context.getForWhom()).getProfile());
 
       Locale locale = (Locale) context.getSessionData(Locale.class);
-      return ChatColor.AQUA
-             + MESSAGES.getString("warp-acceptance-conversation.accepted-successful", locale,
-                                  warp.getName());
+      return ChatColor.AQUA + MESSAGES
+          .getString("warp-acceptance-conversation.accepted-successful", locale, warp.getName());
     }
 
     @Override
@@ -137,8 +133,7 @@ public class WarpAcceptancePromptFactory {
     @Override
     public String getPromptText(ConversationContext context) {
       Locale locale = (Locale) context.getSessionData(Locale.class);
-      return ChatColor.AQUA
-             + MESSAGES.getString("warp-acceptance-conversation.declined-successful", locale);
+      return ChatColor.AQUA + MESSAGES.getString("warp-acceptance-conversation.declined-successful", locale);
     }
 
     @Override

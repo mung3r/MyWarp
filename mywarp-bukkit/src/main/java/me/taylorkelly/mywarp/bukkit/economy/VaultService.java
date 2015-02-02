@@ -61,14 +61,10 @@ public class VaultService implements EconomyService {
   @Override
   public void withdraw(LocalPlayer player, double amount) {
     Player bukkitPlayer = adapter.adapt(player);
-    EconomyResponse
-        response =
-        economy.withdrawPlayer(bukkitPlayer, bukkitPlayer.getWorld().getName(),
-                               amount);
+    EconomyResponse response = economy.withdrawPlayer(bukkitPlayer, bukkitPlayer.getWorld().getName(), amount);
 
     if (!response.transactionSuccess()) {
-      log.severe(
-          "Could not withdraw " + bukkitPlayer.getName() + ", " + response.errorMessage); // NON-NLS
+      log.severe("Could not withdraw " + bukkitPlayer.getName() + ", " + response.errorMessage); // NON-NLS
     }
   }
 }

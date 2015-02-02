@@ -31,8 +31,6 @@ public class BPermissions2Resolver implements GroupResolver {
 
   @Override
   public boolean hasGroup(Player player, String group) {
-    return ApiLayer
-        .hasGroupRecursive(player.getWorld().getName(), CalculableType.USER, player.getName(),
-                           group);
+    return ApiLayer.hasGroupRecursive(player.getWorld().getName(), CalculableType.USER, player.getName(), group);
   }
 }

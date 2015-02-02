@@ -30,30 +30,27 @@ import me.taylorkelly.mywarp.warp.Warp;
 import javax.annotation.Nullable;
 
 /**
- * Manages {@link me.taylorkelly.mywarp.limits.Limit}s that control how much warps a user can
- * create.
+ * Manages {@link me.taylorkelly.mywarp.limits.Limit}s that control how much warps a user can create.
  */
 public interface LimitManager {
 
   /**
-   * Evaluates whether the given creator exceeds limits on the given LocalWorld, testing against the
-   * given Limit.Type.
+   * Evaluates whether the given creator exceeds limits on the given LocalWorld, testing against the given Limit.Type.
    *
    * @param creator         the creator
    * @param world           the LocalWorld
    * @param type            the Limit.Type
-   * @param evaluateParents Whether parents of the given {@code type} will be evaluated too
-   *                        (recursively). This is useful if not just a specific Limit.Type might be
-   *                        exceeded, but also a more general limit that includes the given one
+   * @param evaluateParents Whether parents of the given {@code type} will be evaluated too (recursively). This is
+   *                        useful if not just a specific Limit.Type might be exceeded, but also a more general limit
+   *                        that includes the given one
    * @return an EvaluationResult representing the result of the evaluation
    */
-  LimitManager.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world,
-                                              Limit.Type type,
+  LimitManager.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Limit.Type type,
                                               boolean evaluateParents);
 
   /**
-   * Gets all warps created by the given LocalPlayer mapped under the applicable {@link Limit}. A
-   * warp may be mapped multiple times.
+   * Gets all warps created by the given LocalPlayer mapped under the applicable {@link Limit}. A warp may be mapped
+   * multiple times.
    *
    * @param creator the creator
    * @return a Multimap with all matching warps
@@ -67,14 +64,13 @@ public interface LimitManager {
    */
   public static class EvaluationResult {
 
-    private final boolean exceedsLimit;
-    private final Optional<Limit.Type> exceededLimit;
-    private final Optional<Integer> limitMaximum;
-
     /**
      * Indicates that no limit was exceeded.
      */
     public static final EvaluationResult LIMIT_MEAT = new EvaluationResult();
+    private final boolean exceedsLimit;
+    private final Optional<Limit.Type> exceededLimit;
+    private final Optional<Integer> limitMaximum;
 
     /**
      * Creates an instance that indicates that all limits were meat.
@@ -86,13 +82,12 @@ public interface LimitManager {
     }
 
     /**
-     * Creates an instance. Use {@link #LIMIT_MEAT} to get an instance that indicates that all
-     * limits are meat.
+     * Creates an instance. Use {@link #LIMIT_MEAT} to get an instance that indicates that all limits are meat.
      *
      * @param exceedsLimit  whether a limit was exceeded
      * @param exceededLimit the exceeded limit - can be {@code null} if no limit was exceeded
-     * @param limitMaximum  the maximum number of warps a user can create under the exceeded limit -
-     *                      can be {@code null} if no limit was exceeded
+     * @param limitMaximum  the maximum number of warps a user can create under the exceeded limit - can be {@code null}
+     *                      if no limit was exceeded
      */
     public EvaluationResult(boolean exceedsLimit, Type exceededLimit, int limitMaximum) {
       this.exceedsLimit = exceedsLimit;
@@ -110,8 +105,8 @@ public interface LimitManager {
     }
 
     /**
-     * Gets an Optional containing the exceeded limit. Returns {@link Optional#absent()} if, and
-     * only if no limit is exceeded and thus {@link #exceedsLimit()} returns {@code true}.
+     * Gets an Optional containing the exceeded limit. Returns {@link Optional#absent()} if, and only if no limit is
+     * exceeded and thus {@link #exceedsLimit()} returns {@code true}.
      *
      * @return the exceeded limit
      */
@@ -121,9 +116,8 @@ public interface LimitManager {
     }
 
     /**
-     * Gets the maximum number of warps a user can create under the exceeded limit. Returns @link
-     * {@link Optional#absent()} if, and only if no limit is exceeded and thus {@link
-     * #exceedsLimit()} returns {@code true}.
+     * Gets the maximum number of warps a user can create under the exceeded limit. Returns @link {@link
+     * Optional#absent()} if, and only if no limit is exceeded and thus {@link #exceedsLimit()} returns {@code true}.
      *
      * @return the maximum number of warps of the exceeded limit
      */

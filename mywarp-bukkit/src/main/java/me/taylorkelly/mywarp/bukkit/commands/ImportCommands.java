@@ -22,7 +22,6 @@ package me.taylorkelly.mywarp.bukkit.commands;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
@@ -30,12 +29,12 @@ import com.sk89q.intake.Require;
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.util.CommandUtils;
-import me.taylorkelly.mywarp.dataconnections.MySQLConnection;
-import me.taylorkelly.mywarp.dataconnections.SQLiteConnection;
+import me.taylorkelly.mywarp.dataconnections.MySqlConnection;
+import me.taylorkelly.mywarp.dataconnections.SqLiteConnection;
 import me.taylorkelly.mywarp.dataconnections.migrators.DataConnectionMigrator;
 import me.taylorkelly.mywarp.dataconnections.migrators.DataMigrator;
-import me.taylorkelly.mywarp.dataconnections.migrators.LegacyMySQLMigrator;
-import me.taylorkelly.mywarp.dataconnections.migrators.LegacySQLiteMigrator;
+import me.taylorkelly.mywarp.dataconnections.migrators.LegacyMySqlMigrator;
+import me.taylorkelly.mywarp.dataconnections.migrators.LegacySqLiteMigrator;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -52,9 +51,7 @@ import java.util.Set;
 public class ImportCommands {
 
   private static final String IMPORT_PERMISSION = "mywarp.admin.import"; // NON-NLS
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   /**
    * Imports Warps from an SQLite database.
@@ -68,10 +65,9 @@ public class ImportCommands {
   public void sqlite(Actor actor, String databasePath) throws CommandException {
     File database = new File(MyWarp.getInstance().getPlatform().getDataFolder(), databasePath);
     if (!database.exists()) {
-      throw new CommandException(MESSAGES.getString("import.file-non-existent",
-                                                    database.getAbsolutePath()));
+      throw new CommandException(MESSAGES.getString("import.file-non-existent", database.getAbsolutePath()));
     }
-    migrate(actor, new DataConnectionMigrator(SQLiteConnection.getConnection(database, false)));
+    migrate(actor, new DataConnectionMigrator(SqLiteConnection.getConnection(database, false)));
   }
 
   /**
@@ -85,8 +81,7 @@ public class ImportCommands {
   @Command(aliases = {"mysql"}, desc = "import.mysql.description", help = "import.mysql.help")
   @Require(IMPORT_PERMISSION)
   public void mysql(Actor actor, String dsn, String user, String password) {
-    migrate(actor,
-            new DataConnectionMigrator(MySQLConnection.getConnection(dsn, user, password, false)));
+    migrate(actor, new DataConnectionMigrator(MySqlConnection.getConnection(dsn, user, password, false)));
   }
 
   /**
@@ -96,8 +91,7 @@ public class ImportCommands {
    * @param databasePath the path to the database file
    * @throws CommandException if the file does not exist
    */
-  @Command(aliases = {
-      "pre3-sqlite"}, desc = "import.pre3-sqlite.description", help = "import.pre3-sqlite.help")
+  @Command(aliases = {"pre3-sqlite"}, desc = "import.pre3-sqlite.description", help = "import.pre3-sqlite.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Sqlite(Actor actor, String databasePath) throws CommandException {
     File database = new File(MyWarp.getInstance().getPlatform().getDataFolder(), databasePath);
@@ -105,7 +99,7 @@ public class ImportCommands {
       throw new CommandException(MESSAGES.getString("commands.import.file-non-existent", // NON-NLS
                                                     database.getAbsolutePath()));
     }
-    migrate(actor, new LegacySQLiteMigrator(database));
+    migrate(actor, new LegacySqLiteMigrator(database));
   }
 
   /**
@@ -117,11 +111,10 @@ public class ImportCommands {
    * @param password  the user's password
    * @param tableName the name of the table that contains the data
    */
-  @Command(aliases = {
-      "pre3-mysql"}, desc = "import.pre3-mysql.description", help = "import.pre3-mysql.help")
+  @Command(aliases = {"pre3-mysql"}, desc = "import.pre3-mysql.description", help = "import.pre3-mysql.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Mysql(Actor actor, String dsn, String user, String password, String tableName) {
-    migrate(actor, new LegacyMySQLMigrator(dsn, user, password, tableName));
+    migrate(actor, new LegacyMySqlMigrator(dsn, user, password, tableName));
   }
 
   /**
@@ -138,8 +131,8 @@ public class ImportCommands {
     Futures.addCallback(futureWarps, new FutureCallback<Collection<Warp>>() {
 
       @Override
-      public void onFailure(final Throwable t) {
-        initiator.sendError(MESSAGES.getString("import.no-connection", t.getMessage()));
+      public void onFailure(final Throwable throwable) {
+        initiator.sendError(MESSAGES.getString("import.no-connection", throwable.getMessage()));
       }
 
       @Override
@@ -155,11 +148,9 @@ public class ImportCommands {
         }
 
         if (notImportedWarps.isEmpty()) {
-          initiator.sendMessage(ChatColor.AQUA
-                                + MESSAGES.getString("import.import-successful", warps.size()));
+          initiator.sendMessage(ChatColor.AQUA + MESSAGES.getString("import.import-successful", warps.size()));
         } else {
-          initiator.sendError(MESSAGES.getString("import.import-with-skips", warps.size(),
-                                                 notImportedWarps.size()));
+          initiator.sendError(MESSAGES.getString("import.import-with-skips", warps.size(), notImportedWarps.size()));
           initiator.sendMessage(CommandUtils.joinWarps(notImportedWarps));
         }
 

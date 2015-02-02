@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.bukkit.util;
 
 import com.google.common.base.Joiner;
-
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.CommandMapping;
 import com.sk89q.intake.InvalidUsageException;
@@ -41,9 +40,9 @@ import me.taylorkelly.mywarp.warp.Warp;
 import java.util.Arrays;
 
 /**
- * A custom Dispatcher implementation that, instead of simply throwing an InvalidUsageException if
- * the given arguments do not match any of the registered sub-commands, tries to send the command
- * caller to a Warp matching these arguments.
+ * A custom Dispatcher implementation that, instead of simply throwing an InvalidUsageException if the given arguments
+ * do not match any of the registered sub-commands, tries to send the command caller to a Warp matching these
+ * arguments.
  */
 public class WarpDispatcher extends SimpleDispatcher {
 
@@ -60,8 +59,7 @@ public class WarpDispatcher extends SimpleDispatcher {
    * @param warpBinding   the WarpBinding
    * @param usageCommands the UsageCommands
    */
-  public WarpDispatcher(ExceptionConverter converter, PlayerBinding playerBinding,
-                        WarpBinding warpBinding,
+  public WarpDispatcher(ExceptionConverter converter, PlayerBinding playerBinding, WarpBinding warpBinding,
                         UsageCommands usageCommands) {
     this.converter = converter;
     this.playerBinding = playerBinding;
@@ -121,26 +119,22 @@ public class WarpDispatcher extends SimpleDispatcher {
   }
 
   /**
-   * Teleports the command caller to the Warp matching the first argument, if the command caller is
-   * a player, only one argument is given and that argument matches an warp usable by the command
-   * caller and all requirements listed for {@link UsageCommands#to(LocalPlayer, Warp)} are meat.
+   * Teleports the command caller to the Warp matching the first argument, if the command caller is a player, only one
+   * argument is given and that argument matches an warp usable by the command caller and all requirements listed for
+   * {@link UsageCommands#to(LocalPlayer, Warp)} are meat.
    *
    * @param arguments the arguments
    * @param locals    the CommandLocals
    * @throws InvalidUsageException         if {@code arguments} does not have exactly one entry
-   * @throws NoSuchWarpException           if there is no Warp matching the argument or is usable by
-   *                                       the command caller
-   * @throws ParameterException            if the given CommandLocals do not contain a mapping for
-   *                                       the {@link me.taylorkelly.mywarp.Actor} class
+   * @throws NoSuchWarpException           if there is no Warp matching the argument or is usable by the command caller
+   * @throws ParameterException            if the given CommandLocals do not contain a mapping for the {@link
+   *                                       me.taylorkelly.mywarp.Actor} class
    * @throws IllegalCommandSenderException if the command caller is not a player
-   * @throws TimerRunningException         if the command caller already has some sort of timer
-   *                                       running
+   * @throws TimerRunningException         if the command caller already has some sort of timer running
    */
-  private void to(String[] arguments, CommandLocals locals) throws InvalidUsageException,
-                                                                   NoSuchWarpException,
-                                                                   ParameterException,
-                                                                   IllegalCommandSenderException,
-                                                                   TimerRunningException {
+  private void to(String[] arguments, CommandLocals locals)
+      throws InvalidUsageException, NoSuchWarpException, ParameterException, IllegalCommandSenderException,
+             TimerRunningException {
     if (arguments.length != 1) {
       // TODO localize!
       throw new InvalidUsageException("Please choose a sub-command.", this, true);

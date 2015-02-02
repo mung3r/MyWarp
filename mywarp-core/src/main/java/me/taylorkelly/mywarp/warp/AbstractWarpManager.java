@@ -29,8 +29,8 @@ import me.taylorkelly.mywarp.util.profile.Profile;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * An abstract {@link WarpManager} implementation that implements 'matching' methods that do not
- * depend on the implementation.
+ * An abstract {@link WarpManager} implementation that implements 'matching' methods that do not depend on the
+ * implementation.
  */
 public abstract class AbstractWarpManager implements WarpManager {
 

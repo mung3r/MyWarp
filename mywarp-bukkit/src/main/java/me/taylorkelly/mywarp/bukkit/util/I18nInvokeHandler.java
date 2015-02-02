@@ -34,13 +34,12 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import java.lang.reflect.Method;
 
 /**
- * By registering this InvokeHandler at a {@link com.sk89q.intake.parametric.ParametricBuilder},
- * command methods created by this builder will have internationalized descriptions and help texts.
+ * By registering this InvokeHandler at a {@link com.sk89q.intake.parametric.ParametricBuilder}, command methods created
+ * by this builder will have internationalized descriptions and help texts.
  */
 public class I18nInvokeHandler implements InvokeListener, InvokeHandler {
 
-  private static final DynamicMessages
-      MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   @Override
   public InvokeHandler createInvokeHandler() {
@@ -66,23 +65,20 @@ public class I18nInvokeHandler implements InvokeListener, InvokeHandler {
   }
 
   @Override
-  public boolean preProcess(Object object, Method method, ParameterData[] parameters,
-                            CommandContext context, CommandLocals locals) throws CommandException,
-                                                                                 ParameterException {
+  public boolean preProcess(Object object, Method method, ParameterData[] parameters, CommandContext context,
+                            CommandLocals locals) throws CommandException, ParameterException {
     return true;
   }
 
   @Override
   public boolean preInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
-                           CommandContext context, CommandLocals locals)
-      throws CommandException, ParameterException {
+                           CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
     return true;
   }
 
   @Override
   public void postInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
-                         CommandContext context, CommandLocals locals)
-      throws CommandException, ParameterException {
+                         CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
   }
 
 }

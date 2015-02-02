@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.bukkit.commands;
 
 import com.google.common.base.Optional;
-
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
@@ -50,9 +49,7 @@ import org.bukkit.ChatColor;
  */
 public class SocialCommands {
 
-  private static final DynamicMessages
-      MESSAGES =
-      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final WarpAcceptancePromptFactory warpAcceptancePromptFactory;
 
@@ -71,21 +68,18 @@ public class SocialCommands {
    * @param actor        the Actor
    * @param receiver     the Profile of the player who should receive the Warp
    * @param warp         the Warp
-   * @param giveDirectly whether the Warp should be given directly, without asking the owner for
-   *                     acceptance
+   * @param giveDirectly whether the Warp should be given directly, without asking the owner for acceptance
    * @param ignoreLimits whether the limits of the new owner should be ignored
    * @throws CommandException       if the owner could not be changed
    * @throws AuthorizationException if the Actor does have enough permissions
-   * @throws NoSuchPlayerException  if the receiver is offline and the flags to bypass this check
-   *                                where not given
+   * @throws NoSuchPlayerException  if the receiver is offline and the flags to bypass this check where not given
    */
   @Command(aliases = {"give"}, desc = "give.description", help = "give.help")
   @Require("mywarp.warp.soc.give")
   @Billable(FeeType.GIVE)
   public void give(Actor actor, Profile receiver, @Condition(Type.MODIFIABLE) Warp warp,
                    @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits)
-      throws CommandException,
-             AuthorizationException, NoSuchPlayerException {
+      throws CommandException, AuthorizationException, NoSuchPlayerException {
     if (giveDirectly && !actor.hasPermission("mywarp.warp.soc.give.direct")) { // NON-NLS
       throw new AuthorizationException();
     }
@@ -102,8 +96,10 @@ public class SocialCommands {
       if (!receiverPlayer.isPresent()) {
         throw new NoSuchPlayerException(receiver);
       }
-      LimitManager.EvaluationResult result = MyWarp.getInstance().getLimitManager()
-          .evaluateLimit(receiverPlayer.get(), warp.getWorld(), warp.getType().getLimit(), true);
+      LimitManager.EvaluationResult
+          result =
+          MyWarp.getInstance().getLimitManager()
+              .evaluateLimit(receiverPlayer.get(), warp.getWorld(), warp.getType().getLimit(), true);
       if (result.exceedsLimit()) {
         throw new CommandException(MESSAGES.getString("give.receiver-limits"));
       }
@@ -139,9 +135,8 @@ public class SocialCommands {
   @Command(aliases = {"private"}, desc = "private.description", help = "private.help")
   @Require("mywarp.warp.soc.private")
   @Billable(FeeType.PRIVATE)
-  public void privatize(Actor actor, @Condition(Type.MODIFIABLE) Warp warp) throws CommandException,
-                                                                                   LimitExceededException,
-                                                                                   NoSuchPlayerException {
+  public void privatize(Actor actor, @Condition(Type.MODIFIABLE) Warp warp)
+      throws CommandException, LimitExceededException, NoSuchPlayerException {
     if (warp.isType(Warp.Type.PRIVATE)) {
       throw new CommandException("private.already-private");
     }
@@ -150,11 +145,12 @@ public class SocialCommands {
     if (!creatorPlayer.isPresent()) {
       throw new NoSuchPlayerException(creator);
     }
-    LimitManager.EvaluationResult result = MyWarp.getInstance().getLimitManager()
-        .evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PRIVATE.getLimit(), false);
+    LimitManager.EvaluationResult
+        result =
+        MyWarp.getInstance().getLimitManager()
+            .evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PRIVATE.getLimit(), false);
     if (result.exceedsLimit()) {
-      throw new LimitExceededException(result.getExceededLimit().get(),
-                                       result.getLimitMaximum().get());
+      throw new LimitExceededException(result.getExceededLimit().get(), result.getLimitMaximum().get());
     }
     warp.setType(Warp.Type.PRIVATE);
     actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("private.privatized", warp.getName()));
@@ -172,9 +168,8 @@ public class SocialCommands {
   @Command(aliases = {"public"}, desc = "public.description", help = "public.help")
   @Require("mywarp.warp.soc.public")
   @Billable(FeeType.PUBLIC)
-  public void publicize(Actor actor, @Condition(Type.MODIFIABLE) Warp warp) throws CommandException,
-                                                                                   LimitExceededException,
-                                                                                   NoSuchPlayerException {
+  public void publicize(Actor actor, @Condition(Type.MODIFIABLE) Warp warp)
+      throws CommandException, LimitExceededException, NoSuchPlayerException {
     if (warp.isType(Warp.Type.PUBLIC)) {
       throw new CommandException(MESSAGES.getString("public.already-public"));
     }
@@ -183,11 +178,12 @@ public class SocialCommands {
     if (!creatorPlayer.isPresent()) {
       throw new NoSuchPlayerException(creator);
     }
-    LimitManager.EvaluationResult result = MyWarp.getInstance().getLimitManager()
-        .evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PUBLIC.getLimit(), false);
+    LimitManager.EvaluationResult
+        result =
+        MyWarp.getInstance().getLimitManager()
+            .evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PUBLIC.getLimit(), false);
     if (result.exceedsLimit()) {
-      throw new LimitExceededException(result.getExceededLimit().get(),
-                                       result.getLimitMaximum().get());
+      throw new LimitExceededException(result.getExceededLimit().get(), result.getLimitMaximum().get());
     }
     warp.setType(Warp.Type.PUBLIC);
     actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("public.publicized", warp.getName()));
@@ -202,14 +198,13 @@ public class SocialCommands {
    * @param groupInvite       whether groups should be invited
    * @throws CommandException       if the invitation fails
    * @throws AuthorizationException if the Actor does have enough permissions
-   * @throws NoSuchProfileException if a player should be invited, but no Profile could be found for
-   *                                the given {@code inviteeIdentifier}
+   * @throws NoSuchProfileException if a player should be invited, but no Profile could be found for the given {@code
+   *                                inviteeIdentifier}
    */
   @Command(aliases = {"invite"}, desc = "invite.description", help = "invite.help")
   @Require("mywarp.warp.soc.invite")
   @Billable(FeeType.INVITE)
-  public void invite(Actor actor, String inviteeIdentifier,
-                     @Condition(Condition.Type.MODIFIABLE) Warp warp,
+  public void invite(Actor actor, String inviteeIdentifier, @Condition(Condition.Type.MODIFIABLE) Warp warp,
                      @Switch('g') boolean groupInvite)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
@@ -218,23 +213,19 @@ public class SocialCommands {
       }
 
       if (warp.isGroupInvited(inviteeIdentifier)) {
-        throw new CommandException(MESSAGES.getString("invite.group.already-invited",
-                                                      inviteeIdentifier));
+        throw new CommandException(MESSAGES.getString("invite.group.already-invited", inviteeIdentifier));
       }
       warp.inviteGroup(inviteeIdentifier);
 
-      actor.sendMessage(ChatColor.AQUA
-                        + MESSAGES
-          .getString("invite.group.successful", inviteeIdentifier, warp.getName()));
+      actor.sendMessage(
+          ChatColor.AQUA + MESSAGES.getString("invite.group.successful", inviteeIdentifier, warp.getName()));
       if (warp.getType() == Warp.Type.PUBLIC) {
         actor.sendMessage(ChatColor.GRAY + MESSAGES.getString("invite.public", warp.getName()));
       }
       return;
     }
     // invite player
-    Optional<Profile>
-        optionalInvitee =
-        MyWarp.getInstance().getProfileService().get(inviteeIdentifier);
+    Optional<Profile> optionalInvitee = MyWarp.getInstance().getProfileService().get(inviteeIdentifier);
     if (!optionalInvitee.isPresent()) {
       throw new NoSuchProfileException(inviteeIdentifier);
     }
@@ -242,8 +233,7 @@ public class SocialCommands {
     Profile invitee = optionalInvitee.get();
 
     if (warp.isPlayerInvited(invitee)) {
-      throw new CommandException(
-          MESSAGES.getString("invite.player.already-invited", invitee.getName()));
+      throw new CommandException(MESSAGES.getString("invite.player.already-invited", invitee.getName()));
     }
     if (warp.isCreator(invitee)) {
       throw new CommandException(MESSAGES.getString("invite.player.is-creator", invitee.getName()));
@@ -255,17 +245,15 @@ public class SocialCommands {
       displayName = invitee.getName().get();
     }
 
-    actor.sendMessage(ChatColor.AQUA
-                      + MESSAGES
-        .getString("invite.player.successful", displayName, warp.getName()));
+    actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("invite.player.successful", displayName, warp.getName()));
     if (warp.getType() == Warp.Type.PUBLIC) {
       actor.sendMessage(ChatColor.GRAY + MESSAGES.getString("invite.public", warp.getName()));
     }
 
     Optional<LocalPlayer> uninvitedPlayer = MyWarp.getInstance().getOnlinePlayer(invitee);
     if (uninvitedPlayer.isPresent()) {
-      uninvitedPlayer.get().sendMessage(
-          ChatColor.AQUA + MESSAGES.getString("invite.player.player-invited", warp.getName()));
+      uninvitedPlayer.get()
+          .sendMessage(ChatColor.AQUA + MESSAGES.getString("invite.player.player-invited", warp.getName()));
     }
   }
 
@@ -278,14 +266,13 @@ public class SocialCommands {
    * @param groupInvite         whether groups should be uninvited
    * @throws CommandException       if the uninvitation fails
    * @throws AuthorizationException if the Actor does have enough permissions
-   * @throws NoSuchProfileException if a player should be uninvited, but no Profile could be found
-   *                                for the given {@code uninviteeIdentifier}
+   * @throws NoSuchProfileException if a player should be uninvited, but no Profile could be found for the given {@code
+   *                                uninviteeIdentifier}
    */
   @Command(aliases = {"uninvite"}, desc = "uninvite.description", help = "uninvite.help")
   @Require("mywarp.warp.soc.uninvite")
   @Billable(FeeType.UNINVITE)
-  public void uninvite(Actor actor, String uninviteeIdentifier,
-                       @Condition(Condition.Type.MODIFIABLE) Warp warp,
+  public void uninvite(Actor actor, String uninviteeIdentifier, @Condition(Condition.Type.MODIFIABLE) Warp warp,
                        @Switch('g') boolean groupInvite)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
@@ -294,22 +281,19 @@ public class SocialCommands {
       }
 
       if (!warp.isGroupInvited(uninviteeIdentifier)) {
-        throw new CommandException(MESSAGES.getString("uninvite.group.not-invited",
-                                                      uninviteeIdentifier));
+        throw new CommandException(MESSAGES.getString("uninvite.group.not-invited", uninviteeIdentifier));
       }
       warp.uninviteGroup(uninviteeIdentifier);
 
-      actor.sendMessage(ChatColor.AQUA
-                        + MESSAGES
-          .getString("uninvite.group.successful", uninviteeIdentifier, warp.getName()));
+      actor.sendMessage(
+          ChatColor.AQUA + MESSAGES.getString("uninvite.group.successful", uninviteeIdentifier, warp.getName()));
       if (warp.getType() == Warp.Type.PUBLIC) {
         actor.sendMessage(ChatColor.GRAY + MESSAGES.getString("uninvite.public", warp.getName()));
       }
       return;
     }
     // uninvite player
-    Optional<Profile> optionalUninvitee = MyWarp.getInstance().getProfileService()
-        .get(uninviteeIdentifier);
+    Optional<Profile> optionalUninvitee = MyWarp.getInstance().getProfileService().get(uninviteeIdentifier);
     if (!optionalUninvitee.isPresent()) {
       throw new NoSuchProfileException(uninviteeIdentifier);
     }
@@ -317,12 +301,10 @@ public class SocialCommands {
     Profile uninvitee = optionalUninvitee.get();
 
     if (!warp.isPlayerInvited(uninvitee)) {
-      throw new CommandException(
-          MESSAGES.getString("uninvite.player.not-invited", uninvitee.getName()));
+      throw new CommandException(MESSAGES.getString("uninvite.player.not-invited", uninvitee.getName()));
     }
     if (warp.isCreator(uninvitee)) {
-      throw new CommandException(
-          MESSAGES.getString("uninvite.player.is-creator", uninvitee.getName()));
+      throw new CommandException(MESSAGES.getString("uninvite.player.is-creator", uninvitee.getName()));
     }
     warp.uninvitePlayer(uninvitee);
 
@@ -331,17 +313,15 @@ public class SocialCommands {
       displayName = uninvitee.getName().get();
     }
 
-    actor.sendMessage(ChatColor.AQUA
-                      + MESSAGES
-        .getString("uninvited.player.successful", displayName, warp.getName()));
+    actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("uninvited.player.successful", displayName, warp.getName()));
     if (warp.getType() == Warp.Type.PUBLIC) {
       actor.sendMessage(ChatColor.GRAY + MESSAGES.getString("uninvite.public", warp.getName()));
     }
 
     Optional<LocalPlayer> invitedPlayer = MyWarp.getInstance().getOnlinePlayer(uninvitee);
     if (invitedPlayer.isPresent()) {
-      invitedPlayer.get().sendMessage(
-          ChatColor.AQUA + MESSAGES.getString("uninvite.player.player-uninvited", warp.getName()));
+      invitedPlayer.get()
+          .sendMessage(ChatColor.AQUA + MESSAGES.getString("uninvite.player.player-uninvited", warp.getName()));
     }
   }
 }

@@ -33,6 +33,7 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -40,46 +41,48 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 
 /**
- * The connection to a MySQL database.
+ * The connection to a SQlite database.
  */
-public class MySQLConnection {
+public class SqLiteConnection {
 
   /**
    * Block initialization of this class.
    */
-  private MySQLConnection() {
+  private SqLiteConnection() {
   }
 
   /**
-   * Gets a valid connection to the given MySQL database. The connection is created asynchronous,
-   * the returned CheckedFuture either contains the ready-to-use connection or throws a {@link
-   * DataConnectionException}.
+   * Gets a valid connection to the given SQLite database. The connection is created asynchronous, the returned
+   * CheckedFuture either contains the ready-to-use connection or throws a {@link DataConnectionException}.
    *
-   * @param dsn             the dsn of the database
-   * @param user            the MySQL user to use
-   * @param password        the user's password
-   * @param controlDBLayout whether the implementation should create tables and execute updates, if
-   *                        necessary
-   * @return a CheckedFuture containing a valid, setup connection
+   * @param database        the database file
+   * @param controlDbLayout whether the implementation should create tables and execute updates, if necessary
+   * @return a valid, setup connection to the SQLite database
    */
-  public static CheckedFuture<DataConnection, DataConnectionException> getConnection(
-      final String dsn,
-      final String user, final String password, final boolean controlDBLayout) {
-    final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
-                                                                                   .newSingleThreadExecutor());
+  public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final File database,
+                                                                                     final boolean controlDbLayout) {
+    final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
 
-    ListenableFuture<DataConnection> future = executor.submit(new Callable<DataConnection>() {
+    ListenableFuture<DataConnection> futureConnection = executor.submit(new Callable<DataConnection>() {
 
       @Override
       public DataConnection call() throws DataConnectionException {
+        String dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
+        try {
+          // Manually load SQLite driver. DriveManager is unable to
+          // identify it as the driver does not follow JDBC 4.0
+          // standards.
+          Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+          throw new DataConnectionException("Unable to find SQLite library.", e);
+        }
 
-        if (controlDBLayout) {
+        if (controlDbLayout) {
           Flyway flyway = new Flyway();
 
-          flyway.setDataSource(dsn, user, password);
+          flyway.setDataSource(dsn, null, null);
           flyway.setClassLoader(getClass().getClassLoader());
-          flyway.setLocations("migrations/mysql"); // NON-NLS
-          flyway.setSchemas("mywarp"); // NON-NLS
+          flyway.setLocations("migrations/sqlite"); // NON-NLS
 
           try {
             flyway.migrate();
@@ -90,20 +93,21 @@ public class MySQLConnection {
 
         Connection conn;
         try {
-          conn = DriverManager.getConnection(dsn, user, password);
+          conn = DriverManager.getConnection(dsn);
         } catch (SQLException e) {
           throw new DataConnectionException("Failed to connect to the database.", e);
         }
 
         // the database scheme can be configured by users
         Settings settings = new Settings().withRenderSchema(false);
-        DSLContext create = DSL.using(conn, SQLDialect.MYSQL, settings);
 
-        return new JOOQConnection(create, conn, executor);
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE, settings);
+
+        return new JooqConnection(create, conn, executor);
       }
 
     });
-    return Futures.makeChecked(future, new Function<Exception, DataConnectionException>() {
+    return Futures.makeChecked(futureConnection, new Function<Exception, DataConnectionException>() {
 
       @Override
       public DataConnectionException apply(Exception ex) {

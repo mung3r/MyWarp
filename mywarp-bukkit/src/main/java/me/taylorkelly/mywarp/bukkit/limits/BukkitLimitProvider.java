@@ -41,10 +41,10 @@ import java.util.Set;
 import java.util.SortedSet;
 
 /**
- * Provides Limits when running on Bukkit. The actual Limits are stored in {@link LimitBundle}s
- * managed by this provider. <p> Players either need to have a specific permission of a certain
- * bundle that covers the world in question or they fall under a global default bundle. If a player
- * has the permission for more than one bundle, the alphabetically first bundle will be used. </p>
+ * Provides Limits when running on Bukkit. The actual Limits are stored in {@link LimitBundle}s managed by this
+ * provider. <p> Players either need to have a specific permission of a certain bundle that covers the world in question
+ * or they fall under a global default bundle. If a player has the permission for more than one bundle, the
+ * alphabetically first bundle will be used. </p>
  */
 public class BukkitLimitProvider implements LimitProvider {
 
@@ -54,18 +54,16 @@ public class BukkitLimitProvider implements LimitProvider {
   /**
    * Initializes this provider.
    *
-   * @param configuredLimits the configured FeeBundles that are assigned to a player via a specific
-   *                         permission
-   * @param defaultLimit     the default FeeBundle that acts as a fallback if a player has none of
-   *                         the specific permissions
+   * @param configuredLimits the configured FeeBundles that are assigned to a player via a specific permission
+   * @param defaultLimit     the default FeeBundle that acts as a fallback if a player has none of the specific
+   *                         permissions
    */
   public BukkitLimitProvider(Iterable<LimitBundle> configuredLimits, LimitBundle defaultLimit) {
     this.configuredLimits = ImmutableSortedSet.copyOf(configuredLimits);
     this.defaultLimit = defaultLimit;
 
     for (ValueBundle bundle : configuredLimits) {
-      BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(),
-                                                                     PermissionDefault.FALSE));
+      BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(), PermissionDefault.FALSE));
     }
     // register per-world overrides
     for (World world : Bukkit.getWorlds()) {

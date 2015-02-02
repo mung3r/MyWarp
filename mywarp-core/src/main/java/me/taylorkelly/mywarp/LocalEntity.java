@@ -49,8 +49,7 @@ public interface LocalEntity {
   EulerDirection getRotation();
 
   /**
-   * Teleports this entity to the given position on the given world, and sets his rotation to the
-   * given one.
+   * Teleports this entity to the given position on the given world, and sets his rotation to the given one.
    *
    * @param world    the world
    * @param position the position vector
