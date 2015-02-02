@@ -28,20 +28,19 @@ import org.bukkit.entity.Player;
  */
 public class VaultResolver implements GroupResolver {
 
-    private Permission permission;
+  private Permission permission;
 
-    /**
-     * Initializes this handler with the given permissions-API.
-     * 
-     * @param permission
-     *            the permission-API
-     */
-    public VaultResolver(Permission permission) {
-        this.permission = permission;
-    }
+  /**
+   * Initializes this handler with the given permissions-API.
+   *
+   * @param permission the permission-API
+   */
+  public VaultResolver(Permission permission) {
+    this.permission = permission;
+  }
 
-    @Override
-    public boolean hasGroup(Player player, String group) {
-        return permission.playerInGroup(player, group);
-    }
+  @Override
+  public boolean hasGroup(Player player, String group) {
+    return permission.playerInGroup(player, group);
+  }
 }

@@ -28,14 +28,13 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class AbstractListener implements Listener {
 
-    /**
-     * Registers this class as Listener.
-     * 
-     * @param plugin
-     *            the plugin that registers the listener
-     */
-    public void registerEvents(Plugin plugin) {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
+  /**
+   * Registers this class as Listener.
+   *
+   * @param plugin the plugin that registers the listener
+   */
+  public void registerEvents(Plugin plugin) {
+    Bukkit.getPluginManager().registerEvents(this, plugin);
+  }
 
 }

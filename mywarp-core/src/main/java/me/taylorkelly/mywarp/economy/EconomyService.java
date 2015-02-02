@@ -26,24 +26,20 @@ import me.taylorkelly.mywarp.LocalPlayer;
  */
 public interface EconomyService {
 
-    /**
-     * Checks if the given LocalPlayer has at least the given amount.
-     * 
-     * @param player
-     *            the LocalPlayer to check
-     * @param amount
-     *            the amount to check
-     * @return true if the LocalPlayer has at least the given amount
-     */
-    boolean hasAtLeast(LocalPlayer player, double amount);
+  /**
+   * Checks if the given LocalPlayer has at least the given amount.
+   *
+   * @param player the LocalPlayer to check
+   * @param amount the amount to check
+   * @return true if the LocalPlayer has at least the given amount
+   */
+  boolean hasAtLeast(LocalPlayer player, double amount);
 
-    /**
-     * Withdraws the given LocalPlayer with the given amount.
-     * 
-     * @param player
-     *            the LocalPlayer to check
-     * @param amount
-     *            the amount to withdraw
-     */
-    void withdraw(LocalPlayer player, double amount);
+  /**
+   * Withdraws the given LocalPlayer with the given amount.
+   *
+   * @param player the LocalPlayer to check
+   * @param amount the amount to withdraw
+   */
+  void withdraw(LocalPlayer player, double amount);
 }

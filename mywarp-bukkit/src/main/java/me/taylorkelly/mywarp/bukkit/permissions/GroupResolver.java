@@ -26,15 +26,12 @@ import org.bukkit.entity.Player;
  */
 public interface GroupResolver {
 
-    /**
-     * Returns whether the given player is in the group identified by the given
-     * group-id.
-     * 
-     * @param player
-     *            the player
-     * @param groupId
-     *            the name of the group
-     * @return true if the player is in the group
-     */
-    boolean hasGroup(Player player, String groupId);
+  /**
+   * Returns whether the given player is in the group identified by the given group-id.
+   *
+   * @param player  the player
+   * @param groupId the name of the group
+   * @return true if the player is in the group
+   */
+  boolean hasGroup(Player player, String groupId);
 }

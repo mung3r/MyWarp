@@ -22,20 +22,17 @@ package me.taylorkelly.mywarp.timer;
 import me.taylorkelly.mywarp.LocalPlayer;
 
 /**
- * Provides the actual {@link Duration}s that affect a user under certain
- * conditions.
+ * Provides the actual {@link Duration}s that affect a user under certain conditions.
  */
 public interface DurationProvider {
 
-    /**
-     * Gets the duration of the given Type that affects the given LocalPlayer.
-     * 
-     * @param player
-     *            the LocalPlayer
-     * @param clazz
-     *            the TimerAction class the Duration is requested for
-     * @return the duration
-     */
-    Duration getDuration(LocalPlayer player, Class<? extends TimerAction<?>> clazz);
+  /**
+   * Gets the duration of the given Type that affects the given LocalPlayer.
+   *
+   * @param player the LocalPlayer
+   * @param clazz  the TimerAction class the Duration is requested for
+   * @return the duration
+   */
+  Duration getDuration(LocalPlayer player, Class<? extends TimerAction<?>> clazz);
 
 }

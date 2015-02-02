@@ -19,21 +19,20 @@
 
 package me.taylorkelly.mywarp.bukkit.util.economy;
 
+import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-
 /**
- * Annotates a method that withdraws a certain fee from callers once executed
- * successfully.
- **/
+ * Annotates a method that withdraws a certain fee from callers once executed successfully.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Billable {
 
-    /**
-     * The FeeType referencing the fee.
-     */
-    FeeType value();
+  /**
+   * The FeeType referencing the fee.
+   */
+  FeeType value();
 
 }

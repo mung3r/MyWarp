@@ -19,128 +19,109 @@
 
 package me.taylorkelly.mywarp.dataconnections;
 
-import java.util.Collection;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Collection;
 
 /**
  * A connection to a data-source.
  */
 public interface DataConnection {
 
-    /**
-     * Closes any connection to the underlying data-source.
-     */
-    void close();
+  /**
+   * Closes any connection to the underlying data-source.
+   */
+  void close();
 
-    /**
-     * Adds the given warp to the underlying data-source.
-     * 
-     * @param warp
-     *            the warp
-     */
-    void addWarp(Warp warp);
+  /**
+   * Adds the given warp to the underlying data-source.
+   *
+   * @param warp the warp
+   */
+  void addWarp(Warp warp);
 
-    /**
-     * Removes the given warp from the underlying data-source.
-     * 
-     * @param warp
-     *            the warp
-     */
-    void removeWarp(Warp warp);
+  /**
+   * Removes the given warp from the underlying data-source.
+   *
+   * @param warp the warp
+   */
+  void removeWarp(Warp warp);
 
-    /**
-     * Gets all warps from the underlying data-source.
-     * 
-     * @return a ListenableFuture that contains a collection of warps
-     */
-    ListenableFuture<Collection<Warp>> getWarps();
+  /**
+   * Gets all warps from the underlying data-source.
+   *
+   * @return a ListenableFuture that contains a collection of warps
+   */
+  ListenableFuture<Collection<Warp>> getWarps();
 
-    /**
-     * Adds the given groupId to the list of invited groupIdss for the given
-     * warp.
-     * 
-     * @param warp
-     *            the warp
-     * @param groupId
-     *            the ID of the group
-     */
-    void inviteGroup(Warp warp, String groupId);
+  /**
+   * Adds the given groupId to the list of invited groupIdss for the given warp.
+   *
+   * @param warp    the warp
+   * @param groupId the ID of the group
+   */
+  void inviteGroup(Warp warp, String groupId);
 
-    /**
-     * Adds the given player-profile to the invited player-profiles for the
-     * given warp.
-     * 
-     * @param warp
-     *            the warp
-     * @param playerProfile
-     *            the player-profile
-     */
-    void invitePlayer(Warp warp, Profile playerProfile);
+  /**
+   * Adds the given player-profile to the invited player-profiles for the given warp.
+   *
+   * @param warp          the warp
+   * @param playerProfile the player-profile
+   */
+  void invitePlayer(Warp warp, Profile playerProfile);
 
-    /**
-     * Removes the given groupId from the list of invited groupIds for the given
-     * warp.
-     * 
-     * @param warp
-     *            the warp
-     * @param groupId
-     *            the ID of the group
-     */
-    void uninviteGroup(Warp warp, String groupId);
+  /**
+   * Removes the given groupId from the list of invited groupIds for the given warp.
+   *
+   * @param warp    the warp
+   * @param groupId the ID of the group
+   */
+  void uninviteGroup(Warp warp, String groupId);
 
-    /**
-     * Removes the given player-profile from the invited player-profiles for the
-     * given warp.
-     * 
-     * @param warp
-     *            the warp
-     * @param playerProfile
-     *            the profile of the player
-     */
-    void uninvitePlayer(Warp warp, Profile playerProfile);
+  /**
+   * Removes the given player-profile from the invited player-profiles for the given warp.
+   *
+   * @param warp          the warp
+   * @param playerProfile the profile of the player
+   */
+  void uninvitePlayer(Warp warp, Profile playerProfile);
 
-    /**
-     * Updates the creator of the given warp.
-     * 
-     * @param warp
-     *            the warp
-     */
-    void updateCreator(Warp warp);
+  /**
+   * Updates the creator of the given warp.
+   *
+   * @param warp the warp
+   */
+  void updateCreator(Warp warp);
 
-    /**
-     * Updates the location of the given warp.
-     * 
-     * @param warp
-     *            the warp
-     */
-    void updateLocation(Warp warp);
+  /**
+   * Updates the location of the given warp.
+   *
+   * @param warp the warp
+   */
+  void updateLocation(Warp warp);
 
-    /**
-     * Updates the type of the given warp.
-     * 
-     * @param warp
-     *            the warp
-     */
-    void updateType(Warp warp);
+  /**
+   * Updates the type of the given warp.
+   *
+   * @param warp the warp
+   */
+  void updateType(Warp warp);
 
-    /**
-     * Updates the visits of the given warp.
-     * 
-     * @param warp
-     *            the warp
-     */
-    void updateVisits(Warp warp);
+  /**
+   * Updates the visits of the given warp.
+   *
+   * @param warp the warp
+   */
+  void updateVisits(Warp warp);
 
-    /**
-     * Update the welcome-message of the given warp.
-     * 
-     * @param warp
-     *            the warp
-     */
-    void updateWelcomeMessage(Warp warp);
+  /**
+   * Update the welcome-message of the given warp.
+   *
+   * @param warp the warp
+   */
+  void updateWelcomeMessage(Warp warp);
 
 }

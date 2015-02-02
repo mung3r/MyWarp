@@ -19,54 +19,56 @@
 
 package me.taylorkelly.mywarp.bukkit.economy;
 
-import java.util.logging.Logger;
-
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
 import me.taylorkelly.mywarp.economy.EconomyService;
+
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.logging.Logger;
+
 /**
  * An EconomyService that uses Vault to resolve requests.
  */
 public class VaultService implements EconomyService {
 
-    private static final Logger LOG = Logger.getLogger(VaultService.class.getName());
+  private static final Logger log = Logger.getLogger(VaultService.class.getName());
 
-    private final Economy economy;
-    private final BukkitAdapter adapter;
+  private final Economy economy;
+  private final BukkitAdapter adapter;
 
-    /**
-     * Initializes this service.
-     * 
-     * @param economyProvider
-     *            the economy service provider from Vault
-     * @param adapter
-     *            the adapter
-     */
-    public VaultService(RegisteredServiceProvider<Economy> economyProvider, BukkitAdapter adapter) {
-        this.economy = economyProvider.getProvider();
-        this.adapter = adapter;
+  /**
+   * Initializes this service.
+   *
+   * @param economyProvider the economy service provider from Vault
+   * @param adapter         the adapter
+   */
+  public VaultService(RegisteredServiceProvider<Economy> economyProvider, BukkitAdapter adapter) {
+    this.economy = economyProvider.getProvider();
+    this.adapter = adapter;
+  }
+
+  @Override
+  public boolean hasAtLeast(LocalPlayer player, double amount) {
+    Player bukkitPlayer = adapter.adapt(player);
+    return economy.has(bukkitPlayer, bukkitPlayer.getWorld().getName(), amount);
+  }
+
+  @Override
+  public void withdraw(LocalPlayer player, double amount) {
+    Player bukkitPlayer = adapter.adapt(player);
+    EconomyResponse
+        response =
+        economy.withdrawPlayer(bukkitPlayer, bukkitPlayer.getWorld().getName(),
+                               amount);
+
+    if (!response.transactionSuccess()) {
+      log.severe(
+          "Could not withdraw " + bukkitPlayer.getName() + ", " + response.errorMessage); // NON-NLS
     }
-
-    @Override
-    public boolean hasAtLeast(LocalPlayer player, double amount) {
-        Player bukkitPlayer = adapter.adapt(player);
-        return economy.has(bukkitPlayer, bukkitPlayer.getWorld().getName(), amount);
-    }
-
-    @Override
-    public void withdraw(LocalPlayer player, double amount) {
-        Player bukkitPlayer = adapter.adapt(player);
-        EconomyResponse response = economy.withdrawPlayer(bukkitPlayer, bukkitPlayer.getWorld().getName(),
-                amount);
-
-        if (!response.transactionSuccess()) {
-            LOG.severe("Could not withdraw " + bukkitPlayer.getName() + ", " + response.errorMessage); // NON-NLS
-        }
-    }
+  }
 }

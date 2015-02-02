@@ -27,31 +27,28 @@ import me.taylorkelly.mywarp.warp.Warp;
  */
 public class WarpPlayerInvitesEvent extends WarpInvitesEvent {
 
-    private final Profile profile;
+  private final Profile profile;
 
-    /**
-     * Constructs this event for the given Warp, indicating that the player of
-     * the given Profile now has the given InvitationStatus.
-     * 
-     * @param warp
-     *            the warp
-     * @param invitationStatus
-     *            the InvitationStatus of the player
-     * @param profile
-     *            the Profile of the player
-     */
-    public WarpPlayerInvitesEvent(Warp warp, InvitationStatus invitationStatus, Profile profile) {
-        super(warp, invitationStatus);
-        this.profile = profile;
-    }
+  /**
+   * Constructs this event for the given Warp, indicating that the player of the given Profile now
+   * has the given InvitationStatus.
+   *
+   * @param warp             the warp
+   * @param invitationStatus the InvitationStatus of the player
+   * @param profile          the Profile of the player
+   */
+  public WarpPlayerInvitesEvent(Warp warp, InvitationStatus invitationStatus, Profile profile) {
+    super(warp, invitationStatus);
+    this.profile = profile;
+  }
 
-    /**
-     * Gets the profile of the player.
-     *
-     * @return the profile
-     */
-    public Profile getProfile() {
-        return profile;
-    }
+  /**
+   * Gets the profile of the player.
+   *
+   * @return the profile
+   */
+  public Profile getProfile() {
+    return profile;
+  }
 
 }

@@ -19,57 +19,55 @@
 
 package me.taylorkelly.mywarp.bukkit.permissions;
 
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.permissions.Permission;
-
 /**
- * 
+ * Controls permissions that are registered on Bukkit.
  */
 public enum BukkitPermissionsRegistration {
 
-    /**
-     * The singleton.
-     */
-    INSTANCE;
+  /**
+   * The singleton.
+   */
+  INSTANCE;
 
-    private final Set<Permission> registeredPermissions = new HashSet<Permission>();
+  private final Set<Permission> registeredPermissions = new HashSet<Permission>();
 
-    /**
-     * Registers the given Permission on the server.
-     * 
-     * @param perm
-     *            the Permission
-     */
-    public void register(Permission perm) {
-        Bukkit.getPluginManager().addPermission(perm);
-        registeredPermissions.add(perm);
+  /**
+   * Registers the given Permission on the server.
+   *
+   * @param perm the Permission
+   */
+  public void register(Permission perm) {
+    Bukkit.getPluginManager().addPermission(perm);
+    registeredPermissions.add(perm);
+  }
+
+  /**
+   * Unregisters the given Permission from the server.
+   *
+   * @param perm the Permission
+   */
+  public void unregister(Permission perm) {
+    Bukkit.getPluginManager().removePermission(perm);
+    registeredPermissions.remove(perm);
+  }
+
+  /**
+   * Unregisters all previously registered permissions from the server.
+   */
+  public void unregisterAll() {
+    for (Iterator<Permission> iterator = registeredPermissions.iterator(); iterator.hasNext(); ) {
+      Permission perm = iterator.next();
+
+      Bukkit.getPluginManager().removePermission(perm);
+      iterator.remove();
     }
-
-    /**
-     * Unregisters the given Permission from the server.
-     * 
-     * @param perm
-     *            the Permission
-     */
-    public void unregister(Permission perm) {
-        Bukkit.getPluginManager().removePermission(perm);
-        registeredPermissions.remove(perm);
-    }
-
-    /**
-     * Unregisters all previously registered permissions from the server.
-     */
-    public void unregisterAll() {
-        for (Iterator<Permission> iterator = registeredPermissions.iterator(); iterator.hasNext();) {
-            Permission perm = iterator.next();
-
-            Bukkit.getPluginManager().removePermission(perm);
-            iterator.remove();
-        }
-    }
+  }
 
 }

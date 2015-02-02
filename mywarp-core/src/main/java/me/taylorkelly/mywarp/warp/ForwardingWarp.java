@@ -19,9 +19,7 @@
 
 package me.taylorkelly.mywarp.warp;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import com.google.common.collect.ForwardingObject;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
@@ -33,212 +31,213 @@ import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
-import com.google.common.collect.ForwardingObject;
+import java.util.Date;
+import java.util.Set;
+import java.util.UUID;
 
 /**
- * A Warp which forwards all its method calls to another Warp. Subclasses should
- * override one or more methods to modify the behavior of the backing Warp as
- * desired per the <a
+ * A Warp which forwards all its method calls to another Warp. Subclasses should override one or
+ * more methods to modify the behavior of the backing Warp as desired per the <a
  * href="http://en.wikipedia.org/wiki/Decorator_pattern">decorator pattern</a>.
  */
 public abstract class ForwardingWarp extends ForwardingObject implements Warp {
 
-    @Override
-    public void asCompassTarget(LocalPlayer player) {
-        delegate().asCompassTarget(player);
-    }
+  @Override
+  public void asCompassTarget(LocalPlayer player) {
+    delegate().asCompassTarget(player);
+  }
 
-    @Override
-    public boolean isViewable(Actor actor) {
-        return delegate().isViewable(actor);
-    }
+  @Override
+  public boolean isViewable(Actor actor) {
+    return delegate().isViewable(actor);
+  }
 
-    @Override
-    public boolean isUsable(LocalEntity entity) {
-        return delegate().isUsable(entity);
-    }
+  @Override
+  public boolean isUsable(LocalEntity entity) {
+    return delegate().isUsable(entity);
+  }
 
-    @Override
-    public boolean isModifiable(Actor actor) {
-        return delegate().isModifiable(actor);
-    }
+  @Override
+  public boolean isModifiable(Actor actor) {
+    return delegate().isModifiable(actor);
+  }
 
-    @Override
-    public TeleportStatus teleport(LocalEntity entity) {
-        return delegate().teleport(entity);
-    }
+  @Override
+  public TeleportStatus teleport(LocalEntity entity) {
+    return delegate().teleport(entity);
+  }
 
-    @Override
-    public TeleportStatus teleport(LocalPlayer player) {
-        return delegate().teleport(player);
-    }
+  @Override
+  public TeleportStatus teleport(LocalPlayer player) {
+    return delegate().teleport(player);
+  }
 
-    @Override
-    public TeleportStatus teleport(LocalPlayer player, FeeType fee) {
-        return delegate().teleport(player, fee);
-    }
+  @Override
+  public TeleportStatus teleport(LocalPlayer player, FeeType fee) {
+    return delegate().teleport(player, fee);
+  }
 
-    @Override
-    public boolean isCreator(LocalPlayer player) {
-        return delegate().isCreator(player);
-    }
+  @Override
+  public boolean isCreator(LocalPlayer player) {
+    return delegate().isCreator(player);
+  }
 
-    @Override
-    public boolean isCreator(Profile profile) {
-        return delegate().isCreator(profile);
-    }
+  @Override
+  public boolean isCreator(Profile profile) {
+    return delegate().isCreator(profile);
+  }
 
-    @Override
-    public boolean isType(Type type) {
-        return delegate().isType(type);
-    }
+  @Override
+  public boolean isType(Type type) {
+    return delegate().isType(type);
+  }
 
-    @Override
-    public boolean isPlayerInvited(LocalPlayer player) {
-        return delegate().isPlayerInvited(player);
-    }
+  @Override
+  public boolean isPlayerInvited(LocalPlayer player) {
+    return delegate().isPlayerInvited(player);
+  }
 
-    @Override
-    public boolean isPlayerInvited(Profile profile) {
-        return delegate().isPlayerInvited(profile);
-    }
+  @Override
+  public boolean isPlayerInvited(Profile profile) {
+    return delegate().isPlayerInvited(profile);
+  }
 
-    @Override
-    public boolean isGroupInvited(String groupId) {
-        return delegate().isGroupInvited(groupId);
-    }
+  @Override
+  public boolean isGroupInvited(String groupId) {
+    return delegate().isGroupInvited(groupId);
+  }
 
-    @Override
-    public void inviteGroup(String groupId) {
-        delegate().inviteGroup(groupId);
-    }
+  @Override
+  public void inviteGroup(String groupId) {
+    delegate().inviteGroup(groupId);
+  }
 
-    @Override
-    public void invitePlayer(Profile player) {
-        delegate().invitePlayer(player);
-    }
+  @Override
+  public void invitePlayer(Profile player) {
+    delegate().invitePlayer(player);
+  }
 
-    @Override
-    public void uninviteGroup(String groupId) {
-        delegate().uninviteGroup(groupId);
-    }
+  @Override
+  public void uninviteGroup(String groupId) {
+    delegate().uninviteGroup(groupId);
+  }
 
-    @Override
-    public void uninvitePlayer(Profile player) {
-        delegate().uninvitePlayer(player);
-    }
+  @Override
+  public void uninvitePlayer(Profile player) {
+    delegate().uninvitePlayer(player);
+  }
 
-    @Override
-    public String replacePlaceholders(String str, LocalPlayer forWhom) {
-        return delegate().replacePlaceholders(str, forWhom);
-    }
+  @Override
+  public String replacePlaceholders(String str, LocalPlayer forWhom) {
+    return delegate().replacePlaceholders(str, forWhom);
+  }
 
-    @Override
-    public String replacePlaceholders(String str) {
-        return delegate().replacePlaceholders(str);
-    }
+  @Override
+  public String replacePlaceholders(String str) {
+    return delegate().replacePlaceholders(str);
+  }
 
-    @Override
-    public int compareTo(Warp that) {
-        return delegate().compareTo(that);
-    }
+  @Override
+  public int compareTo(Warp that) {
+    return delegate().compareTo(that);
+  }
 
-    @Override
-    public Profile getCreator() {
-        return delegate().getCreator();
-    }
+  @Override
+  public Profile getCreator() {
+    return delegate().getCreator();
+  }
 
-    @Override
-    public Set<String> getInvitedGroups() {
-        return delegate().getInvitedGroups();
-    }
+  @Override
+  public Set<String> getInvitedGroups() {
+    return delegate().getInvitedGroups();
+  }
 
-    @Override
-    public Set<Profile> getInvitedPlayers() {
-        return delegate().getInvitedPlayers();
-    }
+  @Override
+  public Set<Profile> getInvitedPlayers() {
+    return delegate().getInvitedPlayers();
+  }
 
-    @Override
-    public String getName() {
-        return delegate().getName();
-    }
+  @Override
+  public String getName() {
+    return delegate().getName();
+  }
 
-    @Override
-    public LocalWorld getWorld() {
-        return delegate().getWorld();
-    }
+  @Override
+  public LocalWorld getWorld() {
+    return delegate().getWorld();
+  }
 
-    @Override
-    public UUID getWorldIdentifier() {
-        return delegate().getWorldIdentifier();
-    }
+  @Override
+  public UUID getWorldIdentifier() {
+    return delegate().getWorldIdentifier();
+  }
 
-    @Override
-    public Vector3 getPosition() {
-        return delegate().getPosition();
-    }
+  @Override
+  public Vector3 getPosition() {
+    return delegate().getPosition();
+  }
 
-    @Override
-    public EulerDirection getRotation() {
-        return delegate().getRotation();
-    }
+  @Override
+  public EulerDirection getRotation() {
+    return delegate().getRotation();
+  }
 
-    @Override
-    public Type getType() {
-        return delegate().getType();
-    }
+  @Override
+  public Type getType() {
+    return delegate().getType();
+  }
 
-    @Override
-    public Date getCreationDate() {
-        return delegate().getCreationDate();
-    }
+  @Override
+  public Date getCreationDate() {
+    return delegate().getCreationDate();
+  }
 
-    @Override
-    public int getVisits() {
-        return delegate().getVisits();
-    }
+  @Override
+  public int getVisits() {
+    return delegate().getVisits();
+  }
 
-    @Override
-    public String getWelcomeMessage() {
-        return delegate().getWelcomeMessage();
-    }
+  @Override
+  public String getWelcomeMessage() {
+    return delegate().getWelcomeMessage();
+  }
 
-    @Override
-    public String getParsedWelcomeMessage(LocalPlayer forWhom) {
-        return delegate().getParsedWelcomeMessage(forWhom);
-    }
+  @Override
+  public String getParsedWelcomeMessage(LocalPlayer forWhom) {
+    return delegate().getParsedWelcomeMessage(forWhom);
+  }
 
-    @Override
-    public void setCreator(Profile creator) {
-        delegate().setCreator(creator);
-    }
+  @Override
+  public void setCreator(Profile creator) {
+    delegate().setCreator(creator);
+  }
 
-    @Override
-    public void setType(Type type) {
-        delegate().setType(type);
-    }
+  @Override
+  public void setType(Type type) {
+    delegate().setType(type);
+  }
 
-    @Override
-    public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
-        delegate().setLocation(world, position, rotation);
-    }
+  @Override
+  public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
+    delegate().setLocation(world, position, rotation);
+  }
 
-    @Override
-    public void setWelcomeMessage(String welcomeMessage) {
-        delegate().setWelcomeMessage(welcomeMessage);
-    }
+  @Override
+  public void setWelcomeMessage(String welcomeMessage) {
+    delegate().setWelcomeMessage(welcomeMessage);
+  }
 
-    @Override
-    public double getVisitsPerDay() {
-        return delegate().getVisitsPerDay();
-    }
+  @Override
+  public double getVisitsPerDay() {
+    return delegate().getVisitsPerDay();
+  }
 
-    @Override
-    public double getPopularityScore() {
-        return delegate().getPopularityScore();
-    }
+  @Override
+  public double getPopularityScore() {
+    return delegate().getPopularityScore();
+  }
 
-    @Override
-    protected abstract Warp delegate();
+  @Override
+  protected abstract Warp delegate();
 
 }

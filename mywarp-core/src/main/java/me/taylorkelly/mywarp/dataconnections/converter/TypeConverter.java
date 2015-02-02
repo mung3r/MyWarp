@@ -25,21 +25,17 @@ import org.jooq.impl.EnumConverter;
 import org.jooq.types.UByte;
 
 /**
- * Converts {@link UByte} to {@link me.taylorkelly.mywarp.warp.Warp.Type} and
- * back.
+ * Converts {@link UByte} to {@link me.taylorkelly.mywarp.warp.Warp.Type} and back.
  */
 public class TypeConverter extends EnumConverter<UByte, Warp.Type> {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -7704911259321558564L;
+  private static final long serialVersionUID = -7704911259321558564L;
 
-    /**
-     * Initializes this converter.
-     */
-    public TypeConverter() {
-        super(UByte.class, Warp.Type.class);
-    }
+  /**
+   * Initializes this converter.
+   */
+  public TypeConverter() {
+    super(UByte.class, Warp.Type.class);
+  }
 
 }

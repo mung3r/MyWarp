@@ -26,27 +26,26 @@ import me.taylorkelly.mywarp.timer.Duration;
  */
 public class TimerRunningException extends Exception {
 
-    private static final long serialVersionUID = -1170656232204925816L;
+  private static final long serialVersionUID = -1170656232204925816L;
 
-    private final Duration durationLeft;
+  private final Duration durationLeft;
 
-    /**
-     * Constructs an instance.
-     * 
-     * @param durationLeft
-     *            the duration until the running timer is done
-     */
-    public TimerRunningException(Duration durationLeft) {
-        this.durationLeft = durationLeft;
-    }
+  /**
+   * Constructs an instance.
+   *
+   * @param durationLeft the duration until the running timer is done
+   */
+  public TimerRunningException(Duration durationLeft) {
+    this.durationLeft = durationLeft;
+  }
 
-    /**
-     * Gets the Duration that is left until running Timer is done.
-     *
-     * @return the Duration left
-     */
-    public Duration getDurationLeft() {
-        return durationLeft;
-    }
+  /**
+   * Gets the Duration that is left until running Timer is done.
+   *
+   * @return the Duration left
+   */
+  public Duration getDurationLeft() {
+    return durationLeft;
+  }
 
 }

@@ -19,9 +19,9 @@
 
 package me.taylorkelly.mywarp.limits;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
@@ -30,98 +30,90 @@ import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * Manages {@link Limit}s.
- * <p>
- * The SimpleLimitManager operates on a {@link LimitProvider} that provides the
- * actual limits and a {@link WarpManager} that holds the warps the limits apply
- * on.
+ * Manages {@link Limit}s. <p> The SimpleLimitManager operates on a {@link LimitProvider} that
+ * provides the actual limits and a {@link WarpManager} that holds the warps the limits apply on.
  * </p>
  */
 public class SimpleLimitManager implements LimitManager {
 
-    private final LimitProvider provider;
-    private final WarpManager manager;
+  private final LimitProvider provider;
+  private final WarpManager manager;
 
-    /**
-     * Initializes this SimpleLimitManager acting on the given LimitProvider and
-     * the given WarpManager.
-     * 
-     * @param provider
-     *            the LimitProvider
-     * @param manager
-     *            the WarpManager
-     */
-    public SimpleLimitManager(LimitProvider provider, WarpManager manager) {
-        this.provider = provider;
-        this.manager = manager;
-    }
+  /**
+   * Initializes this SimpleLimitManager acting on the given LimitProvider and the given
+   * WarpManager.
+   *
+   * @param provider the LimitProvider
+   * @param manager  the WarpManager
+   */
+  public SimpleLimitManager(LimitProvider provider, WarpManager manager) {
+    this.provider = provider;
+    this.manager = manager;
+  }
 
-    @Override
-    public LimitManager.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world,
-            Limit.Type type, boolean evaluateParents) {
-        if (!type.canDisobey(creator, world)) {
+  @Override
+  public LimitManager.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world,
+                                                     Limit.Type type, boolean evaluateParents) {
+    if (!type.canDisobey(creator, world)) {
 
-            Iterable<Warp> filteredWarps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
-            Limit limit = provider.getLimit(creator, world);
+      Iterable<Warp> filteredWarps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
+      Limit limit = provider.getLimit(creator, world);
 
-            List<Limit.Type> limitsToCheck = Arrays.asList(type);
-            if (evaluateParents) {
-                limitsToCheck.addAll(type.getParentsRecusive());
-            }
+      List<Limit.Type> limitsToCheck = Arrays.asList(type);
+      if (evaluateParents) {
+        limitsToCheck.addAll(type.getParentsRecusive());
+      }
 
-            for (Limit.Type parent : limitsToCheck) {
-                LimitManager.EvaluationResult result = evaluateLimit(limit, parent, filteredWarps);
-                if (result.exceedsLimit()) {
-                    return result;
-                }
-            }
+      for (Limit.Type parent : limitsToCheck) {
+        LimitManager.EvaluationResult result = evaluateLimit(limit, parent, filteredWarps);
+        if (result.exceedsLimit()) {
+          return result;
         }
-        return LimitManager.EvaluationResult.LIMIT_MEAT;
+      }
     }
+    return LimitManager.EvaluationResult.LIMIT_MEAT;
+  }
 
-    /**
-     * Evaluates whether the given Limit.Type of the given Limit is exceeded in
-     * the given Iterable of warps. The Iterable will be overwritten and only
-     * include the warps matching the given types condition.
-     * 
-     * @param limit
-     *            the limit
-     * @param type
-     *            the type
-     * @param filteredWarps
-     *            the warps
-     * @return an EvaluationResult representing the result of the evaluation
-     */
-    private LimitManager.EvaluationResult evaluateLimit(Limit limit, Limit.Type type,
-            Iterable<Warp> filteredWarps) {
-        filteredWarps = Iterables.filter(filteredWarps, type.getCondition());
-        int limitMaximum = limit.getLimit(type);
-        if (IterableUtils.atLeast(filteredWarps, limitMaximum)) {
-            return new LimitManager.EvaluationResult(true, type, limitMaximum);
+  /**
+   * Evaluates whether the given Limit.Type of the given Limit is exceeded in the given Iterable of
+   * warps. The Iterable will be overwritten and only include the warps matching the given types
+   * condition.
+   *
+   * @param limit         the limit
+   * @param type          the type
+   * @param filteredWarps the warps
+   * @return an EvaluationResult representing the result of the evaluation
+   */
+  private LimitManager.EvaluationResult evaluateLimit(Limit limit, Limit.Type type,
+                                                      Iterable<Warp> filteredWarps) {
+    filteredWarps = Iterables.filter(filteredWarps, type.getCondition());
+    int limitMaximum = limit.getLimit(type);
+    if (IterableUtils.atLeast(filteredWarps, limitMaximum)) {
+      return new LimitManager.EvaluationResult(true, type, limitMaximum);
+    }
+    return LimitManager.EvaluationResult.LIMIT_MEAT;
+  }
+
+  @Override
+  public Multimap<Limit, Warp> getWarpsPerLimit(LocalPlayer creator) {
+    Collection<Warp> warps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
+    ImmutableMultimap.Builder<Limit, Warp> builder = ImmutableMultimap.builder();
+
+    // sort warps to limits
+    for (Warp warp : warps) {
+      for (Limit limit : provider.getEffectiveLimits(creator)) {
+        if (limit.isAffectedWorld(warp.getWorld())) {
+          builder.put(limit, warp);
         }
-        return LimitManager.EvaluationResult.LIMIT_MEAT;
+      }
     }
 
-    @Override
-    public Multimap<Limit, Warp> getWarpsPerLimit(LocalPlayer creator) {
-        Collection<Warp> warps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
-        ImmutableMultimap.Builder<Limit, Warp> builder = ImmutableMultimap.builder();
-
-        // sort warps to limits
-        for (Warp warp : warps) {
-            for (Limit limit : provider.getEffectiveLimits(creator)) {
-                if (limit.isAffectedWorld(warp.getWorld())) {
-                    builder.put(limit, warp);
-                }
-            }
-        }
-
-        return builder.build();
-    }
+    return builder.build();
+  }
 
 }

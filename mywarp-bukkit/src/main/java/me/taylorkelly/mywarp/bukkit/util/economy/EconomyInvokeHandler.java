@@ -19,13 +19,6 @@
 
 package me.taylorkelly.mywarp.bukkit.util.economy;
 
-import java.lang.reflect.Method;
-
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.context.CommandContext;
 import com.sk89q.intake.context.CommandLocals;
@@ -34,50 +27,63 @@ import com.sk89q.intake.parametric.ParameterException;
 import com.sk89q.intake.parametric.handler.AbstractInvokeListener;
 import com.sk89q.intake.parametric.handler.InvokeHandler;
 
+import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.LocalPlayer;
+import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+
+import java.lang.reflect.Method;
+
 /**
- * 
+ * By registering this InvokeHandler at a {@link com.sk89q.intake.parametric.ParametricBuilder},
+ * command methods created by this builder will require a certain fee when used if the method is
+ * annotated with {@link me.taylorkelly.mywarp.bukkit.util.economy.Billable}.
  */
 public class EconomyInvokeHandler extends AbstractInvokeListener implements InvokeHandler {
 
-    @Override
-    public InvokeHandler createInvokeHandler() {
-        return this;
+  @Override
+  public InvokeHandler createInvokeHandler() {
+    return this;
+  }
+
+  @Override
+  public boolean preProcess(Object object, Method method, ParameterData[] parameters,
+                            CommandContext context, CommandLocals locals)
+      throws CommandException, ParameterException {
+    return true;
+  }
+
+  @Override
+  public boolean preInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
+                           CommandContext context, CommandLocals locals)
+      throws CommandException, ParameterException {
+    if (!method.isAnnotationPresent(Billable.class)) {
+      return true;
+    }
+    Actor actor = locals.get(Actor.class);
+    if (actor == null || !(actor instanceof LocalPlayer)) {
+      return true;
     }
 
-    @Override
-    public boolean preProcess(Object object, Method method, ParameterData[] parameters,
-            CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
-        return true;
+    FeeType feeType = method.getAnnotation(Billable.class).value();
+    return MyWarp.getInstance().getEconomyManager()
+        .informativeHasAtLeast((LocalPlayer) actor, feeType);
+  }
+
+  @Override
+  public void postInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
+                         CommandContext context, CommandLocals locals)
+      throws CommandException, ParameterException {
+    if (!method.isAnnotationPresent(Billable.class)) {
+      return;
+    }
+    Actor actor = locals.get(Actor.class);
+    if (actor == null || !(actor instanceof LocalPlayer)) {
+      return;
     }
 
-    @Override
-    public boolean preInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
-            CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
-        if (!method.isAnnotationPresent(Billable.class)) {
-            return true;
-        }
-        Actor actor = locals.get(Actor.class);
-        if (actor == null || !(actor instanceof LocalPlayer)) {
-            return true;
-        }
-
-        FeeType feeType = method.getAnnotation(Billable.class).value();
-        return MyWarp.getInstance().getEconomyManager().informativeHasAtLeast((LocalPlayer) actor, feeType);
-    }
-
-    @Override
-    public void postInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
-            CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
-        if (!method.isAnnotationPresent(Billable.class)) {
-            return;
-        }
-        Actor actor = locals.get(Actor.class);
-        if (actor == null || !(actor instanceof LocalPlayer)) {
-            return;
-        }
-
-        FeeType feeType = method.getAnnotation(Billable.class).value();
-        MyWarp.getInstance().getEconomyManager().informativeWithdraw((LocalPlayer) actor, feeType);
-    }
+    FeeType feeType = method.getAnnotation(Billable.class).value();
+    MyWarp.getInstance().getEconomyManager().informativeWithdraw((LocalPlayer) actor, feeType);
+  }
 
 }

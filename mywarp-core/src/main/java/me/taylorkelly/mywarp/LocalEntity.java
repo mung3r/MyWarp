@@ -27,38 +27,35 @@ import me.taylorkelly.mywarp.util.Vector3;
  */
 public interface LocalEntity {
 
-    /**
-     * Gets the world this entity is currently positioned in.
-     * 
-     * @return the current world
-     */
-    LocalWorld getWorld();
+  /**
+   * Gets the world this entity is currently positioned in.
+   *
+   * @return the current world
+   */
+  LocalWorld getWorld();
 
-    /**
-     * Gets the current position of this entity.
-     * 
-     * @return the current position
-     */
-    Vector3 getPosition();
+  /**
+   * Gets the current position of this entity.
+   *
+   * @return the current position
+   */
+  Vector3 getPosition();
 
-    /**
-     * Gets the current rotation of this entity.
-     * 
-     * @return the current rotation
-     */
-    EulerDirection getRotation();
+  /**
+   * Gets the current rotation of this entity.
+   *
+   * @return the current rotation
+   */
+  EulerDirection getRotation();
 
-    /**
-     * Teleports this entity to the given position on the given world, and sets
-     * his rotation to the given one.
-     * 
-     * @param world
-     *            the world
-     * @param position
-     *            the position vector
-     * @param rotation
-     *            the rotation
-     */
-    void teleport(LocalWorld world, Vector3 position, EulerDirection rotation);
+  /**
+   * Teleports this entity to the given position on the given world, and sets his rotation to the
+   * given one.
+   *
+   * @param world    the world
+   * @param position the position vector
+   * @param rotation the rotation
+   */
+  void teleport(LocalWorld world, Vector3 position, EulerDirection rotation);
 
 }

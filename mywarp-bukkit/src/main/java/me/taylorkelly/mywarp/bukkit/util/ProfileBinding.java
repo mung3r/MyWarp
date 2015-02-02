@@ -19,71 +19,69 @@
 
 package me.taylorkelly.mywarp.bukkit.util;
 
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.util.profile.Profile;
-
 import com.google.common.base.Optional;
+
 import com.sk89q.intake.parametric.ParameterException;
 import com.sk89q.intake.parametric.argument.ArgumentStack;
 import com.sk89q.intake.parametric.binding.BindingBehavior;
 import com.sk89q.intake.parametric.binding.BindingHelper;
 import com.sk89q.intake.parametric.binding.BindingMatch;
 
+import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.util.profile.Profile;
+
 /**
  * A binding for {@link Profile}s.
  */
 public class ProfileBinding extends BindingHelper {
 
-    /**
-     * Gets a Profile matching the name given by the command.
-     * 
-     * @param context
-     *            the command's context
-     * @return a matching Profile
-     * @throws NoSuchProfileException
-     *             if no matching Profile was found
-     * @throws ParameterException
-     *             on a parameter error
-     */
-    @BindingMatch(type = Profile.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = false)
-    public Profile getString(ArgumentStack context) throws NoSuchProfileException, ParameterException {
-        String query = context.next();
-        Optional<Profile> optional = MyWarp.getInstance().getProfileService().get(query);
+  /**
+   * Gets a Profile matching the name given by the command.
+   *
+   * @param context the command's context
+   * @return a matching Profile
+   * @throws NoSuchProfileException if no matching Profile was found
+   * @throws ParameterException     on a parameter error
+   */
+  @BindingMatch(type = Profile.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = false)
+  public Profile getString(ArgumentStack context)
+      throws NoSuchProfileException, ParameterException {
+    String query = context.next();
+    Optional<Profile> optional = MyWarp.getInstance().getProfileService().get(query);
 
-        if (!optional.isPresent()) {
-            throw new NoSuchProfileException(query);
-        }
-        return optional.get();
+    if (!optional.isPresent()) {
+      throw new NoSuchProfileException(query);
+    }
+    return optional.get();
+  }
+
+  /**
+   * Thrown when no {@link Profile} can be found for a given query. Typically this is caused by a
+   * malformed query or unavailable UUID servers.
+   */
+  public static class NoSuchProfileException extends Exception {
+
+    private static final long serialVersionUID = 5770626202494099277L;
+
+    private final String query;
+
+    /**
+     * Creates an instance.
+     *
+     * @param query the query
+     */
+    public NoSuchProfileException(String query) {
+      this.query = query;
     }
 
     /**
-     * Thrown when no {@link Profile} can be found for a given query. Typically
-     * this is caused by a malformed query or unavailable UUID servers.
+     * Gets the query.
+     *
+     * @return the query
      */
-    public static class NoSuchProfileException extends Exception {
-
-        private static final long serialVersionUID = 5770626202494099277L;
-
-        private final String query;
-
-        /**
-         * Creates an instance.
-         * 
-         * @param query
-         *            the query
-         */
-        public NoSuchProfileException(String query) {
-            this.query = query;
-        }
-
-        /**
-         * Gets the query.
-         *
-         * @return the query
-         */
-        public String getQuery() {
-            return query;
-        }
+    public String getQuery() {
+      return query;
     }
+  }
 
 }

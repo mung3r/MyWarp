@@ -26,99 +26,88 @@ import com.google.common.base.Optional;
  */
 public interface TimerService {
 
-    /**
-     * Starts a timer with the given TimerAction and the given Duration on the
-     * given subject.
-     * 
-     * @param <T>
-     *            the type of the subject the timer runs on
-     * 
-     * @param timedSubject
-     *            the instance the timer runs on
-     * @param duration
-     *            the Duration
-     * @param action
-     *            the TimerAction
-     */
-    <T> void start(T timedSubject, Duration duration, TimerAction<T> action);
+  /**
+   * Starts a timer with the given TimerAction and the given Duration on the given subject.
+   *
+   * @param <T>          the type of the subject the timer runs on
+   * @param timedSubject the instance the timer runs on
+   * @param duration     the Duration
+   * @param action       the TimerAction
+   */
+  <T> void start(T timedSubject, Duration duration, TimerAction<T> action);
+
+  /**
+   * Returns whether the given subject has a running timer of the given Class.
+   *
+   * @param timedSubject the instance the timer runs on
+   * @param clazz        the Class
+   * @return true if the instance has a running timer
+   */
+  EvaluationResult has(Object timedSubject,
+                       @SuppressWarnings("rawtypes") Class<? extends TimerAction> clazz);
+
+  /**
+   * Cancels the timer of the given Class that runs on the given instance directly, if any.
+   *
+   * @param timedSubject the instance the timer runs on
+   * @param clazz        the Class
+   */
+  void cancel(Object timedSubject,
+              @SuppressWarnings("rawtypes") Class<? extends TimerAction> clazz);
+
+  /**
+   * The result of an evaluation that checked whether a certain subject has a running timer.
+   *
+   * @see TimerService#has(Object, Class)
+   */
+  public static class EvaluationResult {
+
+    private final boolean timerRunning;
+    private final Optional<Duration> durationLeft;
 
     /**
-     * Returns whether the given subject has a running timer of the given Class.
-     * 
-     * @param timedSubject
-     *            the instance the timer runs on
-     * @param clazz
-     *            the Class
-     * @return true if the instance has a running timer
+     * Indicates that no timer is running.
      */
-    EvaluationResult has(Object timedSubject, @SuppressWarnings("rawtypes") Class<? extends TimerAction> clazz);
+    public static final EvaluationResult NO_RUNNING_TIMER = new EvaluationResult();
 
     /**
-     * Cancels the timer of the given Class that runs on the given instance
-     * directly, if any.
-     * 
-     * @param timedSubject
-     *            the instance the timer runs on
-     * @param clazz
-     *            the Class
+     * Creates an instance that indicates that no timer is running.
      */
-    void cancel(Object timedSubject, @SuppressWarnings("rawtypes") Class<? extends TimerAction> clazz);
-
-    /**
-     * The result of an evaluation that checked whether a certain subject has a
-     * running timer.
-     * 
-     * @see TimerService#has(Object, Class)
-     */
-    public static class EvaluationResult {
-        private final boolean timerRunning;
-        private final Optional<Duration> durationLeft;
-
-        /**
-         * Indicates that no timer is running.
-         */
-        public static final EvaluationResult NO_RUNNING_TIMER = new EvaluationResult();
-
-        /**
-         * Creates an instance that indicates that no timer is running.
-         */
-        private EvaluationResult() {
-            this.timerRunning = false;
-            this.durationLeft = Optional.absent();
-        }
-
-        /**
-         * Creates an instance. Use {@link #NO_RUNNING_TIMER} to get an instance
-         * that indicates that no timer is running.
-         * 
-         * @param timerRunning
-         *            whether a timer is running
-         * @param durationLeft
-         *            the Duration left on the running Timer
-         */
-        public EvaluationResult(boolean timerRunning, Duration durationLeft) {
-            this.timerRunning = timerRunning;
-            this.durationLeft = Optional.of(durationLeft);
-        }
-
-        /**
-         * Returns whether a timer is running.
-         *
-         * @return true if a timer is running
-         */
-        public boolean isTimerRunning() {
-            return timerRunning;
-        }
-
-        /**
-         * Gets an Optional containing the duration that is left on the running
-         * timer. {@link Optional#absent()} will be returned if, and only if no
-         * timer is running and {@link #isTimerRunning()} returns {@code true}.
-         *
-         * @return the Duration left
-         */
-        public Optional<Duration> getDurationLeft() {
-            return durationLeft;
-        }
+    private EvaluationResult() {
+      this.timerRunning = false;
+      this.durationLeft = Optional.absent();
     }
+
+    /**
+     * Creates an instance. Use {@link #NO_RUNNING_TIMER} to get an instance that indicates that no
+     * timer is running.
+     *
+     * @param timerRunning whether a timer is running
+     * @param durationLeft the Duration left on the running Timer
+     */
+    public EvaluationResult(boolean timerRunning, Duration durationLeft) {
+      this.timerRunning = timerRunning;
+      this.durationLeft = Optional.of(durationLeft);
+    }
+
+    /**
+     * Returns whether a timer is running.
+     *
+     * @return true if a timer is running
+     */
+    public boolean isTimerRunning() {
+      return timerRunning;
+    }
+
+    /**
+     * Gets an Optional containing the duration that is left on the running timer. {@link
+     * Optional#absent()} will be returned if, and only if no timer is running and {@link
+     * #isTimerRunning()} returns {@code true}.
+     *
+     * @return the Duration left
+     */
+    public Optional<Duration> getDurationLeft() {
+      return durationLeft;
+    }
+  }
 }

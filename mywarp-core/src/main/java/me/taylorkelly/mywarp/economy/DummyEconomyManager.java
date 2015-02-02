@@ -23,27 +23,27 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 
 /**
- * An EconomyManager implementation that does absolutely nothing. Methods that
- * require a return value will return a positive one.
+ * An EconomyManager implementation that does absolutely nothing. Methods that require a return
+ * value will return a positive one.
  */
 public class DummyEconomyManager implements EconomyManager {
 
-    @Override
-    public boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier) {
-        return true;
-    }
+  @Override
+  public boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier) {
+    return true;
+  }
 
-    @Override
-    public boolean informativeHasAtLeast(LocalPlayer player, double amount) throws IllegalArgumentException {
-        return true;
-    }
+  @Override
+  public boolean informativeHasAtLeast(LocalPlayer player, double amount) {
+    return true;
+  }
 
-    @Override
-    public void informativeWithdraw(LocalPlayer player, FeeType identifier) {
-    }
+  @Override
+  public void informativeWithdraw(LocalPlayer player, FeeType identifier) {
+  }
 
-    @Override
-    public void informativeWithdraw(LocalPlayer player, double amount) throws IllegalArgumentException {
-    }
+  @Override
+  public void informativeWithdraw(LocalPlayer player, double amount) {
+  }
 
 }

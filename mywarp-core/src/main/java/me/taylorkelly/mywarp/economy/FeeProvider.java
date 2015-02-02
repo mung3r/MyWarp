@@ -26,23 +26,20 @@ import me.taylorkelly.mywarp.LocalPlayer;
  */
 public interface FeeProvider {
 
-    /**
-     * The different types of fees.
-     */
-    enum FeeType {
-        ASSETS, CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE, LIST, POINT, PRIVATE, PUBLIC, UNINVITE, UPDATE, WARP_PLAYER, WARP_SIGN_CREATE, WARP_SIGN_USE, WARP_TO, WELCOME
-    }
+  /**
+   * The different types of fees.
+   */
+  enum FeeType {
+    ASSETS, CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE, LIST, POINT, PRIVATE, PUBLIC, UNINVITE, UPDATE, WARP_PLAYER, WARP_SIGN_CREATE, WARP_SIGN_USE, WARP_TO, WELCOME
+  }
 
-    /**
-     * Gets the fee that referenced by the given type, for the given
-     * LocalPlayer.
-     * 
-     * @param player
-     *            the LocalPlayer
-     * @param type
-     *            the type
-     * @return the actual fee
-     */
-    double getFee(LocalPlayer player, FeeType type);
+  /**
+   * Gets the fee that referenced by the given type, for the given LocalPlayer.
+   *
+   * @param player the LocalPlayer
+   * @param type   the type
+   * @return the actual fee
+   */
+  double getFee(LocalPlayer player, FeeType type);
 
 }

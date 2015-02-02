@@ -19,36 +19,35 @@
 
 package me.taylorkelly.mywarp;
 
-import java.util.UUID;
-
 import me.taylorkelly.mywarp.util.Vector3;
+
+import java.util.UUID;
 
 /**
  * Represents a world (dimension).
  */
 public interface LocalWorld {
 
-    /**
-     * Gets the name of this world.
-     * 
-     * @return this world's name
-     */
-    String getName();
+  /**
+   * Gets the name of this world.
+   *
+   * @return this world's name
+   */
+  String getName();
 
-    /**
-     * Gets the unique ID of this world.
-     * 
-     * @return this world's unique ID
-     */
-    UUID getUniqueId();
+  /**
+   * Gets the unique ID of this world.
+   *
+   * @return this world's unique ID
+   */
+  UUID getUniqueId();
 
-    /**
-     * Gets the block at the given position.
-     * 
-     * @param position
-     *            the position vector
-     * @return the block
-     */
-    BlockType getBlock(Vector3 position);
+  /**
+   * Gets the block at the given position.
+   *
+   * @param position the position vector
+   * @return the block
+   */
+  BlockType getBlock(Vector3 position);
 
 }

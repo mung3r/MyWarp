@@ -24,44 +24,40 @@ package me.taylorkelly.mywarp.dataconnections;
  */
 public class DataConnectionException extends Exception {
 
-    private static final long serialVersionUID = -2033822282111044971L;
+  private static final long serialVersionUID = -2033822282111044971L;
 
-    /**
-     * Constructs this exception.
-     */
-    public DataConnectionException() {
-        super();
-    }
+  /**
+   * Constructs this exception.
+   */
+  public DataConnectionException() {
+    super();
+  }
 
-    /**
-     * Constructs this exception with the given message.
-     * 
-     * @param message
-     *            the message
-     */
-    public DataConnectionException(String message) {
-        super(message);
-    }
+  /**
+   * Constructs this exception with the given message.
+   *
+   * @param message the message
+   */
+  public DataConnectionException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructs this exception with the given message and the given cause.
-     * 
-     * @param message
-     *            the message
-     * @param cause
-     *            the cause of this exception
-     */
-    public DataConnectionException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructs this exception with the given message and the given cause.
+   *
+   * @param message the message
+   * @param cause   the cause of this exception
+   */
+  public DataConnectionException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    /**
-     * Constructs this exception with the given cause.
-     * 
-     * @param cause
-     *            the cause
-     */
-    public DataConnectionException(Throwable cause) {
-        super(cause);
-    }
+  /**
+   * Constructs this exception with the given cause.
+   *
+   * @param cause the cause
+   */
+  public DataConnectionException(Throwable cause) {
+    super(cause);
+  }
 }

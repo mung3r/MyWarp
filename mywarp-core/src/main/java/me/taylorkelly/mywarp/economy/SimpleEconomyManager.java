@@ -19,87 +19,83 @@
 
 package me.taylorkelly.mywarp.economy;
 
+import com.google.common.base.Preconditions;
+
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
-import com.google.common.base.Preconditions;
-
 /**
- * Manages the economy tasks.
- * <p>
- * The SimpleEconomyManager operates on a {@link FeeProvider} that provides the
- * actual fees and a {@link EconomyService} that provides a connection with the
- * actual economy of the plattform.
- * </p>
+ * Manages the economy tasks. <p> The SimpleEconomyManager operates on a {@link FeeProvider} that
+ * provides the actual fees and a {@link EconomyService} that provides a connection with the actual
+ * economy of the plattform. </p>
  */
 public class SimpleEconomyManager implements EconomyManager {
 
-    private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.Economy"); // NON-NLS
+  private static final DynamicMessages
+      MESSAGES =
+      new DynamicMessages("me.taylorkelly.mywarp.lang.Economy");
+  // NON-NLS
 
-    private final FeeProvider provider;
-    private final EconomyService service;
+  private final FeeProvider provider;
+  private final EconomyService service;
 
-    /**
-     * Initializes this SimpleEconomyManager, acting on the given EconomyService
-     * and FeeProvider.
-     * 
-     * @param provider
-     *            the FeeProvider
-     * @param service
-     *            the EconomyService
-     */
-    public SimpleEconomyManager(FeeProvider provider, EconomyService service) {
-        this.provider = provider;
-        this.service = service;
+  /**
+   * Initializes this SimpleEconomyManager, acting on the given EconomyService and FeeProvider.
+   *
+   * @param provider the FeeProvider
+   * @param service  the EconomyService
+   */
+  public SimpleEconomyManager(FeeProvider provider, EconomyService service) {
+    this.provider = provider;
+    this.service = service;
+  }
+
+  /**
+   * Returns whether the given LocalPlayer can disobey fees.
+   *
+   * @param player the LocalPlayer
+   * @return true if the Player can disobey fees
+   */
+  private boolean canDisobeyFees(LocalPlayer player) {
+    return player.hasPermission("mywarp.economy.disobey"); // NON-NLS
+  }
+
+  @Override
+  public boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier) {
+    return informativeHasAtLeast(player, provider.getFee(player, identifier));
+  }
+
+  @Override
+  public boolean informativeHasAtLeast(LocalPlayer player, double amount) {
+    Preconditions.checkArgument(amount > 0, "The amount must be greater than 0."); // NON-NLS
+    if (canDisobeyFees(player)) {
+      return true;
     }
-
-    /**
-     * Returns whether the given LocalPlayer can disobey fees.
-     * 
-     * @param player
-     *            the LocalPlayer
-     * @return true if the Player can disobey fees
-     */
-    private boolean canDisobeyFees(LocalPlayer player) {
-        return player.hasPermission("mywarp.economy.disobey"); // NON-NLS
+    if (service.hasAtLeast(player, amount)) {
+      return true;
     }
+    player.sendError(MESSAGES.getString("cannot-afford", amount));
+    return false;
+  }
 
-    @Override
-    public boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier) {
-        return informativeHasAtLeast(player, provider.getFee(player, identifier));
-    }
+  @Override
+  public void informativeWithdraw(LocalPlayer player, FeeType identifier) {
+    informativeWithdraw(player, provider.getFee(player, identifier));
+  }
 
-    @Override
-    public boolean informativeHasAtLeast(LocalPlayer player, double amount) throws IllegalArgumentException {
-        Preconditions.checkArgument(amount > 0, "The amount must be greater than 0."); // NON-NLS
-        if (canDisobeyFees(player)) {
-            return true;
-        }
-        if (service.hasAtLeast(player, amount)) {
-            return true;
-        }
-        player.sendError(MESSAGES.getString("cannot-afford", amount));
-        return false;
+  @Override
+  public void informativeWithdraw(LocalPlayer player, double amount) {
+    Preconditions.checkArgument(amount > 0, "The amount must be greater than 0."); // NON-NLS
+    if (canDisobeyFees(player)) {
+      return;
     }
-
-    @Override
-    public void informativeWithdraw(LocalPlayer player, FeeType identifier) {
-        informativeWithdraw(player, provider.getFee(player, identifier));
+    service.withdraw(player, amount);
+    if (MyWarp.getInstance().getSettings().isEconomyInformAfterTransaction()) {
+      // TODO color in aqua
+      player.sendMessage(MESSAGES.getString("transaction-complete", amount));
     }
-
-    @Override
-    public void informativeWithdraw(LocalPlayer player, double amount) throws IllegalArgumentException {
-        Preconditions.checkArgument(amount > 0, "The amount must be greater than 0."); // NON-NLS
-        if (canDisobeyFees(player)) {
-            return;
-        }
-        service.withdraw(player, amount);
-        if (MyWarp.getInstance().getSettings().isEconomyInformAfterTransaction()) {
-            // TODO color in aqua
-            player.sendMessage(MESSAGES.getString("transaction-complete", amount));
-        }
-    }
+  }
 
 }

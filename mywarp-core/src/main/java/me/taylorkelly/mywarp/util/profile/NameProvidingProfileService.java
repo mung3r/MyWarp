@@ -19,85 +19,83 @@
 
 package me.taylorkelly.mywarp.util.profile;
 
-import java.util.UUID;
-
 import com.google.common.base.Optional;
 
+import java.util.UUID;
+
 /**
- * 
+ * A ProfileService that has an additional method to get the current name of a uniqueId. By
+ * combining this with an {@link me.taylorkelly.mywarp.util.profile.NameProvidingProfileService.LazyProfile}
+ * implementations can create lazy profile services that query the name only when needed.
  */
 public interface NameProvidingProfileService extends ProfileService {
 
-    /**
-     * Gets an Optional containing the name that belongs to the given unique ID.
-     * 
-     * @param uniqueId
-     *            the unique ID
-     * @return an Optional containing the corresponding name
-     */
-    Optional<String> getName(UUID uniqueId);
+  /**
+   * Gets an Optional containing the name that belongs to the given unique ID.
+   *
+   * @param uniqueId the unique ID
+   * @return an Optional containing the corresponding name
+   */
+  Optional<String> getName(UUID uniqueId);
+
+  /**
+   * A Profile that uses an {@link NameProvidingProfileService} to get the name whenever necessary.
+   */
+  public class LazyProfile extends AbstractProfile {
+
+    private final NameProvidingProfileService service;
+    private final UUID uniqueId;
 
     /**
-     * A Profile that uses an {@link NameProvidingProfileService} to get the
-     * name whenever necessary.
+     * Creates an instance of the given unique ID.
+     *
+     * @param service  the NameProvidingProfileService
+     * @param uniqueId the unique ID
      */
-    public class LazyProfile extends AbstractProfile {
-
-        private final NameProvidingProfileService service;
-        private final UUID uniqueId;
-
-        /**
-         * Creates an instance of the given unique ID.
-         * 
-         * @param service
-         *            the NameProvidingProfileService
-         * @param uniqueId
-         *            the unique ID
-         */
-        public LazyProfile(NameProvidingProfileService service, UUID uniqueId) {
-            this.service = service;
-            this.uniqueId = uniqueId;
-        }
-
-        @Override
-        public UUID getUniqueId() {
-            return uniqueId;
-        }
-
-        @Override
-        public Optional<String> getName() {
-            return service.getName(uniqueId);
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            LazyProfile other = (LazyProfile) obj;
-            if (uniqueId == null) {
-                if (other.uniqueId != null) {
-                    return false;
-                }
-            } else if (!uniqueId.equals(other.uniqueId)) {
-                return false;
-            }
-            return true;
-        }
-
+    public LazyProfile(NameProvidingProfileService service, UUID uniqueId) {
+      this.service = service;
+      this.uniqueId = uniqueId;
     }
+
+    @Override
+    public UUID getUniqueId() {
+      return uniqueId;
+    }
+
+    @Override
+    public Optional<String> getName() {
+      return service.getName(uniqueId);
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      LazyProfile other = (LazyProfile) obj;
+      if (uniqueId == null) {
+        if (other.uniqueId != null) {
+          return false;
+        }
+      } else if (!uniqueId.equals(other.uniqueId)) {
+        return false;
+      }
+      return true;
+    }
+
+  }
 }

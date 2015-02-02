@@ -19,10 +19,6 @@
 
 package me.taylorkelly.mywarp.bukkit.conversation;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
@@ -38,106 +34,107 @@ import org.bukkit.conversations.MessagePrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 /**
- * Creates and handles conversations with players who want to change a Warp's
- * welcome-message.
+ * Creates and handles conversations with players who want to change a Warp's welcome-message.
  */
 public class WelcomeEditorFactory {
 
-    private static final String ESCAPE_SEQUENCE = "#cancel"; // NON-NLS
-    private static final String REMOVE_SEQUENCE = "#none"; // NON-NLS
-    private static final int TIMEOUT = 30;
+  private static final String ESCAPE_SEQUENCE = "#cancel"; // NON-NLS
+  private static final String REMOVE_SEQUENCE = "#none"; // NON-NLS
+  private static final int TIMEOUT = 30;
 
-    private static final DynamicMessages MESSAGES = new DynamicMessages(
-            UsageCommands.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(
+      UsageCommands.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
 
-    private final ConversationFactory factory;
-    private final BukkitAdapter adapter;
+  private final ConversationFactory factory;
+  private final BukkitAdapter adapter;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param plugin
-     *            the plugin instance
-     * @param adapter
-     *            the adapter
-     */
-    public WelcomeEditorFactory(MyWarpPlugin plugin, BukkitAdapter adapter) {
-        this.factory = new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT)
-                .withEscapeSequence(ESCAPE_SEQUENCE).withFirstPrompt(new MessageInputPrompt());
-        this.adapter = adapter;
+  /**
+   * Creates an instance.
+   *
+   * @param plugin  the plugin instance
+   * @param adapter the adapter
+   */
+  public WelcomeEditorFactory(MyWarpPlugin plugin, BukkitAdapter adapter) {
+    this.factory = new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT)
+        .withEscapeSequence(ESCAPE_SEQUENCE).withFirstPrompt(new MessageInputPrompt());
+    this.adapter = adapter;
+  }
+
+  /**
+   * Creates an welcome-editor for the given player to change the welcome-message of the given
+   * Warp.
+   *
+   * @param player the LocalPlayer
+   * @param warp   the Warp
+   */
+  public void create(LocalPlayer player, Warp warp) {
+    Map<Object, Object> initialSessionData = new HashMap<Object, Object>();
+    initialSessionData.put(Locale.class, player.getLocale());
+    initialSessionData.put(Warp.class, warp);
+
+    factory.withInitialSessionData(initialSessionData).buildConversation(adapter.adapt(player))
+        .begin();
+  }
+
+  /**
+   * Asks for a new welcome message and validates the input accordingly.
+   */
+  private class MessageInputPrompt extends StringPrompt {
+
+    @Override
+    public Prompt acceptInput(ConversationContext context, String input) {
+      input = input.trim();
+      if (input.equalsIgnoreCase(REMOVE_SEQUENCE)) {
+        input = "";
+      }
+      context.setSessionData(String.class, input);
+      return new ChangePrompt();
     }
 
-    /**
-     * Creates an welcome-editor for the given player to change the
-     * welcome-message of the given Warp.
-     * 
-     * @param player
-     *            the LocalPlayer
-     * @param warp
-     *            the Warp
-     */
-    public void create(LocalPlayer player, Warp warp) {
-        Map<Object, Object> initialSessionData = new HashMap<Object, Object>();
-        initialSessionData.put(Locale.class, player.getLocale());
-        initialSessionData.put(Warp.class, warp);
+    @Override
+    public String getPromptText(ConversationContext context) {
+      Warp warp = (Warp) context.getSessionData(Warp.class);
+      Locale locale = (Locale) context.getSessionData(Locale.class);
+      return ChatColor.AQUA
+             + MESSAGES.getString("welcome-message-conversation.enter-message", locale,
+                                  warp.getName(), REMOVE_SEQUENCE, ESCAPE_SEQUENCE, TIMEOUT);
+    }
+  }
 
-        factory.withInitialSessionData(initialSessionData).buildConversation(adapter.adapt(player)).begin();
+  /**
+   * Changes the welcome message and ends the conversation afterwards.
+   */
+  private class ChangePrompt extends MessagePrompt {
+
+    @Override
+    public String getPromptText(ConversationContext context) {
+      Warp warp = (Warp) context.getSessionData(Warp.class);
+      String message = (String) context.getSessionData(String.class);
+      warp.setWelcomeMessage(message);
+
+      Locale locale = (Locale) context.getSessionData(Locale.class);
+
+      if (message.isEmpty()) {
+        return MESSAGES.getString("welcome-message-conversation.removed-successful", locale,
+                                  warp.getName());
+      }
+      return new StrBuilder()
+          .append(ChatColor.AQUA)
+          .append(MESSAGES.getString("welcome-message-conversation.changed-successful", locale,
+                                     warp.getName())).appendNewLine().append(ChatColor.ITALIC)
+          .append(message)
+          .toString();
     }
 
-    /**
-     * Asks for a new welcome message and validates the input accordingly.
-     */
-    private class MessageInputPrompt extends StringPrompt {
-
-        @Override
-        public Prompt acceptInput(ConversationContext context, String input) {
-            input = input.trim();
-            if (input.equalsIgnoreCase(REMOVE_SEQUENCE)) {
-                input = "";
-            }
-            context.setSessionData(String.class, input);
-            return new ChangePrompt();
-        }
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            Warp warp = (Warp) context.getSessionData(Warp.class);
-            Locale locale = (Locale) context.getSessionData(Locale.class);
-            return ChatColor.AQUA
-                    + MESSAGES.getString("welcome-message-conversation.enter-message", locale,
-                            warp.getName(), REMOVE_SEQUENCE, ESCAPE_SEQUENCE, TIMEOUT);
-        }
+    @Override
+    protected Prompt getNextPrompt(ConversationContext context) {
+      return Prompt.END_OF_CONVERSATION;
     }
 
-    /**
-     * Changes the welcome message and ends the conversation afterwards.
-     */
-    private class ChangePrompt extends MessagePrompt {
-
-        @Override
-        public String getPromptText(ConversationContext context) {
-            Warp warp = (Warp) context.getSessionData(Warp.class);
-            String message = (String) context.getSessionData(String.class);
-            warp.setWelcomeMessage(message);
-
-            Locale locale = (Locale) context.getSessionData(Locale.class);
-
-            if (message.isEmpty()) {
-                return MESSAGES.getString("welcome-message-conversation.removed-successful", locale,
-                        warp.getName());
-            }
-            return new StrBuilder()
-                    .append(ChatColor.AQUA)
-                    .append(MESSAGES.getString("welcome-message-conversation.changed-successful", locale,
-                            warp.getName())).appendNewLine().append(ChatColor.ITALIC).append(message)
-                    .toString();
-        }
-
-        @Override
-        protected Prompt getNextPrompt(ConversationContext context) {
-            return Prompt.END_OF_CONVERSATION;
-        }
-
-    }
+  }
 }

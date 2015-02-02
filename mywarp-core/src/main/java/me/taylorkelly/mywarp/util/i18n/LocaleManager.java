@@ -26,36 +26,35 @@ import java.util.Locale;
  */
 public class LocaleManager {
 
-    private static final ThreadLocal<Locale> ACTIVE_LOCALE = new ThreadLocal<Locale>() {
+  private static final ThreadLocal<Locale> ACTIVE_LOCALE = new ThreadLocal<Locale>() {
 
-        @Override
-        protected Locale initialValue() {
-            return Locale.getDefault();
-        }
-    };
-
-    /**
-     * Block initialization of this class.
-     */
-    private LocaleManager() {
+    @Override
+    protected Locale initialValue() {
+      return Locale.getDefault();
     }
+  };
 
-    /**
-     * Sets the Locale for the Thread calling this method.
-     * 
-     * @param locale
-     *            the Locale
-     */
-    public static void setLocale(Locale locale) {
-        ACTIVE_LOCALE.set(locale);
-    }
+  /**
+   * Block initialization of this class.
+   */
+  private LocaleManager() {
+  }
 
-    /**
-     * Gets the Locale for the Thread calling this method.
-     * 
-     * @return the Locale
-     */
-    public static Locale getLocale() {
-        return ACTIVE_LOCALE.get();
-    }
+  /**
+   * Sets the Locale for the Thread calling this method.
+   *
+   * @param locale the Locale
+   */
+  public static void setLocale(Locale locale) {
+    ACTIVE_LOCALE.set(locale);
+  }
+
+  /**
+   * Gets the Locale for the Thread calling this method.
+   *
+   * @return the Locale
+   */
+  public static Locale getLocale() {
+    return ACTIVE_LOCALE.get();
+  }
 }

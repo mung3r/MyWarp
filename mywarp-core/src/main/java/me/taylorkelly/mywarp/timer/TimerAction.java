@@ -21,31 +21,29 @@ package me.taylorkelly.mywarp.timer;
 
 /**
  * An action that is executed after a timer finishes.
- * 
- * @param <T>
- *            the type of the subject the timer runs on
+ *
+ * @param <T> the type of the subject the timer runs on
  */
 public abstract class TimerAction<T> implements Runnable {
 
-    private final T timedSuject;
+  private final T timedSuject;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param timedSubject
-     *            the instance the timer runs on
-     */
-    public TimerAction(T timedSubject) {
-        this.timedSuject = timedSubject;
-    }
+  /**
+   * Creates an instance.
+   *
+   * @param timedSubject the instance the timer runs on
+   */
+  public TimerAction(T timedSubject) {
+    this.timedSuject = timedSubject;
+  }
 
-    /**
-     * Gets the instance the timer runs on.
-     *
-     * @return the instance
-     */
-    public T getTimedSuject() {
-        return timedSuject;
-    }
+  /**
+   * Gets the instance the timer runs on.
+   *
+   * @return the instance
+   */
+  public T getTimedSuject() {
+    return timedSuject;
+  }
 
 }

@@ -26,54 +26,52 @@ import me.taylorkelly.mywarp.warp.Warp;
  */
 public class WarpUpdateEvent extends WarpEvent {
 
+  /**
+   * Represents the way a Warp was updated.
+   */
+  public enum UpdateType {
     /**
-     * Represents the way a Warp was updated.
+     * The warp's creator was updated.
      */
-    public enum UpdateType {
-        /**
-         * The warp's creator was updated.
-         */
-        CREATOR,
-        /**
-         * The warp's location was updated.
-         */
-        LOCATION,
-        /**
-         * The warp's type was updated.
-         */
-        TYPE,
-        /**
-         * The warp's visit-counter was updated.
-         */
-        VISITS,
-        /**
-         * The warp's welcome-message was updated.
-         */
-        WELCOME_MESSAGE
-    }
-
-    private final UpdateType type;
-
+    CREATOR,
     /**
-     * Constructs this event for the given Warp with the given UpdateType.
-     * 
-     * @param warp
-     *            the warp
-     * @param type
-     *            the type
+     * The warp's location was updated.
      */
-    public WarpUpdateEvent(Warp warp, UpdateType type) {
-        super(warp);
-        this.type = type;
-    }
-
+    LOCATION,
     /**
-     * Gets the type, indicating how exactly the Warp was updated.
-     *
-     * @return the type
+     * The warp's type was updated.
      */
-    public UpdateType getType() {
-        return type;
-    }
+    TYPE,
+    /**
+     * The warp's visit-counter was updated.
+     */
+    VISITS,
+    /**
+     * The warp's welcome-message was updated.
+     */
+    WELCOME_MESSAGE
+  }
+
+  private final UpdateType type;
+
+  /**
+   * Constructs this event for the given Warp with the given UpdateType.
+   *
+   * @param warp the warp
+   * @param type the type
+   */
+  public WarpUpdateEvent(Warp warp, UpdateType type) {
+    super(warp);
+    this.type = type;
+  }
+
+  /**
+   * Gets the type, indicating how exactly the Warp was updated.
+   *
+   * @return the type
+   */
+  public UpdateType getType() {
+    return type;
+  }
 
 }

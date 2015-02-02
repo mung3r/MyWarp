@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit.timer;
 
+import com.google.common.base.Optional;
+
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
@@ -29,36 +31,35 @@ import me.taylorkelly.mywarp.util.profile.Profile;
 
 import org.bukkit.ChatColor;
 
-import com.google.common.base.Optional;
-
 /**
  * A cooldown that blocks a player from using warps.
  */
 public class WarpCooldown extends TimerAction<Profile> {
 
-    private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages
+      MESSAGES =
+      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
-    /**
-     * Initializes this WarpCooldown.
-     * 
-     * @param player
-     *            the player who is cooling down
-     */
-    public WarpCooldown(LocalPlayer player) {
-        super(player.getProfile());
+  /**
+   * Initializes this WarpCooldown.
+   *
+   * @param player the player who is cooling down
+   */
+  public WarpCooldown(LocalPlayer player) {
+    super(player.getProfile());
+  }
+
+  @Override
+  public void run() {
+    if (MyWarp.getInstance().getSettings().isTimersCooldownNotifyOnFinish()) {
+      Optional<LocalPlayer> optionalPlayer = MyWarp.getInstance().getOnlinePlayer(getTimedSuject());
+
+      if (optionalPlayer.isPresent()) {
+        LocalPlayer player = optionalPlayer.get();
+        LocaleManager.setLocale(player.getLocale());
+        player.sendMessage(ChatColor.AQUA + MESSAGES.getString("warp-to.cooldown.ended"));
+      }
     }
-
-    @Override
-    public void run() {
-        if (MyWarp.getInstance().getSettings().isTimersCooldownNotifyOnFinish()) {
-            Optional<LocalPlayer> optionalPlayer = MyWarp.getInstance().getOnlinePlayer(getTimedSuject());
-
-            if (optionalPlayer.isPresent()) {
-                LocalPlayer player = optionalPlayer.get();
-                LocaleManager.setLocale(player.getLocale());
-                player.sendMessage(ChatColor.AQUA + MESSAGES.getString("warp-to.cooldown.ended"));
-            }
-        }
-    }
+  }
 
 }

@@ -19,40 +19,36 @@
 
 package me.taylorkelly.mywarp.bukkit.util;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.NoSuchPlayerException;
-
 import com.sk89q.intake.parametric.ParameterException;
 import com.sk89q.intake.parametric.argument.ArgumentStack;
 import com.sk89q.intake.parametric.binding.BindingBehavior;
 import com.sk89q.intake.parametric.binding.BindingHelper;
 import com.sk89q.intake.parametric.binding.BindingMatch;
 
+import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.NoSuchPlayerException;
+
 /**
- * A binding that gets {@link Actor}s from the
- * {@link com.sk89q.intake.context.CommandLocals}s.
+ * A binding that gets {@link Actor}s from the {@link com.sk89q.intake.context.CommandLocals}s.
  */
 public class ActorBindung extends BindingHelper {
 
-    /**
-     * Gets an Actor from the CommandLocales.
-     * 
-     * @param context
-     *            the command's context
-     * @return the Actor
-     * @throws NoSuchPlayerException
-     *             if no matching player was found
-     * @throws ParameterException
-     *             on a parameter error
-     */
-    @BindingMatch(type = Actor.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = false)
-    public Actor getString(ArgumentStack context) throws NoSuchPlayerException, ParameterException {
-        Actor actor = context.getContext().getLocals().get(Actor.class);
+  /**
+   * Gets an Actor from the CommandLocales.
+   *
+   * @param context the command's context
+   * @return the Actor
+   * @throws NoSuchPlayerException if no matching player was found
+   * @throws ParameterException    on a parameter error
+   */
+  @BindingMatch(type = Actor.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = false)
+  public Actor getString(ArgumentStack context) throws NoSuchPlayerException, ParameterException {
+    Actor actor = context.getContext().getLocals().get(Actor.class);
 
-        if (actor == null) {
-            throw new ParameterException(
-                    "No Actor avilable. Either this command was not used by one or he is missing from the CommandLocales.");
-        }
-        return actor;
+    if (actor == null) {
+      throw new ParameterException(
+          "No Actor avilable. Either this command was not used by one or he is missing from the CommandLocales.");
     }
+    return actor;
+  }
 }

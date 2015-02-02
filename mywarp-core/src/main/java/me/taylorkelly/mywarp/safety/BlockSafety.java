@@ -27,20 +27,20 @@ import me.taylorkelly.mywarp.util.Vector3;
  */
 public abstract class BlockSafety implements PositionSafety {
 
-    @Override
-    public boolean isPositionSafe(LocalWorld world, Vector3 position) {
-        Vector3 upOne = position.add(0, 1, 0);
-        Vector3 downOne = position.sub(0, 1, 0);
+  @Override
+  public boolean isPositionSafe(LocalWorld world, Vector3 position) {
+    Vector3 upOne = position.add(0, 1, 0);
+    Vector3 downOne = position.sub(0, 1, 0);
 
-        if (!world.getBlock(position).isSafeToStandIn()) {
-            return false;
-        }
-        if (!world.getBlock(upOne).isSafeToStandIn()) {
-            return false;
-        }
-        if (!world.getBlock(downOne).isSafeToStandOn()) {
-            return false;
-        }
-        return true;
+    if (!world.getBlock(position).isSafeToStandIn()) {
+      return false;
     }
+    if (!world.getBlock(upOne).isSafeToStandIn()) {
+      return false;
+    }
+    if (!world.getBlock(downOne).isSafeToStandOn()) {
+      return false;
+    }
+    return true;
+  }
 }

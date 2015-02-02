@@ -19,150 +19,138 @@
 
 package me.taylorkelly.mywarp.limits;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
-import javax.annotation.Nullable;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+import javax.annotation.Nullable;
 
 /**
- * Represents a limit. Implementations are expected to provide the limits for
- * each {@link Type} and a way to resolve these limits per world.
+ * Represents a limit. Implementations are expected to provide the limits for each {@link Type} and
+ * a way to resolve these limits per world.
  */
 public interface Limit {
 
+  /**
+   * The different types limits.
+   */
+  enum Type {
     /**
-     * The different types limits.
+     * The total limit (accounts all warps).
      */
-    enum Type {
-        /**
-         * The total limit (accounts all warps).
-         */
-        TOTAL(null, Predicates.<Warp>alwaysTrue()),
-        /**
-         * The private limit (accounts only private warps).
-         */
-        PRIVATE(TOTAL, WarpUtils.isType(Warp.Type.PRIVATE)),
-        /**
-         * The public limit (accounts only public warps).
-         */
-        PUBLIC(TOTAL, WarpUtils.isType(Warp.Type.PUBLIC));
+    TOTAL(null, Predicates.<Warp>alwaysTrue()),
+    /**
+     * The private limit (accounts only private warps).
+     */
+    PRIVATE(TOTAL, WarpUtils.isType(Warp.Type.PRIVATE)),
+    /**
+     * The public limit (accounts only public warps).
+     */
+    PUBLIC(TOTAL, WarpUtils.isType(Warp.Type.PUBLIC));
 
-        @Nullable
-        private final Type parent;
-        private final Predicate<Warp> condition;
+    @Nullable
+    private final Type parent;
+    private final Predicate<Warp> condition;
 
-        /**
-         * Initializes this Limit.
-         * 
-         * @param parent
-         *            the parent of this Type. The parent must count all warps
-         *            that are counted by this limit. Can be {@code null} if
-         *            this Type has no parent.
-         * @param condition
-         *            the condition a warp must fulfill to be counted under this
-         *            limit
-         */
-        private Type(@Nullable Type parent, Predicate<Warp> condition) {
-            this.parent = parent;
-            this.condition = condition;
-        }
-
-        /**
-         * Gets the condition of this Type.
-         * 
-         * @return the condition
-         */
-        public Predicate<Warp> getCondition() {
-            return condition;
-        }
-
-        /**
-         * Gets the parent of this Type. May return {@code null} if this Type
-         * has no parent.
-         * 
-         * @return the parent
-         */
-        @Nullable
-        public Type getParent() {
-            return parent;
-        }
-
-        /**
-         * Gets the parents of this type recursively. The last entry in the
-         * returned Deque is the parent of this Type, the second will be the
-         * parent of the parent of this Type and so one.
-         * 
-         * @return the parents, recursively
-         */
-        public Deque<Type> getParentsRecusive() {
-            Deque<Limit.Type> ret = new ArrayDeque<Limit.Type>();
-            Limit.Type parent = this.getParent();
-            do {
-                ret.addFirst(parent);
-                parent = parent.getParent();
-            } while (parent != null);
-            return ret;
-        }
-
-        /**
-         * Gets the name of this Type in lower case.
-         * 
-         * @see #name()
-         * @return this Type's name in lowercase
-         */
-        public String lowerCaseName() {
-            return name().toLowerCase();
-        }
-
-        /**
-         * Returns whether the given player can disobey any limit of this Type
-         * on the given world.
-         * 
-         * @param player
-         *            the player
-         * @param world
-         *            the world
-         * @return true if the player can disobey any limit of this Type
-         */
-        public boolean canDisobey(LocalPlayer player, LocalWorld world) {
-            String perm = "mywarp.limit.disobey." + world.getName() + "." + lowerCaseName(); // NON-NLS
-            return player.hasPermission(perm);
-        }
+    /**
+     * Initializes this Limit.
+     *
+     * @param parent    the parent of this Type. The parent must count all warps that are counted by
+     *                  this limit. Can be {@code null} if this Type has no parent.
+     * @param condition the condition a warp must fulfill to be counted under this limit
+     */
+    private Type(@Nullable Type parent, Predicate<Warp> condition) {
+      this.parent = parent;
+      this.condition = condition;
     }
 
     /**
-     * Gets the maximum number of warps a user can create under the given
-     * Limit.Type.
-     * 
-     * @param type
-     *            the type of limit
-     * @return the maximum number of warps
+     * Gets the condition of this Type.
+     *
+     * @return the condition
      */
-    int getLimit(Type type);
+    public Predicate<Warp> getCondition() {
+      return condition;
+    }
 
     /**
-     * Gets a list of all worlds that are affected by this Limit.
-     * 
-     * @return a Set with all affected worlds
+     * Gets the parent of this Type. May return {@code null} if this Type has no parent.
+     *
+     * @return the parent
      */
-    ImmutableSet<LocalWorld> getAffectedWorlds();
+    @Nullable
+    public Type getParent() {
+      return parent;
+    }
 
     /**
-     * Returns whether the given LocalWorld is affected by this Limit.
-     * 
-     * @param world
-     *            the world to check
-     * @return true if the given world is affected
+     * Gets the parents of this type recursively. The last entry in the returned Deque is the parent
+     * of this Type, the second will be the parent of the parent of this Type and so one.
+     *
+     * @return the parents, recursively
      */
-    boolean isAffectedWorld(LocalWorld world);
+    public Deque<Type> getParentsRecusive() {
+      Deque<Limit.Type> ret = new ArrayDeque<Limit.Type>();
+      Limit.Type parent = this.getParent();
+      do {
+        ret.addFirst(parent);
+        parent = parent.getParent();
+      } while (parent != null);
+      return ret;
+    }
+
+    /**
+     * Gets the name of this Type in lower case.
+     *
+     * @return this Type's name in lowercase
+     * @see #name()
+     */
+    public String lowerCaseName() {
+      return name().toLowerCase();
+    }
+
+    /**
+     * Returns whether the given player can disobey any limit of this Type on the given world.
+     *
+     * @param player the player
+     * @param world  the world
+     * @return true if the player can disobey any limit of this Type
+     */
+    public boolean canDisobey(LocalPlayer player, LocalWorld world) {
+      String perm = "mywarp.limit.disobey." + world.getName() + "." + lowerCaseName(); // NON-NLS
+      return player.hasPermission(perm);
+    }
+  }
+
+  /**
+   * Gets the maximum number of warps a user can create under the given Limit.Type.
+   *
+   * @param type the type of limit
+   * @return the maximum number of warps
+   */
+  int getLimit(Type type);
+
+  /**
+   * Gets a list of all worlds that are affected by this Limit.
+   *
+   * @return a Set with all affected worlds
+   */
+  ImmutableSet<LocalWorld> getAffectedWorlds();
+
+  /**
+   * Returns whether the given LocalWorld is affected by this Limit.
+   *
+   * @param world the world to check
+   * @return true if the given world is affected
+   */
+  boolean isAffectedWorld(LocalWorld world);
 
 }

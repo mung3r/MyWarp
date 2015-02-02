@@ -26,9 +26,9 @@ import org.bukkit.entity.Player;
  */
 public class SuperpermsResolver implements GroupResolver {
 
-    @Override
-    public boolean hasGroup(Player player, String group) {
-        // instead of returning false we check for a specific group permission
-        return player.hasPermission("mywarp.group." + group);
-    }
+  @Override
+  public boolean hasGroup(Player player, String group) {
+    // instead of returning false we check for a specific group permission
+    return player.hasPermission("mywarp.group." + group);
+  }
 }

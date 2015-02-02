@@ -19,37 +19,31 @@
 
 package me.taylorkelly.mywarp.util.profile;
 
-import java.util.UUID;
-
 import com.google.common.base.Optional;
 
+import java.util.UUID;
+
 /**
- * Represents a Service that creates {@link Profile}s from unique IDs or
- * player-names.
+ * Represents a Service that creates {@link Profile}s from unique IDs or player-names.
  */
 public interface ProfileService {
 
-    /**
-     * Gets the Profile of the given unique ID. If the service is unable to find
-     * a name matching the unique ID, the returned Profile will not have a name
-     * value and calls to {@link Profile#getName()} may fail.
-     * <p>
-     * Implementations must be thread-safe!
-     * </p>
-     * 
-     * @param uniqueId
-     *            the unique ID
-     * @return the corresponding Profile
-     */
-    Profile get(UUID uniqueId);
+  /**
+   * Gets the Profile of the given unique ID. If the service is unable to find a name matching the
+   * unique ID, the returned Profile will not have a name value and calls to {@link
+   * Profile#getName()} may fail. <p> Implementations must be thread-safe! </p>
+   *
+   * @param uniqueId the unique ID
+   * @return the corresponding Profile
+   */
+  Profile get(UUID uniqueId);
 
-    /**
-     * Gets an Optional containing the Profile of the given name.
-     * 
-     * @param name
-     *            the name
-     * @return an Optional containing the Profile
-     */
-    Optional<Profile> get(String name);
+  /**
+   * Gets an Optional containing the Profile of the given name.
+   *
+   * @param name the name
+   * @return an Optional containing the Profile
+   */
+  Optional<Profile> get(String name);
 
 }

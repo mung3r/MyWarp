@@ -3,44 +3,24 @@ Contributing
 
 Thank you for your interest in contributing to MyWarp! We appreciate your effort, but to make sure that the inclusion of your patch is a smooth process, we ask that you make note of the following guidelines.
 
-* **Follow the [Oracle coding conventions](http://www.oracle.com/technetwork/java/codeconv-138413.html).**  We can't stress this enough; if your code has notable issues, it may delay the process significantly.
-* **Target Java 6 for source and compilation.** Make sure to mark methods with `@Override` that override methods of parent classes, or that implement methods of interfaces (Java 6+).
-* **Use only spaces for indentation.** Our indents are 4-spaces long, and tabs are unacceptable.
-* **Wrap code to a 110 column limit.** We do this to make side by side diffs and other such tasks easier.
-* **Write complete Javadocs.** Do so for all methods, and make sure  that your `@param` and `@return` fields are not just blank.
-* **Don't tag classes with @author.** Some legacy classes may have this tag, but we are phasing it out.
-* **Make sure the code is efficient.** One way you can achieve this is to spend around ten minutes to think about what the code is doing and whether it seems awfully roundabout. If you had to copy the same large piece of code in several places, that's bad.
-* **Keep commit summaries under 70 characters.** For more details, place two new lines after the summary line and write away!
-* **Test your code.** We're not interested in broken code, for the obvious reasons.
-* **Write unit tests.** While this is strictly optional, we recommend it for complicated algorithms.
+Please note that MyWarp is build against **Java 6**. All contributions must be licensed under the GNU General Public License v3.
 
-
-Checklist
+Coding Style
 ---------
+MyWarp follows the [Google coding conventions](https://google-styleguide.googlecode.com/svn-history/r130/trunk/javaguide.html) with two modifications:
+1. The column limit is set to 120 characters. This replaces point 4.4, while the exceptions defined there still apply.
+2. Switch cases can come without a `default` statement if, and only if, they cover all possible cases. This replaces point 4.8.4.3.
+3. All files must have the license header that can be found in `config/checkstyle/header.txt`.
+4. The `@author` tag in java-docs is forbidden.
 
-Ready to submit? Perform the checklist below:
+The build process automatically checks most of these conventions using Checkstyle.
 
-1. Have all tabs been replaced into four spaces? Are indentations 4-space wide?
-2. Have I written proper Javadocs for my methods? Are the @param and @return fields actually filled out?
-3. Have I `git rebase`d my pull request to the latest commit of the target branch?
-4. Have I combined my commits into a reasonably small number (if not one) commit using `git rebase`?
-5. Have I made my pull request too large? Pull requests should introduce small sets of changes at a time. Major changes should be discussed with the team prior to starting work.
-6. Are my commit messages descriptive?
+>**Note:** You can use our code styles for [Eclipse](https://code.google.com/p/google-styleguide/source/browse/trunk/eclipse-java-google-style.xml) or [IntelliJ IDEA](https://code.google.com/p/google-styleguide/source/browse/trunk/intellij-java-google-style.xml) to let your IDE format the code correctly for you.
 
-You should be aware of [`git rebase`](http://learn.github.com/p/rebasing.html). It allows you to modify existing commit messages, and combine, break apart, or adjust past changes.
 
-Example
--------
-
-This is **GOOD:**
-
-    if (var.func(param1, param2)) {
-        // do things
-    }
-
-This is **EXTREMELY BAD:**
-
-    if(var.func( param1, param2 ))
-    {
-        // do things
-    }
+Code Conventions
+---------
+* Use [Optionals](https://code.google.com/p/guava-libraries/wiki/UsingAndAvoidingNullExplained) instead of returning `null`.
+* Method parameters accepting `null` must be annotated with `@Nullable` (from javax.*), all methods and parameters are `@Nonnull` by default.
+* Use [Google Preconditions](https://code.google.com/p/guava-libraries/wiki/PreconditionsExplained) for null- and argument checking.
+* If a class needs to log something, create a private static final instance of `java.util.logging.Logger` with the classes name as the logger's name.

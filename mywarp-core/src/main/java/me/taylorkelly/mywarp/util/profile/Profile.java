@@ -19,36 +19,34 @@
 
 package me.taylorkelly.mywarp.util.profile;
 
-import java.util.UUID;
-
 import com.google.common.base.Optional;
+
+import java.util.UUID;
 
 /**
  * A pairing of a player's UUID and username.
  */
 public interface Profile {
 
-    /**
-     * Gets the player's unique ID.
-     * 
-     * @return the unique ID
-     */
-    UUID getUniqueId();
+  /**
+   * Gets the player's unique ID.
+   *
+   * @return the unique ID
+   */
+  UUID getUniqueId();
 
-    /**
-     * Gets the player's name.
-     * 
-     * @return the name
-     */
-    Optional<String> getName();
+  /**
+   * Gets the player's name.
+   *
+   * @return the name
+   */
+  Optional<String> getName();
 
-    /**
-     * Returns whether this profile belongs to the same player than the given
-     * unique ID.
-     * 
-     * @param uniqueId
-     *            the player's unique ID
-     * @return true if this profile belongs the the same player
-     */
-    boolean isProfileOf(UUID uniqueId);
+  /**
+   * Returns whether this profile belongs to the same player than the given unique ID.
+   *
+   * @param uniqueId the player's unique ID
+   * @return true if this profile belongs the the same player
+   */
+  boolean isProfileOf(UUID uniqueId);
 }

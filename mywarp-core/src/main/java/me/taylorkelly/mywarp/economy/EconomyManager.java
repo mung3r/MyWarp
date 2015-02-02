@@ -23,58 +23,47 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 
 /**
- * 
+ * Manages an economy that MyWarp hooks into.
  */
 public interface EconomyManager {
 
-    /**
-     * Returns whether the given LocalPlayer has at least the amount identified
-     * by the given Fee and informs the player if he has not.
-     * 
-     * @param player
-     *            the player
-     * @param identifier
-     *            the identifier
-     * @return true if the player has at least the given amount
-     */
-    boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier);
+  /**
+   * Returns whether the given LocalPlayer has at least the amount identified by the given Fee and
+   * informs the player if he has not.
+   *
+   * @param player     the player
+   * @param identifier the identifier
+   * @return true if the player has at least the given amount
+   */
+  boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier);
 
-    /**
-     * Returns whether the given LocalPlayer has at least the given amount and
-     * informs the player if he has not.
-     * 
-     * @param player
-     *            the player
-     * @param amount
-     *            the amount
-     * @return true if the player has at least the given amount
-     * @throws IllegalArgumentException
-     *             if the given {@code amount} is not greater than 0
-     */
-    boolean informativeHasAtLeast(LocalPlayer player, double amount) throws IllegalArgumentException;
+  /**
+   * Returns whether the given LocalPlayer has at least the given amount and informs the player if
+   * he has not.
+   *
+   * @param player the player
+   * @param amount the amount
+   * @return true if the player has at least the given amount
+   * @throws IllegalArgumentException if the given {@code amount} is not greater than 0
+   */
+  boolean informativeHasAtLeast(LocalPlayer player, double amount);
 
-    /**
-     * Withdraws the given LocalPlayer with the amount identified by the given
-     * Fee and informs the player accordingly.
-     * 
-     * @param player
-     *            the player
-     * @param identifier
-     *            the identifier
-     */
-    void informativeWithdraw(LocalPlayer player, FeeType identifier);
+  /**
+   * Withdraws the given LocalPlayer with the amount identified by the given Fee and informs the
+   * player accordingly.
+   *
+   * @param player     the player
+   * @param identifier the identifier
+   */
+  void informativeWithdraw(LocalPlayer player, FeeType identifier);
 
-    /**
-     * Withdraws the given LocalPlayer with the given amount and informs the
-     * player accordingly.
-     * 
-     * @param player
-     *            the player
-     * @param amount
-     *            the amount
-     * @throws IllegalArgumentException
-     *             if the given {@code amount} is not greater than 0
-     */
-    void informativeWithdraw(LocalPlayer player, double amount) throws IllegalArgumentException;
+  /**
+   * Withdraws the given LocalPlayer with the given amount and informs the player accordingly.
+   *
+   * @param player the player
+   * @param amount the amount
+   * @throws IllegalArgumentException if the given {@code amount} is not greater than 0
+   */
+  void informativeWithdraw(LocalPlayer player, double amount);
 
 }

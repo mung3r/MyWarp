@@ -19,31 +19,30 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import java.util.concurrent.Executor;
-
 import org.bukkit.Bukkit;
 
+import java.util.concurrent.Executor;
+
 /**
- * An Executor for the Bukkit plattform. Given Runnables will be called by the
- * main server thread at the next tick.
+ * An Executor for the Bukkit plattform. Given Runnables will be called by the main server thread at
+ * the next tick.
  */
 public class BukkitExecutor implements Executor {
 
-    private final MyWarpPlugin plugin;
+  private final MyWarpPlugin plugin;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param plugin
-     *            the running plugin instance
-     */
-    public BukkitExecutor(MyWarpPlugin plugin) {
-        this.plugin = plugin;
-    }
+  /**
+   * Creates an instance.
+   *
+   * @param plugin the running plugin instance
+   */
+  public BukkitExecutor(MyWarpPlugin plugin) {
+    this.plugin = plugin;
+  }
 
-    @Override
-    public void execute(Runnable command) {
-        Bukkit.getScheduler().runTask(plugin, command);
-    }
+  @Override
+  public void execute(Runnable command) {
+    Bukkit.getScheduler().runTask(plugin, command);
+  }
 
 }

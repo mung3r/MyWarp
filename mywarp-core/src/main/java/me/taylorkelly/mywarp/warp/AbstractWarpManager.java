@@ -19,68 +19,68 @@
 
 package me.taylorkelly.mywarp.warp;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-
 /**
- * An abstract {@link WarpManager} implementation that implements 'matching'
- * methods that do not depend on the implementation.
+ * An abstract {@link WarpManager} implementation that implements 'matching' methods that do not
+ * depend on the implementation.
  */
 public abstract class AbstractWarpManager implements WarpManager {
 
-    @Override
-    public Optional<Profile> getMatchingCreator(String filter, Predicate<Warp> predicate) {
-        Profile ret = null;
-        for (Warp warp : filter(predicate)) {
-            Profile creator = warp.getCreator();
+  @Override
+  public Optional<Profile> getMatchingCreator(String filter, Predicate<Warp> predicate) {
+    Profile ret = null;
+    for (Warp warp : filter(predicate)) {
+      Profile creator = warp.getCreator();
 
-            Optional<String> creatorName = creator.getName();
-            if (!creatorName.isPresent()) {
-                // the name cannot be resolved so we cannot do any matching
-                continue;
-            }
-            if (StringUtils.equalsIgnoreCase(creatorName.get(), filter)) {
-                // minecraft names are, as of 1.7.x case insensitive
-                return Optional.of(creator);
-            }
-            if (StringUtils.containsIgnoreCase(creatorName.get(), filter)) {
-                if (ret != null) {
-                    // no clear match so there is no point in continuing
-                    return Optional.absent();
-                }
-                ret = creator;
-            }
+      Optional<String> creatorName = creator.getName();
+      if (!creatorName.isPresent()) {
+        // the name cannot be resolved so we cannot do any matching
+        continue;
+      }
+      if (StringUtils.equalsIgnoreCase(creatorName.get(), filter)) {
+        // minecraft names are, as of 1.7.x case insensitive
+        return Optional.of(creator);
+      }
+      if (StringUtils.containsIgnoreCase(creatorName.get(), filter)) {
+        if (ret != null) {
+          // no clear match so there is no point in continuing
+          return Optional.absent();
         }
-        return Optional.fromNullable(ret);
+        ret = creator;
+      }
     }
+    return Optional.fromNullable(ret);
+  }
 
-    @Override
-    public Optional<LocalWorld> getMatchingWorld(String filter, Predicate<Warp> predicate) {
-        LocalWorld ret = null;
-        for (Warp warp : filter(predicate)) {
-            LocalWorld world = warp.getWorld();
-            if (world.getName().equals(filter)) {
-                return Optional.of(world);
-            }
-            if (StringUtils.containsIgnoreCase(world.getName(), filter)) {
-                if (ret != null) {
-                    // no clear match so there is no point in continuing
-                    return Optional.absent();
-                }
-                ret = world;
-            }
+  @Override
+  public Optional<LocalWorld> getMatchingWorld(String filter, Predicate<Warp> predicate) {
+    LocalWorld ret = null;
+    for (Warp warp : filter(predicate)) {
+      LocalWorld world = warp.getWorld();
+      if (world.getName().equals(filter)) {
+        return Optional.of(world);
+      }
+      if (StringUtils.containsIgnoreCase(world.getName(), filter)) {
+        if (ret != null) {
+          // no clear match so there is no point in continuing
+          return Optional.absent();
         }
-        return Optional.fromNullable(ret);
+        ret = world;
+      }
     }
+    return Optional.fromNullable(ret);
+  }
 
-    @Override
-    public MatchList getMatchingWarps(String filter, Predicate<Warp> predicate) {
-        return new MatchList(filter, filter(predicate));
-    }
+  @Override
+  public MatchList getMatchingWarps(String filter, Predicate<Warp> predicate) {
+    return new MatchList(filter, filter(predicate));
+  }
 }

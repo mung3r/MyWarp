@@ -29,95 +29,93 @@ import org.bukkit.Material;
  */
 public class BukkitBlockType implements BlockType {
 
-    private final BukkitWorld world;
-    private final Vector3 position;
+  private final BukkitWorld world;
+  private final Vector3 position;
 
-    /**
-     * Constructs an instance.
-     * 
-     * @param world
-     *            the world of the block
-     * @param position
-     *            the position of the block
-     */
-    public BukkitBlockType(BukkitWorld world, Vector3 position) {
-        this.world = world;
-        this.position = position;
-    }
+  /**
+   * Constructs an instance.
+   *
+   * @param world    the world of the block
+   * @param position the position of the block
+   */
+  public BukkitBlockType(BukkitWorld world, Vector3 position) {
+    this.world = world;
+    this.position = position;
+  }
 
-    @Override
-    public boolean isSafeToStandIn() {
-        Material material = getBlockMaterial();
-        switch (material) {
-        case LAVA:
-        case STATIONARY_LAVA:
-        case FIRE:
-            return false;
-        case WATER:
-            return true;
-        default:
-            return !material.isSolid();
-        }
+  @Override
+  public boolean isSafeToStandIn() {
+    Material material = getBlockMaterial();
+    switch (material) {
+      case LAVA:
+      case STATIONARY_LAVA:
+      case FIRE:
+        return false;
+      case WATER:
+        return true;
+      default:
+        return !material.isSolid();
     }
+  }
 
-    @Override
-    public boolean isSafeToStandOn() {
-        Material material = getBlockMaterial();
-        switch (material) {
-        case CACTUS:
-            return false;
-        case WATER:
-            return true;
-        default:
-            return material.isSolid();
-        }
+  @Override
+  public boolean isSafeToStandOn() {
+    Material material = getBlockMaterial();
+    switch (material) {
+      case CACTUS:
+        return false;
+      case WATER:
+        return true;
+      default:
+        return material.isSolid();
     }
+  }
 
-    @Override
-    public boolean isNotFullHeight() {
-        Material material = getBlockMaterial();
-        switch (material) {
-        case BED_BLOCK:
-        case STEP:
-        case WOOD_STAIRS:
-        case CHEST:
-        case COBBLESTONE_STAIRS:
-        case CAKE_BLOCK:
-        case TRAP_DOOR:
-        case BRICK_STAIRS:
-        case SMOOTH_STAIRS:
-        case NETHER_BRICK_STAIRS:
-        case ENCHANTMENT_TABLE:
-        case BREWING_STAND:
-        case CAULDRON:
-        case WOOD_STEP:
-        case SANDSTONE_STAIRS:
-        case ENDER_CHEST:
-        case SPRUCE_WOOD_STAIRS:
-        case BIRCH_WOOD_STAIRS:
-        case JUNGLE_WOOD_STAIRS:
-        case SKULL:
-        case TRAPPED_CHEST:
-        case DAYLIGHT_DETECTOR:
-        case QUARTZ_STAIRS:
-        case ACACIA_STAIRS:
-        case DARK_OAK_STAIRS:
-            return true;
-        default:
-            return false;
-        }
+  @Override
+  public boolean isNotFullHeight() {
+    Material material = getBlockMaterial();
+    switch (material) {
+      case BED_BLOCK:
+      case STEP:
+      case WOOD_STAIRS:
+      case CHEST:
+      case COBBLESTONE_STAIRS:
+      case CAKE_BLOCK:
+      case TRAP_DOOR:
+      case BRICK_STAIRS:
+      case SMOOTH_STAIRS:
+      case NETHER_BRICK_STAIRS:
+      case ENCHANTMENT_TABLE:
+      case BREWING_STAND:
+      case CAULDRON:
+      case WOOD_STEP:
+      case SANDSTONE_STAIRS:
+      case ENDER_CHEST:
+      case SPRUCE_WOOD_STAIRS:
+      case BIRCH_WOOD_STAIRS:
+      case JUNGLE_WOOD_STAIRS:
+      case SKULL:
+      case TRAPPED_CHEST:
+      case DAYLIGHT_DETECTOR:
+      case QUARTZ_STAIRS:
+      case ACACIA_STAIRS:
+      case DARK_OAK_STAIRS:
+        return true;
+      default:
+        return false;
     }
+  }
 
-    /**
-     * Gets the block's Material.
-     * 
-     * @return the Material of this block
-     */
-    private Material getBlockMaterial() {
-        return world
-                .getLoadedWorld()
-                .getBlockAt((int) position.getFloorX(), (int) position.getFloorY(),
-                        (int) position.getFloorZ()).getType();
-    }
+  /**
+   * Gets the block's Material.
+   *
+   * @return the Material of this block
+   */
+  private Material getBlockMaterial() {
+    return world
+        .getLoadedWorld()
+        .getBlockAt((int) position.getFloorX(), (int) position.getFloorY(),
+                    (int) position.getFloorZ()).getType();
+  }
 
 }

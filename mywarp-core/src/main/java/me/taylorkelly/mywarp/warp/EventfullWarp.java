@@ -32,99 +32,97 @@ import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
 import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent.UpdateType;
 
 /**
- * Forwards method calls to an existing Warp and posts
- * {@link me.taylorkelly.mywarp.warp.event.WarpEvent}s to an EventWarpManager.
+ * Forwards method calls to an existing Warp and posts {@link me.taylorkelly.mywarp.warp.event.WarpEvent}s
+ * to an EventWarpManager.
  */
 public class EventfullWarp extends ForwardingWarp {
 
-    private final Warp warp;
-    private final EventWarpManager eventManager;
+  private final Warp warp;
+  private final EventWarpManager eventManager;
 
-    /**
-     * Creates the instance that forwards calls to the given Warp. Events will
-     * be posted to the given EventWarpManager.
-     * 
-     * @param warp
-     *            the Warp
-     * @param eventManager
-     *            the EventWarpManager
-     */
-    public EventfullWarp(Warp warp, EventWarpManager eventManager) {
-        this.warp = warp;
-        this.eventManager = eventManager;
+  /**
+   * Creates the instance that forwards calls to the given Warp. Events will be posted to the given
+   * EventWarpManager.
+   *
+   * @param warp         the Warp
+   * @param eventManager the EventWarpManager
+   */
+  public EventfullWarp(Warp warp, EventWarpManager eventManager) {
+    this.warp = warp;
+    this.eventManager = eventManager;
+  }
+
+  @Override
+  protected Warp delegate() {
+    return warp;
+  }
+
+  @Override
+  public TeleportStatus teleport(LocalEntity entity) {
+    TeleportStatus ret = super.teleport(entity);
+    switch (ret) {
+      case ORIGINAL_LOC:
+      case SAFE_LOC:
+        eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.VISITS));
+        break;
+      case NONE:
+        break;
     }
+    return ret;
+  }
 
-    @Override
-    protected Warp delegate() {
-        return warp;
-    }
+  @Override
+  public void inviteGroup(String groupId) {
+    super.inviteGroup(groupId);
+    eventManager.postEvent(new WarpGroupInvitesEvent(this, InvitationStatus.INVITE, groupId));
 
-    @Override
-    public TeleportStatus teleport(LocalEntity entity) {
-        TeleportStatus ret = super.teleport(entity);
-        switch (ret) {
-        case ORIGINAL_LOC:
-        case SAFE_LOC:
-            eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.VISITS));
-            break;
-        case NONE:
-            break;
-        }
-        return ret;
-    }
+  }
 
-    @Override
-    public void inviteGroup(String groupId) {
-        super.inviteGroup(groupId);
-        eventManager.postEvent(new WarpGroupInvitesEvent(this, InvitationStatus.INVITE, groupId));
+  @Override
+  public void invitePlayer(Profile player) {
+    super.invitePlayer(player);
+    eventManager.postEvent(new WarpPlayerInvitesEvent(this, InvitationStatus.INVITE, player));
 
-    }
+  }
 
-    @Override
-    public void invitePlayer(Profile player) {
-        super.invitePlayer(player);
-        eventManager.postEvent(new WarpPlayerInvitesEvent(this, InvitationStatus.INVITE, player));
+  @Override
+  public void uninviteGroup(String groupId) {
+    super.uninviteGroup(groupId);
+    eventManager.postEvent(new WarpGroupInvitesEvent(this, InvitationStatus.UNINVITE, groupId));
 
-    }
+  }
 
-    @Override
-    public void uninviteGroup(String groupId) {
-        super.uninviteGroup(groupId);
-        eventManager.postEvent(new WarpGroupInvitesEvent(this, InvitationStatus.UNINVITE, groupId));
+  @Override
+  public void uninvitePlayer(Profile player) {
+    super.uninvitePlayer(player);
+    eventManager.postEvent(new WarpPlayerInvitesEvent(this, InvitationStatus.UNINVITE, player));
 
-    }
+  }
 
-    @Override
-    public void uninvitePlayer(Profile player) {
-        super.uninvitePlayer(player);
-        eventManager.postEvent(new WarpPlayerInvitesEvent(this, InvitationStatus.UNINVITE, player));
+  @Override
+  public void setCreator(Profile creator) {
+    super.setCreator(creator);
+    eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.CREATOR));
 
-    }
+  }
 
-    @Override
-    public void setCreator(Profile creator) {
-        super.setCreator(creator);
-        eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.CREATOR));
+  @Override
+  public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
+    super.setLocation(world, position, rotation);
+    eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.LOCATION));
 
-    }
+  }
 
-    @Override
-    public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
-        super.setLocation(world, position, rotation);
-        eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.LOCATION));
+  @Override
+  public void setType(Type type) {
+    super.setType(type);
+    eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.TYPE));
+  }
 
-    }
-
-    @Override
-    public void setType(Type type) {
-        super.setType(type);
-        eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.TYPE));
-    }
-
-    @Override
-    public void setWelcomeMessage(String welcomeMessage) {
-        super.setWelcomeMessage(welcomeMessage);
-        eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.WELCOME_MESSAGE));
-    }
+  @Override
+  public void setWelcomeMessage(String welcomeMessage) {
+    super.setWelcomeMessage(welcomeMessage);
+    eventManager.postEvent(new WarpUpdateEvent(this, UpdateType.WELCOME_MESSAGE));
+  }
 
 }

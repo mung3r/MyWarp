@@ -19,10 +19,9 @@
 
 package me.taylorkelly.mywarp.bukkit.limits;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSortedSet;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
@@ -36,100 +35,95 @@ import org.bukkit.World;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.ImmutableSortedSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 /**
- * Provides Limits when running on Bukkit. The actual Limits are stored in
- * {@link LimitBundle}s managed by this provider.
- * <p>
- * Players either need to have a specific permission of a certain bundle that
- * covers the world in question or they fall under a global default bundle. If a
- * player has the permission for more than one bundle, the alphabetically first
- * bundle will be used.
- * </p>
+ * Provides Limits when running on Bukkit. The actual Limits are stored in {@link LimitBundle}s
+ * managed by this provider. <p> Players either need to have a specific permission of a certain
+ * bundle that covers the world in question or they fall under a global default bundle. If a player
+ * has the permission for more than one bundle, the alphabetically first bundle will be used. </p>
  */
 public class BukkitLimitProvider implements LimitProvider {
 
-    private SortedSet<LimitBundle> configuredLimits;
-    private LimitBundle defaultLimit;
+  private SortedSet<LimitBundle> configuredLimits;
+  private LimitBundle defaultLimit;
 
-    /**
-     * Initializes this provider.
-     * 
-     * @param configuredLimits
-     *            the configured FeeBundles that are assigned to a player via a
-     *            specific permission
-     * @param defaultLimit
-     *            the default FeeBundle that acts as a fallback if a player has
-     *            none of the specific permissions
-     */
-    public BukkitLimitProvider(Iterable<LimitBundle> configuredLimits, LimitBundle defaultLimit) {
-        this.configuredLimits = ImmutableSortedSet.copyOf(configuredLimits);
-        this.defaultLimit = defaultLimit;
+  /**
+   * Initializes this provider.
+   *
+   * @param configuredLimits the configured FeeBundles that are assigned to a player via a specific
+   *                         permission
+   * @param defaultLimit     the default FeeBundle that acts as a fallback if a player has none of
+   *                         the specific permissions
+   */
+  public BukkitLimitProvider(Iterable<LimitBundle> configuredLimits, LimitBundle defaultLimit) {
+    this.configuredLimits = ImmutableSortedSet.copyOf(configuredLimits);
+    this.defaultLimit = defaultLimit;
 
-        for (ValueBundle bundle : configuredLimits) {
-            BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(),
-                    PermissionDefault.FALSE));
-        }
-        // register per-world overrides
-        for (World world : Bukkit.getWorlds()) {
-            String perm = "mywarp.limit.disobey." + world.getName(); // NON-NLS
-            // mywarp.limit.disobey.[WORLDNAME].total
-            Permission totalPerm = new Permission(perm + ".total"); // NON-NLS
-            totalPerm.addParent("mywarp.limit.disobey.total", true); // NON-NLS
-            totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
-            BukkitPermissionsRegistration.INSTANCE.register(totalPerm);
-            // mywarp.limit.disobey.[WORLDNAME].private
-            Permission privatePerm = new Permission(perm + ".private"); // NON-NLS
-            privatePerm.addParent("mywarp.limit.disobey.private", true); // NON-NLS
-            privatePerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
-            BukkitPermissionsRegistration.INSTANCE.register(privatePerm);
-            // mywarp.limit.disobey.[WORLDNAME].public
-            Permission publicPerm = new Permission(perm + ".public"); // NON-NLS
-            publicPerm.addParent("mywarp.limit.disobey.public", true); // NON-NLS
-            publicPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
-            BukkitPermissionsRegistration.INSTANCE.register(publicPerm);
-        }
+    for (ValueBundle bundle : configuredLimits) {
+      BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(),
+                                                                     PermissionDefault.FALSE));
     }
-
-    @Override
-    public Limit getLimit(LocalPlayer player, LocalWorld world) {
-        for (LimitBundle bundle : configuredLimits) {
-            if (!player.hasPermission(bundle.getPermission())) {
-                continue;
-            }
-            if (!bundle.isAffectedWorld(world)) {
-                continue;
-            }
-            return bundle;
-        }
-        return defaultLimit;
+    // register per-world overrides
+    for (World world : Bukkit.getWorlds()) {
+      String perm = "mywarp.limit.disobey." + world.getName(); // NON-NLS
+      // mywarp.limit.disobey.[WORLDNAME].total
+      Permission totalPerm = new Permission(perm + ".total"); // NON-NLS
+      totalPerm.addParent("mywarp.limit.disobey.total", true); // NON-NLS
+      totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
+      BukkitPermissionsRegistration.INSTANCE.register(totalPerm);
+      // mywarp.limit.disobey.[WORLDNAME].private
+      Permission privatePerm = new Permission(perm + ".private"); // NON-NLS
+      privatePerm.addParent("mywarp.limit.disobey.private", true); // NON-NLS
+      privatePerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
+      BukkitPermissionsRegistration.INSTANCE.register(privatePerm);
+      // mywarp.limit.disobey.[WORLDNAME].public
+      Permission publicPerm = new Permission(perm + ".public"); // NON-NLS
+      publicPerm.addParent("mywarp.limit.disobey.public", true); // NON-NLS
+      publicPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
+      BukkitPermissionsRegistration.INSTANCE.register(publicPerm);
     }
+  }
 
-    @Override
-    public List<Limit> getEffectiveLimits(LocalPlayer player) {
-        Builder<Limit> ret = ImmutableList.builder();
-        Set<LocalWorld> worlds = new HashSet<LocalWorld>();
-        for (LimitBundle bundle : configuredLimits) {
-            if (!player.hasPermission(bundle.getPermission())) {
-                continue;
-            }
-            if (worlds.containsAll(bundle.getAffectedWorlds())) {
-                // the affective bundles already cover all worlds that this
-                // bundle covers, so it is effectively overwritten.
-                continue;
-            }
-            ret.add(bundle);
-            worlds.addAll(bundle.getAffectedWorlds());
-        }
-        // if there is a world that is not covered by all bundles, the default
-        // bundle (always global) is needed
-        if (!worlds.containsAll(defaultLimit.getAffectedWorlds())) {
-            ret.add(defaultLimit);
-        }
-        return ret.build();
+  @Override
+  public Limit getLimit(LocalPlayer player, LocalWorld world) {
+    for (LimitBundle bundle : configuredLimits) {
+      if (!player.hasPermission(bundle.getPermission())) {
+        continue;
+      }
+      if (!bundle.isAffectedWorld(world)) {
+        continue;
+      }
+      return bundle;
     }
+    return defaultLimit;
+  }
+
+  @Override
+  public List<Limit> getEffectiveLimits(LocalPlayer player) {
+    Builder<Limit> ret = ImmutableList.builder();
+    Set<LocalWorld> worlds = new HashSet<LocalWorld>();
+    for (LimitBundle bundle : configuredLimits) {
+      if (!player.hasPermission(bundle.getPermission())) {
+        continue;
+      }
+      if (worlds.containsAll(bundle.getAffectedWorlds())) {
+        // the affective bundles already cover all worlds that this
+        // bundle covers, so it is effectively overwritten.
+        continue;
+      }
+      ret.add(bundle);
+      worlds.addAll(bundle.getAffectedWorlds());
+    }
+    // if there is a world that is not covered by all bundles, the default
+    // bundle (always global) is needed
+    if (!worlds.containsAll(defaultLimit.getAffectedWorlds())) {
+      ret.add(defaultLimit);
+    }
+    return ret.build();
+  }
 
 }

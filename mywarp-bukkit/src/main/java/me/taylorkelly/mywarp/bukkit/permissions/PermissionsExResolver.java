@@ -28,9 +28,9 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
  */
 public class PermissionsExResolver implements GroupResolver {
 
-    @Override
-    public boolean hasGroup(Player player, String group) {
-        return PermissionsEx.getPermissionManager().getUser(player.getName())
-                .inGroup(group, player.getWorld().getName());
-    }
+  @Override
+  public boolean hasGroup(Player player, String group) {
+    return PermissionsEx.getPermissionManager().getUser(player.getName())
+        .inGroup(group, player.getWorld().getName());
+  }
 }

@@ -19,35 +19,30 @@
 
 package me.taylorkelly.mywarp.limits;
 
-import java.util.List;
-
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 
+import java.util.List;
+
 /**
- * Provides the actual {@link Limit}s that affect a user under certain
- * conditions.
+ * Provides the actual {@link Limit}s that affect a user under certain conditions.
  */
 public interface LimitProvider {
 
-    /**
-     * Gets the Limit that affects the given LocalPlayer on the given
-     * LocalWorld.
-     * 
-     * @param player
-     *            the player
-     * @param world
-     *            the world
-     * @return the Limit
-     */
-    Limit getLimit(LocalPlayer player, LocalWorld world);
+  /**
+   * Gets the Limit that affects the given LocalPlayer on the given LocalWorld.
+   *
+   * @param player the player
+   * @param world  the world
+   * @return the Limit
+   */
+  Limit getLimit(LocalPlayer player, LocalWorld world);
 
-    /**
-     * Gets all Limits that can possible affect the given LocalPlayer.
-     * 
-     * @param player
-     *            the player
-     * @return a List of Limits that could affect the player
-     */
-    List<Limit> getEffectiveLimits(LocalPlayer player);
+  /**
+   * Gets all Limits that can possible affect the given LocalPlayer.
+   *
+   * @param player the player
+   * @return a List of Limits that could affect the player
+   */
+  List<Limit> getEffectiveLimits(LocalPlayer player);
 }

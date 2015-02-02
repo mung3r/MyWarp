@@ -26,37 +26,34 @@ import me.taylorkelly.mywarp.warp.Warp;
  */
 public abstract class WarpInvitesEvent extends WarpEvent {
 
-    /**
-     * Represents the status of an Invitation that is indicated by an
-     * WarpInvitesEvent.
-     */
-    public enum InvitationStatus {
-        INVITE, UNINVITE
-    }
+  /**
+   * Represents the status of an Invitation that is indicated by an WarpInvitesEvent.
+   */
+  public enum InvitationStatus {
+    INVITE, UNINVITE
+  }
 
-    private final InvitationStatus invitationStatus;
+  private final InvitationStatus invitationStatus;
 
-    /**
-     * Constructs this event for the given warp, indicating that the particular
-     * invitee now has the given InvitationStatus.
-     * 
-     * @param warp
-     *            the warp
-     * @param invitationStatus
-     *            the invitationStatus
-     */
-    public WarpInvitesEvent(Warp warp, InvitationStatus invitationStatus) {
-        super(warp);
-        this.invitationStatus = invitationStatus;
-    }
+  /**
+   * Constructs this event for the given warp, indicating that the particular invitee now has the
+   * given InvitationStatus.
+   *
+   * @param warp             the warp
+   * @param invitationStatus the invitationStatus
+   */
+  public WarpInvitesEvent(Warp warp, InvitationStatus invitationStatus) {
+    super(warp);
+    this.invitationStatus = invitationStatus;
+  }
 
-    /**
-     * Gets the InvitationStatus of the particular invitee.
-     * 
-     * @return the InvitationStatus
-     */
-    public InvitationStatus getInvitationStatus() {
-        return invitationStatus;
-    }
+  /**
+   * Gets the InvitationStatus of the particular invitee.
+   *
+   * @return the InvitationStatus
+   */
+  public InvitationStatus getInvitationStatus() {
+    return invitationStatus;
+  }
 
 }

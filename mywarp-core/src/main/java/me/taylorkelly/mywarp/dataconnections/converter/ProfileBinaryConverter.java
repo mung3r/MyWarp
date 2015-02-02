@@ -26,38 +26,37 @@ import org.jooq.Converter;
 
 /**
  * Converts byte arrays to {@link Profile}s and back.
- *
  */
 public class ProfileBinaryConverter implements Converter<byte[], Profile> {
 
-    private static final long serialVersionUID = 713212664614712270L;
+  private static final long serialVersionUID = 713212664614712270L;
 
-    private final UUIDBinaryConverter converter = new UUIDBinaryConverter();
+  private final UUIDBinaryConverter converter = new UUIDBinaryConverter();
 
-    @Override
-    public Profile from(byte[] databaseObject) {
-        if (databaseObject == null) {
-            return null;
-        }
-        return MyWarp.getInstance().getProfileService().get(converter.from(databaseObject));
+  @Override
+  public Profile from(byte[] databaseObject) {
+    if (databaseObject == null) {
+      return null;
+    }
+    return MyWarp.getInstance().getProfileService().get(converter.from(databaseObject));
+  }
+
+  @Override
+  public byte[] to(Profile userObject) {
+    if (userObject == null) {
+      return null;
     }
 
-    @Override
-    public byte[] to(Profile userObject) {
-        if (userObject == null) {
-            return null;
-        }
+    return converter.to(userObject.getUniqueId());
+  }
 
-        return converter.to(userObject.getUniqueId());
-    }
+  @Override
+  public Class<byte[]> fromType() {
+    return byte[].class;
+  }
 
-    @Override
-    public Class<byte[]> fromType() {
-        return byte[].class;
-    }
-
-    @Override
-    public Class<Profile> toType() {
-        return Profile.class;
-    }
+  @Override
+  public Class<Profile> toType() {
+    return Profile.class;
+  }
 }

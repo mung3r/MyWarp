@@ -19,75 +19,71 @@
 
 package me.taylorkelly.mywarp;
 
-import java.util.UUID;
-
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
+
+import java.util.UUID;
 
 /**
  * Represents a player.
  */
 public interface LocalPlayer extends LocalEntity, Actor {
 
-    /**
-     * Gets the name of this player.
-     * 
-     * @return this player's name
-     */
-    String getName();
+  /**
+   * Gets the name of this player.
+   *
+   * @return this player's name
+   */
+  String getName();
 
-    /**
-     * Gets the unique ID of this player.
-     * 
-     * @return this player's unique ID
-     */
-    UUID getUniqueId();
+  /**
+   * Gets the unique ID of this player.
+   *
+   * @return this player's unique ID
+   */
+  UUID getUniqueId();
 
-    /**
-     * Gets the Profile of this player.
-     * 
-     * @return the Profile
-     */
-    Profile getProfile();
+  /**
+   * Gets the Profile of this player.
+   *
+   * @return the Profile
+   */
+  Profile getProfile();
 
-    /**
-     * Sets the compass target of this player.
-     * 
-     * @param world
-     *            the world where the new position is in
-     * @param position
-     *            the position of the new target
-     */
-    void setCompassTarget(LocalWorld world, Vector3 position);
+  /**
+   * Sets the compass target of this player.
+   *
+   * @param world    the world where the new position is in
+   * @param position the position of the new target
+   */
+  void setCompassTarget(LocalWorld world, Vector3 position);
 
-    /**
-     * Resets the compass target of this player.
-     */
-    void resetCompass();
+  /**
+   * Resets the compass target of this player.
+   */
+  void resetCompass();
 
-    /**
-     * Returns whether this player belongs to the given group.
-     * 
-     * @param groupId
-     *            the group-identifier
-     * @return true if this player belongs to the given group
-     */
-    boolean hasGroup(String groupId);
+  /**
+   * Returns whether this player belongs to the given group.
+   *
+   * @param groupId the group-identifier
+   * @return true if this player belongs to the given group
+   */
+  boolean hasGroup(String groupId);
 
-    /**
-     * Returns whether this player can access the given world.
-     * 
-     * @param world
-     *            the world
-     * @return true if this player can access the world
-     */
-    boolean canAccessWorld(LocalWorld world);
+  /**
+   * Returns whether this player can access the given world.
+   *
+   * @param world the world
+   * @return true if this player can access the world
+   */
+  boolean canAccessWorld(LocalWorld world);
 
-    /**
-     * Gets the current health of this player.
-     * 
-     * @return the current health
-     */
-    double getHealth();
+  /**
+   * Gets the current health of this player.
+   *
+   * @return the current health
+   */
+  double getHealth();
 
 }

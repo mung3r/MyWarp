@@ -26,43 +26,40 @@ import java.util.Locale;
  */
 public interface Actor {
 
-    /**
-     * Sends a message to this Actor.
-     * 
-     * @param msg
-     *            the message
-     */
-    void sendMessage(String msg);
+  /**
+   * Sends a message to this Actor.
+   *
+   * @param msg the message
+   */
+  void sendMessage(String msg);
 
-    /**
-     * Sends an error-message to this Actor.
-     * 
-     * @param msg
-     *            the error-message
-     */
-    void sendError(String msg);
+  /**
+   * Sends an error-message to this Actor.
+   *
+   * @param msg the error-message
+   */
+  void sendError(String msg);
 
-    /**
-     * Returns whether this Actor has the given permission.
-     * 
-     * @param node
-     *            the permission-node
-     * @return true if the Actor has the permission
-     */
-    boolean hasPermission(String node);
+  /**
+   * Returns whether this Actor has the given permission.
+   *
+   * @param node the permission-node
+   * @return true if the Actor has the permission
+   */
+  boolean hasPermission(String node);
 
-    /**
-     * Gets the name of this Actor.
-     * 
-     * @return the name
-     */
-    String getName();
+  /**
+   * Gets the name of this Actor.
+   *
+   * @return the name
+   */
+  String getName();
 
-    /**
-     * Gets the Locale of this Actor.
-     * 
-     * @return the Actor's Locale
-     */
-    Locale getLocale();
+  /**
+   * Gets the Locale of this Actor.
+   *
+   * @return the Actor's Locale
+   */
+  Locale getLocale();
 
 }

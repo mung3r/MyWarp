@@ -24,36 +24,33 @@ package me.taylorkelly.mywarp.bukkit.permissions.bundles;
  */
 public abstract class ValueBundle implements Comparable<ValueBundle> {
 
-    private final String identifier;
-    private final String basePermission;
+  private final String identifier;
+  private final String basePermission;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param identifier
-     *            the identifier if this individual ValueBundle
-     * @param basePermission
-     *            the base permission that is identical for all bundles that
-     *            bundle the same type of values
-     */
-    public ValueBundle(String identifier, String basePermission) {
-        this.identifier = identifier;
-        this.basePermission = basePermission.intern();
-    }
+  /**
+   * Creates an instance.
+   *
+   * @param identifier     the identifier if this individual ValueBundle
+   * @param basePermission the base permission that is identical for all bundles that bundle the
+   *                       same type of values
+   */
+  public ValueBundle(String identifier, String basePermission) {
+    this.identifier = identifier;
+    this.basePermission = basePermission.intern();
+  }
 
-    /**
-     * Gets the full permission that a user needs to have to have the bundled
-     * values.
-     * 
-     * @return the full permission of this bundle
-     */
-    public String getPermission() {
-        return basePermission + identifier;
-    }
+  /**
+   * Gets the full permission that a user needs to have to have the bundled values.
+   *
+   * @return the full permission of this bundle
+   */
+  public String getPermission() {
+    return basePermission + identifier;
+  }
 
-    @Override
-    public int compareTo(ValueBundle that) {
-        return this.identifier.compareTo(that.identifier);
-    }
+  @Override
+  public int compareTo(ValueBundle that) {
+    return this.identifier.compareTo(that.identifier);
+  }
 
 }

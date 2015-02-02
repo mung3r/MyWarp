@@ -19,128 +19,119 @@
 
 package me.taylorkelly.mywarp.util;
 
+import com.google.common.base.Predicate;
+
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
-
-import com.google.common.base.Predicate;
 
 /**
  * Utility methods to work with warps.
  */
 public final class WarpUtils {
 
-    public static final int MAX_NAME_LENGTH = 32;
+  public static final int MAX_NAME_LENGTH = 32;
 
-    /**
-     * Block initialization of this class.
-     */
-    private WarpUtils() {
-    }
+  /**
+   * Block initialization of this class.
+   */
+  private WarpUtils() {
+  }
 
-    /**
-     * Returns a predicate that evaluates to {@code true} if the warp being
-     * tested is created by player identified by the given profile.
-     * 
-     * @see Warp#isCreator(Profile)
-     * @param profile
-     *            the Profile
-     * @return a predicate that checks if the given warp is created by the given
-     *         player
-     */
-    public static Predicate<Warp> isCreator(final Profile profile) {
-        return new Predicate<Warp>() {
+  /**
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is created by
+   * player identified by the given profile.
+   *
+   * @param profile the Profile
+   * @return a predicate that checks if the given warp is created by the given player
+   * @see Warp#isCreator(Profile)
+   */
+  public static Predicate<Warp> isCreator(final Profile profile) {
+    return new Predicate<Warp>() {
 
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isCreator(profile);
-            }
+      @Override
+      public boolean apply(Warp warp) {
+        return warp.isCreator(profile);
+      }
 
-        };
-    }
+    };
+  }
 
-    /**
-     * Returns a predicate that evaluates to {@code true} if the warp being
-     * tested is modifiable by the given Actor.
-     * 
-     * @see Warp#isModifiable(Actor)
-     * @param actor
-     *            the command-sender
-     * @return a predicate that checks if the given warp is modifiable by the
-     *         given Actor
-     */
-    public static Predicate<Warp> isModifiable(final Actor actor) {
-        return new Predicate<Warp>() {
+  /**
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is modifiable by
+   * the given Actor.
+   *
+   * @param actor the command-sender
+   * @return a predicate that checks if the given warp is modifiable by the given Actor
+   * @see Warp#isModifiable(Actor)
+   */
+  public static Predicate<Warp> isModifiable(final Actor actor) {
+    return new Predicate<Warp>() {
 
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isModifiable(actor);
-            }
+      @Override
+      public boolean apply(Warp warp) {
+        return warp.isModifiable(actor);
+      }
 
-        };
-    }
+    };
+  }
 
-    /**
-     * Returns a predicate that evaluates to {@code true} if the warp being
-     * tested is of the given type.
-     * 
-     * @see Warp#isType(Warp.Type)
-     * @param type
-     *            the type
-     * @return a predicate that checks if the given warp is of the given type
-     */
-    public static Predicate<Warp> isType(final Warp.Type type) {
-        return new Predicate<Warp>() {
+  /**
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is of the given
+   * type.
+   *
+   * @param type the type
+   * @return a predicate that checks if the given warp is of the given type
+   * @see Warp#isType(Warp.Type)
+   */
+  public static Predicate<Warp> isType(final Warp.Type type) {
+    return new Predicate<Warp>() {
 
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isType(type);
-            }
+      @Override
+      public boolean apply(Warp warp) {
+        return warp.isType(type);
+      }
 
-        };
-    }
+    };
+  }
 
-    /**
-     * Returns a predicate that evaluates to {@code true} if the warp being
-     * tested is usable by the given entity.
-     * 
-     * @see Warp#isUsable(LocalEntity)
-     * @param entity
-     *            the entity
-     * @return a predicate that checks if the given warp is usable by the given
-     *         entity
-     */
-    public static Predicate<Warp> isUsable(final LocalEntity entity) {
-        return new Predicate<Warp>() {
+  /**
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is usable by the
+   * given entity.
+   *
+   * @param entity the entity
+   * @return a predicate that checks if the given warp is usable by the given entity
+   * @see Warp#isUsable(LocalEntity)
+   */
+  public static Predicate<Warp> isUsable(final LocalEntity entity) {
+    return new Predicate<Warp>() {
 
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isUsable(entity);
-            }
+      @Override
+      public boolean apply(Warp warp) {
+        return warp.isUsable(entity);
+      }
 
-        };
-    }
+    };
+  }
 
-    /**
-     * Returns a predicate that evaluates to {@code true} if the warp being
-     * tested is viewable by the given Actor.
-     * 
-     * @see Warp#isViewable(Actor)
-     * @param actor
-     *            the Actor
-     * @return a predicate that checks if the given warp is usable by the given
-     *         Actor
-     */
-    public static Predicate<Warp> isViewable(final Actor actor) {
-        return new Predicate<Warp>() {
+  /**
+   * Returns a predicate that evaluates to {@code true} if the warp being tested is viewable by the
+   * given Actor.
+   *
+   * @param actor the Actor
+   * @return a predicate that checks if the given warp is usable by the given Actor
+   * @see Warp#isViewable(Actor)
+   */
+  public static Predicate<Warp> isViewable(final Actor actor) {
+    return new Predicate<Warp>() {
 
-            @Override
-            public boolean apply(Warp warp) {
-                return warp.isViewable(actor);
-            }
+      @Override
+      public boolean apply(Warp warp) {
+        return warp.isViewable(actor);
+      }
 
-        };
-    }
+    };
+  }
 
 }

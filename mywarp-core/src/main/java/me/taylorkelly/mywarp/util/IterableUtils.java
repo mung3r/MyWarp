@@ -27,42 +27,35 @@ import com.google.common.collect.Iterables;
  */
 public final class IterableUtils {
 
-    /**
-     * Block initialization of this class.
-     */
-    private IterableUtils() {
-    }
+  /**
+   * Block initialization of this class.
+   */
+  private IterableUtils() {
+  }
 
-    /**
-     * Returns whether the given Iterable contains has least the given number of
-     * entries.
-     * 
-     * @param <T>
-     *            the type of entries
-     * @param iterable
-     *            the iterable to check
-     * @param count
-     *            the number of entries the iterable should have at least
-     * @return true if the given Iterable has at least the given number of
-     *         entries
-     */
-    public static <T> boolean atLeast(Iterable<T> iterable, int count) {
-        return Iterables.size(Iterables.limit(iterable, count)) == count;
-    }
+  /**
+   * Returns whether the given Iterable contains has least the given number of entries.
+   *
+   * @param <T>      the type of entries
+   * @param iterable the iterable to check
+   * @param count    the number of entries the iterable should have at least
+   * @return true if the given Iterable has at least the given number of entries
+   */
+  public static <T> boolean atLeast(Iterable<T> iterable, int count) {
+    return Iterables.size(Iterables.limit(iterable, count)) == count;
+  }
 
-    /**
-     * Returns an Optional containing the first element in iterable or
-     * {@code Optional.absend()} if the iterable is empty.
-     * 
-     * @param <T>
-     *            the type of entries
-     * @param iterable
-     *            the iterable to check
-     * @return the first element
-     */
-    public static <T> Optional<T> getFirst(Iterable<T> iterable) {
-        T first = Iterables.getFirst(iterable, null);
-        return Optional.fromNullable(first);
-    }
+  /**
+   * Returns an Optional containing the first element in iterable or {@code Optional.absend()} if
+   * the iterable is empty.
+   *
+   * @param <T>      the type of entries
+   * @param iterable the iterable to check
+   * @return the first element
+   */
+  public static <T> Optional<T> getFirst(Iterable<T> iterable) {
+    T first = Iterables.getFirst(iterable, null);
+    return Optional.fromNullable(first);
+  }
 
 }

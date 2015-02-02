@@ -19,66 +19,60 @@
 
 package me.taylorkelly.mywarp.bukkit.util;
 
-import java.util.Collection;
-
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import org.apache.commons.lang.text.StrBuilder;
 
+import java.util.Collection;
+
 /**
- * This class bundles all methods that are only used to simplify certain task
- * when writing commands. All methods should be static.
+ * This class bundles all methods that are only used to simplify certain task when writing commands.
+ * All methods should be static.
  */
 public class CommandUtils {
 
-    /**
-     * Block initialization of this class.
-     */
-    private CommandUtils() {
+  /**
+   * Block initialization of this class.
+   */
+  private CommandUtils() {
+  }
+
+  /**
+   * Joins all warps in the given collection in one string, separated by {@code ", "}.
+   *
+   * @param warps a collection of warps
+   * @return a string with all warp-names or {@code -} if the collection was empty
+   */
+  public static String joinWarps(Collection<Warp> warps) {
+    if (warps.isEmpty()) {
+      return "-";
     }
 
-    /**
-     * Joins all warps in the given collection in one string, separated by
-     * {@code ", "}.
-     * 
-     * @param warps
-     *            a collection of warps
-     * @return a string with all warp-names or {@code -} if the collection was
-     *         empty
-     */
-    public static String joinWarps(Collection<Warp> warps) {
-        if (warps.isEmpty()) {
-            return "-";
-        }
+    StrBuilder ret = new StrBuilder();
+    for (Warp warp : warps) {
+      ret.appendSeparator(", ");
+      ret.append(warp.getName());
+    }
+    return ret.toString();
+  }
 
-        StrBuilder ret = new StrBuilder();
-        for (Warp warp : warps) {
-            ret.appendSeparator(", ");
-            ret.append(warp.getName());
-        }
-        return ret.toString();
+  /**
+   * Joins all worlds in the given collection in one string, separated by {@code ", "}.
+   *
+   * @param worlds a collection of worlds
+   * @return a string with all world-names or {@code -} if the collection was empty
+   */
+  public static String joinWorlds(Collection<LocalWorld> worlds) {
+    if (worlds.isEmpty()) {
+      return "-";
     }
 
-    /**
-     * Joins all worlds in the given collection in one string, separated by
-     * {@code ", "}.
-     * 
-     * @param worlds
-     *            a collection of worlds
-     * @return a string with all world-names or {@code -} if the collection was
-     *         empty
-     */
-    public static String joinWorlds(Collection<LocalWorld> worlds) {
-        if (worlds.isEmpty()) {
-            return "-";
-        }
-
-        StrBuilder ret = new StrBuilder();
-        for (LocalWorld world : worlds) {
-            ret.appendSeparator(", ");
-            ret.append(world.getName());
-        }
-        return ret.toString();
+    StrBuilder ret = new StrBuilder();
+    for (LocalWorld world : worlds) {
+      ret.appendSeparator(", ");
+      ret.append(world.getName());
     }
+    return ret.toString();
+  }
 }

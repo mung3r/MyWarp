@@ -19,7 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit.commands;
 
-import java.util.concurrent.TimeUnit;
+import com.sk89q.intake.Command;
+import com.sk89q.intake.Require;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
@@ -37,65 +38,69 @@ import me.taylorkelly.mywarp.warp.Warp;
 
 import org.bukkit.ChatColor;
 
-import com.sk89q.intake.Command;
-import com.sk89q.intake.Require;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Bundles usage commands.
  */
 public class UsageCommands {
 
-    // REVIEW move these somewhere else - where? MyWarp?
-    public static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Commands"; // NON-NLS
-    public static final String CONVERSATIONS_RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Conversations"; // NON-NLS
+  // REVIEW move these somewhere else - where? MyWarp?
+  public static final String
+      RESOURCE_BUNDLE_NAME =
+      "me.taylorkelly.mywarp.lang.Commands";
+  // NON-NLS
+  public static final String
+      CONVERSATIONS_RESOURCE_BUNDLE_NAME =
+      "me.taylorkelly.mywarp.lang.Conversations";
+  // NON-NLS
 
-    private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages
+      MESSAGES =
+      new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
-    /**
-     * Teleports a player to a Warp.
-     * 
-     * @param player
-     *            the LocalPlayer
-     * @param warp
-     *            the Warp
-     * @throws TimerRunningException
-     *             if timers are enabled and a timer is already running for the
-     *             player using this command
-     */
-    @Command(aliases = { "to" }, desc = "warp-to.description")
-    @Require("mywarp.warp.basic.warp-to")
-    public void to(@Sender LocalPlayer player, @Condition(Type.USABLE) Warp warp)
-            throws TimerRunningException {
-        FeeType feeType = FeeType.WARP_TO;
+  /**
+   * Teleports a player to a Warp.
+   *
+   * @param player the LocalPlayer
+   * @param warp   the Warp
+   * @throws TimerRunningException if timers are enabled and a timer is already running for the
+   *                               player using this command
+   */
+  @Command(aliases = {"to"}, desc = "warp-to.description")
+  @Require("mywarp.warp.basic.warp-to")
+  public void to(@Sender LocalPlayer player, @Condition(Type.USABLE) Warp warp)
+      throws TimerRunningException {
+    FeeType feeType = FeeType.WARP_TO;
 
-        if (!MyWarp.getInstance().getEconomyManager().informativeHasAtLeast(player, feeType)) {
-            return;
-        }
-
-        // XXX This implementation is ugly and inflexible
-        if (MyWarp.getInstance().getSettings().isTimersEnabled()
-                && !player.hasPermission("mywarp.timer.disobey")) { // NON-NLS
-            EvaluationResult cooldownResult = MyWarp.getInstance().getTimerService()
-                    .has(player.getProfile(), WarpCooldown.class);
-            if (cooldownResult.isTimerRunning()) {
-                throw new TimerRunningException(cooldownResult.getDurationLeft().get());
-            }
-            EvaluationResult warmupResult = MyWarp.getInstance().getTimerService()
-                    .has(player.getProfile(), WarpWarmup.class);
-            if (warmupResult.isTimerRunning()) {
-                throw new TimerRunningException(warmupResult.getDurationLeft().get());
-            }
-            Duration duration = MyWarp.getInstance().getDurationProvider()
-                    .getDuration(player, WarpWarmup.class);
-            MyWarp.getInstance().getTimerService()
-                    .start(player.getProfile(), duration, new WarpWarmup(player, warp));
-
-            player.sendMessage(ChatColor.AQUA
-                    + MESSAGES.getString("warp-to.warmup.started", warp.getName(),
-                            duration.get(TimeUnit.SECONDS)));
-            return;
-        }
-        warp.teleport(player, feeType);
+    if (!MyWarp.getInstance().getEconomyManager().informativeHasAtLeast(player, feeType)) {
+      return;
     }
+
+    // XXX This implementation is ugly and inflexible
+    if (MyWarp.getInstance().getSettings().isTimersEnabled()
+        && !player.hasPermission("mywarp.timer.disobey")) { // NON-NLS
+      EvaluationResult cooldownResult = MyWarp.getInstance().getTimerService()
+          .has(player.getProfile(), WarpCooldown.class);
+      if (cooldownResult.isTimerRunning()) {
+        throw new TimerRunningException(cooldownResult.getDurationLeft().get());
+      }
+      EvaluationResult warmupResult = MyWarp.getInstance().getTimerService()
+          .has(player.getProfile(), WarpWarmup.class);
+      if (warmupResult.isTimerRunning()) {
+        throw new TimerRunningException(warmupResult.getDurationLeft().get());
+      }
+      Duration duration = MyWarp.getInstance().getDurationProvider()
+          .getDuration(player, WarpWarmup.class);
+      MyWarp.getInstance().getTimerService()
+          .start(player.getProfile(), duration, new WarpWarmup(player, warp));
+
+      player.sendMessage(ChatColor.AQUA
+                         + MESSAGES.getString("warp-to.warmup.started", warp.getName(),
+                                              duration.get(TimeUnit.SECONDS)));
+      return;
+    }
+    warp.teleport(player, feeType);
+  }
 
 }

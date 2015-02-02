@@ -20,20 +20,19 @@
 package me.taylorkelly.mywarp;
 
 /**
- * An abstract implementation of {@link LocalPlayer} that provides platform
- * independent functions.
+ * An abstract implementation of {@link LocalPlayer} that provides platform independent functions.
  */
 public abstract class AbstractPlayer implements LocalPlayer {
 
-    @Override
-    public boolean canAccessWorld(LocalWorld world) {
-        if (getWorld().equals(world) && hasPermission("mywarp.warp.world.currentworld")) { // NON-NLS
-            return true;
-        }
-        if (hasPermission("mywarp.warp.world." + world.getName())) { // NON-NLS
-            return true;
-        }
-        return false;
+  @Override
+  public boolean canAccessWorld(LocalWorld world) {
+    if (getWorld().equals(world) && hasPermission("mywarp.warp.world.currentworld")) { // NON-NLS
+      return true;
     }
+    if (hasPermission("mywarp.warp.world." + world.getName())) { // NON-NLS
+      return true;
+    }
+    return false;
+  }
 
 }

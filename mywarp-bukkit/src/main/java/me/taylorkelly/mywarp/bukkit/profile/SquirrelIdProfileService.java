@@ -19,10 +19,14 @@
 
 package me.taylorkelly.mywarp.bukkit.profile;
 
-import java.io.IOException;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.google.common.base.Optional;
+
+import com.sk89q.squirrelid.cache.HashMapCache;
+import com.sk89q.squirrelid.cache.ProfileCache;
+import com.sk89q.squirrelid.resolver.BukkitPlayerService;
+import com.sk89q.squirrelid.resolver.CacheForwardingService;
+import com.sk89q.squirrelid.resolver.CombinedProfileService;
+import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 
 import me.taylorkelly.mywarp.bukkit.AbstractListener;
 import me.taylorkelly.mywarp.util.profile.NameProvidingProfileService;
@@ -32,79 +36,75 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import com.google.common.base.Optional;
-import com.sk89q.squirrelid.cache.HashMapCache;
-import com.sk89q.squirrelid.cache.ProfileCache;
-import com.sk89q.squirrelid.resolver.BukkitPlayerService;
-import com.sk89q.squirrelid.resolver.CacheForwardingService;
-import com.sk89q.squirrelid.resolver.CombinedProfileService;
-import com.sk89q.squirrelid.resolver.HttpRepositoryService;
+import java.io.IOException;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * A ProfileService implementation that uses the SquirrelID library to lookup
- * UUIDs.
+ * A ProfileService implementation that uses the SquirrelID library to lookup UUIDs.
  */
-public class SquirrelIdProfileService extends AbstractListener implements NameProvidingProfileService {
+public class SquirrelIdProfileService extends AbstractListener
+    implements NameProvidingProfileService {
 
-    private static final Logger LOG = Logger.getLogger(SquirrelIdProfileService.class.getName());
+  private static final Logger log = Logger.getLogger(SquirrelIdProfileService.class.getName());
 
-    private ProfileCache cache = new HashMapCache(); // REVIEW use SQLite cache?
-    private CacheForwardingService resolver = new CacheForwardingService(new CombinedProfileService(
-            BukkitPlayerService.getInstance(), HttpRepositoryService.forMinecraft()), cache);
+  private ProfileCache cache = new HashMapCache(); // REVIEW use SQLite cache?
+  private CacheForwardingService resolver = new CacheForwardingService(new CombinedProfileService(
+      BukkitPlayerService.getInstance(), HttpRepositoryService.forMinecraft()), cache);
 
-    @Override
-    public Profile get(UUID uniqueId) {
-        return new LazyProfile(this, uniqueId);
+  @Override
+  public Profile get(UUID uniqueId) {
+    return new LazyProfile(this, uniqueId);
+  }
+
+  @Override
+  public Optional<Profile> get(String name) {
+    try {
+      com.sk89q.squirrelid.Profile profile = resolver.findByName(name);
+      if (profile != null) {
+        return Optional.of(wrap(profile));
+      }
+    } catch (IOException e) {
+      log.log(Level.SEVERE, "Failed to find UUID for '" + name + "'.", e); // NON-NLS
+    } catch (InterruptedException e) {
+      log.log(Level.SEVERE,
+              "Failed to find UUID for '" + name + "' as the process was interuptted.",
+              e); // NON-NLS
+      // NON-NLS
     }
+    return Optional.absent();
+  }
 
-    @Override
-    public Optional<Profile> get(String name) {
-        try {
-            com.sk89q.squirrelid.Profile profile = resolver.findByName(name);
-            if (profile != null) {
-                return Optional.of(wrap(profile));
-            }
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Failed to find UUID for '" + name + "'.", e); // NON-NLS
-        } catch (InterruptedException e) {
-            LOG.log(Level.SEVERE, "Failed to find UUID for '" + name + "' as the process was interuptted.", e); // NON-NLS
-                                                                                                                // NON-NLS
-        }
-        return Optional.absent();
+  @Override
+  public Optional<String> getName(UUID uniqueId) {
+    com.sk89q.squirrelid.Profile profile = cache.getIfPresent(uniqueId);
+
+    if (profile != null) {
+      return Optional.of(profile.getName());
     }
+    return Optional.absent();
+  }
 
-    @Override
-    public Optional<String> getName(UUID uniqueId) {
-        com.sk89q.squirrelid.Profile profile = cache.getIfPresent(uniqueId);
+  /**
+   * Adapts between a {@link com.sk89q.squirrelid.Profile} and a {@link Profile}.
+   *
+   * @param profile the com.sk89q.squirrelid.Profile
+   * @return the Profile
+   */
+  private Profile wrap(com.sk89q.squirrelid.Profile profile) {
+    return new LazyProfile(this, profile.getUniqueId());
+  }
 
-        if (profile != null) {
-            return Optional.of(profile.getName());
-        }
-        return Optional.absent();
-    }
-
-    /**
-     * Adapts between a {@link com.sk89q.squirrelid.Profile} and a
-     * {@link Profile}.
-     * 
-     * @param profile
-     *            the com.sk89q.squirrelid.Profile
-     * @return the Profile
-     */
-    private Profile wrap(com.sk89q.squirrelid.Profile profile) {
-        return new LazyProfile(this, profile.getUniqueId());
-    }
-
-    /**
-     * Called when a player logs in.
-     * 
-     * @param event
-     *            the PlayerLoginEvent
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerLogin(PlayerLoginEvent event) {
-        org.bukkit.entity.Player player = event.getPlayer();
-        cache.put(new com.sk89q.squirrelid.Profile(player.getUniqueId(), player.getName()));
-    }
+  /**
+   * Called when a player logs in.
+   *
+   * @param event the PlayerLoginEvent
+   */
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void onPlayerLogin(PlayerLoginEvent event) {
+    org.bukkit.entity.Player player = event.getPlayer();
+    cache.put(new com.sk89q.squirrelid.Profile(player.getUniqueId(), player.getName()));
+  }
 
 }

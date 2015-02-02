@@ -26,14 +26,13 @@ import me.taylorkelly.mywarp.warp.Warp;
  */
 public class WarpAdditionEvent extends WarpEvent {
 
-    /**
-     * Constructs this event for the given Warp.
-     * 
-     * @param warp
-     *            the warp
-     */
-    public WarpAdditionEvent(Warp warp) {
-        super(warp);
-    }
+  /**
+   * Constructs this event for the given Warp.
+   *
+   * @param warp the warp
+   */
+  public WarpAdditionEvent(Warp warp) {
+    super(warp);
+  }
 
 }

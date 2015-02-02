@@ -26,30 +26,27 @@ import me.taylorkelly.mywarp.warp.Warp;
  */
 public class WarpGroupInvitesEvent extends WarpInvitesEvent {
 
-    private final String groupId;
+  private final String groupId;
 
-    /**
-     * Constructs this event for the given Warp, indicating that the group of
-     * the given identifier now has the given InvitationStatus.
-     * 
-     * @param warp
-     *            the warp
-     * @param invitationStatus
-     *            the InvitationStatus of the player
-     * @param groupId
-     *            the identifier if the group
-     */
-    public WarpGroupInvitesEvent(Warp warp, InvitationStatus invitationStatus, String groupId) {
-        super(warp, invitationStatus);
-        this.groupId = groupId;
-    }
+  /**
+   * Constructs this event for the given Warp, indicating that the group of the given identifier now
+   * has the given InvitationStatus.
+   *
+   * @param warp             the warp
+   * @param invitationStatus the InvitationStatus of the player
+   * @param groupId          the identifier if the group
+   */
+  public WarpGroupInvitesEvent(Warp warp, InvitationStatus invitationStatus, String groupId) {
+    super(warp, invitationStatus);
+    this.groupId = groupId;
+  }
 
-    /**
-     * Gets the identifier of the group.
-     *
-     * @return the groupId
-     */
-    public String getGroupId() {
-        return groupId;
-    }
+  /**
+   * Gets the identifier of the group.
+   *
+   * @return the groupId
+   */
+  public String getGroupId() {
+    return groupId;
+  }
 }

@@ -19,12 +19,12 @@
 
 package me.taylorkelly.mywarp.dataconnections;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
@@ -33,94 +33,96 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.google.common.base.Function;
-import com.google.common.util.concurrent.CheckedFuture;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 /**
  * The connection to a SQlite database.
  */
 public class SQLiteConnection {
 
-    /**
-     * Block initialization of this class.
-     */
-    private SQLiteConnection() {
-    }
+  /**
+   * Block initialization of this class.
+   */
+  private SQLiteConnection() {
+  }
 
-    /**
-     * Gets a valid connection to the given SQLite database. The connection is
-     * created asynchronous, the returned CheckedFuture either contains the
-     * ready-to-use connection or throws a {@link DataConnectionException}.
-     * 
-     * @param database
-     *            the database file
-     * @param controlDBLayout
-     *            whether the implementation should create tables and execute
-     *            updates, if necessary
-     * @return a valid, setup connection to the SQLite database
-     */
-    public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final File database,
-            final boolean controlDBLayout) {
-        final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
-                .newSingleThreadExecutor());
+  /**
+   * Gets a valid connection to the given SQLite database. The connection is created asynchronous,
+   * the returned CheckedFuture either contains the ready-to-use connection or throws a {@link
+   * DataConnectionException}.
+   *
+   * @param database        the database file
+   * @param controlDBLayout whether the implementation should create tables and execute updates, if
+   *                        necessary
+   * @return a valid, setup connection to the SQLite database
+   */
+  public static CheckedFuture<DataConnection, DataConnectionException> getConnection(
+      final File database,
+      final boolean controlDBLayout) {
+    final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
+                                                                                   .newSingleThreadExecutor());
 
-        ListenableFuture<DataConnection> futureConnection = executor.submit(new Callable<DataConnection>() {
+    ListenableFuture<DataConnection>
+        futureConnection =
+        executor.submit(new Callable<DataConnection>() {
 
-            @Override
-            public DataConnection call() throws DataConnectionException {
-                String dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
-                try {
-                    // Manually load SQLite driver. DriveManager is unable to
-                    // identify it as the driver does not follow JDBC 4.0
-                    // standards.
-                    Class.forName("org.sqlite.JDBC");
-                } catch (ClassNotFoundException e) {
-                    throw new DataConnectionException("Unable to find SQLite library.", e);
-                }
-
-                if (controlDBLayout) {
-                    Flyway flyway = new Flyway();
-
-                    flyway.setDataSource(dsn, null, null);
-                    flyway.setClassLoader(getClass().getClassLoader());
-                    flyway.setLocations("migrations/sqlite"); // NON-NLS
-
-                    try {
-                        flyway.migrate();
-                    } catch (FlywayException e) {
-                        throw new DataConnectionException("Failed to execute migration process.", e);
-                    }
-                }
-
-                Connection conn;
-                try {
-                    conn = DriverManager.getConnection(dsn);
-                } catch (SQLException e) {
-                    throw new DataConnectionException("Failed to connect to the database.", e);
-                }
-
-                // the database scheme can be configured by users
-                Settings settings = new Settings().withRenderSchema(false);
-
-                DSLContext create = DSL.using(conn, SQLDialect.SQLITE, settings);
-
-                return new JOOQConnection(create, conn, executor);
+          @Override
+          public DataConnection call() throws DataConnectionException {
+            String dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
+            try {
+              // Manually load SQLite driver. DriveManager is unable to
+              // identify it as the driver does not follow JDBC 4.0
+              // standards.
+              Class.forName("org.sqlite.JDBC");
+            } catch (ClassNotFoundException e) {
+              throw new DataConnectionException("Unable to find SQLite library.", e);
             }
 
-        });
-        return Futures.makeChecked(futureConnection, new Function<Exception, DataConnectionException>() {
+            if (controlDBLayout) {
+              Flyway flyway = new Flyway();
 
-            @Override
-            public DataConnectionException apply(Exception ex) {
-                if (ex instanceof DataConnectionException) {
-                    return (DataConnectionException) ex;
-                }
-                return new DataConnectionException(ex);
+              flyway.setDataSource(dsn, null, null);
+              flyway.setClassLoader(getClass().getClassLoader());
+              flyway.setLocations("migrations/sqlite"); // NON-NLS
+
+              try {
+                flyway.migrate();
+              } catch (FlywayException e) {
+                throw new DataConnectionException("Failed to execute migration process.", e);
+              }
             }
+
+            Connection conn;
+            try {
+              conn = DriverManager.getConnection(dsn);
+            } catch (SQLException e) {
+              throw new DataConnectionException("Failed to connect to the database.", e);
+            }
+
+            // the database scheme can be configured by users
+            Settings settings = new Settings().withRenderSchema(false);
+
+            DSLContext create = DSL.using(conn, SQLDialect.SQLITE, settings);
+
+            return new JOOQConnection(create, conn, executor);
+          }
+
         });
-    }
+    return Futures
+        .makeChecked(futureConnection, new Function<Exception, DataConnectionException>() {
+
+          @Override
+          public DataConnectionException apply(Exception ex) {
+            if (ex instanceof DataConnectionException) {
+              return (DataConnectionException) ex;
+            }
+            return new DataConnectionException(ex);
+          }
+        });
+  }
 }

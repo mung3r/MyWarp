@@ -26,25 +26,24 @@ import me.taylorkelly.mywarp.warp.Warp;
  */
 public abstract class WarpEvent {
 
-    private final Warp warp;
+  private final Warp warp;
 
-    /**
-     * Constructs this event for the given Warp.
-     * 
-     * @param warp
-     *            the Warp
-     */
-    public WarpEvent(Warp warp) {
-        this.warp = warp;
-    }
+  /**
+   * Constructs this event for the given Warp.
+   *
+   * @param warp the Warp
+   */
+  public WarpEvent(Warp warp) {
+    this.warp = warp;
+  }
 
-    /**
-     * Gets the Warp.
-     *
-     * @return the Warp
-     */
-    public Warp getWarp() {
-        return warp;
-    }
+  /**
+   * Gets the Warp.
+   *
+   * @return the Warp
+   */
+  public Warp getWarp() {
+    return warp;
+  }
 
 }

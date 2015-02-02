@@ -19,11 +19,12 @@
 
 package me.taylorkelly.mywarp.dataconnections;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
@@ -32,89 +33,85 @@ import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.google.common.base.Function;
-import com.google.common.util.concurrent.CheckedFuture;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 /**
  * The connection to a MySQL database.
  */
 public class MySQLConnection {
 
-    /**
-     * Block initialization of this class.
-     */
-    private MySQLConnection() {
-    }
+  /**
+   * Block initialization of this class.
+   */
+  private MySQLConnection() {
+  }
 
-    /**
-     * Gets a valid connection to the given MySQL database. The connection is
-     * created asynchronous, the returned CheckedFuture either contains the
-     * ready-to-use connection or throws a {@link DataConnectionException}.
-     * 
-     * @param dsn
-     *            the dsn of the database
-     * @param user
-     *            the MySQL user to use
-     * @param password
-     *            the user's password
-     * @param controlDBLayout
-     *            whether the implementation should create tables and execute
-     *            updates, if necessary
-     * @return a CheckedFuture containing a valid, setup connection
-     */
-    public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final String dsn,
-            final String user, final String password, final boolean controlDBLayout) {
-        final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
-                .newSingleThreadExecutor());
+  /**
+   * Gets a valid connection to the given MySQL database. The connection is created asynchronous,
+   * the returned CheckedFuture either contains the ready-to-use connection or throws a {@link
+   * DataConnectionException}.
+   *
+   * @param dsn             the dsn of the database
+   * @param user            the MySQL user to use
+   * @param password        the user's password
+   * @param controlDBLayout whether the implementation should create tables and execute updates, if
+   *                        necessary
+   * @return a CheckedFuture containing a valid, setup connection
+   */
+  public static CheckedFuture<DataConnection, DataConnectionException> getConnection(
+      final String dsn,
+      final String user, final String password, final boolean controlDBLayout) {
+    final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors
+                                                                                   .newSingleThreadExecutor());
 
-        ListenableFuture<DataConnection> future = executor.submit(new Callable<DataConnection>() {
+    ListenableFuture<DataConnection> future = executor.submit(new Callable<DataConnection>() {
 
-            @Override
-            public DataConnection call() throws DataConnectionException {
+      @Override
+      public DataConnection call() throws DataConnectionException {
 
-                if (controlDBLayout) {
-                    Flyway flyway = new Flyway();
+        if (controlDBLayout) {
+          Flyway flyway = new Flyway();
 
-                    flyway.setDataSource(dsn, user, password);
-                    flyway.setClassLoader(getClass().getClassLoader());
-                    flyway.setLocations("migrations/mysql"); // NON-NLS
-                    flyway.setSchemas("mywarp"); // NON-NLS
+          flyway.setDataSource(dsn, user, password);
+          flyway.setClassLoader(getClass().getClassLoader());
+          flyway.setLocations("migrations/mysql"); // NON-NLS
+          flyway.setSchemas("mywarp"); // NON-NLS
 
-                    try {
-                        flyway.migrate();
-                    } catch (FlywayException e) {
-                        throw new DataConnectionException("Failed to execute migration process.", e);
-                    }
-                }
+          try {
+            flyway.migrate();
+          } catch (FlywayException e) {
+            throw new DataConnectionException("Failed to execute migration process.", e);
+          }
+        }
 
-                Connection conn;
-                try {
-                    conn = DriverManager.getConnection(dsn, user, password);
-                } catch (SQLException e) {
-                    throw new DataConnectionException("Failed to connect to the database.", e);
-                }
+        Connection conn;
+        try {
+          conn = DriverManager.getConnection(dsn, user, password);
+        } catch (SQLException e) {
+          throw new DataConnectionException("Failed to connect to the database.", e);
+        }
 
-                // the database scheme can be configured by users
-                Settings settings = new Settings().withRenderSchema(false);
-                DSLContext create = DSL.using(conn, SQLDialect.MYSQL, settings);
+        // the database scheme can be configured by users
+        Settings settings = new Settings().withRenderSchema(false);
+        DSLContext create = DSL.using(conn, SQLDialect.MYSQL, settings);
 
-                return new JOOQConnection(create, conn, executor);
-            }
+        return new JOOQConnection(create, conn, executor);
+      }
 
-        });
-        return Futures.makeChecked(future, new Function<Exception, DataConnectionException>() {
+    });
+    return Futures.makeChecked(future, new Function<Exception, DataConnectionException>() {
 
-            @Override
-            public DataConnectionException apply(Exception ex) {
-                if (ex instanceof DataConnectionException) {
-                    return (DataConnectionException) ex;
-                }
-                return new DataConnectionException(ex);
-            }
-        });
-    }
+      @Override
+      public DataConnectionException apply(Exception ex) {
+        if (ex instanceof DataConnectionException) {
+          return (DataConnectionException) ex;
+        }
+        return new DataConnectionException(ex);
+      }
+    });
+  }
 }

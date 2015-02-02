@@ -26,9 +26,9 @@ import java.util.UUID;
  */
 public abstract class AbstractProfile implements Profile {
 
-    @Override
-    public boolean isProfileOf(UUID uniqueId) {
-        return getUniqueId().equals(uniqueId);
-    }
+  @Override
+  public boolean isProfileOf(UUID uniqueId) {
+    return getUniqueId().equals(uniqueId);
+  }
 
 }

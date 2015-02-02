@@ -33,78 +33,73 @@ import org.bukkit.entity.Player;
  */
 public final class BukkitAdapter {
 
-    private final ProfileService profileService;
-    private final GroupResolver groupResolver;
+  private final ProfileService profileService;
+  private final GroupResolver groupResolver;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param profileService
-     *            the profileService
-     * @param groupResolver
-     *            the groupResolver
-     */
-    public BukkitAdapter(ProfileService profileService, GroupResolver groupResolver) {
-        this.profileService = profileService;
-        this.groupResolver = groupResolver;
-    }
+  /**
+   * Creates an instance.
+   *
+   * @param profileService the profileService
+   * @param groupResolver  the groupResolver
+   */
+  public BukkitAdapter(ProfileService profileService, GroupResolver groupResolver) {
+    this.profileService = profileService;
+    this.groupResolver = groupResolver;
+  }
 
-    /**
-     * Adapts between a LocalWorld and a World.
-     * 
-     * @param world
-     *            the LocalWorld
-     * @return the World representing the given LocalWorld
-     */
-    public World adapt(LocalWorld world) {
-        if (world instanceof BukkitWorld) {
-            return ((BukkitWorld) world).getLoadedWorld();
-        }
-        World loadedWorld = Bukkit.getWorld(world.getName());
-        if (loadedWorld == null) {
-            throw new IllegalArgumentException("Cannot find a loaded world for " + world + "in Bukkit.");
-        }
-        return loadedWorld;
+  /**
+   * Adapts between a LocalWorld and a World.
+   *
+   * @param world the LocalWorld
+   * @return the World representing the given LocalWorld
+   */
+  public World adapt(LocalWorld world) {
+    if (world instanceof BukkitWorld) {
+      return ((BukkitWorld) world).getLoadedWorld();
     }
+    World loadedWorld = Bukkit.getWorld(world.getName());
+    if (loadedWorld == null) {
+      throw new IllegalArgumentException("Cannot find a loaded world for " + world + "in Bukkit.");
+    }
+    return loadedWorld;
+  }
 
-    /**
-     * Adapts between a World and a LocalWorld.
-     * 
-     * @param world
-     *            the World
-     * @return the LocalWorld representing the given World
-     */
-    public LocalWorld adapt(World world) {
-        return new BukkitWorld(world);
-    }
+  /**
+   * Adapts between a World and a LocalWorld.
+   *
+   * @param world the World
+   * @return the LocalWorld representing the given World
+   */
+  public LocalWorld adapt(World world) {
+    return new BukkitWorld(world);
+  }
 
-    /**
-     * Adapts between a LocalPlayer and a Player.
-     * 
-     * @param player
-     *            the LocalPlayer
-     * @return the Player representing the given LocalPlayer
-     */
-    public Player adapt(LocalPlayer player) {
-        if (player instanceof BukkitPlayer) {
-            return ((BukkitPlayer) player).getLoadedPlayer();
-        }
-        Player loadedPlayer = Bukkit.getPlayer(player.getProfile().getUniqueId());
-        if (loadedPlayer == null) {
-            throw new IllegalArgumentException("Cannot find a loaded player for " + player + "in Bukkit.");
-        }
-        return loadedPlayer;
+  /**
+   * Adapts between a LocalPlayer and a Player.
+   *
+   * @param player the LocalPlayer
+   * @return the Player representing the given LocalPlayer
+   */
+  public Player adapt(LocalPlayer player) {
+    if (player instanceof BukkitPlayer) {
+      return ((BukkitPlayer) player).getLoadedPlayer();
     }
+    Player loadedPlayer = Bukkit.getPlayer(player.getProfile().getUniqueId());
+    if (loadedPlayer == null) {
+      throw new IllegalArgumentException(
+          "Cannot find a loaded player for " + player + "in Bukkit.");
+    }
+    return loadedPlayer;
+  }
 
-    /**
-     * Adapts between a Player and a LocalPlayer.
-     * 
-     * @param player
-     *            the Player
-     * @return the LocalPlayer representing the given Player
-     */
-    public LocalPlayer adapt(Player player) {
-        return new BukkitPlayer(player, profileService, groupResolver, this);
-    }
+  /**
+   * Adapts between a Player and a LocalPlayer.
+   *
+   * @param player the Player
+   * @return the LocalPlayer representing the given Player
+   */
+  public LocalPlayer adapt(Player player) {
+    return new BukkitPlayer(player, profileService, groupResolver, this);
+  }
 
 }

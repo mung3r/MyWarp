@@ -27,20 +27,20 @@ import org.bukkit.entity.Player;
  */
 public class GroupManagerResolver implements GroupResolver {
 
-    private final GroupManager groupManager;
+  private final GroupManager groupManager;
 
-    /**
-     * Initializes this handler on the given GroupManager instance.
-     * 
-     * @param groupManager
-     *            the running GroupManager plugin
-     */
-    public GroupManagerResolver(final GroupManager groupManager) {
-        this.groupManager = groupManager;
-    }
+  /**
+   * Initializes this handler on the given GroupManager instance.
+   *
+   * @param groupManager the running GroupManager plugin
+   */
+  public GroupManagerResolver(final GroupManager groupManager) {
+    this.groupManager = groupManager;
+  }
 
-    @Override
-    public boolean hasGroup(Player player, String group) {
-        return groupManager.getWorldsHolder().getWorldPermissions(player).inGroup(player.getName(), group);
-    }
+  @Override
+  public boolean hasGroup(Player player, String group) {
+    return groupManager.getWorldsHolder().getWorldPermissions(player)
+        .inGroup(player.getName(), group);
+  }
 }

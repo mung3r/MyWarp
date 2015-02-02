@@ -19,6 +19,10 @@
 
 package me.taylorkelly.mywarp.util;
 
+import com.google.common.base.Charsets;
+
+import org.apache.commons.lang.text.StrBuilder;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,135 +39,121 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.text.StrBuilder;
-
-import com.google.common.base.Charsets;
-
 /**
  * Provides utility methods for working with {@link Properties}.
  */
 public final class PropertiesUtils {
 
-    private static final Logger LOG = Logger.getLogger(PropertiesUtils.class.getName());
+  private static final Logger log = Logger.getLogger(PropertiesUtils.class.getName());
 
-    /**
-     * Block initialization of this class.
-     */
-    private PropertiesUtils() {
-    }
+  /**
+   * Block initialization of this class.
+   */
+  private PropertiesUtils() {
+  }
 
-    /**
-     * Copies key-value-pairs found in the given Properties but not in the given
-     * File into it. The file is expected to exist and contain a structure
-     * readable as Properties.
-     * <p>
-     * Instead of using the sytem's default encoding, this method will use
-     * <b>UTF-8</b> to write the file. A comment about the encoding is added to
-     * the file if changes need to be saved.
-     * </p>
-     * 
-     * @param file
-     *            the file that potentially has missing values
-     * @param defaults
-     *            the Properties that contains all values
-     * @throws IOException
-     *             if reading or writing the file fails for some reason
-     */
-    public static void copyMissing(File file, Properties defaults) throws IOException {
-        copyMissing(file, defaults, Charsets.UTF_8);
-    }
+  /**
+   * Copies key-value-pairs found in the given Properties but not in the given File into it. The
+   * file is expected to exist and contain a structure readable as Properties. <p> Instead of using
+   * the sytem's default encoding, this method will use <b>UTF-8</b> to write the file. A comment
+   * about the encoding is added to the file if changes need to be saved. </p>
+   *
+   * @param file     the file that potentially has missing values
+   * @param defaults the Properties that contains all values
+   * @throws IOException if reading or writing the file fails for some reason
+   */
+  public static void copyMissing(File file, Properties defaults) throws IOException {
+    copyMissing(file, defaults, Charsets.UTF_8);
+  }
 
-    /**
-     * Copies key-value-pairs found in the given Properties but not in the given
-     * File into it. The file is not created by this method but is expected to
-     * exist and contain a structure readable as Properties.
-     * <p>
-     * Instead of using the sytem's default encoding, this method will use given
-     * one to write the file. A comment about the encoding is added to the file
-     * if changes need to be saved.
-     * </p>
-     * 
-     * @param file
-     *            the file that potentially has missing values
-     * @param defaults
-     *            the Properties that contains all values
-     * @param charset
-     *            the charset that should be used to read and write the file
-     * @throws IOException
-     *             if reading or writing the file fails for some reason
-     */
-    public static void copyMissing(File file, Properties defaults, Charset charset) throws IOException {
-        Properties loaded = new Properties();
+  /**
+   * Copies key-value-pairs found in the given Properties but not in the given File into it. The
+   * file is not created by this method but is expected to exist and contain a structure readable as
+   * Properties. <p> Instead of using the sytem's default encoding, this method will use given one
+   * to write the file. A comment about the encoding is added to the file if changes need to be
+   * saved. </p>
+   *
+   * @param file     the file that potentially has missing values
+   * @param defaults the Properties that contains all values
+   * @param charset  the charset that should be used to read and write the file
+   * @throws IOException if reading or writing the file fails for some reason
+   */
+  public static void copyMissing(File file, Properties defaults, Charset charset)
+      throws IOException {
+    Properties loaded = new Properties();
 
-        InputStream inputStream;
-        Reader reader = null;
+    InputStream inputStream;
+    Reader reader = null;
+    try {
+      inputStream = new FileInputStream(file);
+      reader = new InputStreamReader(inputStream, charset);
+      loaded.load(reader);
+    } finally {
+      if (reader != null) {
         try {
-            inputStream = new FileInputStream(file);
-            reader = new InputStreamReader(inputStream, charset);
-            loaded.load(reader);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    LOG.log(Level.FINER, "Failed to close Reader for '" + file.getAbsolutePath() + "'.", e); // NON-NLS
-                }
-            }
+          reader.close();
+        } catch (IOException e) {
+          log.log(Level.FINER, "Failed to close Reader for '" + file.getAbsolutePath() + "'.",
+                  e); // NON-NLS
         }
-
-        boolean needsStorage = false;
-        for (Entry<Object, Object> entry : defaults.entrySet()) {
-            if (loaded.containsKey(entry.getKey().toString())) {
-                continue;
-            }
-            loaded.setProperty(entry.getKey().toString(), entry.getValue().toString());
-            needsStorage = true;
-        }
-
-        if (needsStorage) {
-            OutputStream outputStream = null;
-            Writer writer = null;
-
-            try {
-                outputStream = new FileOutputStream(file);
-                writer = new OutputStreamWriter(outputStream, charset);
-                loaded.store(writer, getHeader(charset));
-            } finally {
-                if (writer != null) {
-                    try {
-                        writer.close();
-                    } catch (IOException e) {
-                        LOG.log(Level.FINER, "Failed to close Writer to '" + file.getAbsolutePath() + "'.", e); // NON-NLS
-                    }
-                }
-                if (outputStream != null) {
-                    try {
-                        outputStream.close();
-                    } catch (IOException e) {
-                        LOG.log(Level.FINER, "Failed to close OutputStream to '" + file.getAbsolutePath() // NON-NLS
-                                + "'.", e);
-                    }
-                }
-            }
-        }
-
+      }
     }
 
-    /**
-     * Gets the header for the given Charset. The header includes informations
-     * about the Charset and on how to edit the file.
-     * 
-     * @param charset
-     *            the Charset
-     * @return the header
-     */
-    private static String getHeader(Charset charset) {
-        StrBuilder ret = new StrBuilder();
-        ret.append("This file is encoded in '"); // NON-NLS
-        ret.append(charset.name());
-        ret.append("', you MUST NOT change this encoding or special characters will brake."); // NON-NLS
-        ret.appendNewLine();
-        ret.append("Use an appropriate editor when editing this file and make sure you know what you are doing!"); // NON-NLS
-        return ret.toString();
+    boolean needsStorage = false;
+    for (Entry<Object, Object> entry : defaults.entrySet()) {
+      if (loaded.containsKey(entry.getKey().toString())) {
+        continue;
+      }
+      loaded.setProperty(entry.getKey().toString(), entry.getValue().toString());
+      needsStorage = true;
     }
+
+    if (needsStorage) {
+      OutputStream outputStream = null;
+      Writer writer = null;
+
+      try {
+        outputStream = new FileOutputStream(file);
+        writer = new OutputStreamWriter(outputStream, charset);
+        loaded.store(writer, getHeader(charset));
+      } finally {
+        if (writer != null) {
+          try {
+            writer.close();
+          } catch (IOException e) {
+            log.log(Level.FINER, "Failed to close Writer to '" + file.getAbsolutePath() + "'.",
+                    e); // NON-NLS
+          }
+        }
+        if (outputStream != null) {
+          try {
+            outputStream.close();
+          } catch (IOException e) {
+            log.log(Level.FINER,
+                    "Failed to close OutputStream to '" + file.getAbsolutePath() // NON-NLS
+                    + "'.", e);
+          }
+        }
+      }
+    }
+
+  }
+
+  /**
+   * Gets the header for the given Charset. The header includes informations about the Charset and
+   * on how to edit the file.
+   *
+   * @param charset the Charset
+   * @return the header
+   */
+  private static String getHeader(Charset charset) {
+    StrBuilder ret = new StrBuilder();
+    ret.append("This file is encoded in '"); // NON-NLS
+    ret.append(charset.name());
+    ret.append("', you MUST NOT change this encoding or special characters will brake."); // NON-NLS
+    ret.appendNewLine();
+    ret.append(
+        "Use an appropriate editor when editing this file and make sure you know what you are doing!"); // NON-NLS
+    return ret.toString();
+  }
 }

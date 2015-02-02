@@ -19,6 +19,10 @@
 
 package me.taylorkelly.mywarp.limits;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
@@ -27,56 +31,51 @@ import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
-
 /**
- * A LimitManager implementation that does absolutely nothing. Limit evaluation
- * will always result in a positive response.
+ * A LimitManager implementation that does absolutely nothing. Limit evaluation will always result
+ * in a positive response.
  */
 public class DummyLimitManager implements LimitManager {
 
-    private final WarpManager manager;
+  private final WarpManager manager;
 
-    /**
-     * Construct an instance.
-     * 
-     * @param manager
-     *            the WarpManager this LimitManager is active on
-     */
-    public DummyLimitManager(WarpManager manager) {
-        this.manager = manager;
-    }
+  /**
+   * Construct an instance.
+   *
+   * @param manager the WarpManager this LimitManager is active on
+   */
+  public DummyLimitManager(WarpManager manager) {
+    this.manager = manager;
+  }
 
-    @Override
-    public EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Type type,
-            boolean evaluateParents) {
-        return EvaluationResult.LIMIT_MEAT;
-    }
+  @Override
+  public EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Type type,
+                                        boolean evaluateParents) {
+    return EvaluationResult.LIMIT_MEAT;
+  }
 
-    @Override
-    public Multimap<Limit, Warp> getWarpsPerLimit(LocalPlayer creator) {
-        Limit dummyLimit = new Limit() {
+  @Override
+  public Multimap<Limit, Warp> getWarpsPerLimit(LocalPlayer creator) {
+    Limit dummyLimit = new Limit() {
 
-            @Override
-            public int getLimit(Type type) {
-                return -1;
-            }
+      @Override
+      public int getLimit(Type type) {
+        return -1;
+      }
 
-            @Override
-            public ImmutableSet<LocalWorld> getAffectedWorlds() {
-                return MyWarp.getInstance().getLoadedWorlds();
-            }
+      @Override
+      public ImmutableSet<LocalWorld> getAffectedWorlds() {
+        return MyWarp.getInstance().getLoadedWorlds();
+      }
 
-            @Override
-            public boolean isAffectedWorld(LocalWorld world) {
-                return true;
-            }
+      @Override
+      public boolean isAffectedWorld(LocalWorld world) {
+        return true;
+      }
 
-        };
-        return ImmutableMultimap.<Limit, Warp>builder()
-                .putAll(dummyLimit, manager.filter(WarpUtils.isCreator(creator.getProfile()))).build();
-    }
+    };
+    return ImmutableMultimap.<Limit, Warp>builder()
+        .putAll(dummyLimit, manager.filter(WarpUtils.isCreator(creator.getProfile()))).build();
+  }
 
 }

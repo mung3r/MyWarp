@@ -19,8 +19,6 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import java.util.UUID;
-
 import me.taylorkelly.mywarp.BlockType;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
@@ -29,50 +27,50 @@ import me.taylorkelly.mywarp.util.Vector3;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
+import java.util.UUID;
+
 /**
  * A reference to a World in Bukkit.
  */
 public class BukkitWorld implements LocalWorld {
 
-    private final UUID worldIdentifier;
+  private final UUID worldIdentifier;
 
-    /**
-     * Creates an instance that references the given World.
-     * 
-     * @param world
-     *            the World.
-     */
-    public BukkitWorld(World world) {
-        this.worldIdentifier = world.getUID();
-    }
+  /**
+   * Creates an instance that references the given World.
+   *
+   * @param world the World.
+   */
+  public BukkitWorld(World world) {
+    this.worldIdentifier = world.getUID();
+  }
 
-    @Override
-    public String getName() {
-        return getLoadedWorld().getName();
-    }
+  @Override
+  public String getName() {
+    return getLoadedWorld().getName();
+  }
 
-    @Override
-    public UUID getUniqueId() {
-        return getLoadedWorld().getUID();
-    }
+  @Override
+  public UUID getUniqueId() {
+    return getLoadedWorld().getUID();
+  }
 
-    /**
-     * Gets the loaded World that is referenced by this BukkitWorld.
-     * 
-     * @return the loaded World
-     * @throws NoSuchWorldException
-     *             if the World is no longer loaded
-     */
-    public World getLoadedWorld() throws NoSuchWorldException {
-        World ret = Bukkit.getWorld(worldIdentifier);
-        if (ret == null) {
-            throw new NoSuchWorldException(worldIdentifier.toString());
-        }
-        return ret;
+  /**
+   * Gets the loaded World that is referenced by this BukkitWorld.
+   *
+   * @return the loaded World
+   * @throws NoSuchWorldException if the World is no longer loaded
+   */
+  public World getLoadedWorld() {
+    World ret = Bukkit.getWorld(worldIdentifier);
+    if (ret == null) {
+      throw new NoSuchWorldException(worldIdentifier.toString());
     }
+    return ret;
+  }
 
-    @Override
-    public BlockType getBlock(Vector3 position) {
-        return new BukkitBlockType(this, position);
-    }
+  @Override
+  public BlockType getBlock(Vector3 position) {
+    return new BukkitBlockType(this, position);
+  }
 }

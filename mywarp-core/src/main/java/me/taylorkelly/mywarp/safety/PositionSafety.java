@@ -19,40 +19,34 @@
 
 package me.taylorkelly.mywarp.safety;
 
+import com.google.common.base.Optional;
+
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.util.Vector3;
 
-import com.google.common.base.Optional;
-
 /**
- * Tests if a position in a world is safe and searches for safe positions if
- * not.
+ * Tests if a position in a world is safe and searches for safe positions if not.
  */
 public interface PositionSafety {
 
-    /**
-     * Returns whether the given position in the given world is safe.
-     * 
-     * @param world
-     *            the world where the position is placed it
-     * @param position
-     *            the position vector
-     * @return true if the location is safe
-     */
-    boolean isPositionSafe(LocalWorld world, Vector3 position);
+  /**
+   * Returns whether the given position in the given world is safe.
+   *
+   * @param world    the world where the position is placed it
+   * @param position the position vector
+   * @return true if the location is safe
+   */
+  boolean isPositionSafe(LocalWorld world, Vector3 position);
 
-    /**
-     * Gets an Optional with the first safe position found within the given
-     * tolerance, starting from the given position, if such a position exits.
-     * 
-     * @param world
-     *            the world where the position is placed it
-     * @param position
-     *            the position vector
-     * @param tolerance
-     *            the acceptable tolerance
-     * @return the first safe position
-     */
-    Optional<Vector3> getSafePosition(LocalWorld world, Vector3 position, int tolerance);
+  /**
+   * Gets an Optional with the first safe position found within the given tolerance, starting from
+   * the given position, if such a position exits.
+   *
+   * @param world     the world where the position is placed it
+   * @param position  the position vector
+   * @param tolerance the acceptable tolerance
+   * @return the first safe position
+   */
+  Optional<Vector3> getSafePosition(LocalWorld world, Vector3 position, int tolerance);
 
 }

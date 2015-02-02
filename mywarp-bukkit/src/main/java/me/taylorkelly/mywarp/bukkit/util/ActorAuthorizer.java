@@ -19,23 +19,23 @@
 
 package me.taylorkelly.mywarp.bukkit.util;
 
-import me.taylorkelly.mywarp.Actor;
-
 import com.sk89q.intake.context.CommandLocals;
 import com.sk89q.intake.util.auth.Authorizer;
+
+import me.taylorkelly.mywarp.Actor;
 
 /**
  * An Authorizer for {@link Actor}s.
  */
 public class ActorAuthorizer implements Authorizer {
 
-    @Override
-    public boolean testPermission(CommandLocals locals, String permission) {
-        Actor actor = locals.get(Actor.class);
-        if (actor == null) {
-            throw new RuntimeException("The command must be used by Actors!");
-        }
-        return actor.hasPermission(permission);
+  @Override
+  public boolean testPermission(CommandLocals locals, String permission) {
+    Actor actor = locals.get(Actor.class);
+    if (actor == null) {
+      throw new RuntimeException("The command must be used by Actors!");
     }
+    return actor.hasPermission(permission);
+  }
 
 }

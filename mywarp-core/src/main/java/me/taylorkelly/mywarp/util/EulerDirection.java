@@ -20,97 +20,93 @@
 package me.taylorkelly.mywarp.util;
 
 /**
- * Represents an immutable euler direction, made up of pitch, yaw and roll
- * components.
+ * Represents an immutable euler direction, made up of pitch, yaw and roll components.
  */
 public class EulerDirection {
 
-    private final float pitch;
-    private final float yaw;
-    private final float roll;
+  private final float pitch;
+  private final float yaw;
+  private final float roll;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param pitch
-     *            the pitch component
-     * @param yaw
-     *            the yaw component
-     * @param roll
-     *            the roll component
-     */
-    public EulerDirection(float pitch, float yaw, float roll) {
-        this.pitch = pitch;
-        this.yaw = yaw;
-        this.roll = roll;
-    }
+  /**
+   * Creates an instance.
+   *
+   * @param pitch the pitch component
+   * @param yaw   the yaw component
+   * @param roll  the roll component
+   */
+  public EulerDirection(float pitch, float yaw, float roll) {
+    this.pitch = pitch;
+    this.yaw = yaw;
+    this.roll = roll;
+  }
 
-    /**
-     * Returns the pitch component.
-     *
-     * @return the pitch component
-     */
-    public float getPitch() {
-        return pitch;
-    }
+  /**
+   * Returns the pitch component.
+   *
+   * @return the pitch component
+   */
+  public float getPitch() {
+    return pitch;
+  }
 
-    /**
-     * Returns the yaw component.
-     *
-     * @return the yaw component
-     */
-    public float getYaw() {
-        return yaw;
-    }
+  /**
+   * Returns the yaw component.
+   *
+   * @return the yaw component
+   */
+  public float getYaw() {
+    return yaw;
+  }
 
-    /**
-     * Returns the roll component.
-     *
-     * @return the roll component
-     */
-    public float getRoll() {
-        return roll;
-    }
+  /**
+   * Returns the roll component.
+   *
+   * @return the roll component
+   */
+  public float getRoll() {
+    return roll;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Float.floatToIntBits(pitch);
-        result = prime * result + Float.floatToIntBits(roll);
-        result = prime * result + Float.floatToIntBits(yaw);
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Float.floatToIntBits(pitch);
+    result = prime * result + Float.floatToIntBits(roll);
+    result = prime * result + Float.floatToIntBits(yaw);
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EulerDirection other = (EulerDirection) obj;
-        if (Float.floatToIntBits(pitch) != Float.floatToIntBits(other.pitch)) {
-            return false;
-        }
-        if (Float.floatToIntBits(roll) != Float.floatToIntBits(other.roll)) {
-            return false;
-        }
-        if (Float.floatToIntBits(yaw) != Float.floatToIntBits(other.yaw)) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    EulerDirection other = (EulerDirection) obj;
+    if (Float.floatToIntBits(pitch) != Float.floatToIntBits(other.pitch)) {
+      return false;
+    }
+    if (Float.floatToIntBits(roll) != Float.floatToIntBits(other.roll)) {
+      return false;
+    }
+    if (Float.floatToIntBits(yaw) != Float.floatToIntBits(other.yaw)) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        return "EulerDirection [pitch=" + pitch + ", yaw=" + yaw + ", roll=" + roll + "]"; // NON-NLS
-                                                                                           // NON-NLS
-                                                                                           // NON-NLS
-    }
+  @Override
+  public String toString() {
+    return "EulerDirection [pitch=" + pitch + ", yaw=" + yaw + ", roll=" + roll + "]"; // NON-NLS
+    // NON-NLS
+    // NON-NLS
+  }
 
 }

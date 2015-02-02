@@ -20,35 +20,30 @@
 package me.taylorkelly.mywarp.timer;
 
 /**
- * An action that is executed when a timer finishes and can be internally
- * aborted while the timer is running.
- * 
- * @param <T>
- *            the type of the subject the timer runs on
+ * An action that is executed when a timer finishes and can be internally aborted while the timer is
+ * running.
+ *
+ * @param <T> the type of the subject the timer runs on
  */
 public abstract class AbortableTimerAction<T> extends TimerAction<T> {
 
-    public static final long CHECK_INTERVAL_TICKS = 40;
+  public static final long CHECK_INTERVAL_TICKS = 40;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param timedSubject
-     *            the instance the timer runs on
-     */
-    public AbortableTimerAction(T timedSubject) {
-        super(timedSubject);
-    }
+  /**
+   * Creates an instance.
+   *
+   * @param timedSubject the instance the timer runs on
+   */
+  public AbortableTimerAction(T timedSubject) {
+    super(timedSubject);
+  }
 
-    /**
-     * Returns whether the timer should be aborted.
-     * <p>
-     * This method will be called periodically while the timer is running to
-     * check if the timer should be aborted prematurely.
-     * </p>
-     * 
-     * @return true if the timer should be aborted
-     */
-    public abstract boolean abort();
+  /**
+   * Returns whether the timer should be aborted. <p> This method will be called periodically while
+   * the timer is running to check if the timer should be aborted prematurely. </p>
+   *
+   * @return true if the timer should be aborted
+   */
+  public abstract boolean abort();
 
 }

@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.util.i18n;
 
+import com.google.common.base.Charsets;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,77 +36,73 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import com.google.common.base.Charsets;
-
 /**
- * Searches for {@link PropertyResourceBundle}s in a folder, before trying to
- * resolve them from the classpath. ResourceBundles are loaded using
- * <b>UTF-8</b> file-encoding.
+ * Searches for {@link PropertyResourceBundle}s in a folder, before trying to resolve them from the
+ * classpath. ResourceBundles are loaded using <b>UTF-8</b> file-encoding.
  */
 public class FolderSourcedControl extends ResourceBundle.Control {
 
-    private static final Charset CHARSET = Charsets.UTF_8;
+  private static final Charset CHARSET = Charsets.UTF_8;
 
-    private final File bundleFolder;
+  private final File bundleFolder;
 
-    /**
-     * Initializes this instance. Resource bundles will be resolved from the
-     * given folder before falling back to the class-path.
-     * 
-     * @param bundleFolder
-     *            the folder
-     */
-    public FolderSourcedControl(File bundleFolder) {
-        this.bundleFolder = bundleFolder;
+  /**
+   * Initializes this instance. Resource bundles will be resolved from the given folder before
+   * falling back to the class-path.
+   *
+   * @param bundleFolder the folder
+   */
+  public FolderSourcedControl(File bundleFolder) {
+    this.bundleFolder = bundleFolder;
+  }
+
+  @Override
+  public List<String> getFormats(String baseName) {
+    if (baseName == null) {
+      throw new NullPointerException();
     }
+    return Arrays.asList("properties"); // NON-NLS
+  }
 
-    @Override
-    public List<String> getFormats(String baseName) {
-        if (baseName == null) {
-            throw new NullPointerException();
-        }
-        return Arrays.asList("properties"); // NON-NLS
-    }
+  @Override
+  public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
+                                  boolean reload) throws IOException {
 
-    @Override
-    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
-            boolean reload) throws IOException {
+    String bundleName = toBundleName(baseName, locale);
+    ResourceBundle bundle = null;
 
-        String bundleName = toBundleName(baseName, locale);
-        ResourceBundle bundle = null;
+    final String resourceName = toResourceName(bundleName, "properties"); // NON-NLS
+    InputStream stream = null;
+    final File bundleFile = new File(bundleFolder, resourceName);
 
-        final String resourceName = toResourceName(bundleName, "properties"); // NON-NLS
-        InputStream stream = null;
-        final File bundleFile = new File(bundleFolder, resourceName);
-
-        if (bundleFile.isFile()) {
-            stream = new FileInputStream(bundleFile);
-        } else if (reload) {
-            URL url = loader.getResource(resourceName);
-            if (url != null) {
-                URLConnection connection = url.openConnection();
-                if (connection != null) {
-                    // Disable caches to get fresh data for
-                    // reloading.
-                    connection.setUseCaches(false);
-                    stream = connection.getInputStream();
-                }
-
-            } else {
-                stream = loader.getResourceAsStream(resourceName);
-            }
-        }
-        if (stream != null) {
-            Reader reader = new InputStreamReader(stream, CHARSET);
-            try {
-
-                bundle = new PropertyResourceBundle(reader);
-            } finally {
-                // this also closes the stream
-                reader.close();
-            }
+    if (bundleFile.isFile()) {
+      stream = new FileInputStream(bundleFile);
+    } else if (reload) {
+      URL url = loader.getResource(resourceName);
+      if (url != null) {
+        URLConnection connection = url.openConnection();
+        if (connection != null) {
+          // Disable caches to get fresh data for
+          // reloading.
+          connection.setUseCaches(false);
+          stream = connection.getInputStream();
         }
 
-        return bundle;
+      } else {
+        stream = loader.getResourceAsStream(resourceName);
+      }
     }
+    if (stream != null) {
+      Reader reader = new InputStreamReader(stream, CHARSET);
+      try {
+
+        bundle = new PropertyResourceBundle(reader);
+      } finally {
+        // this also closes the stream
+        reader.close();
+      }
+    }
+
+    return bundle;
+  }
 }

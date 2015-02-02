@@ -20,33 +20,32 @@
 package me.taylorkelly.mywarp.util;
 
 /**
- * Thrown when an attempt is made to access a world that does not exist on the
- * server when the attempt was made.
+ * Thrown when an attempt is made to access a world that does not exist on the server when the
+ * attempt was made.
  */
 public class NoSuchWorldException extends RuntimeException {
 
-    private static final long serialVersionUID = 6540699388762912185L;
+  private static final long serialVersionUID = 6540699388762912185L;
 
-    private final String worldRepresentation;
+  private final String worldRepresentation;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param worldRepresentation
-     *            the world's representation
-     */
-    public NoSuchWorldException(String worldRepresentation) {
-        this.worldRepresentation = worldRepresentation;
-    }
+  /**
+   * Creates an instance.
+   *
+   * @param worldRepresentation the world's representation
+   */
+  public NoSuchWorldException(String worldRepresentation) {
+    this.worldRepresentation = worldRepresentation;
+  }
 
-    /**
-     * Gets a readable representation of the world which does not exist. This
-     * can be a world's name or a world#s unique identifier.
-     *
-     * @return the world's representation
-     */
-    public String getWorldRepresentation() {
-        return worldRepresentation;
-    }
+  /**
+   * Gets a readable representation of the world which does not exist. This can be a world's name or
+   * a world#s unique identifier.
+   *
+   * @return the world's representation
+   */
+  public String getWorldRepresentation() {
+    return worldRepresentation;
+  }
 
 }
