@@ -8,6 +8,7 @@ Please note that MyWarp is build against **Java 6**. All contributions must be l
 Coding Style
 ---------
 MyWarp follows the [Google coding conventions](https://google-styleguide.googlecode.com/svn-history/r130/trunk/javaguide.html) with two modifications:
+
 1. The column limit is set to 120 characters. This replaces point 4.4, while the exceptions defined there still apply.
 2. Switch cases can come without a `default` statement if, and only if, they cover all possible cases. This replaces point 4.8.4.3.
 3. All files must have the license header that can be found in `config/checkstyle/header.txt`.
