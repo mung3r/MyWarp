@@ -38,19 +38,23 @@ public class WarpCooldown extends TimerAction<Profile> {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
+  private final MyWarp myWarp;
+
   /**
    * Initializes this WarpCooldown.
    *
+   * @param myWarp the MyWarp instance
    * @param player the player who is cooling down
    */
-  public WarpCooldown(LocalPlayer player) {
+  public WarpCooldown(MyWarp myWarp, LocalPlayer player) {
     super(player.getProfile());
+    this.myWarp = myWarp;
   }
 
   @Override
   public void run() {
-    if (MyWarp.getInstance().getSettings().isTimersCooldownNotifyOnFinish()) {
-      Optional<LocalPlayer> optionalPlayer = MyWarp.getInstance().getOnlinePlayer(getTimedSuject());
+    if (myWarp.getSettings().isTimersCooldownNotifyOnFinish()) {
+      Optional<LocalPlayer> optionalPlayer = myWarp.getGame().getPlayer(getTimedSuject().getUniqueId());
 
       if (optionalPlayer.isPresent()) {
         LocalPlayer player = optionalPlayer.get();

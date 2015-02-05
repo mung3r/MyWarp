@@ -19,9 +19,6 @@
 
 package me.taylorkelly.mywarp;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableSet;
-
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.limits.LimitProvider;
@@ -31,8 +28,6 @@ import me.taylorkelly.mywarp.util.profile.ProfileService;
 
 import java.io.File;
 import java.util.ResourceBundle;
-import java.util.UUID;
-import java.util.concurrent.Executor;
 
 /**
  * Represents a platform MyWarp has been adapted to run on.
@@ -40,7 +35,8 @@ import java.util.concurrent.Executor;
 public interface Platform {
 
   /**
-   * Reloads the platform.
+   * Reloads this Platform. Calling this method will unload  and reload all platform specific behaviors, as far as
+   * supported by the Platform.
    */
   void reload();
 
@@ -53,105 +49,67 @@ public interface Platform {
   File getDataFolder();
 
   /**
-   * Gets the ResourceBundle.Control implementation used by this Platform.
-   *
-   * @return the ResourceBundle.Control
-   */
-  ResourceBundle.Control getResourceBundleControl();
-
-  /**
-   * Gets the Settings implementation of this Platform.
+   * Gets the {@link Settings} as implemented by this Platform.
    *
    * @return the Settings
    */
   Settings getSettings();
 
   /**
-   * Gets the ProfileService implementation of this platform.
+   * Gets the {@link ResourceBundle.Control} as implemented by this Platform.
+   *
+   * @return the ResourceBundle.Control
+   */
+  ResourceBundle.Control getResourceBundleControl();
+
+  /**
+   * Gets the {@link Game} as implemented by this Platform.
+   *
+   * @return the Game
+   */
+  Game getGame();
+
+  /**
+   * Gets the {@link ProfileService} as implemented by this Platform.
    *
    * @return the ProfileService
    */
   ProfileService getProfileService();
 
   /**
-   * Gets the EconomyService implementation of this platform.
+   * Gets the {@link EconomyService} as implemented by this Platform.
    *
    * @return the EconomyService
+   * @throws java.lang.UnsupportedOperationException if the Platform has no support for an economy
    */
   EconomyService getEconomyService();
 
   /**
-   * Gets the FeeProvider implementation of this platform.
-   *
-   * @return the FeeProvider
-   */
-  FeeProvider getFeeProvider();
-
-  /**
-   * Gets the LimitProvider implementation of this platform.
-   *
-   * @return the LimitProvider
-   */
-  LimitProvider getLimitProvider();
-
-  /**
-   * Gets the DurationProvider implementation of this platform.
-   *
-   * @return the DurationProvider
-   */
-  DurationProvider getDurationProvider();
-
-  /**
-   * Gets the TimerService implementation of this platform.
+   * Gets the {@link TimerService} as implemented by this Platform.
    *
    * @return the TimerService
    */
   TimerService getTimerService();
 
   /**
-   * Gets an Executor that executes given Runnables in the server thread of this platform ('synchronous').
+   * Gets the {@link FeeProvider} as implemented by this Platform.
    *
-   * @return the Executor
+   * @return the FeeProvider
    */
-  Executor getServerExecutor();
+  FeeProvider getFeeProvider();
 
   /**
-   * Gets an ImmutableSet with all worlds currently loaded on the server.
+   * Gets the {@link LimitProvider} as implemented by this Platform.
    *
-   * @return an ImmutableSet with all loaded worlds
+   * @return the LimitProvider
    */
-  ImmutableSet<LocalWorld> getLoadedWorlds();
+  LimitProvider getLimitProvider();
 
   /**
-   * Gets an Optional containing the loaded world of the given name, if such a world exists.
+   * Gets the {@link DurationProvider} as implemented by this Platform.
    *
-   * @param name the name of the world
-   * @return an Optional containing the loaded world
+   * @return the DurationProvider
    */
-  Optional<LocalWorld> getLoadedWorld(String name);
-
-  /**
-   * Gets an Optional containing the loaded world of the given unique identifier, if such a world exists.
-   *
-   * @param uniqueId the unique Identifier of the world
-   * @return an Optional containing the loaded world
-   */
-  Optional<LocalWorld> getLoadedWorld(UUID uniqueId);
-
-  /**
-   * Gets an Optional containing the online player of the given name, if such a player exists.
-   *
-   * @param name the name of the player
-   * @return an Optional containing the player
-   */
-  Optional<LocalPlayer> getOnlinePlayer(String name);
-
-  /**
-   * Gets an Optional containing the online player of the given identifier, if such a player exists.
-   *
-   * @param identifier the identifier of the player
-   * @return an Optional containing the player
-   */
-  Optional<LocalPlayer> getOnlinePlayer(UUID identifier);
+  DurationProvider getDurationProvider();
 
 }

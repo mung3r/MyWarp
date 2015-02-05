@@ -24,7 +24,7 @@ import com.google.common.collect.Multimap;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
 import me.taylorkelly.mywarp.bukkit.util.CommandUtils;
 import me.taylorkelly.mywarp.bukkit.util.FormattingUtils;
@@ -51,16 +51,19 @@ public class AssetsPrinter {
 
   private final LocalPlayer creator;
   private final LimitManager limitManager;
+  private final Settings settings;
 
   /**
    * Creates an instance.
    *
    * @param creator      the player whose assets should be displayed
    * @param limitManager the limitManager that manages the limits that should be displayed
+   * @param settings     the Settings
    */
-  public AssetsPrinter(LocalPlayer creator, LimitManager limitManager) {
+  public AssetsPrinter(LocalPlayer creator, LimitManager limitManager, Settings settings) {
     this.creator = creator;
     this.limitManager = limitManager;
+    this.settings = settings;
   }
 
   /**
@@ -131,7 +134,7 @@ public class AssetsPrinter {
   private String warpLimitCount(int warpCount, int limitMaxiumum) {
     StringBuilder count = new StringBuilder();
     count.append(warpCount);
-    if (MyWarp.getInstance().getSettings().isLimitsEnabled()) {
+    if (settings.isLimitsEnabled()) {
       count.append('/').append(limitMaxiumum);
     }
     return count.toString();

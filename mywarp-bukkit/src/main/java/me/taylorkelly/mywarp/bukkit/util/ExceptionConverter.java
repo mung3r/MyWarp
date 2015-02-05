@@ -44,8 +44,6 @@ import java.util.concurrent.TimeUnit;
 public class ExceptionConverter extends ExceptionConverterHelper {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
-  // NON-NLS
-
   /**
    * Converts a {@link NoSuchPlayerException} to a human readable {@link CommandException}.
    *

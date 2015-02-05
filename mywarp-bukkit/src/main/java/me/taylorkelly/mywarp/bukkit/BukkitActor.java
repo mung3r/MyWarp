@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.bukkit;
 
 import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.MyWarp;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -33,14 +32,17 @@ import java.util.Locale;
 public class BukkitActor implements Actor {
 
   private final CommandSender sender;
+  private final Locale locale;
 
   /**
    * Initializes this BukkitActor.
    *
    * @param sender the Bukkit CommandSender
+   * @param locale the Locale of the CommandSender
    */
-  public BukkitActor(CommandSender sender) {
+  public BukkitActor(CommandSender sender, Locale locale) {
     this.sender = sender;
+    this.locale = locale;
   }
 
   /**
@@ -74,7 +76,7 @@ public class BukkitActor implements Actor {
 
   @Override
   public Locale getLocale() {
-    return MyWarp.getInstance().getSettings().getLocalizationDefaultLocale();
+    return locale;
   }
 
 }

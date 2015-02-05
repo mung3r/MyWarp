@@ -29,7 +29,6 @@ import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.economy.EconomyManager;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.safety.TeleportService.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
@@ -54,6 +53,8 @@ public class SimpleWarp implements Warp {
   private static final double GRAVITY_CONSTANT = 0.8;
   private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
+  private final MyWarp myWarp;
+
   private final String name;
   private final Date creationDate;
   private final Set<Profile> invitedPlayers;
@@ -69,12 +70,13 @@ public class SimpleWarp implements Warp {
   /**
    * Creates a warp from the given Builder.
    *
-   * @param builder the Builder
+   * @param myWarp the MyWarp instance
+   * @param builder         the Builder
    * @throws NullPointerException     if any of the Builder's fields is {@code null}
    * @throws IllegalArgumentException if the Builder's {@code invitedPlayerIds} or {@code invitedGroups} contains {@code
    *                                  null}
    */
-  SimpleWarp(WarpBuilder builder) {
+  SimpleWarp(MyWarp myWarp, WarpBuilder builder) {
     this.name = checkNotNull(builder.getName());
     this.creator = checkNotNull(builder.getCreator());
     this.type = checkNotNull(builder.getType());
@@ -88,6 +90,8 @@ public class SimpleWarp implements Warp {
     this.invitedPlayers = builder.getInvitedPlayers();
     checkArgument(!builder.getInvitedGroups().contains(null));
     this.invitedGroups = builder.getInvitedGroups();
+
+    this.myWarp = myWarp;
   }
 
   @Override
@@ -107,7 +111,7 @@ public class SimpleWarp implements Warp {
   public boolean isUsable(LocalEntity entity) {
     if (entity instanceof LocalPlayer) {
       LocalPlayer player = (LocalPlayer) entity;
-      if (MyWarp.getInstance().getSettings().isControlWorldAccess()) {
+      if (myWarp.getSettings().isControlWorldAccess()) {
         if (!player.canAccessWorld(getWorld())) {
           return false;
 
@@ -144,9 +148,7 @@ public class SimpleWarp implements Warp {
 
   @Override
   public TeleportStatus teleport(LocalEntity entity) {
-    TeleportStatus
-        status =
-        MyWarp.getInstance().getTeleportService().safeTeleport(entity, getWorld(), position, rotation);
+    TeleportStatus status = myWarp.getTeleportService().safeTeleport(entity, getWorld(), position, rotation);
 
     switch (status) {
       case ORIGINAL_LOC:
@@ -183,14 +185,13 @@ public class SimpleWarp implements Warp {
   @Override
   public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
     TeleportStatus status = teleport(player);
-    if (MyWarp.getInstance().getSettings().isEconomyEnabled()) {
+    if (myWarp.getSettings().isEconomyEnabled()) {
       switch (status) {
         case NONE:
           break;
         case ORIGINAL_LOC:
         case SAFE_LOC:
-          EconomyManager manager = MyWarp.getInstance().getEconomyManager();
-          manager.informativeWithdraw(player, fee);
+          myWarp.getEconomyManager().informativeWithdraw(player, fee);
       }
     }
     return status;
@@ -395,7 +396,7 @@ public class SimpleWarp implements Warp {
 
   @Override
   public LocalWorld getWorld() {
-    Optional<LocalWorld> world = MyWarp.getInstance().getLoadedWorld(worldIdentifier);
+    Optional<LocalWorld> world = myWarp.getGame().getWorld(worldIdentifier);
     if (!world.isPresent()) {
       throw new NoSuchWorldException(worldIdentifier.toString());
     }

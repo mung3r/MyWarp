@@ -23,9 +23,9 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.limits.Limit.Type;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -37,14 +37,17 @@ import me.taylorkelly.mywarp.warp.WarpManager;
  */
 public class DummyLimitManager implements LimitManager {
 
+  private final Game game;
   private final WarpManager manager;
 
   /**
    * Construct an instance.
    *
+   * @param game the Game
    * @param manager the WarpManager this LimitManager is active on
    */
-  public DummyLimitManager(WarpManager manager) {
+  public DummyLimitManager(Game game, WarpManager manager) {
+    this.game = game;
     this.manager = manager;
   }
 
@@ -64,7 +67,7 @@ public class DummyLimitManager implements LimitManager {
 
       @Override
       public ImmutableSet<LocalWorld> getAffectedWorlds() {
-        return MyWarp.getInstance().getLoadedWorlds();
+        return game.getWorlds();
       }
 
       @Override

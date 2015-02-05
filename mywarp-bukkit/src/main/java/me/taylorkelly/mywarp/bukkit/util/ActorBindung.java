@@ -47,7 +47,7 @@ public class ActorBindung extends BindingHelper {
 
     if (actor == null) {
       throw new ParameterException(
-          "No Actor avilable. Either this command was not used by one or he is missing from the CommandLocales.");
+          "No Actor available. Either this command was not used by one or he is missing from the CommandLocales.");
     }
     return actor;
   }

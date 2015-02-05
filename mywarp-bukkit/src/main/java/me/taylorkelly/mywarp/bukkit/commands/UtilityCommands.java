@@ -42,6 +42,16 @@ import org.bukkit.ChatColor;
 public class UtilityCommands {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private final MyWarp myWarp;
+
+  /**
+   * Creates an instance.
+   *
+   * @param myWarp the MyWarp instance
+   */
+  public UtilityCommands(MyWarp myWarp) {
+    this.myWarp = myWarp;
+  }
 
   /**
    * Displays the help.
@@ -111,7 +121,7 @@ public class UtilityCommands {
   @Command(aliases = {"reload"}, desc = "reload.description", help = "reload.help")
   @Require("mywarp.admin.reload")
   public void reload(Actor actor) {
-    MyWarp.getInstance().reload();
+    myWarp.reload();
     actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("reload.reload-message"));
   }
 

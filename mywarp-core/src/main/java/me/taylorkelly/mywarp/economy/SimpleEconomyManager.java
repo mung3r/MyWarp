@@ -22,29 +22,31 @@ package me.taylorkelly.mywarp.economy;
 import com.google.common.base.Preconditions;
 
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 /**
  * Manages the economy tasks. <p> The SimpleEconomyManager operates on a {@link FeeProvider} that provides the actual
- * fees and a {@link EconomyService} that provides a connection with the actual economy of the plattform. </p>
+ * fees and a {@link EconomyService} that provides a connection with the actual economy of the platform. </p>
  */
 public class SimpleEconomyManager implements EconomyManager {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.Economy");
-  // NON-NLS
 
+  private final Settings settings;
   private final FeeProvider provider;
   private final EconomyService service;
 
   /**
    * Initializes this SimpleEconomyManager, acting on the given EconomyService and FeeProvider.
    *
+   * @param settings the Settings
    * @param provider the FeeProvider
    * @param service  the EconomyService
    */
-  public SimpleEconomyManager(FeeProvider provider, EconomyService service) {
+  public SimpleEconomyManager(Settings settings, FeeProvider provider, EconomyService service) {
+    this.settings = settings;
     this.provider = provider;
     this.service = service;
   }
@@ -89,7 +91,7 @@ public class SimpleEconomyManager implements EconomyManager {
       return;
     }
     service.withdraw(player, amount);
-    if (MyWarp.getInstance().getSettings().isEconomyInformAfterTransaction()) {
+    if (settings.isEconomyInformAfterTransaction()) {
       // TODO color in aqua
       player.sendMessage(MESSAGES.getString("transaction-complete", amount));
     }

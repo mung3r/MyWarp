@@ -26,6 +26,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import me.taylorkelly.mywarp.MyWarp;
+
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 import org.jooq.DSLContext;
@@ -55,11 +57,13 @@ public class SqLiteConnection {
    * Gets a valid connection to the given SQLite database. The connection is created asynchronous, the returned
    * CheckedFuture either contains the ready-to-use connection or throws a {@link DataConnectionException}.
    *
+   * @param myWarp          the MyWarp instance
    * @param database        the database file
    * @param controlDbLayout whether the implementation should create tables and execute updates, if necessary
    * @return a valid, setup connection to the SQLite database
    */
-  public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final File database,
+  public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final MyWarp myWarp,
+                                                                                     final File database,
                                                                                      final boolean controlDbLayout) {
     final ListeningExecutorService executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
 
@@ -103,7 +107,7 @@ public class SqLiteConnection {
 
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE, settings);
 
-        return new JooqConnection(create, conn, executor);
+        return new JooqConnection(myWarp, conn, executor, create);
       }
 
     });

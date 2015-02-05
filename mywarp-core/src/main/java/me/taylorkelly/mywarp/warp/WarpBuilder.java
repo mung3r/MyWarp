@@ -39,6 +39,8 @@ public class WarpBuilder {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
+  private final MyWarp myWarp;
+
   private final String name;
   private final Profile creator;
   private final Type type;
@@ -49,13 +51,12 @@ public class WarpBuilder {
   private final Set<String> invitedGroups = new HashSet<String>();
   private Date creationDate = new Date();
   private int visits;
-  // REVIEW use LocaleManager.getLocale() ?
-  private String welcomeMessage = MESSAGES.getString("default-welcome-message", MyWarp.getInstance() // NON-NLS
-      .getSettings().getLocalizationDefaultLocale());
+  private String welcomeMessage = MESSAGES.getString("default-welcome-message");
 
   /**
    * Creates a Builder that will build a Warp with the given values.
    *
+   * @param myWarp   the MyWarp instance
    * @param name     the name of the warp
    * @param creator  the Profile of the player who created the warp
    * @param type     the type
@@ -63,14 +64,15 @@ public class WarpBuilder {
    * @param position the position of the warp
    * @param rotation the rotation of the warp
    */
-  public WarpBuilder(String name, Profile creator, Type type, LocalWorld world, Vector3 position,
+  public WarpBuilder(MyWarp myWarp, String name, Profile creator, Type type, LocalWorld world, Vector3 position,
                      EulerDirection rotation) {
-    this(name, creator, type, world.getUniqueId(), position, rotation);
+    this(myWarp, name, creator, type, world.getUniqueId(), position, rotation);
   }
 
   /**
    * Creates a Builder that will build a Warp with the given values.
    *
+   * @param myWarp          the MyWarp instance
    * @param name            the name of the warp
    * @param creator         the Profile of the player who created the warp
    * @param type            the type
@@ -78,8 +80,9 @@ public class WarpBuilder {
    * @param position        the position of the warp
    * @param rotation        the rotation of the warp
    */
-  public WarpBuilder(String name, Profile creator, Type type, UUID worldIdentifier, Vector3 position,
+  public WarpBuilder(MyWarp myWarp, String name, Profile creator, Type type, UUID worldIdentifier, Vector3 position,
                      EulerDirection rotation) {
+    this.myWarp = myWarp;
     this.name = name;
     this.creator = creator;
     this.type = type;
@@ -149,7 +152,7 @@ public class WarpBuilder {
    * @return the builded warp
    */
   public Warp build() {
-    return new SimpleWarp(this);
+    return new SimpleWarp(myWarp, this);
   }
 
   /**

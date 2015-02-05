@@ -50,14 +50,18 @@ public class ManagementCommands {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
+  private final MyWarp myWarp;
   private final WelcomeEditorFactory welcomeEditorFactory;
 
   /**
    * Creates an instance.
    *
+   * @param myWarp               the MyWarp instance
    * @param welcomeEditorFactory the WelcomeEditorFactory
    */
-  public ManagementCommands(WelcomeEditorFactory welcomeEditorFactory) {
+  public ManagementCommands(MyWarp myWarp, WelcomeEditorFactory welcomeEditorFactory) {
+
+    this.myWarp = myWarp;
     this.welcomeEditorFactory = welcomeEditorFactory;
   }
 
@@ -107,7 +111,7 @@ public class ManagementCommands {
    */
   private void addWarp(LocalPlayer creator, LocalWorld world, Vector3 position, EulerDirection rotation, Warp.Type type,
                        String name) throws CommandException, LimitExceededException {
-    if (MyWarp.getInstance().getWarpManager().contains(name)) {
+    if (myWarp.getWarpManager().contains(name)) {
       throw new CommandException(MESSAGES.getString("create.warp-exists", name));
     }
     if (name.length() > WarpUtils.MAX_NAME_LENGTH) {
@@ -117,13 +121,13 @@ public class ManagementCommands {
 
     LimitManager.EvaluationResult
         result =
-        MyWarp.getInstance().getLimitManager().evaluateLimit(creator, world, type.getLimit(), true);
+        myWarp.getLimitManager().evaluateLimit(creator, world, type.getLimit(), true);
     if (result.exceedsLimit()) {
       throw new LimitExceededException(result.getExceededLimit().get(), result.getLimitMaximum().get());
     }
 
-    WarpBuilder builder = new WarpBuilder(name, creator.getProfile(), type, world, position, rotation);
-    MyWarp.getInstance().getWarpManager().add(builder.build());
+    WarpBuilder builder = new WarpBuilder(myWarp, name, creator.getProfile(), type, world, position, rotation);
+    myWarp.getWarpManager().add(builder.build());
   }
 
   /**
@@ -136,7 +140,7 @@ public class ManagementCommands {
   @Require("mywarp.warp.basic.delete")
   @Billable(FeeType.DELETE)
   public void delete(Actor actor, @Condition(Condition.Type.MODIFIABLE) Warp warp) {
-    MyWarp.getInstance().getWarpManager().remove(warp);
+    myWarp.getWarpManager().remove(warp);
     actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("delete.deleted-successful", warp.getName()));
   }
 

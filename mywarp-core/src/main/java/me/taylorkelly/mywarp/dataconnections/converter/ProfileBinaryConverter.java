@@ -19,8 +19,8 @@
 
 package me.taylorkelly.mywarp.dataconnections.converter;
 
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.profile.ProfileService;
 
 import org.jooq.Converter;
 
@@ -32,13 +32,23 @@ public class ProfileBinaryConverter implements Converter<byte[], Profile> {
   private static final long serialVersionUID = 713212664614712270L;
 
   private final UuidBinaryConverter converter = new UuidBinaryConverter();
+  private final ProfileService profileService;
+
+  /**
+   * Creates an instance.
+   *
+   * @param profileService the ProfileService returned Profiles are attached to
+   */
+  public ProfileBinaryConverter(ProfileService profileService) {
+    this.profileService = profileService;
+  }
 
   @Override
   public Profile from(byte[] databaseObject) {
     if (databaseObject == null) {
       return null;
     }
-    return MyWarp.getInstance().getProfileService().get(converter.from(databaseObject));
+    return profileService.get(converter.from(databaseObject));
   }
 
   @Override

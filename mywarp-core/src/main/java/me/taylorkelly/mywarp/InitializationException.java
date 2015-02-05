@@ -22,14 +22,14 @@ package me.taylorkelly.mywarp;
 /**
  * Indicates a general Exception thrown by MyWarp.
  */
-public class MyWarpException extends Exception {
+public class InitializationException extends Exception {
 
   private static final long serialVersionUID = -2033822282111044971L;
 
   /**
    * Constructs this exception.
    */
-  public MyWarpException() {
+  public InitializationException() {
     super();
   }
 
@@ -38,7 +38,7 @@ public class MyWarpException extends Exception {
    *
    * @param message the message
    */
-  public MyWarpException(String message) {
+  public InitializationException(String message) {
     super(message);
   }
 
@@ -48,7 +48,7 @@ public class MyWarpException extends Exception {
    * @param message the message
    * @param cause   the cause of this exception
    */
-  public MyWarpException(String message, Throwable cause) {
+  public InitializationException(String message, Throwable cause) {
     super(message, cause);
   }
 
@@ -57,7 +57,7 @@ public class MyWarpException extends Exception {
    *
    * @param cause the cause
    */
-  public MyWarpException(Throwable cause) {
+  public InitializationException(Throwable cause) {
     super(cause);
   }
 }

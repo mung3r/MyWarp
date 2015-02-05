@@ -37,6 +37,7 @@ import me.taylorkelly.mywarp.dataconnections.migrators.LegacyMySqlMigrator;
 import me.taylorkelly.mywarp.dataconnections.migrators.LegacySqLiteMigrator;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.WarpManager;
 
 import org.bukkit.ChatColor;
 
@@ -53,6 +54,17 @@ public class ImportCommands {
   private static final String IMPORT_PERMISSION = "mywarp.admin.import"; // NON-NLS
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
+  private final MyWarp myWarp;
+
+  /**
+   * Creates an instance.
+   *
+   * @param myWarp the MyWarp instance
+   */
+  public ImportCommands(MyWarp myWarp) {
+    this.myWarp = myWarp;
+  }
+
   /**
    * Imports Warps from an SQLite database.
    *
@@ -63,11 +75,11 @@ public class ImportCommands {
   @Command(aliases = {"sqlite"}, desc = "import.sqlite.description", help = "import.sqlite.help")
   @Require(IMPORT_PERMISSION)
   public void sqlite(Actor actor, String databasePath) throws CommandException {
-    File database = new File(MyWarp.getInstance().getPlatform().getDataFolder(), databasePath);
+    File database = new File(myWarp.getPlatform().getDataFolder(), databasePath);
     if (!database.exists()) {
       throw new CommandException(MESSAGES.getString("import.file-non-existent", database.getAbsolutePath()));
     }
-    migrate(actor, new DataConnectionMigrator(SqLiteConnection.getConnection(database, false)));
+    migrate(actor, new DataConnectionMigrator(SqLiteConnection.getConnection(myWarp, database, false)));
   }
 
   /**
@@ -81,7 +93,7 @@ public class ImportCommands {
   @Command(aliases = {"mysql"}, desc = "import.mysql.description", help = "import.mysql.help")
   @Require(IMPORT_PERMISSION)
   public void mysql(Actor actor, String dsn, String user, String password) {
-    migrate(actor, new DataConnectionMigrator(MySqlConnection.getConnection(dsn, user, password, false)));
+    migrate(actor, new DataConnectionMigrator(MySqlConnection.getConnection(myWarp, dsn, user, password, false)));
   }
 
   /**
@@ -94,12 +106,12 @@ public class ImportCommands {
   @Command(aliases = {"pre3-sqlite"}, desc = "import.pre3-sqlite.description", help = "import.pre3-sqlite.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Sqlite(Actor actor, String databasePath) throws CommandException {
-    File database = new File(MyWarp.getInstance().getPlatform().getDataFolder(), databasePath);
+    File database = new File(myWarp.getPlatform().getDataFolder(), databasePath);
     if (!database.exists()) {
       throw new CommandException(MESSAGES.getString("commands.import.file-non-existent", // NON-NLS
                                                     database.getAbsolutePath()));
     }
-    migrate(actor, new LegacySqLiteMigrator(database));
+    migrate(actor, new LegacySqLiteMigrator(myWarp, database));
   }
 
   /**
@@ -114,7 +126,7 @@ public class ImportCommands {
   @Command(aliases = {"pre3-mysql"}, desc = "import.pre3-mysql.description", help = "import.pre3-mysql.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Mysql(Actor actor, String dsn, String user, String password, String tableName) {
-    migrate(actor, new LegacyMySqlMigrator(dsn, user, password, tableName));
+    migrate(actor, new LegacyMySqlMigrator(myWarp, dsn, user, password, tableName));
   }
 
   /**
@@ -138,13 +150,15 @@ public class ImportCommands {
       @Override
       public void onSuccess(final Collection<Warp> warps) {
         Set<Warp> notImportedWarps = new HashSet<Warp>();
+        WarpManager warpManager = myWarp.getWarpManager();
+
         for (Warp warp : warps) {
-          if (MyWarp.getInstance().getWarpManager().contains(warp.getName())) {
+          if (warpManager.contains(warp.getName())) {
             // skip the warp
             notImportedWarps.add(warp);
             continue;
           }
-          MyWarp.getInstance().getWarpManager().add(warp);
+          warpManager.add(warp);
         }
 
         if (notImportedWarps.isEmpty()) {
@@ -156,7 +170,7 @@ public class ImportCommands {
 
       }
 
-    }, MyWarp.getInstance().getServerExecutor());
+    }, myWarp.getGame().getExecutor());
   }
 
 }

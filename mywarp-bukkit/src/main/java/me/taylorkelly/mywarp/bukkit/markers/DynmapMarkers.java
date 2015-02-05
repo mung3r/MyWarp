@@ -21,7 +21,7 @@ package me.taylorkelly.mywarp.bukkit.markers;
 
 import com.google.common.eventbus.Subscribe;
 
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -50,7 +50,8 @@ public class DynmapMarkers {
 
   private static final Logger log = Logger.getLogger(DynmapMarkers.class.getName());
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.DynmapMarkers");
-  // NON-NLS
+
+  private final Settings settings;
 
   private MarkerIcon markerIcon;
   private MarkerSet markerSet;
@@ -63,12 +64,14 @@ public class DynmapMarkers {
    * @param manager      the EventWarpManager this Markers run on
    */
   public DynmapMarkers(MyWarpPlugin plugin, DynmapCommonAPI dynmapPlugin, EventWarpManager manager) {
+    this.settings = plugin.getSettings();
+
     MarkerAPI markerApi = dynmapPlugin.getMarkerAPI();
 
     // get Icon for all markers
-    markerIcon = markerApi.getMarkerIcon(MyWarp.getInstance().getSettings().getDynmapMarkerIconId());
-    if (markerIcon == null && !MyWarp.getInstance().getSettings().getDynmapMarkerIconId().equals(ICON_ID)) {
-      log.warning("MarkerIcon '" + MyWarp.getInstance().getSettings().getDynmapMarkerIconId() // NON-NLS
+    markerIcon = markerApi.getMarkerIcon(settings.getDynmapMarkerIconId());
+    if (markerIcon == null && !settings.getDynmapMarkerIconId().equals(ICON_ID)) {
+      log.warning("MarkerIcon '" + settings.getDynmapMarkerIconId() // NON-NLS
                   + "' does not exist. Using the default one."); // NON-NLS
       markerIcon = markerApi.getMarkerIcon(ICON_ID);
     }
@@ -80,16 +83,14 @@ public class DynmapMarkers {
     // create the label
     markerSet = markerApi.getMarkerSet(LABEL_ID);
     if (markerSet == null) {
-      markerSet =
-          markerApi
-              .createMarkerSet(LABEL_ID, MyWarp.getInstance().getSettings().getDynmapLayerDisplayName(), null, false);
+      markerSet = markerApi.createMarkerSet(LABEL_ID, settings.getDynmapLayerDisplayName(), null, false);
     } else {
-      markerSet.setMarkerSetLabel(MyWarp.getInstance().getSettings().getDynmapLayerDisplayName());
+      markerSet.setMarkerSetLabel(settings.getDynmapLayerDisplayName());
     }
-    markerSet.setLayerPriority(MyWarp.getInstance().getSettings().getDynmapLayerPriority());
-    markerSet.setHideByDefault(MyWarp.getInstance().getSettings().isDynmapLayerHiddenByDefault());
-    markerSet.setLabelShow(MyWarp.getInstance().getSettings().isDynmapMarkerShowLable());
-    markerSet.setMinZoom(MyWarp.getInstance().getSettings().getDynmapMarkerMinZoom());
+    markerSet.setLayerPriority(settings.getDynmapLayerPriority());
+    markerSet.setHideByDefault(settings.isDynmapLayerHiddenByDefault());
+    markerSet.setLabelShow(settings.isDynmapMarkerShowLable());
+    markerSet.setMinZoom(settings.getDynmapMarkerMinZoom());
 
     // add all public warps
     for (Warp warp : manager.filter(WarpUtils.isType(Warp.Type.PUBLIC))) {
@@ -157,7 +158,7 @@ public class DynmapMarkers {
    * @see Warp#replacePlaceholders(String)
    */
   private String toLabelHtml(Warp warp) {
-    String rawLabel = MESSAGES.getString("marker", MyWarp.getInstance().getSettings().getLocalizationDefaultLocale());
+    String rawLabel = MESSAGES.getString("marker", settings.getLocalizationDefaultLocale());
     return warp.replacePlaceholders(rawLabel);
 
   }

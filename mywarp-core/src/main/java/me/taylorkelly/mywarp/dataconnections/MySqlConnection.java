@@ -26,6 +26,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import me.taylorkelly.mywarp.MyWarp;
+
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 import org.jooq.DSLContext;
@@ -54,13 +56,15 @@ public class MySqlConnection {
    * Gets a valid connection to the given MySQL database. The connection is created asynchronous, the returned
    * CheckedFuture either contains the ready-to-use connection or throws a {@link DataConnectionException}.
    *
+   * @param myWarp          the MyWarp instance
    * @param dsn             the dsn of the database
    * @param user            the MySQL user to use
    * @param password        the user's password
    * @param controlDbLayout whether the implementation should create tables and execute updates, if necessary
    * @return a CheckedFuture containing a valid, setup connection
    */
-  public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final String dsn,
+  public static CheckedFuture<DataConnection, DataConnectionException> getConnection(final MyWarp myWarp,
+                                                                                     final String dsn,
                                                                                      final String user,
                                                                                      final String password,
                                                                                      final boolean controlDbLayout) {
@@ -97,7 +101,7 @@ public class MySqlConnection {
         Settings settings = new Settings().withRenderSchema(false);
         DSLContext create = DSL.using(conn, SQLDialect.MYSQL, settings);
 
-        return new JooqConnection(create, conn, executor);
+        return new JooqConnection(myWarp, conn, executor, create);
       }
 
     });

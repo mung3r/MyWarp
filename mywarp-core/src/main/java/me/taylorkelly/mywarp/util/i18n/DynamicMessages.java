@@ -19,8 +19,6 @@
 
 package me.taylorkelly.mywarp.util.i18n;
 
-import me.taylorkelly.mywarp.MyWarp;
-
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
@@ -30,11 +28,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Provides translated messages.
+ * Provides translated messages using Java ResourceBundles. <p> When created, instances will uses the default resource
+ * bundle lookup as described in the {@link java.util.ResourceBundle} documentation. This process can be customized by
+ * registering a custom {@link java.util.ResourceBundle.Control} via {@link #setControl(ResourceBundle.Control)}. </p>
  */
 public class DynamicMessages {
 
   private static final Logger log = Logger.getLogger(DynamicMessages.class.getName());
+
+  private static ResourceBundle.Control control = new ResourceBundle.Control() {
+  };
+
   private final String baseName;
 
   /**
@@ -51,6 +55,15 @@ public class DynamicMessages {
    */
   public static void clearCache() {
     ResourceBundle.clearCache();
+  }
+
+  /**
+   * Sets the {@link java.util.ResourceBundle.Control} instance used by all DynamicMessages instances.
+   *
+   * @param control the ResourceBundle.Control
+   */
+  public static synchronized void setControl(ResourceBundle.Control control) {
+    DynamicMessages.control = control;
   }
 
   /**
@@ -117,6 +130,6 @@ public class DynamicMessages {
    * @return the applicable ResourceBundle
    */
   private ResourceBundle getBundle(Locale locale) {
-    return ResourceBundle.getBundle(baseName, locale, MyWarp.getInstance().getResourceBundleControl());
+    return ResourceBundle.getBundle(baseName, locale, control);
   }
 }

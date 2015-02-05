@@ -28,8 +28,8 @@ import com.sk89q.intake.parametric.binding.BindingHelper;
 import com.sk89q.intake.parametric.binding.BindingMatch;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
 import java.lang.annotation.Annotation;
@@ -42,6 +42,17 @@ import java.lang.annotation.Target;
  * A binding for {@link LocalPlayer}s.
  */
 public class PlayerBinding extends BindingHelper {
+
+  private final Game game;
+
+  /**
+   * Creates an instance.
+   *
+   * @param game the Game this Binding will bind players from
+   */
+  public PlayerBinding(Game game) {
+    this.game = game;
+  }
 
   /**
    * Gets a player matching the name given by the command.
@@ -97,7 +108,7 @@ public class PlayerBinding extends BindingHelper {
    * @throws NoSuchPlayerException if no matching player could be found
    */
   protected LocalPlayer getPlayer(String query) throws NoSuchPlayerException {
-    Optional<LocalPlayer> optional = MyWarp.getInstance().getOnlinePlayer(query);
+    Optional<LocalPlayer> optional = game.getPlayer(query);
 
     if (!optional.isPresent()) {
       throw new NoSuchPlayerException(query);

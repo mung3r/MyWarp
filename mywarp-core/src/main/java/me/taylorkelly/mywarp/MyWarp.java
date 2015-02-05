@@ -19,9 +19,6 @@
 
 package me.taylorkelly.mywarp;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -36,89 +33,77 @@ import me.taylorkelly.mywarp.economy.SimpleEconomyManager;
 import me.taylorkelly.mywarp.limits.DummyLimitManager;
 import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.limits.SimpleLimitManager;
+import me.taylorkelly.mywarp.safety.CubicLocationSafety;
 import me.taylorkelly.mywarp.safety.TeleportService;
-import me.taylorkelly.mywarp.timer.DurationProvider;
-import me.taylorkelly.mywarp.timer.TimerService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.EventWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.WarpSignManager;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.ResourceBundle;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Entry point and container for a working MyWarp implementation.
+ * Entry point and container for a working MyWarp implementation. <p> An instance of this class holds and manages
+ * MyWarp's internal logic. It is initialized with a {@link me.taylorkelly.mywarp.Platform} which provides MyWarp with
+ * the needed connection to the game.</p>
  */
 public class MyWarp {
 
   private static final Logger log = Logger.getLogger(MyWarp.class.getName());
 
-  private static MyWarp instance;
-
-  private final EventWarpManager warpManager;
   private final Platform platform;
-  private final TeleportService teleportService;
+  private final EventWarpManager warpManager;
+  private final DataConnection dataConnection;
 
-  private DataConnection dataConnection;
   private EconomyManager economyManager;
   private LimitManager limitManager;
+  private WarpSignManager warpSignManager;
+
+  private TeleportService teleportService;
+
 
   /**
    * Creates an instance of MyWarp, running on the given Platform.
    *
    * @param platform the Platform MyWarp runs on
-   * @throws MyWarpException if the initialization fail and MyWarp is unable to continue
+   * @throws InitializationException if the initialization fails and MyWarp is unable to continue
    */
-  public MyWarp(Platform platform) throws MyWarpException {
+  public MyWarp(Platform platform) throws InitializationException {
     this.platform = platform;
 
     // setup dataConnection
     ListenableFuture<DataConnection> futureConnection;
     if (getSettings().isMysqlEnabled()) {
       futureConnection =
-          MySqlConnection.getConnection(getSettings().getMysqlDsn(), getSettings().getMysqlUsername(),
+          MySqlConnection.getConnection(this, getSettings().getMysqlDsn(), getSettings().getMysqlUsername(),
                                         getSettings().getMysqlPassword(), true);
     } else {
-      futureConnection = SqLiteConnection.getConnection(new File(platform.getDataFolder(), "mywarp.db"), true);
+      futureConnection = SqLiteConnection.getConnection(this, new File(platform.getDataFolder(), "mywarp.db"), true);
     }
     try {
       dataConnection = futureConnection.get();
     } catch (InterruptedException e) {
-      throw new MyWarpException("Failed to get a connection to the database as the process was interrupted.", e);
+      throw new InitializationException("Failed to get a connection to the database as the process was interrupted.",
+                                        e);
     } catch (ExecutionException e) {
-      throw new MyWarpException("Failed to get a connection to the database.", e.getCause());
+      throw new InitializationException("Failed to get a connection to the database.", e.getCause());
     }
 
     // setup the warpManager
     warpManager = new EventWarpManager(new EventConnectionBridge(dataConnection));
 
+    DynamicMessages.setControl(platform.getResourceBundleControl());
+
     // setup TeleportService
-    teleportService = new TeleportService();
+    teleportService = new TeleportService(new CubicLocationSafety(), getSettings());
 
     // setup the rest of the plugin
     setupPlugin();
-
-    instance = this;
-  }
-
-  /**
-   * Gets the static instance of MyWarp.
-   *
-   * @return the running MyWarp instance
-   * @throws IllegalStateException if MyWarp has not yet been initialized
-   */
-  // REVIEW remove singleton logic?
-  public static MyWarp getInstance() {
-    Preconditions.checkState(instance != null, "MyWarp is not yet initialized."); // NON-NLS
-    return instance;
   }
 
   /**
@@ -126,22 +111,26 @@ public class MyWarp {
    */
   private void setupPlugin() {
     // setup the limitManager
-    if (platform.getSettings().isLimitsEnabled()) {
+    if (getSettings().isLimitsEnabled()) {
       limitManager = new SimpleLimitManager(platform.getLimitProvider(), warpManager);
     } else {
-      limitManager = new DummyLimitManager(warpManager);
+      limitManager = new DummyLimitManager(platform.getGame(), warpManager);
     }
 
     // setup the economyManager
     try {
-      if (platform.getSettings().isEconomyEnabled()) {
-        economyManager = new SimpleEconomyManager(platform.getFeeProvider(), platform.getEconomyService());
+      if (getSettings().isEconomyEnabled()) {
+        economyManager =
+            new SimpleEconomyManager(getSettings(), platform.getFeeProvider(), platform.getEconomyService());
       } else {
         economyManager = new DummyEconomyManager();
       }
     } catch (UnsupportedOperationException e) {
       economyManager = new DummyEconomyManager();
     }
+
+    //TODO this might not be needed
+    warpSignManager = new WarpSignManager(getSettings().getWarpSignsIdentifiers(), economyManager, warpManager);
 
     // Populate the warpManager when the warps are loaded. The callback is
     // executed in the server thread.
@@ -159,7 +148,7 @@ public class MyWarp {
         log.log(Level.SEVERE, "Failed to load warps from the database.", throwable); // NON-NLS
       }
 
-    }, getServerExecutor());
+    }, platform.getGame().getExecutor());
 
   }
 
@@ -184,24 +173,6 @@ public class MyWarp {
     if (dataConnection != null) {
       dataConnection.close();
     }
-  }
-
-  /**
-   * Gets the DataConnection of this MyWarp instance.
-   *
-   * @return the DataConnection
-   */
-  public DataConnection getDataConnection() {
-    return dataConnection;
-  }
-
-  /**
-   * Gets the WarpManager of this MyWarp instance.
-   *
-   * @return the WarpManager
-   */
-  public EventWarpManager getWarpManager() {
-    return warpManager;
   }
 
   /**
@@ -244,7 +215,38 @@ public class MyWarp {
   }
 
   /**
-   * Gets the ProfileService.
+   * Gets the DataConnection of this MyWarp instance.
+   *
+   * @return the DataConnection
+   */
+  public DataConnection getDataConnection() {
+    return dataConnection;
+  }
+
+  /**
+   * Gets the WarpManager of this MyWarp instance.
+   *
+   * @return the WarpManager
+   */
+  public EventWarpManager getWarpManager() {
+    return warpManager;
+  }
+
+  /**
+   * Gets the WarpSignManager instance of this MyWarp instance.
+   *
+   * @return the WarpSignManager
+   */
+  public WarpSignManager getWarpSignManager() {
+    return warpSignManager;
+  }
+
+  public Settings getSettings() {
+    return platform.getSettings();
+  }
+
+  /**
+   * Gets the ProfileService instance of this MyWarp instance.
    *
    * @return the ProfileService
    */
@@ -252,108 +254,7 @@ public class MyWarp {
     return platform.getProfileService();
   }
 
-  /**
-   * Gets the Settings of this MyWarp instance.
-   *
-   * @return the Settings
-   */
-  public Settings getSettings() {
-    return platform.getSettings();
+  public Game getGame() {
+    return platform.getGame();
   }
-
-  /**
-   * Gets the ResourceBundle.Control implementation used by this Platform.
-   *
-   * @return the ResourceBundle.Control
-   */
-  public ResourceBundle.Control getResourceBundleControl() {
-    return platform.getResourceBundleControl();
-  }
-
-  /**
-   * Gets the DurationProvider.
-   *
-   * @return the DurationProvider
-   */
-  public DurationProvider getDurationProvider() {
-    return platform.getDurationProvider();
-  }
-
-  /**
-   * Gets the TimerService.
-   *
-   * @return the TimerService
-   */
-  public TimerService getTimerService() {
-    return platform.getTimerService();
-  }
-
-  /**
-   * Gets an ImmutableSet with all worlds currently loaded on the server.
-   *
-   * @return an ImmutableSet with all loaded worlds
-   */
-  public ImmutableSet<LocalWorld> getLoadedWorlds() {
-    return platform.getLoadedWorlds();
-  }
-
-  /**
-   * Gets an Optional containing the loaded world of the given name, if such a world exists.
-   *
-   * @param name the name of the world
-   * @return an Optional containing the loaded world
-   */
-  public Optional<LocalWorld> getLoadedWorld(String name) {
-    return platform.getLoadedWorld(name);
-  }
-
-  /**
-   * Gets an Optional containing the loaded world of the unique identifier, if such a world exists.
-   *
-   * @param uniqueId the unique identifier of the world
-   * @return an Optional containing the loaded world
-   */
-  public Optional<LocalWorld> getLoadedWorld(UUID uniqueId) {
-    return platform.getLoadedWorld(uniqueId);
-  }
-
-  /**
-   * Gets an Optional containing the online player of the given name, if such a player exists.
-   *
-   * @param name the name of the player
-   * @return an Optional containing the player
-   */
-  public Optional<LocalPlayer> getOnlinePlayer(String name) {
-    return platform.getOnlinePlayer(name);
-  }
-
-  /**
-   * Gets an Optional containing the online player of the given UUID, if such a player exists.
-   *
-   * @param identifier the identifier of the player
-   * @return an Optional containing the player
-   */
-  public Optional<LocalPlayer> getOnlinePlayer(UUID identifier) {
-    return platform.getOnlinePlayer(identifier);
-  }
-
-  /**
-   * Gets an Optional containing the online player of the given Profile, if such a player exists.
-   *
-   * @param profile the Profile of the player
-   * @return an Optional containing the player
-   */
-  public Optional<LocalPlayer> getOnlinePlayer(Profile profile) {
-    return getOnlinePlayer(profile.getUniqueId());
-  }
-
-  /**
-   * Get an Executor that executes given Runnables in the main server-thread ('synchronous').
-   *
-   * @return the Executor
-   */
-  public Executor getServerExecutor() {
-    return platform.getServerExecutor();
-  }
-
 }

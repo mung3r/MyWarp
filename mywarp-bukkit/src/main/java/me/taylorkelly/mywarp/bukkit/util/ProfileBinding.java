@@ -26,13 +26,24 @@ import com.sk89q.intake.parametric.binding.BindingBehavior;
 import com.sk89q.intake.parametric.binding.BindingHelper;
 import com.sk89q.intake.parametric.binding.BindingMatch;
 
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.profile.ProfileService;
 
 /**
  * A binding for {@link Profile}s.
  */
 public class ProfileBinding extends BindingHelper {
+
+  private final ProfileService profileService;
+
+  /**
+   * Creates an instance.
+   *
+   * @param profileService the ProfileService this Binding will bind Profiles from
+   */
+  public ProfileBinding(ProfileService profileService) {
+    this.profileService = profileService;
+  }
 
   /**
    * Gets a Profile matching the name given by the command.
@@ -45,7 +56,7 @@ public class ProfileBinding extends BindingHelper {
   @BindingMatch(type = Profile.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = false)
   public Profile getString(ArgumentStack context) throws NoSuchProfileException, ParameterException {
     String query = context.next();
-    Optional<Profile> optional = MyWarp.getInstance().getProfileService().get(query);
+    Optional<Profile> optional = profileService.get(query);
 
     if (!optional.isPresent()) {
       throw new NoSuchProfileException(query);

@@ -29,7 +29,7 @@ import com.sk89q.intake.parametric.handler.InvokeHandler;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.economy.EconomyManager;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 
 import java.lang.reflect.Method;
@@ -40,6 +40,17 @@ import java.lang.reflect.Method;
  * me.taylorkelly.mywarp.bukkit.util.economy.Billable}.
  */
 public class EconomyInvokeHandler extends AbstractInvokeListener implements InvokeHandler {
+
+  private final EconomyManager economyManager;
+
+  /**
+   * Creates an instance.
+   *
+   * @param economyManager the EconomyManager uses to handle economy tasks
+   */
+  public EconomyInvokeHandler(EconomyManager economyManager) {
+    this.economyManager = economyManager;
+  }
 
   @Override
   public InvokeHandler createInvokeHandler() {
@@ -64,7 +75,7 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
     }
 
     FeeType feeType = method.getAnnotation(Billable.class).value();
-    return MyWarp.getInstance().getEconomyManager().informativeHasAtLeast((LocalPlayer) actor, feeType);
+    return economyManager.informativeHasAtLeast((LocalPlayer) actor, feeType);
   }
 
   @Override
@@ -79,7 +90,7 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
     }
 
     FeeType feeType = method.getAnnotation(Billable.class).value();
-    MyWarp.getInstance().getEconomyManager().informativeWithdraw((LocalPlayer) actor, feeType);
+    economyManager.informativeWithdraw((LocalPlayer) actor, feeType);
   }
 
 }

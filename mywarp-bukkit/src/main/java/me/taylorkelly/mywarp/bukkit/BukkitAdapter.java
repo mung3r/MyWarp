@@ -21,6 +21,7 @@ package me.taylorkelly.mywarp.bukkit;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.permissions.GroupResolver;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
 
@@ -33,18 +34,22 @@ import org.bukkit.entity.Player;
  */
 public final class BukkitAdapter {
 
-  private final ProfileService profileService;
   private final GroupResolver groupResolver;
+  private final ProfileService profileService;
+  private final Settings settings;
+
 
   /**
    * Creates an instance.
    *
-   * @param profileService the profileService
-   * @param groupResolver  the groupResolver
+   * @param groupResolver  the GroupResolver
+   * @param profileService the ProfileService
+   * @param settings the Settings
    */
-  public BukkitAdapter(ProfileService profileService, GroupResolver groupResolver) {
+  public BukkitAdapter(GroupResolver groupResolver, ProfileService profileService, Settings settings) {
     this.profileService = profileService;
     this.groupResolver = groupResolver;
+    this.settings = settings;
   }
 
   /**
@@ -98,7 +103,7 @@ public final class BukkitAdapter {
    * @return the LocalPlayer representing the given Player
    */
   public LocalPlayer adapt(Player player) {
-    return new BukkitPlayer(player, profileService, groupResolver, this);
+    return new BukkitPlayer(player, this, groupResolver, profileService, settings);
   }
 
 }

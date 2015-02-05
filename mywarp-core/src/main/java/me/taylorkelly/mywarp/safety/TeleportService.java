@@ -23,7 +23,7 @@ import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 
@@ -32,7 +32,19 @@ import me.taylorkelly.mywarp.util.Vector3;
  */
 public final class TeleportService {
 
-  private final PositionSafety positionSafety = new CubicLocationSafety();
+  private final PositionSafety positionSafety;
+  private final Settings settings;
+
+  /**
+   * Creates an instance.
+   *
+   * @param positionSafety the PositionSafety used to find safe positions
+   * @param settings       the Settings
+   */
+  public TeleportService(PositionSafety positionSafety, Settings settings) {
+    this.positionSafety = positionSafety;
+    this.settings = settings;
+  }
 
   /**
    * Teleports the entity to the given position in the given world and sets his rotation to the given one if the
@@ -51,10 +63,10 @@ public final class TeleportService {
     if (world.getBlock(position).isNotFullHeight()) {
       position = position.add(0, 1, 0);
     }
-    if (MyWarp.getInstance().getSettings().isSafetyEnabled()) {
+    if (settings.isSafetyEnabled()) {
       Optional<Vector3>
           safePosition =
-          positionSafety.getSafePosition(world, position, MyWarp.getInstance().getSettings().getSafetySearchRadius());
+          positionSafety.getSafePosition(world, position, settings.getSafetySearchRadius());
       if (!safePosition.isPresent()) {
         return TeleportStatus.NONE;
       }

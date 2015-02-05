@@ -29,6 +29,7 @@ import static me.taylorkelly.mywarp.dataconnections.generated.Tables.WORLD;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.Player;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.GroupRecord;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.PlayerRecord;
@@ -67,19 +68,22 @@ public class JooqConnection implements DataConnection {
   private final Connection conn;
   private final DSLContext create;
   private final ListeningExecutorService executor;
+  private final MyWarp myWarp;
 
   /**
    * Creates this JooqConnection using the given DSLContext with the given connection, using the given executor to run
    * all tasks.
    *
-   * @param create   the DSLContext to use
+   * @param myWarp   the MyWarp instance
    * @param conn     the Connection to use
    * @param executor the executor that runs all tasks
+   * @param create   the DSLContext to use
    */
-  protected JooqConnection(DSLContext create, Connection conn, ListeningExecutorService executor) {
+  protected JooqConnection(MyWarp myWarp, Connection conn, ListeningExecutorService executor, DSLContext create) {
     this.create = create;
     this.conn = conn;
     this.executor = executor;
+    this.myWarp = myWarp;
   }
 
   @Override
@@ -158,10 +162,10 @@ public class JooqConnection implements DataConnection {
    * @return the corresponding PlayerRecord
    */
   private PlayerRecord getOrCreatePlayer(Profile profile) {
-    PlayerRecord playerRecord = create.fetchOne(PLAYER, PLAYER.UUID.eq(profile));
+    PlayerRecord playerRecord = create.fetchOne(PLAYER, PLAYER.UUID.eq(profile.getUniqueId()));
     if (playerRecord == null) {
       playerRecord = create.newRecord(PLAYER);
-      playerRecord.setUuid(profile);
+      playerRecord.setUuid(profile.getUniqueId());
       playerRecord.insert();
     }
     return playerRecord;
@@ -209,8 +213,8 @@ public class JooqConnection implements DataConnection {
         // query the database and group results by name - each map-entry
         // contains all values for one single warp
         // @formatter:off
-        Map<String, Result<Record14<String, Profile, Type, Double, Double, Double, Float, Float, UUID, Date,
-            UInteger, String, Profile, String>>> groupedResults = create
+        Map<String, Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date,
+            UInteger, String, UUID, String>>> groupedResults = create
                 .select(WARP.NAME, creatorTable.UUID, WARP.TYPE, WARP.X, WARP.Y, WARP.Z, WARP.YAW,
                         WARP.PITCH, WORLD.UUID, WARP.CREATION_DATE, WARP.VISITS,
                         WARP.WELCOME_MESSAGE, PLAYER.UUID, GROUP.NAME)
@@ -232,18 +236,18 @@ public class JooqConnection implements DataConnection {
 
         // create warp-instances from the results
         Collection<Warp> ret = new ArrayList<Warp>(groupedResults.size());
-        for (Result<Record14<String, Profile, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger,
-            String, Profile, String>> r : groupedResults
+        for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String,
+            UUID, String>> r : groupedResults
             .values()) {
-          Profile creator = r.getValue(0, creatorTable.UUID);
+          Profile creator = myWarp.getProfileService().get(r.getValue(0, creatorTable.UUID));
 
           Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
           EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.YAW), r.getValue(0, WARP.PITCH), 0);
 
           WarpBuilder
               builder =
-              new WarpBuilder(r.getValue(0, WARP.NAME), creator, r.getValue(0, WARP.TYPE), r.getValue(0, WORLD.UUID),
-                              position, rotation);
+              new WarpBuilder(myWarp, r.getValue(0, WARP.NAME), creator, r.getValue(0, WARP.TYPE),
+                              r.getValue(0, WORLD.UUID), position, rotation);
 
           // optional values
           builder.withCreationDate(r.getValue(0, WARP.CREATION_DATE));
@@ -256,8 +260,9 @@ public class JooqConnection implements DataConnection {
             }
           }
 
-          for (Profile inviteeProfile : r.getValues(PLAYER.UUID)) {
-            if (inviteeProfile != null) {
+          for (UUID inviteeUniqueId : r.getValues(PLAYER.UUID)) {
+            if (inviteeUniqueId != null) {
+              Profile inviteeProfile = myWarp.getProfileService().get(inviteeUniqueId);
               builder.addInvitedPlayer(inviteeProfile);
             }
           }

@@ -25,16 +25,16 @@ package me.taylorkelly.mywarp;
 public interface BlockType {
 
   /**
-   * Returns whether this particular block is safe to stand in, which means an entity could stand inside this particular
-   * block without taking damage from doing so.
+   * Returns whether this particular block is safe to stand <b>in</b>, which means an entity could stand inside this
+   * particular block without taking damage from doing so.
    *
    * @return true if this particular block is safe to stand in
    */
   boolean isSafeToStandIn();
 
   /**
-   * Returns whether this particular block is safe to stand on, which mean an entity could stand on this particular
-   * block without taking damage from doing so.
+   * Returns whether this particular block is safe to stand <b>on</b>, which mean an entity could stand on this
+   * particular block without taking damage from doing so.
    *
    * @return true if this particular block is safe to stand on
    */
@@ -44,7 +44,9 @@ public interface BlockType {
    * Returns whether this particular Block is smaller than a normal (full) block.
    *
    * @return true if this particular block is smaller than a normal block
+   * @deprecated This method exists only to suport warps created in legacy versions.
    */
+  @Deprecated
   boolean isNotFullHeight();
 
 }

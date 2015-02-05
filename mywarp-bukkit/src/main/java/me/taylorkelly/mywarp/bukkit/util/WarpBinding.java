@@ -31,11 +31,11 @@ import com.sk89q.intake.parametric.binding.BindingMatch;
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.WarpManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -46,6 +46,17 @@ import java.util.NoSuchElementException;
  * A binding for {@link Warp}s.
  */
 public class WarpBinding extends BindingHelper {
+
+  private final WarpManager warpManager;
+
+  /**
+   * Creates an instance.
+   *
+   * @param warpManager the WarpManager this Binding will bind warps from
+   */
+  public WarpBinding(WarpManager warpManager) {
+    this.warpManager = warpManager;
+  }
 
   /**
    * Gets a Warp matching the query and the Condition modifier given by the command.
@@ -96,7 +107,7 @@ public class WarpBinding extends BindingHelper {
    * @throws NoSuchWarpException if such a Warp does not exist
    */
   protected Warp getWarp(String query, Predicate<Warp> predicate) throws NoSuchWarpException {
-    MatchList matches = MyWarp.getInstance().getWarpManager().getMatchingWarps(query, predicate);
+    MatchList matches = warpManager.getMatchingWarps(query, predicate);
     Optional<Warp> exactMatch = matches.getExactMatch();
 
     if (!exactMatch.isPresent()) {

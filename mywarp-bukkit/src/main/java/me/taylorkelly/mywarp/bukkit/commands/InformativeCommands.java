@@ -30,7 +30,7 @@ import com.sk89q.intake.parametric.annotation.Switch;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.commands.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.bukkit.commands.printer.InfoPrinter;
 import me.taylorkelly.mywarp.bukkit.util.FormattingUtils;
@@ -40,9 +40,11 @@ import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
 import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.bukkit.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.WarpManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -55,6 +57,22 @@ import java.util.List;
 public class InformativeCommands {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+
+  private final LimitManager limitManager;
+  private final Settings settings;
+  private final WarpManager warpManager;
+
+  /**
+   * Creates an instance.
+   *  @param limitManager thr LimitManager the commands should operate on
+   * @param settings the Settings
+   * @param warpManager  the WarpManager the commands should operate on
+   */
+  public InformativeCommands(LimitManager limitManager, Settings settings, WarpManager warpManager) {
+    this.limitManager = limitManager;
+    this.settings = settings;
+    this.warpManager = warpManager;
+  }
 
   /**
    * Displays a player's assets.
@@ -74,7 +92,7 @@ public class InformativeCommands {
         throw new IllegalCommandSenderException(actor);
       }
     }
-    new AssetsPrinter(creator, MyWarp.getInstance().getLimitManager()).print(actor);
+    new AssetsPrinter(creator, limitManager, settings).print(actor);
 
   }
 
@@ -118,8 +136,7 @@ public class InformativeCommands {
 
     List<Warp>
         warps =
-        Ordering.natural().sortedCopy(
-            MyWarp.getInstance().getWarpManager().filter(Predicates.<Warp>and(WarpUtils.isViewable(actor), predicate)));
+        Ordering.natural().sortedCopy(warpManager.filter(Predicates.<Warp>and(WarpUtils.isViewable(actor), predicate)));
 
     Function<Warp, String> mapping = new Function<Warp, String>() {
 
@@ -166,7 +183,7 @@ public class InformativeCommands {
   }
 
   /**
-   * Displays informations about a Warp.
+   * Displays information about a Warp.
    *
    * @param actor the Actor
    * @param warp  the Warp

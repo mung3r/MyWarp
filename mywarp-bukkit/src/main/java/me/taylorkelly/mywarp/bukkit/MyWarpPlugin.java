@@ -28,8 +28,10 @@ import com.sk89q.intake.parametric.ParametricBuilder;
 import com.sk89q.intake.util.auth.AuthorizationException;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
+import me.taylorkelly.mywarp.InitializationException;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.MyWarpException;
+import me.taylorkelly.mywarp.Platform;
 import me.taylorkelly.mywarp.bukkit.commands.ImportCommands;
 import me.taylorkelly.mywarp.bukkit.commands.InformativeCommands;
 import me.taylorkelly.mywarp.bukkit.commands.ManagementCommands;
@@ -38,11 +40,16 @@ import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
 import me.taylorkelly.mywarp.bukkit.commands.UtilityCommands;
 import me.taylorkelly.mywarp.bukkit.conversation.WarpAcceptancePromptFactory;
 import me.taylorkelly.mywarp.bukkit.conversation.WelcomeEditorFactory;
+import me.taylorkelly.mywarp.bukkit.economy.BukkitFeeProvider;
+import me.taylorkelly.mywarp.bukkit.economy.VaultService;
+import me.taylorkelly.mywarp.bukkit.limits.BukkitLimitProvider;
 import me.taylorkelly.mywarp.bukkit.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.bukkit.permissions.BukkitPermissionsRegistration;
 import me.taylorkelly.mywarp.bukkit.permissions.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.permissions.GroupResolverManager;
 import me.taylorkelly.mywarp.bukkit.profile.SquirrelIdProfileService;
+import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
+import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
 import me.taylorkelly.mywarp.bukkit.util.ActorAuthorizer;
 import me.taylorkelly.mywarp.bukkit.util.ActorBindung;
 import me.taylorkelly.mywarp.bukkit.util.ExceptionConverter;
@@ -52,10 +59,10 @@ import me.taylorkelly.mywarp.bukkit.util.ProfileBinding;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding;
 import me.taylorkelly.mywarp.bukkit.util.WarpDispatcher;
 import me.taylorkelly.mywarp.bukkit.util.economy.EconomyInvokeHandler;
-import me.taylorkelly.mywarp.util.PropertiesUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
-import me.taylorkelly.mywarp.util.profile.ProfileService;
+
+import net.milkbowl.vault.economy.Economy;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.Bukkit;
@@ -66,21 +73,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapCommonAPI;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Arrays;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+
+import javax.annotation.Nullable;
 
 /**
  * The MyWarp plugin instance when running on Bukkit.
  */
-public class MyWarpPlugin extends JavaPlugin {
+public class MyWarpPlugin extends JavaPlugin implements Platform {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
@@ -89,56 +95,49 @@ public class MyWarpPlugin extends JavaPlugin {
 
   }; // new FolderSourcedControl(bundleFolder);
 
-  private MyWarp mywarp;
-  private Dispatcher dispatcher;
-  private BukkitAdapter adapter;
-  private BukkitSettings settings;
   private GroupResolverManager groupResolverManager;
   private SquirrelIdProfileService profileService;
-  private WelcomeEditorFactory welcomeEditorFactory;
-  private WarpAcceptancePromptFactory warpAcceptancePromptFactory;
+  private BukkitSettings settings;
+  private BukkitAdapter adapter;
+  private BukkitGame game;
+
+  private MyWarp myWarp;
+
+  private Dispatcher dispatcher;
+
+  @Nullable
+  private VaultService economyService;
+  @Nullable
+  private BukkitTimerService timerService;
+  @Nullable
+  private BukkitFeeProvider feeProvider;
+  @Nullable
+  private BukkitLimitProvider limitProvider;
+  @Nullable
+  private BukkitDurationProvider durationProvider;
+
+  // -- JavaPlugin methods
 
   @Override
   public void onEnable() {
 
-    // // create bundle path
-    // if (!bundleFolder.exists()) {
-    // bundleFolder.mkdirs();
-    // }
-    // // create bundles
-    // // XXX finalize bundle names, edit POM accordingly, add Locales
-    // for (String baseName :
-    // Arrays.asList("me.taylorkelly.mywarp.lang.Commands",
-    // "me.taylorkelly.mywarp.lang.Conversations",
-    // "me.taylorkelly.mywarp.lang.DynmapMarkers",
-    // "me.taylorkelly.mywarp.lang.Economy",
-    // "me.taylorkelly.mywarp.lang.StringPaginator",
-    // "me.taylorkelly.mywarp.lang.Timers",
-    // "me.taylorkelly.mywarp.lang.Warp",
-    // "me.taylorkelly.mywarp.lang.WarpSignManager")) {
-    // try {
-    // createBundle(baseName);
-    // } catch (IOException e) {
-    // getLogger().log(
-    // Level.SEVERE,
-    // "Failed to create default resource bundle '" + baseName
-    // + "', using build in defaults.", e);
-    // }
-    // }
-
     groupResolverManager = new GroupResolverManager();
     profileService = new SquirrelIdProfileService();
-
-    adapter = new BukkitAdapter(profileService, groupResolverManager);
 
     // setup the configurations
     settings =
         new BukkitSettings(new File(getDataFolder(), "config.yml"),
                            YamlConfiguration.loadConfiguration(getTextResource("config.yml")), adapter); // NON-NLS
 
+    adapter = new BukkitAdapter(groupResolverManager, profileService, settings);
+
+    // setup the Game
+    game = new BukkitGame(new BukkitExecutor(this), adapter);
+
+    // try to setup the core
     try {
-      mywarp = new MyWarp(new BukkitPlatform(this));
-    } catch (MyWarpException e) {
+      myWarp = new MyWarp(this);
+    } catch (InitializationException e) {
       getLogger().log(Level.SEVERE,
                       "A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be "
                       + "disabled.", e);
@@ -146,75 +145,47 @@ public class MyWarpPlugin extends JavaPlugin {
       return;
     }
 
-    welcomeEditorFactory = new WelcomeEditorFactory(this, adapter);
-    warpAcceptancePromptFactory = new WarpAcceptancePromptFactory(this, adapter);
+    WelcomeEditorFactory welcomeEditorFactory = new WelcomeEditorFactory(this, adapter);
+    WarpAcceptancePromptFactory warpAcceptancePromptFactory = new WarpAcceptancePromptFactory(this, adapter);
 
     // command registration
     ExceptionConverter exceptionConverter = new ExceptionConverter();
-    PlayerBinding playerBinding = new PlayerBinding();
-    WarpBinding warpBinding = new WarpBinding();
+    PlayerBinding playerBinding = new PlayerBinding(game);
+    WarpBinding warpBinding = new WarpBinding(myWarp.getWarpManager());
 
     ParametricBuilder builder = new ParametricBuilder();
     builder.setAuthorizer(new ActorAuthorizer());
     builder.addBinding(new ActorBindung());
     builder.addBinding(playerBinding);
-    builder.addBinding(new ProfileBinding());
+    builder.addBinding(new ProfileBinding(profileService));
     builder.addBinding(warpBinding);
     builder.addExceptionConverter(exceptionConverter);
 
-    builder.addInvokeListener(new EconomyInvokeHandler());
+    builder.addInvokeListener(new EconomyInvokeHandler(myWarp.getEconomyManager()));
     builder.addInvokeListener(new I18nInvokeHandler());
 
-    UsageCommands usageCommands = new UsageCommands();
+    UsageCommands usageCommands = new UsageCommands(myWarp);
 
     // @formatter:off
     dispatcher = new CommandGraph().builder(builder)
             .commands()
               .registerMethods(usageCommands)
               .group(new WarpDispatcher(exceptionConverter, playerBinding, warpBinding, usageCommands), "warp",
-                     "mywarp", "mw") //NON-NLS NON-NLS
+                     "myWarp", "mw") //NON-NLS NON-NLS
                 .describeAs("warp-to.description")
-                .registerMethods(new InformativeCommands())
-                .registerMethods(new ManagementCommands(welcomeEditorFactory))
-                .registerMethods(new SocialCommands(warpAcceptancePromptFactory))
-                .registerMethods(new UtilityCommands())
+                .registerMethods(new InformativeCommands(myWarp.getLimitManager(), settings, myWarp.getWarpManager()))
+                .registerMethods(new ManagementCommands(myWarp, welcomeEditorFactory))
+                .registerMethods(new SocialCommands(game, myWarp.getLimitManager(), profileService,
+                                                    warpAcceptancePromptFactory))
+                .registerMethods(new UtilityCommands(myWarp))
                 .group("import", "migrate") //NON-NLS NON-NLS
                   .describeAs("import.description")
-                  .registerMethods(new ImportCommands())
+                  .registerMethods(new ImportCommands(myWarp))
               .graph()
             .getDispatcher();
     // @formatter:on
 
     setupPlugin();
-  }
-
-  /**
-   * Creates or updates the ResourceBundle with the given name in the configured bundleFolder.
-   *
-   * @param baseName the name of the ResourceBundle
-   * @throws IOException if a read/write error occurs
-   */
-  private void createBundle(String baseName) throws IOException {
-    for (String localePrefix : Arrays.asList("")) {
-      baseName = baseName + localePrefix + ".properties"; // NON-NLS
-
-      File bundle = new File(bundleFolder, baseName);
-      if (!bundle.exists()) {
-        bundle.createNewFile();
-      }
-      Properties defaults = new Properties();
-      Reader reader = getTextResource("lang/" + baseName); // NON-NLS
-      try {
-        defaults.load(reader);
-        reader.close();
-      } finally {
-        if (reader != null) {
-          reader.close();
-        }
-      }
-
-      PropertiesUtils.copyMissing(bundle, defaults);
-    }
   }
 
   /**
@@ -225,14 +196,13 @@ public class MyWarpPlugin extends JavaPlugin {
     profileService.registerEvents(this);
 
     if (settings.isWarpSignsEnabled()) {
-      new WarpSignManager(settings.getWarpSignsIdentifiers(), MyWarp.getInstance().getWarpManager(), adapter)
-          .registerEvents(this);
+      new WarpSignListener(adapter, myWarp.getWarpSignManager()).registerEvents(this);
     }
 
     if (settings.isDynmapEnabled()) {
       Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap"); // NON-NLS
       if (dynmap != null && dynmap.isEnabled()) {
-        new DynmapMarkers(this, (DynmapCommonAPI) dynmap, MyWarp.getInstance().getWarpManager());
+        new DynmapMarkers(this, (DynmapCommonAPI) dynmap, myWarp.getWarpManager());
       } else {
         getLogger().severe("Failed to hook into Dynmap. Disabling Dynmap support."); // NON-NLS
       }
@@ -240,8 +210,8 @@ public class MyWarpPlugin extends JavaPlugin {
 
     // register world access permissions
     for (World loadedWorld : Bukkit.getWorlds()) {
-      Permission perm = new Permission("mywarp.warp.world." + loadedWorld.getName()); // NON-NLS
-      perm.addParent("mywarp.warp.world.*", true); // NON-NLS
+      Permission perm = new Permission("myWarp.warp.world." + loadedWorld.getName()); // NON-NLS
+      perm.addParent("myWarp.warp.world.*", true); // NON-NLS
       BukkitPermissionsRegistration.INSTANCE.register(perm);
     }
   }
@@ -251,22 +221,9 @@ public class MyWarpPlugin extends JavaPlugin {
     HandlerList.unregisterAll(this);
     BukkitPermissionsRegistration.INSTANCE.unregisterAll();
 
-    if (mywarp != null) {
-      mywarp.unload();
+    if (myWarp != null) {
+      myWarp.unload();
     }
-  }
-
-  /**
-   * Reloads all functions that are specific for Bukkit.
-   */
-  protected void reload() {
-    // cleanup old stuff
-    HandlerList.unregisterAll(this);
-    BukkitPermissionsRegistration.INSTANCE.unregisterAll();
-
-    // load new stuff
-    settings.reload();
-    setupPlugin();
   }
 
   @Override
@@ -314,68 +271,7 @@ public class MyWarpPlugin extends JavaPlugin {
     return true;
   }
 
-  /**
-   * Gets the adapter.
-   *
-   * @return the adapter
-   */
-  public BukkitAdapter getAdapter() {
-    return adapter;
-  }
-
-  /**
-   * Gets the welcomeEditorFactory.
-   *
-   * @return the welcomeEditorFactory
-   */
-  public WelcomeEditorFactory getWelcomeEditorFactory() {
-    return welcomeEditorFactory;
-  }
-
-  /**
-   * Gets the warpAcceptancePromptFactory.
-   *
-   * @return the warpAcceptancePromptFactory
-   */
-  public WarpAcceptancePromptFactory getWarpAcceptancePromptFactory() {
-    return warpAcceptancePromptFactory;
-  }
-
-  /**
-   * Gets the control.
-   *
-   * @return the control
-   */
-  public ResourceBundle.Control getResourceBundleControl() {
-    return control;
-  }
-
-  /**
-   * Gets the settings.
-   *
-   * @return the settings
-   */
-  public BukkitSettings getSettings() {
-    return settings;
-  }
-
-  /**
-   * Gets the GroupResolver.
-   *
-   * @return the GroupResolver
-   */
-  public GroupResolver getGroupResolver() {
-    return groupResolverManager;
-  }
-
-  /**
-   * Gets the profileService.
-   *
-   * @return the profileService
-   */
-  public ProfileService getProfileService() {
-    return profileService;
-  }
+  // -- custom methods
 
   /**
    * Wraps a CommandSender to an Actor.
@@ -387,7 +283,117 @@ public class MyWarpPlugin extends JavaPlugin {
     if (sender instanceof Player) {
       return adapter.adapt((Player) sender);
     }
-    return new BukkitActor(sender);
+    return new BukkitActor(sender, settings.getLocalizationDefaultLocale());
+  }
+
+  /**
+   * Gets the adapter.
+   *
+   * @return the adapter
+   */
+  public BukkitAdapter getAdapter() {
+    return adapter;
+  }
+
+  /**
+   * Gets the GroupResolver.
+   *
+   * @return the GroupResolver
+   */
+  public GroupResolver getGroupResolver() {
+    return groupResolverManager;
+  }
+
+  // -- Platform methods
+
+  @Override
+  public void reload() {
+    // cleanup old stuff
+    HandlerList.unregisterAll(this);
+    BukkitPermissionsRegistration.INSTANCE.unregisterAll();
+
+    // load new stuff
+    settings.reload();
+    setupPlugin();
+  }
+
+  @Override
+  public ResourceBundle.Control getResourceBundleControl() {
+    return control;
+  }
+
+  @Override
+  public Game getGame() {
+    return game;
+  }
+
+  @Override
+  public BukkitSettings getSettings() {
+    return settings;
+  }
+
+  @Override
+  public SquirrelIdProfileService getProfileService() {
+    return profileService;
+  }
+
+  @Override
+  public VaultService getEconomyService() {
+    if (economyService == null) {
+      try {
+        RegisteredServiceProvider<Economy>
+            economyProvider =
+            Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider == null) {
+          getLogger().severe(
+              "Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable."); // NON-NLS
+        } else {
+          economyService = new VaultService(economyProvider, adapter);
+        }
+      } catch (NoClassDefFoundError e) {
+        getLogger().severe(
+            "Failed to hook into Vault (EconomyProviderClass not available). EconomySupport will not be avilable.");
+      }
+      throw new UnsupportedOperationException();
+    }
+
+    return economyService;
+  }
+
+  @Override
+  public BukkitTimerService getTimerService() {
+    if (timerService == null) {
+      timerService = new BukkitTimerService(this);
+    }
+    return timerService;
+  }
+
+  @Override
+  public BukkitFeeProvider getFeeProvider() {
+    if (feeProvider == null) {
+      feeProvider =
+          new BukkitFeeProvider(settings.getEconomyConfiguredFeeBundles(), settings.getEconomyDefaultFeeBundle());
+    }
+    return feeProvider;
+  }
+
+  @Override
+  public BukkitLimitProvider getLimitProvider() {
+    if (limitProvider == null) {
+      limitProvider =
+          new BukkitLimitProvider(settings.getLimitsConfiguredLimitBundles(), settings.getLimitsDefaultLimitBundle());
+    }
+    return limitProvider;
+  }
+
+  @Override
+  public BukkitDurationProvider getDurationProvider() {
+    if (durationProvider == null) {
+      durationProvider =
+          new BukkitDurationProvider(settings.getTimersConfiguredDurationBundles(),
+                                     settings.getTimersDefaultDurationBundle());
+    }
+    return durationProvider;
   }
 
 }

@@ -21,7 +21,9 @@ package me.taylorkelly.mywarp.dataconnections.migrators;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
+import com.google.common.util.concurrent.MoreExecutors;
 
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -38,7 +40,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A migrator for legacy (pre 2.7) MySQL databases.
+ * A migrator for legacy (pre 2.7) MySQL databases. Due to the dependency on the {@link LegacyMigrator} the migraton
+ * must be run synchronous if the underling Game does not support this conversion run from other threads.
  */
 public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator {
 
@@ -52,12 +55,15 @@ public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator 
   /**
    * Initiates this LegacyMySqlMigrator.
    *
-   * @param dsn       the dsn of the database
+   * @param myWarp    the MyWarp instance
    * @param user      the MySQL user to use
    * @param password  the user's password
    * @param tableName the name of the table that contains the data
+   * @param dsn       the dsn of the database
    */
-  public LegacyMySqlMigrator(final String dsn, final String user, final String password, final String tableName) {
+  public LegacyMySqlMigrator(MyWarp myWarp, final String user, final String password, final String tableName,
+                             final String dsn) {
+    super(myWarp);
     this.dsn = dsn;
     this.user = user;
     this.password = password;
@@ -92,7 +98,7 @@ public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator 
         return ret;
       }
     });
-    new Thread(ret).start();
+    MoreExecutors.sameThreadExecutor().submit(ret);
     return ret;
   }
 }

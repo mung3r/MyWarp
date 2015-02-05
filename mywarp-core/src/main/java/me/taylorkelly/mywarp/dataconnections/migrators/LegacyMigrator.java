@@ -46,11 +46,22 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * An abstract migrator for legacy (pre 3.0) database layouts.
+ * An abstract migrator for legacy (pre 3.0) database layouts. Running the migration will convert player names to UUIDs
+ * and world names to world UUIDs. The later process might force an implementation to run synchronous if the underling
+ * Game does not support this conversion run from other threads.
  */
 public abstract class LegacyMigrator {
 
   private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
+  private final MyWarp myWarp;
+
+  /**
+   * Creates an instance.
+   * @param myWarp the MyWarp instance
+   */
+  protected LegacyMigrator(MyWarp myWarp) {
+    this.myWarp = myWarp;
+  }
 
   /**
    * Migrates warps from the given DSLContext looking inside the table of the given name.
@@ -65,18 +76,12 @@ public abstract class LegacyMigrator {
         String>>
         results =
         create.select(fieldByName(String.class, "name"), fieldByName(String.class, "creator"),
-                      // NON-NLS NON-NLS
                       fieldByName(Boolean.class, "publicAll"), fieldByName(Double.class, "x"),
-                      // NON-NLS NON-NLS
-                      fieldByName(Double.class, "y"), fieldByName(Double.class, "z"), // NON-NLS
-                      // NON-NLS
-                      fieldByName(Float.class, "yaw"), fieldByName(Float.class, "pitch"), // NON-NLS
-                      // NON-NLS
-                      fieldByName(String.class, "world"), fieldByName(Integer.class, "visits"),
-                      // NON-NLS NON-NLS
-                      fieldByName(String.class, "welcomeMessage"), // NON-NLS
-                      fieldByName(String.class, "permissions"), // NON-NLS
-                      fieldByName(String.class, "groupPermissions")).from(tableByName(tableName)).fetch(); // NON-NLS
+                      fieldByName(Double.class, "y"), fieldByName(Double.class, "z"), fieldByName(Float.class, "yaw"),
+                      fieldByName(Float.class, "pitch"), fieldByName(String.class, "world"),
+                      fieldByName(Integer.class, "visits"), fieldByName(String.class, "welcomeMessage"),
+                      fieldByName(String.class, "permissions"), fieldByName(String.class, "groupPermissions"))
+            .from(tableByName(tableName)).fetch();
 
     Set<String> playerNames = new HashSet<String>(results.getValues("creator", String.class)); // NON-NLS
     for (String invitedPlayers : results.getValues("permissions", String.class)) { // NON-NLS
@@ -85,7 +90,7 @@ public abstract class LegacyMigrator {
 
     Map<String, Profile> cache = new HashMap<String, Profile>();
     for (String invitedPlayer : playerNames) {
-      Optional<Profile> optionalInvited = MyWarp.getInstance().getProfileService().get(invitedPlayer);
+      Optional<Profile> optionalInvited = myWarp.getProfileService().get(invitedPlayer);
       if (!optionalInvited.isPresent()) {
         // REVIEW log error?
         continue;
@@ -99,7 +104,7 @@ public abstract class LegacyMigrator {
         String> r : results) {
       Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
 
-      Optional<LocalWorld> optionalWorld = MyWarp.getInstance().getLoadedWorld(r.value9());
+      Optional<LocalWorld> optionalWorld = myWarp.getGame().getWorld(r.value9());
       if (!optionalWorld.isPresent()) {
         // REVIEW log error?
         continue;
@@ -108,7 +113,7 @@ public abstract class LegacyMigrator {
       Vector3 position = new Vector3(r.value4(), r.value5(), r.value6());
       EulerDirection rotation = new EulerDirection(r.value7(), r.value8(), 0);
 
-      WarpBuilder builder = new WarpBuilder(r.value1(), cache.get(r.value2()), type, world, position, rotation);
+      WarpBuilder builder = new WarpBuilder(myWarp, r.value1(), cache.get(r.value2()), type, world, position, rotation);
 
       // optional values
       builder.withVisits(r.value10());

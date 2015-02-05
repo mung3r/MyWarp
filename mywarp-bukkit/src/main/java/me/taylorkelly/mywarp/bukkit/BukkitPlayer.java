@@ -21,7 +21,7 @@ package me.taylorkelly.mywarp.bukkit;
 
 import me.taylorkelly.mywarp.AbstractPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.permissions.GroupResolver;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -54,24 +54,27 @@ public class BukkitPlayer extends AbstractPlayer {
   private static final Logger log = Logger.getLogger(BukkitPlayer.class.getName());
 
   private final Player player;
-  private final ProfileService profileService;
-  private final GroupResolver groupResolver;
   private final BukkitAdapter adapter;
+  private final GroupResolver groupResolver;
+  private final ProfileService profileService;
+  private final Settings settings;
 
   /**
    * Creates an instance that references the given Player.
    *
    * @param player         the player
-   * @param profileService the profileService
-   * @param groupResolver  the groupResolver
    * @param adapter        the BukkitAdapter
+   * @param groupResolver  the groupResolver
+   * @param profileService the profileService
+   * @param settings       the Settings
    */
-  public BukkitPlayer(Player player, ProfileService profileService, GroupResolver groupResolver,
-                      BukkitAdapter adapter) {
+  public BukkitPlayer(Player player, BukkitAdapter adapter, GroupResolver groupResolver, ProfileService profileService,
+                      Settings settings) {
     this.player = player;
-    this.profileService = profileService;
-    this.groupResolver = groupResolver;
     this.adapter = adapter;
+    this.groupResolver = groupResolver;
+    this.profileService = profileService;
+    this.settings = settings;
   }
 
   /**
@@ -115,8 +118,8 @@ public class BukkitPlayer extends AbstractPlayer {
 
   @Override
   public Locale getLocale() {
-    Locale locale = MyWarp.getInstance().getSettings().getLocalizationDefaultLocale();
-    if (MyWarp.getInstance().getSettings().isLocalizationPerPlayer()) {
+    Locale locale = settings.getLocalizationDefaultLocale();
+    if (settings.isLocalizationPerPlayer()) {
       try {
         String minecraftLocale = getLanguage(player);
         if (LOCALE_CACHE.containsKey(minecraftLocale)) {
@@ -197,7 +200,7 @@ public class BukkitPlayer extends AbstractPlayer {
         bukkitLoc =
         new Location(adapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getPitch(),
                      rotation.getYaw());
-    teleportRecusive(player, bukkitLoc, true, true);
+    teleportRecursive(player, bukkitLoc, true, true);
   }
 
   /**
@@ -208,8 +211,8 @@ public class BukkitPlayer extends AbstractPlayer {
    * @param teleportTamedHorses whether ridden, tamed horses should be teleported too
    * @param teleportLeashed     whether Entities leashed by the teleported Entity should be teleported too
    */
-  private void teleportRecusive(Entity teleportee, Location bukkitLoc, boolean teleportTamedHorses,
-                                boolean teleportLeashed) {
+  private void teleportRecursive(Entity teleportee, Location bukkitLoc, boolean teleportTamedHorses,
+                                 boolean teleportLeashed) {
     Entity vehicle = null;
 
     // handle vehicles
@@ -254,14 +257,14 @@ public class BukkitPlayer extends AbstractPlayer {
 
     // teleport the vehicle
     if (vehicle != null) {
-      teleportRecusive(vehicle, bukkitLoc, teleportTamedHorses, teleportLeashed);
+      teleportRecursive(vehicle, bukkitLoc, teleportTamedHorses, teleportLeashed);
       vehicle.setPassenger(teleportee);
     }
 
     // //teleport leashed entities
     // if (leashedEntities != null && !leashedEntities.isEmpty()) {
     // for (LivingEntity leashedEntity : leashedEntities) {
-    // teleportRecusive(leashedEntity, bukkitLoc, teleportTamedHorses,
+    // teleportRecursive(leashedEntity, bukkitLoc, teleportTamedHorses,
     // teleportLeashed);
     // leashedEntity.setLeashHolder(teleportee);
     // }

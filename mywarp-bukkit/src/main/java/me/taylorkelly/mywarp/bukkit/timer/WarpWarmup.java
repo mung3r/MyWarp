@@ -42,6 +42,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
+  private final MyWarp myWarp;
   private final Warp warp;
   private final Vector3 initialPosition;
   private final double initialHealth;
@@ -49,11 +50,13 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
   /**
    * Initializes the warp-warmup.
    *
+   * @param myWarp the MyWarp instance
    * @param player the player who is cooling down
    * @param warp   the warp that the player wants to use
    */
-  public WarpWarmup(LocalPlayer player, Warp warp) {
+  public WarpWarmup(MyWarp myWarp, LocalPlayer player, Warp warp) {
     super(player.getProfile());
+    this.myWarp = myWarp;
     this.warp = warp;
     this.initialPosition = player.getPosition();
     this.initialHealth = player.getHealth();
@@ -61,27 +64,27 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
 
   @Override
   public void run() {
-    Optional<LocalPlayer> optionalPlayer = MyWarp.getInstance().getOnlinePlayer(getTimedSuject());
+    Optional<LocalPlayer> optionalPlayer = myWarp.getGame().getPlayer(getTimedSuject().getUniqueId());
     if (!optionalPlayer.isPresent()) {
       return;
     }
     LocalPlayer player = optionalPlayer.get();
     LocaleManager.setLocale(player.getLocale());
 
-    if (MyWarp.getInstance().getSettings().isEconomyEnabled()) {
-      if (MyWarp.getInstance().getEconomyManager().informativeHasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
+    if (myWarp.getSettings().isEconomyEnabled()) {
+      if (myWarp.getEconomyManager().informativeHasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
         return;
       }
     }
 
     warp.teleport(player, FeeProvider.FeeType.WARP_TO);
-    Duration duration = MyWarp.getInstance().getDurationProvider().getDuration(player, WarpCooldown.class);
-    MyWarp.getInstance().getTimerService().start(player.getProfile(), duration, new WarpCooldown(player));
+    Duration duration = myWarp.getPlatform().getDurationProvider().getDuration(player, WarpCooldown.class);
+    myWarp.getPlatform().getTimerService().start(player.getProfile(), duration, new WarpCooldown(myWarp, player));
   }
 
   @Override
   public boolean abort() {
-    Optional<LocalPlayer> player = MyWarp.getInstance().getOnlinePlayer(getTimedSuject());
+    Optional<LocalPlayer> player = myWarp.getGame().getPlayer(getTimedSuject().getUniqueId());
     // player is not online, but might re-login so the timer continues
     return player.isPresent() && (abortOnMove(player.get()) || abortOnDamage(player.get()));
   }
@@ -93,7 +96,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnMove(LocalPlayer player) {
-    if (MyWarp.getInstance().getSettings().isTimersWarmupAbortOnMove() || player
+    if (myWarp.getSettings().isTimersWarmupAbortOnMove() || player
         .hasPermission("mywarp.warmup.disobey.moveabort")) { // NON-NLS
       return false;
     }
@@ -112,7 +115,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnDamage(LocalPlayer player) {
-    if (MyWarp.getInstance().getSettings().isTimersWarmupAbortOnDamage() || player
+    if (myWarp.getSettings().isTimersWarmupAbortOnDamage() || player
         .hasPermission("mywarp.warmup.disobey.dmgabort")) { // NON-NLS
       return false;
     }
