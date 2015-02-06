@@ -108,7 +108,7 @@ public class ImportCommands {
   public void pre3Sqlite(Actor actor, String databasePath) throws CommandException {
     File database = new File(myWarp.getPlatform().getDataFolder(), databasePath);
     if (!database.exists()) {
-      throw new CommandException(MESSAGES.getString("commands.import.file-non-existent", // NON-NLS
+      throw new CommandException(MESSAGES.getString("import.file-non-existent", // NON-NLS
                                                     database.getAbsolutePath()));
     }
     migrate(actor, new LegacySqLiteMigrator(myWarp, database));
