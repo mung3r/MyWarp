@@ -43,6 +43,7 @@ import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
@@ -64,8 +65,9 @@ public class InformativeCommands {
 
   /**
    * Creates an instance.
-   *  @param limitManager thr LimitManager the commands should operate on
-   * @param settings the Settings
+   *
+   * @param limitManager thr LimitManager the commands should operate on
+   * @param settings     the Settings
    * @param warpManager  the WarpManager the commands should operate on
    */
   public InformativeCommands(LimitManager limitManager, Settings settings, WarpManager warpManager) {
@@ -157,12 +159,8 @@ public class InformativeCommands {
         if (actor instanceof LocalPlayer && input.isCreator((LocalPlayer) actor)) {
           first.append(MESSAGES.getString("list.you"));
         } else {
-          com.google.common.base.Optional<String> creatorName = input.getCreator().getName();
-          if (creatorName.isPresent()) {
-            first.append(creatorName.get());
-          } else {
-            first.append(input.getCreator().getUniqueId());
-          }
+          Profile creator = input.getCreator();
+          first.append(creator.getName().or(creator.getUniqueId().toString()));
         }
         // @(x, y, z)
         StringBuilder last = new StringBuilder();

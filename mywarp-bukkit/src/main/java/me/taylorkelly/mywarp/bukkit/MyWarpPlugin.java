@@ -92,7 +92,6 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
 
   private final File bundleFolder = new File(getDataFolder(), "lang");
   private final ResourceBundle.Control control = new ResourceBundle.Control() {
-
   }; // new FolderSourcedControl(bundleFolder);
 
   private GroupResolverManager groupResolverManager;
@@ -253,7 +252,6 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     } catch (IllegalStateException e) {
       getLogger().log(Level.SEVERE, String
           .format("The command '%s' could not be executed as the underling method could not be called.",
-                  // NON-NLS
                   cmd.toString()), e);
       actor.sendError(MESSAGES.getString("exception.unknown"));
     } catch (InvocationCommandException e) {
@@ -261,10 +259,9 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
       // Exception is not covered by our ExceptionConverter and is
       // therefore unintended behavior.
       actor.sendError(MESSAGES.getString("exception.unknown"));
-      getLogger().log(Level.SEVERE, String.format("The command '%s' could not be executed.", cmd), e); // NON-NLS
+      getLogger().log(Level.SEVERE, String.format("The command '%s' could not be executed.", cmd), e);
     } catch (CommandException e) {
       actor.sendError(e.getMessage());
-      e.printStackTrace(); // DEBUG CommandException stacktrace
     } catch (AuthorizationException e) {
       actor.sendError(MESSAGES.getString("exception.insufficient-permission"));
     }

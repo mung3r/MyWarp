@@ -19,7 +19,6 @@
 
 package me.taylorkelly.mywarp.bukkit.commands.printer;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Ordering;
 
 import me.taylorkelly.mywarp.Actor;
@@ -75,17 +74,11 @@ public class InfoPrinter {
     // creator
     info.append(ChatColor.GRAY);
 
-    String creatorName;
-    Optional<String> nameOptional = warp.getCreator().getName();
-    if (nameOptional.isPresent()) {
-      creatorName = nameOptional.get();
-    } else {
-      creatorName = warp.getCreator().getUniqueId().toString();
-    }
     info.append(MESSAGES.getString("info.created-by"));
     info.append(" ");
     info.append(ChatColor.WHITE);
-    info.append(creatorName);
+    Profile creator = warp.getCreator();
+    info.append(creator.getName().or(creator.getUniqueId().toString()));
     if (receiver instanceof LocalPlayer && warp.isCreator((LocalPlayer) receiver)) {
       info.append(" ");
       info.append(MESSAGES.getString("info.created-by-you"));
@@ -118,10 +111,7 @@ public class InfoPrinter {
       } else {
         List<String> invitedPlayerNames = new ArrayList<String>();
         for (Profile profile : invitedPlayers) {
-          Optional<String> name = profile.getName();
-          if (name.isPresent()) {
-            invitedPlayerNames.add(name.get());
-          }
+          invitedPlayerNames.add(profile.getName().or(profile.getUniqueId().toString()));
         }
         Collections.sort(invitedPlayerNames);
         info.appendWithSeparators(invitedPlayerNames, ", ");

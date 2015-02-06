@@ -1,5 +1,6 @@
 dependencies {
     compile 'org.jooq:jooq:3.5.1'
+    //The SQLite driver bundled by Bukkit is not compatible with 3.1
     compile 'org.flywaydb:flyway-core:3.0'
     // Bukkit only bundles 2.3
     compile 'commons-lang:commons-lang:2.3'

@@ -114,10 +114,13 @@ public class SocialCommands {
 
     if (giveDirectly) {
       warp.setCreator(receiver);
-      actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("give.given-successful"));
+
+      actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("give.given-successful", warp.getName(),
+                                                            receiver.getName().or(receiver.getUniqueId().toString())));
 
       if (receiverPlayer.isPresent()) {
-        receiverPlayer.get().sendMessage(ChatColor.AQUA + MESSAGES.getString("give.givee-owner"));
+        receiverPlayer.get()
+            .sendMessage(ChatColor.AQUA + MESSAGES.getString("give.givee-owner", actor.getName(), warp.getName()));
       }
       return;
     }

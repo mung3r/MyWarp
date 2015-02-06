@@ -1,28 +1,3 @@
-/*
- * Copyright (C) 2011 - 2015, MyWarp team and contributors
- *
- * This file is part of MyWarp.
- *
- * MyWarp is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * MyWarp is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
- */
-
-
-
-
-
-
-
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '1.2.0'
@@ -51,16 +26,25 @@ dependencies {
     compile 'net.milkbowl.vault:VaultAPI:1.4'
 }
 
+processResources {
+    filesMatching('**/plugin.yml') {
+        expand version: project.version
+    }
+}
+
 shadowJar {
+    exclude 'LICENSE'
+
     dependencies {
         include(dependency(':mywarp-core'))
-        include(dependency('org.jooq:jooq:3.5.1'))
-        include(dependency('org.flywaydb:flyway-core:3.0'))
-        include(dependency('com.sk89q:squirrelid:0.1.0'))
-        include(dependency('de.minehattan:intake:3.1.1-SNAPSHOT'))
+        include(dependency('org.jooq:jooq'))
+        include(dependency('org.flywaydb:flyway-core'))
+        include(dependency('com.sk89q:squirrelid'))
+        include(dependency('de.minehattan:intake'))
     }
     relocate('org.jooq', 'me.taylorkelly.mywarp.internal.jooq')
-    relocate('org.flywaydb', 'me.taylorkelly.mywarp.internal.flyway')
+    //currently this seems to ignore Flyways sql files
+    //relocate('org.flywaydb', 'me.taylorkelly.mywarp.internal.flyway')
     relocate('com.sk89q.squirrelid', 'me.taylorkelly.mywarp.internal.squirrelid')
     relocate('com.sk89q.intake', 'me.taylorkelly.mywarp.internal.intake')
 }
