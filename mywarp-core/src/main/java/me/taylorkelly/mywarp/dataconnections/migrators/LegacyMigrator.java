@@ -24,9 +24,9 @@ import static org.jooq.impl.DSL.tableByName;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
-import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.util.EulerDirection;
@@ -44,23 +44,27 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * An abstract migrator for legacy (pre 3.0) database layouts. Running the migration will convert player names to UUIDs
- * and world names to world UUIDs. The later process might force an implementation to run synchronous if the underling
- * Game does not support this conversion run from other threads.
+ * and world names to world UUIDs.
  */
 public abstract class LegacyMigrator {
 
   private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
   private final MyWarp myWarp;
+  private final ImmutableMap<String, UUID> worldsSnapshot;
 
   /**
    * Creates an instance.
-   * @param myWarp the MyWarp instance
+   *
+   * @param myWarp         the MyWarp instance
+   * @param worldsSnapshot a mapping of world names to uniqueIds
    */
-  protected LegacyMigrator(MyWarp myWarp) {
+  protected LegacyMigrator(MyWarp myWarp, ImmutableMap<String, UUID> worldsSnapshot) {
     this.myWarp = myWarp;
+    this.worldsSnapshot = worldsSnapshot;
   }
 
   /**
@@ -102,18 +106,23 @@ public abstract class LegacyMigrator {
 
     for (Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String,
         String> r : results) {
-      Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
-
-      Optional<LocalWorld> optionalWorld = myWarp.getGame().getWorld(r.value9());
-      if (!optionalWorld.isPresent()) {
+      Profile creator = cache.get(r.value2());
+      if (creator == null) {
         // REVIEW log error?
         continue;
       }
-      LocalWorld world = optionalWorld.get();
+
+      Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
+
+      UUID worldId = worldsSnapshot.get(r.value9());
+      if (worldId == null) {
+        // REVIEW log error?
+        continue;
+      }
       Vector3 position = new Vector3(r.value4(), r.value5(), r.value6());
       EulerDirection rotation = new EulerDirection(r.value7(), r.value8(), 0);
 
-      WarpBuilder builder = new WarpBuilder(myWarp, r.value1(), cache.get(r.value2()), type, world, position, rotation);
+      WarpBuilder builder = new WarpBuilder(myWarp, r.value1(), creator, type, worldId, position, rotation);
 
       // optional values
       builder.withVisits(r.value10());
@@ -128,7 +137,7 @@ public abstract class LegacyMigrator {
           // REVIEW log error?
           continue;
         }
-        builder.addInvitedPlayer(cache.get(playerName));
+        builder.addInvitedPlayer(invitee);
       }
 
       ret.add(builder.build());

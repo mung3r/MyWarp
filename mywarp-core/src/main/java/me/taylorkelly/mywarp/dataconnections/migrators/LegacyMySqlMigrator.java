@@ -19,9 +19,9 @@
 
 package me.taylorkelly.mywarp.dataconnections.migrators;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
@@ -35,13 +35,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A migrator for legacy (pre 2.7) MySQL databases. Due to the dependency on the {@link LegacyMigrator} the migraton
- * must be run synchronous if the underling Game does not support this conversion run from other threads.
+ * A migrator for legacy (pre 2.7) MySQL databases.
  */
 public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator {
 
@@ -55,15 +55,16 @@ public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator 
   /**
    * Initiates this LegacyMySqlMigrator.
    *
-   * @param myWarp    the MyWarp instance
-   * @param user      the MySQL user to use
-   * @param password  the user's password
-   * @param tableName the name of the table that contains the data
-   * @param dsn       the dsn of the database
+   * @param myWarp         the MyWarp instance
+   * @param worldsSnapshot a mapping of world names to uniqueIds
+   * @param user           the MySQL user to use
+   * @param password       the user's password
+   * @param tableName      the name of the table that contains the data
+   * @param dsn            the dsn of the database
    */
-  public LegacyMySqlMigrator(MyWarp myWarp, final String user, final String password, final String tableName,
-                             final String dsn) {
-    super(myWarp);
+  public LegacyMySqlMigrator(MyWarp myWarp, ImmutableMap<String, UUID> worldsSnapshot, String user, String password,
+                             String tableName, String dsn) {
+    super(myWarp, worldsSnapshot);
     this.dsn = dsn;
     this.user = user;
     this.password = password;
@@ -98,7 +99,7 @@ public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator 
         return ret;
       }
     });
-    MoreExecutors.sameThreadExecutor().submit(ret);
+    new Thread(ret).start();
     return ret;
   }
 }

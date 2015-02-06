@@ -70,8 +70,8 @@ public class SimpleWarp implements Warp {
   /**
    * Creates a warp from the given Builder.
    *
-   * @param myWarp the MyWarp instance
-   * @param builder         the Builder
+   * @param myWarp  the MyWarp instance
+   * @param builder the Builder
    * @throws NullPointerException     if any of the Builder's fields is {@code null}
    * @throws IllegalArgumentException if the Builder's {@code invitedPlayerIds} or {@code invitedGroups} contains {@code
    *                                  null}

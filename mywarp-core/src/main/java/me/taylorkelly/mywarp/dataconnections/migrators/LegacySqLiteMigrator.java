@@ -19,9 +19,9 @@
 
 package me.taylorkelly.mywarp.dataconnections.migrators;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
@@ -36,13 +36,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A migrator for legacy (pre 2.7) SQLite databases.  Due to the dependency on the {@link LegacyMigrator} the migraton
- * must be run synchronous if the underling Game does not support this conversion run from other threads.
+ * A migrator for legacy (pre 2.7) SQLite databases.
  */
 public class LegacySqLiteMigrator extends LegacyMigrator implements DataMigrator {
 
@@ -54,11 +54,12 @@ public class LegacySqLiteMigrator extends LegacyMigrator implements DataMigrator
   /**
    * Initiates this LegacySqLiteMigrator.
    *
-   * @param myWarp   the MyWarp instance
-   * @param database the database file
+   * @param myWarp         the MyWarp instance
+   * @param worldsSnapshot a mapping of world names to uniqueIds
+   * @param database       the database file
    */
-  public LegacySqLiteMigrator(MyWarp myWarp, final File database) {
-    super(myWarp);
+  public LegacySqLiteMigrator(MyWarp myWarp, ImmutableMap<String, UUID> worldsSnapshot, File database) {
+    super(myWarp, worldsSnapshot);
     this.dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
   }
 
@@ -98,7 +99,7 @@ public class LegacySqLiteMigrator extends LegacyMigrator implements DataMigrator
         return ret;
       }
     });
-    MoreExecutors.sameThreadExecutor().submit(ret);
+    new Thread(ret).start();
     return ret;
   }
 }

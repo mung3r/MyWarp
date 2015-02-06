@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp.bukkit.commands;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -27,6 +28,7 @@ import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.util.CommandUtils;
 import me.taylorkelly.mywarp.dataconnections.MySqlConnection;
@@ -45,6 +47,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Bundles commands used to import Warps from an external source.
@@ -111,7 +114,7 @@ public class ImportCommands {
       throw new CommandException(MESSAGES.getString("import.file-non-existent", // NON-NLS
                                                     database.getAbsolutePath()));
     }
-    migrate(actor, new LegacySqLiteMigrator(myWarp, database));
+    migrate(actor, new LegacySqLiteMigrator(myWarp, getWorldSnapshot(), database));
   }
 
   /**
@@ -126,7 +129,7 @@ public class ImportCommands {
   @Command(aliases = {"pre3-mysql"}, desc = "import.pre3-mysql.description", help = "import.pre3-mysql.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Mysql(Actor actor, String dsn, String user, String password, String tableName) {
-    migrate(actor, new LegacyMySqlMigrator(myWarp, dsn, user, password, tableName));
+    migrate(actor, new LegacyMySqlMigrator(myWarp, getWorldSnapshot(), dsn, user, password, tableName));
   }
 
   /**
@@ -136,6 +139,8 @@ public class ImportCommands {
    * @param migrator  the DataMigrator
    */
   private void migrate(final Actor initiator, DataMigrator migrator) {
+    initiator.sendMessage(ChatColor.AQUA + MESSAGES.getString("import.started"));
+
     ListenableFuture<Collection<Warp>> futureWarps = migrator.getWarps();
 
     // The callback is called when the warps are loaded. It is executed in
@@ -171,6 +176,19 @@ public class ImportCommands {
       }
 
     }, myWarp.getGame().getExecutor());
+  }
+
+  /**
+   * Gets a mapping of the names to uniqueIds from all worlds currently existing.
+   *
+   * @return a mapping of the names to uniqueIds from all worlds
+   */
+  private ImmutableMap<String, UUID> getWorldSnapshot() {
+    ImmutableMap.Builder<String, UUID> builder = ImmutableMap.builder();
+    for (LocalWorld world : myWarp.getGame().getWorlds()) {
+      builder.put(world.getName(), world.getUniqueId());
+    }
+    return builder.build();
   }
 
 }

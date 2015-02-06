@@ -44,7 +44,7 @@ public final class BukkitAdapter {
    *
    * @param groupResolver  the GroupResolver
    * @param profileService the ProfileService
-   * @param settings the Settings
+   * @param settings       the Settings
    */
   public BukkitAdapter(GroupResolver groupResolver, ProfileService profileService, Settings settings) {
     this.profileService = profileService;

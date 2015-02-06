@@ -43,7 +43,7 @@ public class DummyLimitManager implements LimitManager {
   /**
    * Construct an instance.
    *
-   * @param game the Game
+   * @param game    the Game
    * @param manager the WarpManager this LimitManager is active on
    */
   public DummyLimitManager(Game game, WarpManager manager) {
