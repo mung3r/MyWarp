@@ -177,7 +177,7 @@ public class StringPaginator<E> {
       if (pages.isEmpty()) {
         throw new NoResultsException();
       }
-      if (page < pages.size()) {
+      if (page < 1 || page > pages.size()) {
         throw new UnknownPageException(pages.size());
       }
 
