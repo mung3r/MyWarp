@@ -78,10 +78,9 @@ public class MySqlConnection {
         if (controlDbLayout) {
           Flyway flyway = new Flyway();
 
-          flyway.setDataSource(dsn, user, password);
           flyway.setClassLoader(getClass().getClassLoader());
+          flyway.setDataSource(dsn, user, password);
           flyway.setLocations("migrations/mysql"); // NON-NLS
-          flyway.setSchemas("mywarp"); // NON-NLS
 
           try {
             flyway.migrate();

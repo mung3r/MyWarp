@@ -84,8 +84,8 @@ public class SqLiteConnection {
         if (controlDbLayout) {
           Flyway flyway = new Flyway();
 
-          flyway.setDataSource(dsn, null, null);
           flyway.setClassLoader(getClass().getClassLoader());
+          flyway.setDataSource(dsn, null, null);
           flyway.setLocations("migrations/sqlite"); // NON-NLS
 
           try {
