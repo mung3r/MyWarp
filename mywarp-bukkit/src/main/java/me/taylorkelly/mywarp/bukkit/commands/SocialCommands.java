@@ -129,7 +129,8 @@ public class SocialCommands {
       throw new NoSuchPlayerException(receiver);
     }
     warpAcceptancePromptFactory.create(actor, receiverPlayer.get(), warp);
-    actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("give.asked-successful"));
+    actor.sendMessage(
+        ChatColor.AQUA + MESSAGES.getString("give.asked-successful", receiverPlayer.get().getName(), warp.getName()));
 
   }
 

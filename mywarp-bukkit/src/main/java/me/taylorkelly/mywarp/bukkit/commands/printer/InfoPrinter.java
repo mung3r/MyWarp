@@ -57,13 +57,13 @@ public class InfoPrinter {
   }
 
   /**
-   * Prints the information to the given receiver.
+   * Gets information text.
    *
-   * @param receiver the Actor who is receiving this print
+   * @param receiver the Actor who will receive the text
+   * @return the text
    */
-  public void print(Actor receiver) {
+  public String getText(Actor receiver) {
     StrBuilder info = new StrBuilder();
-
     // heading
     info.append(ChatColor.GOLD);
     info.append(MESSAGES.getString("info.heading",
@@ -149,7 +149,16 @@ public class InfoPrinter {
     info.append(" ");
     info.append(ChatColor.WHITE);
     info.append(MESSAGES.getString("info.visits.per-day", warp.getVisits(), warp.getVisitsPerDay()));
-    receiver.sendMessage(info.toString());
+    return info.toString();
+  }
+
+  /**
+   * Prints the information to the given receiver.
+   *
+   * @param receiver the Actor who is receiving this print
+   */
+  public void print(Actor receiver) {
+    receiver.sendMessage(getText(receiver));
   }
 
 }

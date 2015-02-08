@@ -24,15 +24,17 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
+import me.taylorkelly.mywarp.bukkit.commands.printer.InfoPrinter;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.BooleanPrompt;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.MessagePrompt;
 import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -59,7 +61,7 @@ public class WarpAcceptancePromptFactory {
    */
   public WarpAcceptancePromptFactory(MyWarpPlugin plugin, BukkitAdapter adapter) {
     this.factory =
-        new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT).withFirstPrompt(new AskPlayerPrompt());
+        new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT).withFirstPrompt(new QuestionPrompt());
     this.adapter = adapter;
   }
 
@@ -79,28 +81,80 @@ public class WarpAcceptancePromptFactory {
     factory.withInitialSessionData(initialSessionData).buildConversation(adapter.adapt(localPlayer)).begin();
   }
 
-  /**
-   * Asks the conversion partner if he wants to accept and calls the next prompt based on the response.
-   */
-  private class AskPlayerPrompt extends BooleanPrompt {
+  private class QuestionPrompt extends StringPrompt {
+
+    @Override
+    public Prompt acceptInput(ConversationContext context, String input) {
+      LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
+      if (input.equalsIgnoreCase(getInfoSequence())) {
+        return new InfoPrompt();
+      }
+      if (input.equalsIgnoreCase(getAcceptanceSequence())) {
+        return new AcceptPrompt();
+      }
+      if (input.equalsIgnoreCase(getDeclineSequence())) {
+        return new DeclinePrompt();
+      }
+
+      return new QuestionPrompt();
+    }
 
     @Override
     public String getPromptText(ConversationContext context) {
       Warp warp = (Warp) context.getSessionData(Warp.class);
       String initiatorName = (String) context.getSessionData(String.class);
-      // XXX Add a way to get informations about the warp via InfoPrinter.
 
-      Locale locale = (Locale) context.getSessionData(Locale.class);
+      LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
       return ChatColor.AQUA + MESSAGES
-          .getString("warp-acceptance-conversation.want-to-accept", locale, initiatorName, warp.getName(), "yes", "no",
-                     TIMEOUT);
+          .getString("warp-acceptance-conversation.want-to-accept", initiatorName, warp.getName(),
+                     getAcceptanceSequence(), getDeclineSequence(), getInfoSequence(), TIMEOUT);
+    }
+
+    /**
+     * Gets the translated acceptance sequence.
+     *
+     * @return the acceptance sequence
+     */
+    private String getAcceptanceSequence() {
+      return MESSAGES.getString("warp-acceptance-conversation.acceptance-sequence");
+    }
+
+    /**
+     * Gets the translated decline sequence.
+     *
+     * @return the decline sequence
+     */
+    private String getDeclineSequence() {
+      return MESSAGES.getString("warp-acceptance-conversation.decline-sequence");
+    }
+
+    /**
+     * Gets the translated info sequence.
+     *
+     * @return the info sequence
+     */
+    private String getInfoSequence() {
+      return MESSAGES.getString("warp-acceptance-conversation.info-sequence");
+    }
+  }
+
+  /**
+   * Displays information about the warp and calls {@link QuestionPrompt} afterwards.
+   */
+  private class InfoPrompt extends MessagePrompt {
+
+    @Override
+    protected Prompt getNextPrompt(ConversationContext context) {
+      return new QuestionPrompt();
     }
 
     @Override
-    protected Prompt acceptValidatedInput(ConversationContext context, boolean input) {
-      return input ? new AcceptPrompt() : new DeclinePrompt();
-    }
+    public String getPromptText(ConversationContext context) {
+      Warp warp = (Warp) context.getSessionData(Warp.class);
 
+      LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
+      return new InfoPrinter(warp).getText(adapter.adapt((Player) context.getForWhom()));
+    }
   }
 
   /**
@@ -113,9 +167,8 @@ public class WarpAcceptancePromptFactory {
       Warp warp = (Warp) context.getSessionData(Warp.class);
       warp.setCreator(adapter.adapt((Player) context.getForWhom()).getProfile());
 
-      Locale locale = (Locale) context.getSessionData(Locale.class);
-      return ChatColor.AQUA + MESSAGES
-          .getString("warp-acceptance-conversation.accepted-successful", locale, warp.getName());
+      LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
+      return ChatColor.AQUA + MESSAGES.getString("warp-acceptance-conversation.accepted-successful", warp.getName());
     }
 
     @Override
@@ -132,8 +185,8 @@ public class WarpAcceptancePromptFactory {
 
     @Override
     public String getPromptText(ConversationContext context) {
-      Locale locale = (Locale) context.getSessionData(Locale.class);
-      return ChatColor.AQUA + MESSAGES.getString("warp-acceptance-conversation.declined-successful", locale);
+      LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
+      return ChatColor.AQUA + MESSAGES.getString("warp-acceptance-conversation.declined-successful");
     }
 
     @Override

@@ -30,7 +30,6 @@ import com.sk89q.intake.parametric.binding.BindingMatch;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.WarpUtils;
@@ -165,7 +164,7 @@ public class WarpBinding extends BindingHelper {
        *
        * @see Warp#isModifiable(Actor)
        */
-      MODIFIABLE(LocalPlayer.class);
+      MODIFIABLE(Actor.class);
 
       private final Class<?> clazz;
 
