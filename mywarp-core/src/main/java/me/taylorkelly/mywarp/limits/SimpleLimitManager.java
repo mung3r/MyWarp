@@ -21,6 +21,7 @@ package me.taylorkelly.mywarp.limits;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import me.taylorkelly.mywarp.LocalPlayer;
@@ -30,7 +31,6 @@ import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,13 +62,13 @@ public class SimpleLimitManager implements LimitManager {
       Iterable<Warp> filteredWarps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
       Limit limit = provider.getLimit(creator, world);
 
-      List<Limit.Type> limitsToCheck = Arrays.asList(type);
+      List<Limit.Type> limitsToCheck = Lists.newArrayList(type);
       if (evaluateParents) {
         limitsToCheck.addAll(type.getParentsRecusive());
       }
 
-      for (Limit.Type parent : limitsToCheck) {
-        LimitManager.EvaluationResult result = evaluateLimit(limit, parent, filteredWarps);
+      for (Limit.Type check : limitsToCheck) {
+        LimitManager.EvaluationResult result = evaluateLimit(limit, check, filteredWarps);
         if (result.exceedsLimit()) {
           return result;
         }
