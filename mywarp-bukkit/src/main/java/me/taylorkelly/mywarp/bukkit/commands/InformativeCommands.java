@@ -123,12 +123,12 @@ public class InformativeCommands {
 
         if (creator != null) {
           com.google.common.base.Optional<String> creatorName = input.getCreator().getName();
-          if (creatorName.isPresent() && !StringUtils.containsIgnoreCase(creatorName.get(), creator)) {
+          if (!creatorName.isPresent() || !StringUtils.containsIgnoreCase(creatorName.get(), creator)) {
             return false;
           }
         }
 
-        if (world != null && !StringUtils.containsIgnoreCase(input.getWorld().getName(), world)) {
+        if (world == null || !StringUtils.containsIgnoreCase(input.getWorld().getName(), world)) {
           return false;
         }
         return true;
