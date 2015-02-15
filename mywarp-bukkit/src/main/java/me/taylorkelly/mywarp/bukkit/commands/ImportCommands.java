@@ -150,8 +150,6 @@ public class ImportCommands {
       @Override
       public void onFailure(final Throwable throwable) {
         initiator.sendError(MESSAGES.getString("import.no-connection", throwable.getMessage()));
-        //DEBUG
-        throwable.printStackTrace();
       }
 
       @Override
