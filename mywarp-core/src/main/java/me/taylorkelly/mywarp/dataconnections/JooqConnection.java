@@ -239,7 +239,7 @@ public class JooqConnection implements DataConnection {
         for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String,
             UUID, String>> r : groupedResults
             .values()) {
-          Profile creator = myWarp.getProfileService().get(r.getValue(0, creatorTable.UUID));
+          Profile creator = myWarp.getProfileService().getByUniqueId(r.getValue(0, creatorTable.UUID));
 
           Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
           EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.YAW), r.getValue(0, WARP.PITCH), 0);
@@ -262,7 +262,7 @@ public class JooqConnection implements DataConnection {
 
           for (UUID inviteeUniqueId : r.getValues(PLAYER.UUID)) {
             if (inviteeUniqueId != null) {
-              Profile inviteeProfile = myWarp.getProfileService().get(inviteeUniqueId);
+              Profile inviteeProfile = myWarp.getProfileService().getByUniqueId(inviteeUniqueId);
               builder.addInvitedPlayer(inviteeProfile);
             }
           }

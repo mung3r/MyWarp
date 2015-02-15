@@ -48,7 +48,7 @@ public class ProfileBinaryConverter implements Converter<byte[], Profile> {
     if (databaseObject == null) {
       return null;
     }
-    return profileService.get(converter.from(databaseObject));
+    return profileService.getByUniqueId(converter.from(databaseObject));
   }
 
   @Override

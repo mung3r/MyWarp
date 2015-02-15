@@ -47,7 +47,6 @@ import me.taylorkelly.mywarp.bukkit.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.bukkit.permissions.BukkitPermissionsRegistration;
 import me.taylorkelly.mywarp.bukkit.permissions.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.permissions.GroupResolverManager;
-import me.taylorkelly.mywarp.bukkit.profile.SquirrelIdProfileService;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
 import me.taylorkelly.mywarp.bukkit.util.ActorAuthorizer;
@@ -59,6 +58,7 @@ import me.taylorkelly.mywarp.bukkit.util.ProfileBinding;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding;
 import me.taylorkelly.mywarp.bukkit.util.WarpDispatcher;
 import me.taylorkelly.mywarp.bukkit.util.economy.EconomyInvokeHandler;
+import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 
@@ -67,6 +67,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -120,8 +121,12 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   @Override
   public void onEnable() {
 
+    // create the data-folder
+    getDataFolder().mkdirs();
+
+    profileService = new SquirrelIdProfileService(new File(getDataFolder(), "profiles.db"));
+
     groupResolverManager = new GroupResolverManager();
-    profileService = new SquirrelIdProfileService();
 
     // setup the configurations
     settings =
@@ -226,7 +231,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   }
 
   @Override
-  public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     // create the CommandLocals
     CommandLocals locals = new CommandLocals();
     Actor actor = wrap(sender);
@@ -340,7 +345,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
       try {
         RegisteredServiceProvider<Economy>
             economyProvider =
-            Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+            Bukkit.getServicesManager().getRegistration(Economy.class);
         if (economyProvider == null) {
           getLogger().severe(
               "Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable."); // NON-NLS

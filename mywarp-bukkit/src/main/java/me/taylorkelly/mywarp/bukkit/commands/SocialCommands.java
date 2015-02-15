@@ -234,7 +234,7 @@ public class SocialCommands {
       return;
     }
     // invite player
-    Optional<Profile> optionalInvitee = service.get(inviteeIdentifier);
+    Optional<Profile> optionalInvitee = service.getByName(inviteeIdentifier);
     if (!optionalInvitee.isPresent()) {
       throw new NoSuchProfileException(inviteeIdentifier);
     }
@@ -302,7 +302,7 @@ public class SocialCommands {
       return;
     }
     // uninvite player
-    Optional<Profile> optionalUninvitee = service.get(uninviteeIdentifier);
+    Optional<Profile> optionalUninvitee = service.getByName(uninviteeIdentifier);
     if (!optionalUninvitee.isPresent()) {
       throw new NoSuchProfileException(uninviteeIdentifier);
     }

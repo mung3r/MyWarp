@@ -113,7 +113,7 @@ public class BukkitPlayer extends AbstractPlayer {
 
   @Override
   public Profile getProfile() {
-    return profileService.get(player.getUniqueId());
+    return profileService.getByUniqueId(player.getUniqueId());
   }
 
   @Override

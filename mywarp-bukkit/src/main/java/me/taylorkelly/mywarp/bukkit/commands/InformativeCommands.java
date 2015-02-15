@@ -128,7 +128,7 @@ public class InformativeCommands {
           }
         }
 
-        if (world == null || !StringUtils.containsIgnoreCase(input.getWorld().getName(), world)) {
+        if (world != null && !StringUtils.containsIgnoreCase(input.getWorld().getName(), world)) {
           return false;
         }
         return true;
@@ -138,7 +138,7 @@ public class InformativeCommands {
 
     List<Warp>
         warps =
-        Ordering.natural().sortedCopy(warpManager.filter(Predicates.<Warp>and(WarpUtils.isViewable(actor), predicate)));
+        Ordering.natural().sortedCopy(warpManager.filter(Predicates.and(WarpUtils.isViewable(actor), predicate)));
 
     Function<Warp, String> mapping = new Function<Warp, String>() {
 

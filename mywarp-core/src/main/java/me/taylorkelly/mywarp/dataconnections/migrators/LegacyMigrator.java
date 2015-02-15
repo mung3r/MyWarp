@@ -40,17 +40,21 @@ import org.jooq.Record13;
 import org.jooq.Result;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An abstract migrator for legacy (pre 3.0) database layouts. Running the migration will convert player names to UUIDs
  * and world names to world UUIDs.
  */
 public abstract class LegacyMigrator {
+
+  private static final Logger log = Logger.getLogger(LegacyMigrator.class.getName());
 
   private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
   private final MyWarp myWarp;
@@ -86,43 +90,60 @@ public abstract class LegacyMigrator {
                       fieldByName(Integer.class, "visits"), fieldByName(String.class, "welcomeMessage"),
                       fieldByName(String.class, "permissions"), fieldByName(String.class, "groupPermissions"))
             .from(tableByName(tableName)).fetch();
+    log.info(String.format("%d entries found.", results.size()));
 
     Set<String> playerNames = new HashSet<String>(results.getValues("creator", String.class)); // NON-NLS
     for (String invitedPlayers : results.getValues("permissions", String.class)) { // NON-NLS
       Iterables.addAll(playerNames, splitter.split(invitedPlayers));
     }
+    log.info(String.format("Looking up unique IDs for %d unique players.", playerNames.size()));
 
-    Map<String, Profile> cache = new HashMap<String, Profile>();
-    for (String invitedPlayer : playerNames) {
-      Optional<Profile> optionalInvited = myWarp.getProfileService().get(invitedPlayer);
-      if (!optionalInvited.isPresent()) {
-        // REVIEW log error?
+    List<Profile> profiles = myWarp.getProfileService().getByName(playerNames);
+    log.info(String.format("%d unique IDs found.", profiles.size()));
+
+    // the legacy database may contain player-names with a wrong case, so the lookup must be case insensitive
+    TreeMap<String, Profile> profileLookup = new TreeMap<String, Profile>(String.CASE_INSENSITIVE_ORDER);
+    for (Profile profile : profiles) {
+      Optional<String> name = profile.getName();
+      if (!name.isPresent()) {
+        // this should not happen since all names where cached when requesting the profiles
         continue;
       }
-      cache.put(invitedPlayer, optionalInvited.get());
+      if (profileLookup.containsKey(name.get())) {
+        // this might happen if a that player does not have an unique ID
+        continue;
+      }
+      profileLookup.put(name.get(), profile);
     }
 
     Set<Warp> ret = new HashSet<Warp>(results.size());
 
     for (Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String,
         String> r : results) {
-      Profile creator = cache.get(r.value2());
+      String warpName = r.value1();
+
+      String creatorName = r.value2();
+      Profile creator = profileLookup.get(creatorName);
       if (creator == null) {
-        // REVIEW log error?
+        log.warning(String.format("For the creator of '%s' (%s) no unique ID could be found. The warp will be ignored.",
+                                  warpName, creatorName));
         continue;
       }
 
       Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
 
-      UUID worldId = worldsSnapshot.get(r.value9());
-      if (worldId == null) {
-        // REVIEW log error?
-        continue;
-      }
       Vector3 position = new Vector3(r.value4(), r.value5(), r.value6());
       EulerDirection rotation = new EulerDirection(r.value7(), r.value8(), 0);
 
-      WarpBuilder builder = new WarpBuilder(myWarp, r.value1(), creator, type, worldId, position, rotation);
+      String worldName = r.value9();
+      UUID worldId = worldsSnapshot.get(worldName);
+      if (worldId == null) {
+        log.warning(String.format("For the world of '%s' (%s) no unique ID could be found. The warp will be ignored.",
+                                  warpName, worldName));
+        continue;
+      }
+
+      WarpBuilder builder = new WarpBuilder(myWarp, warpName, creator, type, worldId, position, rotation);
 
       // optional values
       builder.withVisits(r.value10());
@@ -132,16 +153,21 @@ public abstract class LegacyMigrator {
         builder.addInvitedGroup(groupId);
       }
       for (String playerName : splitter.split(r.value12())) {
-        Profile invitee = cache.get(playerName);
+        Profile invitee = profileLookup.get(playerName);
         if (invitee == null) {
-          // REVIEW log error?
+          log.warning(String.format(
+              "%s, who is invited to '%s' does not have a unique ID. The invitation will be ignored.", playerName,
+              warpName));
           continue;
         }
         builder.addInvitedPlayer(invitee);
       }
 
       ret.add(builder.build());
+      log.log(Level.FINE, String.format("Warp '%s' exported.", warpName));
     }
+
+    log.info(String.format("%d warps exported from source.", ret.size()));
     return ret;
   }
 

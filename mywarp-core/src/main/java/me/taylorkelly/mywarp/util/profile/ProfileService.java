@@ -20,30 +20,46 @@
 package me.taylorkelly.mywarp.util.profile;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 import java.util.UUID;
 
 /**
- * Represents a Service that creates {@link Profile}s from unique IDs or player-names.
+ * Represents a Service that creates {@link Profile}s from unique IDs or player-names. <p>Implementations are expected
+ * to be thread safe.</p>
  */
 public interface ProfileService {
 
   /**
    * Gets the Profile of the given unique ID. If the service is unable to find a name matching the unique ID, the
-   * returned Profile will not have a name value and calls to {@link Profile#getName()} may fail. <p> Implementations
-   * must be thread-safe! </p>
+   * returned Profile will not have a name value and calls to {@link Profile#getName()} may fail.
    *
    * @param uniqueId the unique ID
    * @return the corresponding Profile
    */
-  Profile get(UUID uniqueId);
+  Profile getByUniqueId(UUID uniqueId);
 
   /**
-   * Gets an Optional containing the Profile of the given name.
+   * Gets an Optional containing the Profile of the given name, if such a Profile exists. <p>Since Minecraft usernames
+   * are case-insensitive, {@link Profile#getName()} may return a name with a different case than the requested one. The
+   * returned one is than guaranteed to have the correct case. </p> <p>Calling this method might result in a blocking
+   * call to a remote server to get the Profiles.</p>
    *
    * @param name the name
    * @return an Optional containing the Profile
    */
-  Optional<Profile> get(String name);
+  Optional<Profile> getByName(String name);
+
+
+  /**
+   * Gets the the Profiles for all given names, if such a Profile exists. If none of the given names has a Profile, an
+   * empty List will be returned. <p>Since Minecraft usernames are case-insensitive, {@link Profile#getName()} may
+   * return a name with a different case than the requested one. The returned one is than guaranteed to have the correct
+   * case. </p> <p>Calling this method might result in a blocking call to a remote server to get the Profiles.</p>
+   *
+   * @param names the names
+   * @return a List with all existing Profiles
+   */
+  ImmutableList<Profile> getByName(Iterable<String> names);
 
 }
