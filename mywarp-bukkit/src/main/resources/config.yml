@@ -1,0 +1,79 @@
+settings:
+  controlWorldAccess: false
+  preloadChunks: false
+  teleportHorses: true
+  teleportLeashed: false
+  showTeleportEffect: true
+dynamics:
+  suggestWarps: true
+localization:
+  defaultLocale: en_US
+  perPlayer: true
+teleportSafety:
+  enabled: true
+  searchRadius: 5
+warpSigns:
+  enabled: true
+  identifiers:
+  - MyWarp
+  - Warp
+mysql:
+  enabled: false
+  dsn: 'jdbc:mysql://localhost/mywarp'
+  username: 'username'
+  password: 'password'
+limits:
+  enabled: true
+  defaultLimit:
+    totalLimit: 15
+    publicLimit: 5
+    privateLimit: 10
+  configuredLimits: []
+timers:
+  enabled: false
+  warpCooldown:
+    notifyOnFinish: false
+  warpWarmup:
+    abortOnDamage: false
+    abortOnMove: false
+    notifyOnStart: true
+  defaultTimer:
+    warpCooldown: 15
+    warpWarmup: 15
+  configuredTimers: []
+economy:
+  enabled: false
+  informAfterTransaction: true
+  defaultFee:
+    assets: 0
+    create: 25
+    createPrivate: 25
+    delete: 25
+    give: 25
+    help: 0
+    info: 0
+    invite: 25
+    list: 0
+    point: 25
+    private: 25
+    public: 25
+    search: 0
+    uninvite: 25
+    update: 25
+    warpPlayer: 25
+    warpSignCreate: 25
+    warpSignUse: 25
+    warpTo: 25
+    welcome: 25
+  configuredFees: []
+dynmap:
+  enabled: false
+  layer:
+    displayName: 'MyWarp'
+    hiddenByDefault: false
+    priority: 10
+  marker:
+    iconID: 'mywarp_warp-32'
+    minZoom: 0
+    showLabel: false
+    minZoom:

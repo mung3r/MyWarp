@@ -1,7 +1,7 @@
 ![MyWarp](http://dev.bukkit.org/media/images/55/821/MyWarp_horLogo.png)
 ==========
 
-MyWarp is a dynamic and social warping plugin for bukkit. It allows you to:
+MyWarp is a dynamic and social warp plugin for Minecraft. It allows you to:
 
 * Create private and public warps,
 * Invite and uninvite players or whole permission-groups to warps or make them public so everyone can use them,
@@ -12,20 +12,40 @@ MyWarp is a dynamic and social warping plugin for bukkit. It allows you to:
 * Create warp signs and connect them to buttons or levers,
 * Charge your users for using, creating, listing or any other warp-related task via Vault,
 * Translate every message the plugin outputs, either so it fits your servers theme of even into a whole new language,
-* Show warps on Dynmap using the built-in support. 
+* Show warps on Dynmap using the built-in support.
 
 MyWarp is open source and is available under the GNU General Public License v3.
 
 Compiling
 ---------
 
-This project is written for Java 6 and the build process makes use of Maven, to handle dependencies automatically.
-For compiling you will need to:
+You can compile MyWarp as long as you have the [Java Development Kit (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html) for Java 6 or newer. You only need one version of JDK installed.
 
-1. Install [the Java 6 JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
-2. Install [Apache Maven](http://maven.apache.org).
-3. Download the source code for MyWarp from this repository, using either Git or the download button.
-4. Navigate to the directory where the source code is and type `mvn clean install` in command prompt or terminal. 
+The build process uses Gradle, which you do *not* need to download. MyWarp is a multi-module project with two modules:
+
+* `mywarp-core` contains MyWarp
+* `mywarp-bukkit` is the Bukkit plugin
+
+### To compile...
+
+#### On Windows
+
+1. Shift + right click the folder with MyWarp's files and click "Open command prompt".
+2. `gradlew build`
+
+#### On Linux, BSD, or Mac OS X
+
+1. In your terminal, navigate to the folder with MyWarp's files (`cd /folder/of/mywarp/files`)
+2. `./gradlew build`
+
+### Then you will find...
+
+You will find:
+
+* The core MyWarp API in **mywarp-core/build/libs**
+* MyWarp for Bukkit in **mywarp-bukkit/build/libs**
+
+If you want to use MyWarp, use the `-all` version which includes MyWarp and all necessary libraries.
 
 Contributing
 ------------
