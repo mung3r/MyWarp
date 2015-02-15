@@ -1,5 +1,6 @@
 ![MyWarp](http://dev.bukkit.org/media/images/55/821/MyWarp_horLogo.png)
 ==========
+[![Build Status](https://travis-ci.org/TheE/MyWarp.svg)](https://travis-ci.org/TheE/MyWarp)
 
 MyWarp is a dynamic and social warp plugin for Minecraft. It allows you to:
 
