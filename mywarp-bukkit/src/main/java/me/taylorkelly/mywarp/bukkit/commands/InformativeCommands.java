@@ -26,9 +26,11 @@ import com.google.common.collect.Ordering;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.Require;
 import com.sk89q.intake.parametric.annotation.Optional;
+import com.sk89q.intake.parametric.annotation.Range;
 import com.sk89q.intake.parametric.annotation.Switch;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.commands.printer.AssetsPrinter;
@@ -41,6 +43,7 @@ import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.bukkit.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -50,7 +53,9 @@ import me.taylorkelly.mywarp.warp.WarpManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Bundles commands that provide information about existing Warps.
@@ -105,40 +110,72 @@ public class InformativeCommands {
    * @param page    the page to display
    * @param creator the optional creator
    * @param name    the optional name
+   * @param radius  the optional radius
    * @param world   the optional world
+   * @throws IllegalCommandSenderException if the {@code r} flag is used by an Actor that is not an Entity
    */
   @Command(aliases = {"list", "alist"}, desc = "list.description", help = "list.help")
   @Require("mywarp.warp.basic.list")
   @Billable(FeeType.LIST)
   public void list(final Actor actor, @Optional("1") int page, @Switch('c') final String creator,
-                   @Switch('n') final String name, @Switch('w') final String world) {
+                   @Switch('n') final String name,
+                   @Switch('r') @Range(min = 1, max = Integer.MAX_VALUE) final Integer radius,
+                   @Switch('w') final String world) throws IllegalCommandSenderException {
 
-    Predicate<Warp> predicate = new Predicate<Warp>() {
+    // build the listing predicate
+    List<Predicate<Warp>> predicates = new ArrayList<Predicate<Warp>>();
+    predicates.add(WarpUtils.isViewable(actor));
 
-      @Override
-      public boolean apply(Warp input) {
-        if (name != null && !StringUtils.containsIgnoreCase(input.getName(), name)) {
-          return false;
-        }
-
-        if (creator != null) {
+    if (creator != null) {
+      predicates.add(new Predicate<Warp>() {
+        @Override
+        public boolean apply(Warp input) {
           com.google.common.base.Optional<String> creatorName = input.getCreator().getName();
-          if (!creatorName.isPresent() || !StringUtils.containsIgnoreCase(creatorName.get(), creator)) {
-            return false;
-          }
+          return creatorName.isPresent() && StringUtils.containsIgnoreCase(creatorName.get(), creator);
         }
+      });
+    }
 
-        if (world != null && !StringUtils.containsIgnoreCase(input.getWorld().getName(), world)) {
-          return false;
+    if (name != null) {
+      predicates.add(new Predicate<Warp>() {
+        @Override
+        public boolean apply(Warp input) {
+          return StringUtils.containsIgnoreCase(input.getName(), name);
         }
-        return true;
+      });
+    }
+
+    if (radius != null) {
+      if (!(actor instanceof LocalEntity)) {
+        throw new IllegalCommandSenderException(actor);
       }
 
-    };
+      LocalEntity entity = (LocalEntity) actor;
 
-    List<Warp>
-        warps =
-        Ordering.natural().sortedCopy(warpManager.filter(Predicates.and(WarpUtils.isViewable(actor), predicate)));
+      final UUID worldId = entity.getWorld().getUniqueId();
+
+      final int squaredRadius = radius * radius;
+      final Vector3 position = entity.getPosition();
+      predicates.add(new Predicate<Warp>() {
+        @Override
+        public boolean apply(Warp input) {
+          return input.getWorldIdentifier().equals(worldId)
+                 && input.getPosition().distanceSquared(position) <= squaredRadius;
+        }
+      });
+    }
+
+    if (world != null) {
+      predicates.add(new Predicate<Warp>() {
+        @Override
+        public boolean apply(Warp input) {
+          return StringUtils.containsIgnoreCase(input.getWorld().getName(), world);
+        }
+      });
+    }
+
+    //query the warps
+    List<Warp> warps = Ordering.natural().sortedCopy(warpManager.filter(Predicates.and(predicates)));
 
     Function<Warp, String> mapping = new Function<Warp, String>() {
 
@@ -177,6 +214,7 @@ public class InformativeCommands {
 
     };
 
+    // display
     StringPaginator.of(MESSAGES.getString("list.heading"), warps).withMapping(mapping).paginate().display(actor, page);
   }
 

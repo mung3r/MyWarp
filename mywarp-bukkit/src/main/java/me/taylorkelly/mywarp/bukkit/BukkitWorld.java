@@ -73,4 +73,27 @@ public class BukkitWorld implements LocalWorld {
   public BlockType getBlock(Vector3 position) {
     return new BukkitBlockType(this, position);
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    BukkitWorld that = (BukkitWorld) o;
+
+    if (!worldIdentifier.equals(that.worldIdentifier)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return worldIdentifier.hashCode();
+  }
 }
