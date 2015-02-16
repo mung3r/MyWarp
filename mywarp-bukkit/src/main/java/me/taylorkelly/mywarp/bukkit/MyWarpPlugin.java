@@ -125,15 +125,13 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     getDataFolder().mkdirs();
 
     profileService = new SquirrelIdProfileService(new File(getDataFolder(), "profiles.db"));
-
     groupResolverManager = new GroupResolverManager();
+    adapter = new BukkitAdapter(this);
 
     // setup the configurations
     settings =
         new BukkitSettings(new File(getDataFolder(), "config.yml"),
                            YamlConfiguration.loadConfiguration(getTextResource("config.yml")), adapter); // NON-NLS
-
-    adapter = new BukkitAdapter(groupResolverManager, profileService, settings);
 
     // setup the Game
     game = new BukkitGame(new BukkitExecutor(this), adapter);

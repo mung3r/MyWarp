@@ -52,7 +52,7 @@ public class BukkitWorld implements LocalWorld {
 
   @Override
   public UUID getUniqueId() {
-    return getLoadedWorld().getUID();
+    return worldIdentifier;
   }
 
   /**
