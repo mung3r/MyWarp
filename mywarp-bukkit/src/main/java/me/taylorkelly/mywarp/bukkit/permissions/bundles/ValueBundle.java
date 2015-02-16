@@ -44,7 +44,7 @@ public abstract class ValueBundle implements Comparable<ValueBundle> {
    * @return the full permission of this bundle
    */
   public String getPermission() {
-    return basePermission + identifier;
+    return basePermission + "." + identifier;
   }
 
   @Override
