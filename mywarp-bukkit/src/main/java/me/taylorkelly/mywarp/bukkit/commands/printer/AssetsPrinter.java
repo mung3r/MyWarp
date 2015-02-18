@@ -118,7 +118,7 @@ public class AssetsPrinter {
 
       limitStrings.add(ChatColor.GOLD + MESSAGES.getString("assets." + type.lowerCaseName(), // NON-NLS
                                                            warpLimitCount(privateWarps.size(), limit.getLimit(type)))
-                       + ' ' + ChatColor.WHITE + ChatColor.ITALIC + CommandUtils.joinWarps(privateWarps));
+                       + " " + ChatColor.WHITE + ChatColor.ITALIC + CommandUtils.joinWarps(privateWarps));
     }
 
     receiver.sendMessage(FormattingUtils.toList(limitStrings));

@@ -315,7 +315,7 @@ public final class FormattingUtils {
         }
         // a blank is only needed if the line is not empty AND the last
         // char is not a a blank (e.g. from prefix)
-        if (!line.isEmpty() && line.rightString(1).equals(" ")) {
+        if (!line.isEmpty() && !line.rightString(1).equals(" ")) {
           line.append(' ');
         }
         line.append(part);
@@ -371,8 +371,8 @@ public final class FormattingUtils {
     }
     // If both columns together are larger than the totalWidth, the larger
     // one is trimmed until it fits.
-    int seperatorWidth = getWidth(pad);
-    totalWidth -= seperatorWidth;
+    int separatorWidth = getWidth(pad);
+    totalWidth -= separatorWidth;
     if (leftWidth > rightWidth) {
       leftColumn = trim(leftColumn, leftWidth + totalWidth);
     } else {
@@ -433,81 +433,4 @@ public final class FormattingUtils {
 
     return ret.toString();
   }
-
-  // /**
-  // * Calls {@link #flattenTree(TreeNode, int)} using the chat width as
-  // * totalWidth.
-  // *
-  // * @param root
-  // * the root node
-  // * @return the flattened tree
-  // */
-  // public static String flattenTree(TreeNode<String> root) {
-  // return flattenTree(root, CHAT_WIDTH);
-  // }
-  //
-  // /**
-  // * Flattens the given tree structure. Nodes will be separated by line
-  // * brakes, children of the same level have the same padding.
-  // *
-  // * @param root
-  // * the root node
-  // * @param maxWidth
-  // * the maximal width of each entry
-  // * @return the flattened tree
-  // */
-  // public static String flattenTree(TreeNode<String> root, int maxWidth) {
-  // StrBuilder ret = new StrBuilder();
-  // ret.append(wrap(root.get(), "", maxWidth));
-  // ret.appendNewLine();
-  //
-  // int level = 0;
-  // for (TreeNode<String> child : root.getChildren()) {
-  // addNodeToBuilder(ret, child, level, maxWidth);
-  // }
-  //
-  // return ret.toString();
-  // }
-  //
-  // /**
-  // * Adds the given node to the given builder and indicates that it has the
-  // * given level. If the node has any children, these children will be added
-  // * recursively.
-  // *
-  // * @param builder
-  // * the builder
-  // * @param node
-  // * the node
-  // * @param level
-  // * the level
-  // * @param maxWidth
-  // * the maximal width of each entry
-  // */
-  // private static void addNodeToBuilder(StrBuilder builder, TreeNode<String>
-  // node, final int level,
-  // int maxWidth) {
-  // StrBuilder firstLinePrefix = new StrBuilder();
-  // firstLinePrefix.appendPadding(level, ' ');
-  // firstLinePrefix.append('-');
-  //
-  // List<String> entryParts = new LinkedList<String>();
-  // entryParts.add(firstLinePrefix.toString());
-  // Iterables.addAll(entryParts,
-  // Splitter.on(' ').trimResults().omitEmptyStrings().split(node.get()));
-  //
-  // StrBuilder newLinePrefix = new StrBuilder();
-  // firstLinePrefix.appendPadding(level + 1, ' ');
-  //
-  // builder.appendln(wrappedJoin(entryParts, newLinePrefix.toString(),
-  // maxWidth));
-  //
-  // builder.appendNewLine();
-  // builder.append(ChatColor.RESET);
-  //
-  // int newLevel = level + 1;
-  // for (TreeNode<String> child : node.getChildren()) {
-  // addNodeToBuilder(builder, child, newLevel, maxWidth);
-  // }
-  //
-  // }
 }
