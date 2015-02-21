@@ -94,8 +94,8 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated and formatted string. <p> If no translation exits, {@code $&#123;key&#125;:args} will be
-   * returned. </p>
+   * Gets a translated and formatted string.
+   * <p> If no translation exits, {@code $&#123;key&#125;:args} will be returned. </p>
    *
    * @param key  the key
    * @param args the arguments
@@ -106,7 +106,8 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated and formatted string. <p> If no translation exits, {@code $&#123;key&#125;:args} will be returned. </p>
+   * Gets a translated and formatted string.
+   * <p> If no translation exits, {@code $&#123;key&#125;:args} will be returned.</p>
    *
    * @param key    the key
    * @param locale the Locale

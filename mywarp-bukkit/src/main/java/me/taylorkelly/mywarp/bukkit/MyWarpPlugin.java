@@ -147,9 +147,6 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
       return;
     }
 
-    WelcomeEditorFactory welcomeEditorFactory = new WelcomeEditorFactory(this, adapter);
-    WarpAcceptancePromptFactory warpAcceptancePromptFactory = new WarpAcceptancePromptFactory(this, adapter);
-
     // command registration
     DynamicResourceProvider resourceProvider = new DynamicResourceProvider(control);
     ExceptionConverter exceptionConverter = new ExceptionConverter();
@@ -176,9 +173,9 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
                                         usageCommands), "warp", "myWarp", "mw")
                 .describeAs("warp-to.description")
                 .registerMethods(new InformativeCommands(myWarp.getLimitManager(), settings, myWarp.getWarpManager()))
-                .registerMethods(new ManagementCommands(myWarp, welcomeEditorFactory))
+                .registerMethods(new ManagementCommands(myWarp, new WelcomeEditorFactory(this, adapter)))
                 .registerMethods(new SocialCommands(game, myWarp.getLimitManager(), profileService,
-                                                    warpAcceptancePromptFactory))
+                                                    new WarpAcceptancePromptFactory(this, adapter)))
                 .registerMethods(new UtilityCommands(myWarp))
                 .group("import", "migrate")
                   .describeAs("import.description")

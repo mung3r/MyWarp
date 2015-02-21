@@ -56,7 +56,7 @@ public interface Platform {
   Settings getSettings();
 
   /**
-   * Gets the {@link ResourceBundle.Control} as implemented by this Platform.
+   * Gets the {@link java.util.ResourceBundle.Control} as implemented by this Platform.
    *
    * @return the ResourceBundle.Control
    */

@@ -175,7 +175,7 @@ public class InformativeCommands {
     }
 
     //query the warps
-    List<Warp> warps = Ordering.natural().sortedCopy(warpManager.filter(Predicates.and(predicates)));
+    List<Warp> warps = Ordering.natural().sortedCopy(warpManager.filter(Predicates.<Warp>and(predicates)));
 
     Function<Warp, String> mapping = new Function<Warp, String>() {
 
