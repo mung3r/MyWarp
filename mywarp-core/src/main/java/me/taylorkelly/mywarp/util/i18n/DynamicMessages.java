@@ -67,7 +67,7 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated string. <p> If no translation exits, {@code $ key} will be returned. </p>
+   * Gets a translated string. <p> If no translation exits, {@code $&#123;key&#125;} will be returned. </p>
    *
    * @param key the key
    * @return the translated string
@@ -77,7 +77,7 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated string. <p> If no translation exits, {@code $ key} will be returned. </p>
+   * Gets a translated string. <p> If no translation exits, {@code $&#123;key&#125;} will be returned. </p>
    *
    * @param key    the key
    * @param locale the Locale
@@ -88,13 +88,14 @@ public class DynamicMessages {
     try {
       return bundle.getString(key);
     } catch (MissingResourceException e) {
-      log.log(Level.WARNING, "Failed to find message.", e); // NON-NLS
+      log.log(Level.WARNING, "Failed to find message.", e);
     }
     return "${" + key + "}";
   }
 
   /**
-   * Gets a translated and formatted string. <p> If no translation exits, {@code $ key}:args} will be returned. </p>
+   * Gets a translated and formatted string. <p> If no translation exits, {@code $&#123;key&#125;:args} will be
+   * returned. </p>
    *
    * @param key  the key
    * @param args the arguments
@@ -105,7 +106,7 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated and formatted string. <p> If no translation exits, {@code $ key}:args} will be returned. </p>
+   * Gets a translated and formatted string. <p> If no translation exits, {@code $&#123;key&#125;:args} will be returned. </p>
    *
    * @param key    the key
    * @param locale the Locale
@@ -118,7 +119,7 @@ public class DynamicMessages {
       MessageFormat format = new MessageFormat(bundle.getString(key), locale);
       return format.format(args);
     } catch (MissingResourceException e) {
-      log.log(Level.WARNING, "Failed to find message.", e); // NON-NLS
+      log.log(Level.WARNING, "Failed to find message.", e);
     }
     return "${" + key + "}:" + Arrays.toString(args);
   }

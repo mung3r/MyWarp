@@ -51,8 +51,8 @@ import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
 import me.taylorkelly.mywarp.bukkit.util.ActorAuthorizer;
 import me.taylorkelly.mywarp.bukkit.util.ActorBindung;
+import me.taylorkelly.mywarp.bukkit.util.DynamicResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.ExceptionConverter;
-import me.taylorkelly.mywarp.bukkit.util.I18nInvokeHandler;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding;
 import me.taylorkelly.mywarp.bukkit.util.ProfileBinding;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding;
@@ -151,11 +151,12 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     WarpAcceptancePromptFactory warpAcceptancePromptFactory = new WarpAcceptancePromptFactory(this, adapter);
 
     // command registration
+    DynamicResourceProvider resourceProvider = new DynamicResourceProvider(control);
     ExceptionConverter exceptionConverter = new ExceptionConverter();
     PlayerBinding playerBinding = new PlayerBinding(game);
     WarpBinding warpBinding = new WarpBinding(myWarp.getWarpManager());
 
-    ParametricBuilder builder = new ParametricBuilder();
+    ParametricBuilder builder = new ParametricBuilder(resourceProvider);
     builder.setAuthorizer(new ActorAuthorizer());
     builder.addBinding(new ActorBindung());
     builder.addBinding(playerBinding);
@@ -164,23 +165,22 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     builder.addExceptionConverter(exceptionConverter);
 
     builder.addInvokeListener(new EconomyInvokeHandler(myWarp.getEconomyManager()));
-    builder.addInvokeListener(new I18nInvokeHandler());
 
     UsageCommands usageCommands = new UsageCommands(myWarp);
 
     // @formatter:off
-    dispatcher = new CommandGraph().builder(builder)
+    dispatcher = new CommandGraph(resourceProvider).builder(builder)
             .commands()
               .registerMethods(usageCommands)
-              .group(new WarpDispatcher(exceptionConverter, playerBinding, warpBinding, usageCommands), "warp",
-                     "myWarp", "mw") //NON-NLS NON-NLS
+              .group(new WarpDispatcher(resourceProvider, exceptionConverter, playerBinding, warpBinding,
+                                        usageCommands), "warp", "myWarp", "mw")
                 .describeAs("warp-to.description")
                 .registerMethods(new InformativeCommands(myWarp.getLimitManager(), settings, myWarp.getWarpManager()))
                 .registerMethods(new ManagementCommands(myWarp, welcomeEditorFactory))
                 .registerMethods(new SocialCommands(game, myWarp.getLimitManager(), profileService,
                                                     warpAcceptancePromptFactory))
                 .registerMethods(new UtilityCommands(myWarp))
-                .group("import", "migrate") //NON-NLS NON-NLS
+                .group("import", "migrate")
                   .describeAs("import.description")
                   .registerMethods(new ImportCommands(myWarp))
               .graph()

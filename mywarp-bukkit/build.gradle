@@ -17,7 +17,7 @@ dependencies {
     compile 'org.bukkit:bukkit:1.7.9-R0.2'
 
     compile 'com.sk89q:squirrelid:0.1.0'
-    compile 'de.minehattan:intake:3.1.1-SNAPSHOT'
+    compile 'de.minehattan:intake:3.1.2-SNAPSHOT'
 
     compile 'org.anjocaido:essentialsgroupmanager:2.10.1'
     compile 'ru.tehkode:permissionsex:1.19.6'

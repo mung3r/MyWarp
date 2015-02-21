@@ -54,13 +54,15 @@ public class WarpDispatcher extends SimpleDispatcher {
   /**
    * Creates an instance.
    *
+   * @param resourceProvider the ResourceProvider
    * @param converter     the ExceptionConverter
    * @param playerBinding the PlayerBinding
    * @param warpBinding   the WarpBinding
    * @param usageCommands the UsageCommands
    */
-  public WarpDispatcher(ExceptionConverter converter, PlayerBinding playerBinding, WarpBinding warpBinding,
-                        UsageCommands usageCommands) {
+  public WarpDispatcher(DynamicResourceProvider resourceProvider, ExceptionConverter converter,
+                        PlayerBinding playerBinding, WarpBinding warpBinding, UsageCommands usageCommands) {
+    super(resourceProvider);
     this.converter = converter;
     this.playerBinding = playerBinding;
     this.warpBinding = warpBinding;
