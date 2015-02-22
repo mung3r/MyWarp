@@ -159,6 +159,6 @@ public class ExceptionConverter extends ExceptionConverterHelper {
    */
   @ExceptionMatch
   public void convert(FileNotFoundException ex) throws CommandException {
-    throw new CommandException(MESSAGES.getString("import.file-non-existent", ex.getMessage()), ex);
+    throw new CommandException(MESSAGES.getString("exception.file-not-found", ex.getMessage()), ex);
   }
 }
