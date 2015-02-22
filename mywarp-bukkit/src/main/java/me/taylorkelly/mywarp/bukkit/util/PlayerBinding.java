@@ -57,27 +57,28 @@ public class PlayerBinding extends BindingHelper {
   /**
    * Gets a player matching the name given by the command.
    *
-   * @param context   the command's context
-   * @param modifiers the command's modifiers
+   * @param context the command's context
    * @return a matching player
-   * @throws NoSuchPlayerException         if no matching player was found
-   * @throws ParameterException            on a parameter error
-   * @throws IllegalCommandSenderException if the binding has the {@link Sender} annotation, but the Actor who used the
-   *                                       command is not a player instance
+   * @throws NoSuchPlayerException if no matching player was found
+   * @throws ParameterException    on a parameter error
    */
-  //REVIEW BindingBehavior
-  @BindingMatch(type = LocalPlayer.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers =
-      true)
-  public LocalPlayer getString(ArgumentStack context, Annotation[] modifiers)
-      throws NoSuchPlayerException, ParameterException, IllegalCommandSenderException {
+  @BindingMatch(type = LocalPlayer.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1)
+  public LocalPlayer getPlayer(ArgumentStack context) throws NoSuchPlayerException, ParameterException {
+    return getPlayerFromGame(context.next());
+  }
 
-    for (Annotation modifier : modifiers) {
-      if (modifier instanceof Sender) {
-        return getPlayer(context.getContext().getLocals());
-      }
-    }
-
-    return getPlayer(context.next());
+  /**
+   * Gets the player who called the command.
+   *
+   * @param context    the command's context
+   * @param classifier the classifier
+   * @return the player
+   * @throws IllegalCommandSenderException if the command was not called by a player
+   */
+  @BindingMatch(classifier = Sender.class, type = LocalPlayer.class, behavior = BindingBehavior.PROVIDES)
+  public LocalPlayer getSendingPlayer(ArgumentStack context, Annotation classifier)
+      throws IllegalCommandSenderException {
+    return getPlayerFromLocals(context.getContext().getLocals());
   }
 
   /**
@@ -86,14 +87,14 @@ public class PlayerBinding extends BindingHelper {
    *
    * @param locals the CommandLocals
    * @return the player
-   * @throws ParameterException            if CommandLocals does not contain a mapping for the {@link Actor} class
+   * @throws IllegalArgumentException      if CommandLocals does not contain a mapping for the {@link Actor} class
    * @throws IllegalCommandSenderException if the mapping for the {@link Actor} class is not a player
    */
-  protected LocalPlayer getPlayer(CommandLocals locals) throws ParameterException, IllegalCommandSenderException {
+  protected LocalPlayer getPlayerFromLocals(CommandLocals locals) throws IllegalCommandSenderException {
     Actor actor = locals.get(Actor.class);
     if (actor == null) {
-      throw new ParameterException(
-          "No Actor avilable. Either this command was not used by one or he is missing from the CommandLocales.");
+      throw new IllegalArgumentException(
+          "No Actor available. Either this command was not used by one or he is missing from the CommandLocales.");
     }
     if (actor instanceof LocalPlayer) {
       return (LocalPlayer) actor;
@@ -108,7 +109,7 @@ public class PlayerBinding extends BindingHelper {
    * @return a player with a matching name
    * @throws NoSuchPlayerException if no matching player could be found
    */
-  protected LocalPlayer getPlayer(String query) throws NoSuchPlayerException {
+  protected LocalPlayer getPlayerFromGame(String query) throws NoSuchPlayerException {
     Optional<LocalPlayer> optional = game.getPlayer(query);
 
     if (!optional.isPresent()) {

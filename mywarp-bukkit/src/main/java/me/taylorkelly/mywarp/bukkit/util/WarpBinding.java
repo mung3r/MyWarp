@@ -39,7 +39,6 @@ import me.taylorkelly.mywarp.warp.WarpManager;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
-import java.util.NoSuchElementException;
 
 /**
  * A binding for {@link Warp}s.
@@ -60,20 +59,15 @@ public class WarpBinding extends BindingHelper {
   /**
    * Gets a Warp matching the query and the Condition modifier given by the command.
    *
-   * @param context   the command's context
-   * @param modifiers the command's modifiers
+   * @param context    the command's context
+   * @param classifier the classifier
    * @return a matching Warp
    * @throws NoSuchWarpException if no Warp matching the query and Condition exists
    * @throws ParameterException  on a parameter error
    */
-  @BindingMatch(type = Warp.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = true)
-  public Warp getString(ArgumentStack context, Annotation[] modifiers) throws NoSuchWarpException, ParameterException {
-    Type conditionValue;
-    try {
-      conditionValue = findCondition(modifiers).value();
-    } catch (NoSuchElementException e) {
-      throw new IllegalArgumentException("This Binding must be used with a Modifier annotation.", e);
-    }
+  @BindingMatch(classifier = Condition.class, type = Warp.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1)
+  public Warp getWarp(ArgumentStack context, Annotation classifier) throws NoSuchWarpException, ParameterException {
+    Type conditionValue = ((Condition) classifier).value();
 
     CommandLocals locals = context.getContext().getLocals();
     Actor actor = locals.get(Actor.class);
@@ -113,22 +107,6 @@ public class WarpBinding extends BindingHelper {
       throw new NoSuchWarpException(query, matches);
     }
     return exactMatch.get();
-  }
-
-  /**
-   * Finds the first {@link Condition} in the given Array of Annotations.
-   *
-   * @param annotations the Annotations
-   * @return the first Condition
-   * @throws NoSuchElementException if no Condition could be found
-   */
-  private Condition findCondition(Annotation[] annotations) {
-    for (Annotation annotation : annotations) {
-      if (annotation instanceof Condition) {
-        return (Condition) annotation;
-      }
-    }
-    throw new NoSuchElementException();
   }
 
   /**

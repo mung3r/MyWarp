@@ -53,8 +53,8 @@ public class ProfileBinding extends BindingHelper {
    * @throws NoSuchProfileException if no matching Profile was found
    * @throws ParameterException     on a parameter error
    */
-  @BindingMatch(type = Profile.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = false)
-  public Profile getString(ArgumentStack context) throws NoSuchProfileException, ParameterException {
+  @BindingMatch(type = Profile.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1)
+  public Profile getProfile(ArgumentStack context) throws NoSuchProfileException, ParameterException {
     String query = context.next();
     Optional<Profile> optional = profileService.getByName(query);
 

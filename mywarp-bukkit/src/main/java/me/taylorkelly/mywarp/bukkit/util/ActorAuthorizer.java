@@ -33,7 +33,8 @@ public class ActorAuthorizer implements Authorizer {
   public boolean testPermission(CommandLocals locals, String permission) {
     Actor actor = locals.get(Actor.class);
     if (actor == null) {
-      throw new RuntimeException("The command must be used by Actors!");
+      throw new IllegalArgumentException(
+          "No Actor available. Either this command was not used by one or he is missing from the CommandLocales.");
     }
     return actor.hasPermission(permission);
   }

@@ -142,7 +142,7 @@ public class WarpDispatcher extends SimpleDispatcher {
       throw new InvalidUsageException("Please choose a sub-command.", this, true);
     }
 
-    LocalPlayer player = playerBinding.getPlayer(locals);
+    LocalPlayer player = playerBinding.getPlayerFromLocals(locals);
     Warp warp = warpBinding.getWarp(arguments[0], WarpUtils.isUsable(player));
 
     usageCommands.to(player, warp);
