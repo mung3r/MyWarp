@@ -35,6 +35,7 @@ import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.IllegalCommandSenderException;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding.NoSuchWarpException;
 import me.taylorkelly.mywarp.util.WarpUtils;
+import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.Arrays;
@@ -45,6 +46,8 @@ import java.util.Arrays;
  * arguments.
  */
 public class WarpDispatcher extends SimpleDispatcher {
+
+  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final ExceptionConverter converter;
   private final PlayerBinding playerBinding;
@@ -138,8 +141,7 @@ public class WarpDispatcher extends SimpleDispatcher {
       throws InvalidUsageException, NoSuchWarpException, ParameterException, IllegalCommandSenderException,
              TimerRunningException {
     if (arguments.length != 1) {
-      // TODO localize!
-      throw new InvalidUsageException("Please choose a sub-command.", this, true);
+      throw new InvalidUsageException(MESSAGES.getString("exception.invalid-syntax"), this, true);
     }
 
     LocalPlayer player = playerBinding.getPlayerFromLocals(locals);
