@@ -57,13 +57,13 @@ public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator 
    *
    * @param myWarp         the MyWarp instance
    * @param worldsSnapshot a mapping of world names to uniqueIds
+   * @param dsn            the dsn of the database
    * @param user           the MySQL user to use
    * @param password       the user's password
    * @param tableName      the name of the table that contains the data
-   * @param dsn            the dsn of the database
    */
-  public LegacyMySqlMigrator(MyWarp myWarp, ImmutableMap<String, UUID> worldsSnapshot, String user, String password,
-                             String tableName, String dsn) {
+  public LegacyMySqlMigrator(MyWarp myWarp, ImmutableMap<String, UUID> worldsSnapshot, String dsn, String user,
+                             String password, String tableName) {
     super(myWarp, worldsSnapshot);
     this.dsn = dsn;
     this.user = user;
@@ -92,7 +92,7 @@ public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator 
           try {
             conn.close();
           } catch (SQLException e) {
-            log.log(Level.WARNING, "Failed to close import SQL connection.", e); // NON-NLS
+            log.log(Level.WARNING, "Failed to close import SQL connection.", e);
           }
         }
 
