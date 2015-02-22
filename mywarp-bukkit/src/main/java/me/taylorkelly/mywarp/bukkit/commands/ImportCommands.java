@@ -71,17 +71,13 @@ public class ImportCommands {
   /**
    * Imports Warps from an SQLite database.
    *
-   * @param actor        the Actor
-   * @param databasePath the path to the database file
+   * @param actor    the Actor
+   * @param database the database file
    * @throws CommandException if the file does not exist
    */
   @Command(aliases = {"sqlite"}, desc = "import.sqlite.description", help = "import.sqlite.help")
   @Require(IMPORT_PERMISSION)
-  public void sqlite(Actor actor, String databasePath) throws CommandException {
-    File database = new File(myWarp.getPlatform().getDataFolder(), databasePath);
-    if (!database.exists()) {
-      throw new CommandException(MESSAGES.getString("import.file-non-existent", database.getAbsolutePath()));
-    }
+  public void sqlite(Actor actor, File database) throws CommandException {
     migrate(actor, new DataConnectionMigrator(SqLiteConnection.getConnection(myWarp, database, false)));
   }
 
@@ -102,18 +98,13 @@ public class ImportCommands {
   /**
    * Imports Warps from an SQLite database with an old (pre 3.0) scheme.
    *
-   * @param actor        the Actor
-   * @param databasePath the path to the database file
+   * @param actor    the Actor
+   * @param database the database file
    * @throws CommandException if the file does not exist
    */
   @Command(aliases = {"pre3-sqlite"}, desc = "import.pre3-sqlite.description", help = "import.pre3-sqlite.help")
   @Require(IMPORT_PERMISSION)
-  public void pre3Sqlite(Actor actor, String databasePath) throws CommandException {
-    File database = new File(myWarp.getPlatform().getDataFolder(), databasePath);
-    if (!database.exists()) {
-      throw new CommandException(MESSAGES.getString("import.file-non-existent", // NON-NLS
-                                                    database.getAbsolutePath()));
-    }
+  public void pre3Sqlite(Actor actor, File database) throws CommandException {
     migrate(actor, new LegacySqLiteMigrator(myWarp, getWorldSnapshot(), database));
   }
 

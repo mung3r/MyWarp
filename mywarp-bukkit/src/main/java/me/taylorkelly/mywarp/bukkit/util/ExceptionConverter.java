@@ -36,6 +36,7 @@ import me.taylorkelly.mywarp.warp.Warp;
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
 
+import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -86,7 +87,7 @@ public class ExceptionConverter extends ExceptionConverterHelper {
       builder.append(MESSAGES.getString("exception.no-such-warp.suggestion", match.get().getName()));
     }
 
-    throw new CommandException(builder.toString());
+    throw new CommandException(builder.toString(), ex);
   }
 
   /**
@@ -113,7 +114,7 @@ public class ExceptionConverter extends ExceptionConverterHelper {
     builder.appendNewLine();
     builder.append(MESSAGES.getString("exception.limit-exceeded.delete-warps"));
 
-    throw new CommandException(builder.toString());
+    throw new CommandException(builder.toString(), ex);
   }
 
   /**
@@ -125,7 +126,7 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   @ExceptionMatch
   public void convert(TimerRunningException ex) throws CommandException {
     throw new CommandException(
-        MESSAGES.getString("exception.timer-running", ex.getDurationLeft().get(TimeUnit.SECONDS)));
+        MESSAGES.getString("exception.timer-running", ex.getDurationLeft().get(TimeUnit.SECONDS)), ex);
   }
 
   /**
@@ -136,7 +137,7 @@ public class ExceptionConverter extends ExceptionConverterHelper {
    */
   @ExceptionMatch
   public void convert(IllegalCommandSenderException ex) throws CommandException {
-    throw new CommandException(MESSAGES.getString("exception.illegal-command-sender"));
+    throw new CommandException(MESSAGES.getString("exception.illegal-command-sender"), ex);
   }
 
   /**
@@ -147,6 +148,17 @@ public class ExceptionConverter extends ExceptionConverterHelper {
    */
   @ExceptionMatch
   public void convert(NoSuchWorldException ex) throws CommandException {
-    throw new CommandException(MESSAGES.getString("exception.no-such-world", ex.getWorldRepresentation()));
+    throw new CommandException(MESSAGES.getString("exception.no-such-world", ex.getWorldRepresentation()), ex);
+  }
+
+  /**
+   * Converts a {@link FileNotFoundException} to a human readable {@link CommandException}.
+   *
+   * @param ex the FileNotFoundException
+   * @throws CommandException the wrapped exception
+   */
+  @ExceptionMatch
+  public void convert(FileNotFoundException ex) throws CommandException {
+    throw new CommandException(MESSAGES.getString("import.file-non-existent", ex.getMessage()), ex);
   }
 }

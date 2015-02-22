@@ -54,6 +54,7 @@ import me.taylorkelly.mywarp.bukkit.util.ActorAuthorizer;
 import me.taylorkelly.mywarp.bukkit.util.ActorBindung;
 import me.taylorkelly.mywarp.bukkit.util.DynamicResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.ExceptionConverter;
+import me.taylorkelly.mywarp.bukkit.util.FileBinding;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding;
 import me.taylorkelly.mywarp.bukkit.util.ProfileBinding;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding;
@@ -157,6 +158,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     ParametricBuilder builder = new ParametricBuilder(resourceProvider);
     builder.setAuthorizer(new ActorAuthorizer());
     builder.addBinding(new ActorBindung());
+    builder.addBinding(new FileBinding(getDataFolder()));
     builder.addBinding(playerBinding);
     builder.addBinding(new ProfileBinding(profileService));
     builder.addBinding(warpBinding);
