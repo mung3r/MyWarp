@@ -65,6 +65,7 @@ public class PlayerBinding extends BindingHelper {
    * @throws IllegalCommandSenderException if the binding has the {@link Sender} annotation, but the Actor who used the
    *                                       command is not a player instance
    */
+  //REVIEW BindingBehavior
   @BindingMatch(type = LocalPlayer.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers =
       true)
   public LocalPlayer getString(ArgumentStack context, Annotation[] modifiers)

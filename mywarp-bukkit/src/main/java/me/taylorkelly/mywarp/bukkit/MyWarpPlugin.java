@@ -20,6 +20,7 @@
 package me.taylorkelly.mywarp.bukkit;
 
 import com.sk89q.intake.CommandException;
+import com.sk89q.intake.InvalidUsageException;
 import com.sk89q.intake.InvocationCommandException;
 import com.sk89q.intake.context.CommandLocals;
 import com.sk89q.intake.dispatcher.Dispatcher;
@@ -260,6 +261,18 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
       // therefore unintended behavior.
       actor.sendError(MESSAGES.getString("exception.unknown"));
       getLogger().log(Level.SEVERE, String.format("The command '%s' could not be executed.", cmd), e);
+    } catch (InvalidUsageException e) {
+      StrBuilder error = new StrBuilder();
+      error.append(e.getSimpleUsageString("/"));
+      if (e.getMessage() != null) {
+        error.appendNewLine();
+        error.append(e.getMessage());
+      }
+      if (e.isFullHelpSuggested()) {
+        error.appendNewLine();
+        error.append(e.getCommand().getDescription().getHelp());
+      }
+      actor.sendError(error.toString());
     } catch (CommandException e) {
       actor.sendError(e.getMessage());
     } catch (AuthorizationException e) {

@@ -41,7 +41,7 @@ public class ActorBindung extends BindingHelper {
    * @throws NoSuchPlayerException if no matching player was found
    * @throws ParameterException    on a parameter error
    */
-  @BindingMatch(type = Actor.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1, provideModifiers = false)
+  @BindingMatch(type = Actor.class, behavior = BindingBehavior.PROVIDES)
   public Actor getString(ArgumentStack context) throws NoSuchPlayerException, ParameterException {
     Actor actor = context.getContext().getLocals().get(Actor.class);
 
