@@ -39,7 +39,7 @@ public class ActorBindung extends BindingHelper {
    * @throws IllegalArgumentException if CommandLocals does not contain a mapping for the {@link Actor} class
    */
   @BindingMatch(type = Actor.class, behavior = BindingBehavior.PROVIDES)
-  public Actor getString(ArgumentStack context) {
+  public Actor getActor(ArgumentStack context) {
     Actor actor = context.getContext().getLocals().get(Actor.class);
 
     if (actor == null) {

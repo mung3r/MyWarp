@@ -63,11 +63,8 @@ public class UtilityCommands {
   @Require("mywarp.warp.basic.help")
   @Billable(FeeType.HELP)
   public void help(Actor actor, @Optional("1") int page) {
-    // XXX implement when Intake has the necessary options!
-    // CommandMapping commandMapping =
-    // MyWarp.getInstance().getDispatcher().get("warp");
-
-    actor.sendError("Help is currently not implemented, sorry.");
+    // XXX implement properly when Intake has the necessary options!
+    actor.sendMessage(ChatColor.GRAY + MESSAGES.getString("help.note"));
   }
 
   /**
