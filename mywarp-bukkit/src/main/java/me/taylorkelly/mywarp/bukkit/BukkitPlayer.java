@@ -129,7 +129,7 @@ public class BukkitPlayer extends AbstractPlayer {
           LOCALE_CACHE.put(minecraftLocale, locale);
         }
       } catch (Exception e) {
-        log.log(Level.WARNING, String.format("Failed to get locale from %1$s, defaulting to %2$s.", // NON-NLS
+        log.log(Level.WARNING, String.format("Failed to get locale from %1$s, defaulting to %2$s.",
                                              getName(), locale));
       }
     }

@@ -71,7 +71,7 @@ public class SqLiteConnection {
 
       @Override
       public DataConnection call() throws DataConnectionException {
-        String dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
+        String dsn = "jdbc:sqlite://" + database.getAbsolutePath();
         try {
           // Manually load SQLite driver. DriveManager is unable to
           // identify it as the driver does not follow JDBC 4.0
@@ -86,7 +86,7 @@ public class SqLiteConnection {
 
           flyway.setClassLoader(getClass().getClassLoader());
           flyway.setDataSource(dsn, null, null);
-          flyway.setLocations("migrations/sqlite"); // NON-NLS
+          flyway.setLocations("migrations/sqlite");
 
           try {
             flyway.migrate();

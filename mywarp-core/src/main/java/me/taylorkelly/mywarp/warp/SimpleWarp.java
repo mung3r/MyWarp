@@ -104,7 +104,7 @@ public class SimpleWarp implements Warp {
     if (actor instanceof LocalEntity) {
       return isUsable((LocalEntity) actor);
     }
-    return actor.hasPermission("mywarp.admin.accessall"); // NON-NLS
+    return actor.hasPermission("mywarp.admin.accessall");
   }
 
   @Override
@@ -117,7 +117,7 @@ public class SimpleWarp implements Warp {
 
         }
       }
-      if (player.hasPermission("mywarp.admin.accessall")) { // NON-NLS
+      if (player.hasPermission("mywarp.admin.accessall")) {
         return true;
       }
       if (isCreator(player)) {
@@ -137,7 +137,7 @@ public class SimpleWarp implements Warp {
 
   @Override
   public boolean isModifiable(Actor actor) {
-    if (actor.hasPermission("mywarp.admin.modifyall")) { // NON-NLS
+    if (actor.hasPermission("mywarp.admin.modifyall")) {
       return true;
     }
     if (actor instanceof LocalPlayer && isCreator((LocalPlayer) actor)) {
@@ -250,7 +250,7 @@ public class SimpleWarp implements Warp {
 
   @Override
   public String replacePlaceholders(String str, LocalPlayer forWhom) {
-    str = StringUtils.replace(str, "%player%", forWhom.getName()); // NON-NLS
+    str = StringUtils.replace(str, "%player%", forWhom.getName());
     return replacePlaceholders(str);
   }
 
@@ -258,15 +258,17 @@ public class SimpleWarp implements Warp {
   public String replacePlaceholders(String str) {
     Optional<String> nameOptional = creator.getName();
     if (nameOptional.isPresent()) {
-      str = StringUtils.replace(str, "%creator%", nameOptional.get()); // NON-NLS
+      str = StringUtils.replace(str, "%creator%", nameOptional.get());
     }
 
-    str = StringUtils.replace(str, "%warp%", name); // NON-NLS
-    str = StringUtils.replace(str, "%visits%", Integer.toString(visits)); // NON-NLS
+    str = StringUtils.replace(str, "%warp%", name);
+    str = StringUtils.replace(str, "%visits%", Integer.toString(visits));
 
-    str = StringUtils.replace(str, "%loc%", "(" + position.getFloorX() + ", " + position.getFloorY() // NON-NLS
-                                            + ", " + position.getFloorZ() + ")"); // NON-NLS
-    str = StringUtils.replace(str, "%getWorld()%", getWorld().getName()); // NON-NLS
+    str =
+        StringUtils.replace(str, "%loc%",
+                            "(" + position.getFloorX() + ", " + position.getFloorY() + ", " + position.getFloorZ()
+                            + ")");
+    str = StringUtils.replace(str, "%getWorld()%", getWorld().getName());
 
     return str;
   }

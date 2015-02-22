@@ -97,7 +97,7 @@ public class BukkitDurationProvider implements DurationProvider {
      * @param warpWarmup   the warmup for the {@code warp} command
      */
     public DurationBundle(String identifier, Duration warpCooldown, Duration warpWarmup) {
-      super(identifier, "mywarp.timer"); // NON-NLS
+      super(identifier, "mywarp.timer");
 
       durations =
           ImmutableMap.<Class<? extends TimerAction<?>>, Duration>builder().put(WarpCooldown.class, warpCooldown)

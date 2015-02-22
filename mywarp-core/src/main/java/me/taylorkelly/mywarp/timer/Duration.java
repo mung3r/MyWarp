@@ -87,7 +87,7 @@ public class Duration {
 
   @Override
   public String toString() {
-    return "Duration [durationMillis=" + durationMillis + "]"; // NON-NLS
+    return "Duration [durationMillis=" + durationMillis + "]";
   }
 
 }

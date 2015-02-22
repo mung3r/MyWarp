@@ -44,9 +44,9 @@ import java.util.logging.Logger;
  */
 public class DynmapMarkers {
 
-  private static final String LABEL_ID = "mywarp.warps"; // NON-NLS
-  private static final String MARKER_ID_PREFIX = "mywarp.warp."; // NON-NLS
-  private static final String ICON_ID = "mywarp_warp-32"; // NON-NLS
+  private static final String LABEL_ID = "mywarp.warps";
+  private static final String MARKER_ID_PREFIX = "mywarp.warp.";
+  private static final String ICON_ID = "mywarp_warp-32";
 
   private static final Logger log = Logger.getLogger(DynmapMarkers.class.getName());
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.DynmapMarkers");
@@ -71,13 +71,11 @@ public class DynmapMarkers {
     // get Icon for all markers
     markerIcon = markerApi.getMarkerIcon(settings.getDynmapMarkerIconId());
     if (markerIcon == null && !settings.getDynmapMarkerIconId().equals(ICON_ID)) {
-      log.warning("MarkerIcon '" + settings.getDynmapMarkerIconId() // NON-NLS
-                  + "' does not exist. Using the default one."); // NON-NLS
+      log.warning("MarkerIcon '" + settings.getDynmapMarkerIconId() + "' does not exist. Using the default one.");
       markerIcon = markerApi.getMarkerIcon(ICON_ID);
     }
     if (markerIcon == null) {
-      markerIcon = markerApi.createMarkerIcon(ICON_ID, "Warp", // NON-NLS
-                                              plugin.getResource("mywarp_warp-32.png")); // NON-NLS
+      markerIcon = markerApi.createMarkerIcon(ICON_ID, "Warp", plugin.getResource("mywarp_warp-32.png"));
     }
 
     // create the label

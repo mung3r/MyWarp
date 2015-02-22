@@ -116,7 +116,7 @@ public class AssetsPrinter {
     for (Limit.Type type : DISPLAYABLE_TYPES) {
       Collection<Warp> privateWarps = index.get(type);
 
-      limitStrings.add(ChatColor.GOLD + MESSAGES.getString("assets." + type.lowerCaseName(), // NON-NLS
+      limitStrings.add(ChatColor.GOLD + MESSAGES.getString("assets." + type.lowerCaseName(),
                                                            warpLimitCount(privateWarps.size(), limit.getLimit(type)))
                        + " " + ChatColor.WHITE + ChatColor.ITALIC + CommandUtils.joinWarps(privateWarps));
     }

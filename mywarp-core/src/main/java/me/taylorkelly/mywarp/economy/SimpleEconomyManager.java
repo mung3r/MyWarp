@@ -58,7 +58,7 @@ public class SimpleEconomyManager implements EconomyManager {
    * @return true if the Player can disobey fees
    */
   private boolean canDisobeyFees(LocalPlayer player) {
-    return player.hasPermission("mywarp.economy.disobey"); // NON-NLS
+    return player.hasPermission("mywarp.economy.disobey");
   }
 
   @Override
@@ -68,7 +68,7 @@ public class SimpleEconomyManager implements EconomyManager {
 
   @Override
   public boolean informativeHasAtLeast(LocalPlayer player, double amount) {
-    Preconditions.checkArgument(amount > 0, "The amount must be greater than 0."); // NON-NLS
+    Preconditions.checkArgument(amount > 0, "The amount must be greater than 0.");
     if (canDisobeyFees(player)) {
       return true;
     }
@@ -86,7 +86,7 @@ public class SimpleEconomyManager implements EconomyManager {
 
   @Override
   public void informativeWithdraw(LocalPlayer player, double amount) {
-    Preconditions.checkArgument(amount > 0, "The amount must be greater than 0."); // NON-NLS
+    Preconditions.checkArgument(amount > 0, "The amount must be greater than 0.");
     if (canDisobeyFees(player)) {
       return;
     }

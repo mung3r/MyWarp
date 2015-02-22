@@ -43,7 +43,7 @@ import java.util.UUID;
  */
 public interface Warp extends Comparable<Warp> {
 
-  String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Warp"; // NON-NLS
+  String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Warp";
 
   /**
    * Sets this Warp as the player's compass target.

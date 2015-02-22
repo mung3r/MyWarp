@@ -96,8 +96,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnMove(LocalPlayer player) {
-    if (myWarp.getSettings().isTimersWarmupAbortOnMove() || player
-        .hasPermission("mywarp.warmup.disobey.moveabort")) { // NON-NLS
+    if (myWarp.getSettings().isTimersWarmupAbortOnMove() || player.hasPermission("mywarp.warmup.disobey.moveabort")) {
       return false;
     }
     if (!(player.getPosition().distanceSquared(initialPosition) > (ALLOWED_DISTANCE * ALLOWED_DISTANCE))) {
@@ -115,8 +114,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnDamage(LocalPlayer player) {
-    if (myWarp.getSettings().isTimersWarmupAbortOnDamage() || player
-        .hasPermission("mywarp.warmup.disobey.dmgabort")) { // NON-NLS
+    if (myWarp.getSettings().isTimersWarmupAbortOnDamage() || player.hasPermission("mywarp.warmup.disobey.dmgabort")) {
       return false;
     }
     if (!(player.getHealth() < initialHealth)) {

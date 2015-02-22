@@ -70,7 +70,7 @@ public class LimitBundle extends ValueBundle implements Limit {
    */
   public LimitBundle(String identifier, int totalLimit, int publicLimit, int privateLimit,
                      @Nullable Iterable<LocalWorld> affectedWorlds, BukkitAdapter adapter) {
-    super(identifier, "mywarp.limit"); // NON-NLS
+    super(identifier, "mywarp.limit");
     this.adapter = adapter;
 
     if (affectedWorlds != null) {

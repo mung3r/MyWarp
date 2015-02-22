@@ -61,7 +61,7 @@ public class FolderSourcedControl extends ResourceBundle.Control {
     if (baseName == null) {
       throw new NullPointerException();
     }
-    return Arrays.asList("properties"); // NON-NLS
+    return Arrays.asList("properties");
   }
 
   @Override
@@ -71,7 +71,7 @@ public class FolderSourcedControl extends ResourceBundle.Control {
     String bundleName = toBundleName(baseName, locale);
     ResourceBundle bundle = null;
 
-    final String resourceName = toResourceName(bundleName, "properties"); // NON-NLS
+    final String resourceName = toResourceName(bundleName, "properties");
     InputStream stream = null;
     final File bundleFile = new File(bundleFolder, resourceName);
 

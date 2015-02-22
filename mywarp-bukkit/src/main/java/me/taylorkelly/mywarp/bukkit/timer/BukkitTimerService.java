@@ -58,8 +58,7 @@ public class BukkitTimerService implements TimerService {
   @Override
   public <T> void start(T timedSubject, Duration duration, TimerAction<T> action) {
     Preconditions.checkArgument(!has(timedSubject, action.getClass()).isTimerRunning(),
-                                "A timer of the type %s is already running for %s.", timedSubject,
-                                action.getClass()); // NON-NLS
+                                "A timer of the type %s is already running for %s.", timedSubject, action.getClass());
 
     runningTimers.put(timedSubject, action.getClass(), new SelfRunningRunnable<T>(action, duration));
   }

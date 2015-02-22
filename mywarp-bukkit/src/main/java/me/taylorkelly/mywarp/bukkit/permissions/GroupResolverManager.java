@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit.permissions;
 
+import net.milkbowl.vault.permission.Permission;
+
 import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -45,11 +47,11 @@ public class GroupResolverManager implements GroupResolver {
   private GroupResolver setupResolver() {
     // check for Vault first!
     try {
-      RegisteredServiceProvider<net.milkbowl.vault.permission.Permission>
+      RegisteredServiceProvider<Permission>
           permissionProvider =
-          Bukkit.getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+          Bukkit.getServicesManager().getRegistration(Permission.class);
       if (permissionProvider != null) {
-        log.info("Using Vault for group support."); // NON-NLS
+        log.info("Using Vault for group support.");
         return new VaultResolver(permissionProvider.getProvider());
       }
     } catch (NoClassDefFoundError e) {
@@ -59,31 +61,31 @@ public class GroupResolverManager implements GroupResolver {
 
     Plugin checkPlugin;
 
-    checkPlugin = Bukkit.getPluginManager().getPlugin("bPermissions"); // NON-NLS
+    checkPlugin = Bukkit.getPluginManager().getPlugin("bPermissions");
     if (checkPlugin != null && checkPlugin.isEnabled()) {
       // we support bPermissions2 only
       if (checkPlugin.getDescription().getVersion().charAt(0) == '2') {
-        log.info("Using bPermissions v" + checkPlugin.getDescription().getVersion() // NON-NLS
-                 + " for group support."); // NON-NLS
+        log.info("Using bPermissions v" + checkPlugin.getDescription().getVersion()
+                 + " for group support.");
         return new BPermissions2Resolver();
       }
     }
 
-    checkPlugin = Bukkit.getPluginManager().getPlugin("GroupManager"); // NON-NLS
+    checkPlugin = Bukkit.getPluginManager().getPlugin("GroupManager");
     if (checkPlugin != null && checkPlugin.isEnabled()) {
-      log.info("Using GroupManager v" + checkPlugin.getDescription().getVersion() // NON-NLS
-               + " for group support."); // NON-NLS
+      log.info("Using GroupManager v" + checkPlugin.getDescription().getVersion()
+               + " for group support.");
       return new GroupManagerResolver((GroupManager) checkPlugin);
     }
 
-    checkPlugin = Bukkit.getPluginManager().getPlugin("PermissionsEx"); // NON-NLS
+    checkPlugin = Bukkit.getPluginManager().getPlugin("PermissionsEx");
     if (checkPlugin != null && checkPlugin.isEnabled()) {
-      log.info("Using PermissionsEx v" + checkPlugin.getDescription().getVersion() // NON-NLS
-               + " for group support."); // NON-NLS
+      log.info("Using PermissionsEx v" + checkPlugin.getDescription().getVersion()
+               + " for group support.");
       return new PermissionsExResolver();
     }
 
-    log.info("No supported permissions plugin found, using Superperms fallback for group support."); // NON-NLS
+    log.info("No supported permissions plugin found, using Superperms fallback for group support.");
     return new SuperpermsResolver();
   }
 

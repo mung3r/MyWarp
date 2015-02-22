@@ -67,21 +67,21 @@ public class BukkitLimitProvider implements LimitProvider {
     }
     // register per-world overrides
     for (World world : Bukkit.getWorlds()) {
-      String perm = "mywarp.limit.disobey." + world.getName(); // NON-NLS
+      String perm = "mywarp.limit.disobey." + world.getName();
       // mywarp.limit.disobey.[WORLDNAME].total
-      Permission totalPerm = new Permission(perm + ".total"); // NON-NLS
-      totalPerm.addParent("mywarp.limit.disobey.total", true); // NON-NLS
-      totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
+      Permission totalPerm = new Permission(perm + ".total");
+      totalPerm.addParent("mywarp.limit.disobey.total", true);
+      totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
       BukkitPermissionsRegistration.INSTANCE.register(totalPerm);
       // mywarp.limit.disobey.[WORLDNAME].private
-      Permission privatePerm = new Permission(perm + ".private"); // NON-NLS
-      privatePerm.addParent("mywarp.limit.disobey.private", true); // NON-NLS
-      privatePerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
+      Permission privatePerm = new Permission(perm + ".private");
+      privatePerm.addParent("mywarp.limit.disobey.private", true);
+      privatePerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
       BukkitPermissionsRegistration.INSTANCE.register(privatePerm);
       // mywarp.limit.disobey.[WORLDNAME].public
-      Permission publicPerm = new Permission(perm + ".public"); // NON-NLS
-      publicPerm.addParent("mywarp.limit.disobey.public", true); // NON-NLS
-      publicPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true); // NON-NLS
+      Permission publicPerm = new Permission(perm + ".public");
+      publicPerm.addParent("mywarp.limit.disobey.public", true);
+      publicPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
       BukkitPermissionsRegistration.INSTANCE.register(publicPerm);
     }
   }

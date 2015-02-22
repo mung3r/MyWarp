@@ -82,7 +82,7 @@ public class UsageCommands {
     }
 
     // XXX This implementation is ugly and inflexible
-    if (myWarp.getSettings().isTimersEnabled() && !player.hasPermission("mywarp.timer.disobey")) { // NON-NLS
+    if (myWarp.getSettings().isTimersEnabled() && !player.hasPermission("mywarp.timer.disobey")) {
       TimerService timerService = myWarp.getPlatform().getTimerService();
       DurationProvider durationProvider = myWarp.getPlatform().getDurationProvider();
 

@@ -43,8 +43,8 @@ import java.util.Map;
  */
 public class WelcomeEditorFactory {
 
-  private static final String ESCAPE_SEQUENCE = "#cancel"; // NON-NLS
-  private static final String REMOVE_SEQUENCE = "#none"; // NON-NLS
+  private static final String ESCAPE_SEQUENCE = "#cancel";
+  private static final String REMOVE_SEQUENCE = "#none";
   private static final int TIMEOUT = 30;
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.CONVERSATIONS_RESOURCE_BUNDLE_NAME);

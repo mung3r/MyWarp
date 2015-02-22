@@ -80,7 +80,7 @@ public class MySqlConnection {
 
           flyway.setClassLoader(getClass().getClassLoader());
           flyway.setDataSource(dsn, user, password);
-          flyway.setLocations("migrations/mysql"); // NON-NLS
+          flyway.setLocations("migrations/mysql");
 
           try {
             flyway.migrate();

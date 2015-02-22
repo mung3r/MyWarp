@@ -104,9 +104,9 @@ public class EulerDirection {
 
   @Override
   public String toString() {
-    return "EulerDirection [pitch=" + pitch + ", yaw=" + yaw + ", roll=" + roll + "]"; // NON-NLS
-    // NON-NLS
-    // NON-NLS
+    return "EulerDirection [pitch=" + pitch + ", yaw=" + yaw + ", roll=" + roll + "]";
+
+
   }
 
 }

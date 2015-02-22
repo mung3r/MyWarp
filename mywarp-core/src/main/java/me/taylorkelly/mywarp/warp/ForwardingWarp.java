@@ -38,8 +38,7 @@ import java.util.UUID;
 /**
  * A Warp which forwards all its method calls to another Warp. Subclasses should override one or more methods to modify
  * the behavior of the backing Warp as desired per the <a href="http://en.wikipedia
- * .org/wiki/Decorator_pattern">decorator
- * pattern</a>.
+ * .org/wiki/Decorator_pattern">decorator pattern</a>.
  */
 public abstract class ForwardingWarp extends ForwardingObject implements Warp {
 

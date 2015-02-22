@@ -148,7 +148,7 @@ public interface Limit {
      * @return true if the player can disobey any limit of this Type
      */
     public boolean canDisobey(LocalPlayer player, LocalWorld world) {
-      String perm = "mywarp.limit.disobey." + world.getName() + "." + lowerCaseName(); // NON-NLS
+      String perm = "mywarp.limit.disobey." + world.getName() + "." + lowerCaseName();
       return player.hasPermission(perm);
     }
   }

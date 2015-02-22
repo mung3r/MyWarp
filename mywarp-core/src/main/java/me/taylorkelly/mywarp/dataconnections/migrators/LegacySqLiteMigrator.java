@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 public class LegacySqLiteMigrator extends LegacyMigrator implements DataMigrator {
 
   private static final Logger log = Logger.getLogger(LegacySqLiteMigrator.class.getName());
-  private static final String TABLE_NAME = "warpTable"; // NON-NLS
+  private static final String TABLE_NAME = "warpTable";
 
   private final String dsn;
 
@@ -60,7 +60,7 @@ public class LegacySqLiteMigrator extends LegacyMigrator implements DataMigrator
    */
   public LegacySqLiteMigrator(MyWarp myWarp, ImmutableMap<String, UUID> worldsSnapshot, File database) {
     super(myWarp, worldsSnapshot);
-    this.dsn = "jdbc:sqlite://" + database.getAbsolutePath(); // NON-NLS
+    this.dsn = "jdbc:sqlite://" + database.getAbsolutePath();
   }
 
   @Override
@@ -92,7 +92,7 @@ public class LegacySqLiteMigrator extends LegacyMigrator implements DataMigrator
           try {
             conn.close();
           } catch (SQLException e) {
-            log.log(Level.WARNING, "Failed to close import SQL connection.", e); // NON-NLS
+            log.log(Level.WARNING, "Failed to close import SQL connection.", e);
           }
         }
 

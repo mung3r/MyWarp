@@ -88,10 +88,10 @@ public class SocialCommands {
   public void give(Actor actor, Profile receiver, @Condition(Type.MODIFIABLE) Warp warp,
                    @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits)
       throws CommandException, AuthorizationException, NoSuchPlayerException {
-    if (giveDirectly && !actor.hasPermission("mywarp.warp.soc.give.direct")) { // NON-NLS
+    if (giveDirectly && !actor.hasPermission("mywarp.warp.soc.give.direct")) {
       throw new AuthorizationException();
     }
-    if (ignoreLimits && !actor.hasPermission("mywarp.warp.soc.give.force")) { // NON-NLS
+    if (ignoreLimits && !actor.hasPermission("mywarp.warp.soc.give.force")) {
       throw new AuthorizationException();
     }
 
@@ -217,7 +217,7 @@ public class SocialCommands {
                      @Switch('g') boolean groupInvite)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
-      if (!actor.hasPermission("mywarp.warp.soc.invite.group")) { // NON-NLS
+      if (!actor.hasPermission("mywarp.warp.soc.invite.group")) {
         throw new AuthorizationException();
       }
 
@@ -285,7 +285,7 @@ public class SocialCommands {
                        @Switch('g') boolean groupInvite)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
-      if (!actor.hasPermission("mywarp.warp.soc.uninvite.group")) { // NON-NLS
+      if (!actor.hasPermission("mywarp.warp.soc.uninvite.group")) {
         throw new AuthorizationException();
       }
 

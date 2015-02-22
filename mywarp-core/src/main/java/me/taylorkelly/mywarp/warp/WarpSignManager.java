@@ -65,20 +65,20 @@ public class WarpSignManager {
    */
   public void warpFromSign(String warpName, final LocalPlayer player) {
     LocaleManager.setLocale(player.getLocale());
-    if (!player.hasPermission("mywarp.warp.sign.use")) { // NON-NLS
-      player.sendError(MESSAGES.getString("use-permission", player)); // NON-NLS-1
+    if (!player.hasPermission("mywarp.warp.sign.use")) {
+      player.sendError(MESSAGES.getString("use-permission", player));
       return;
     }
 
     Optional<Warp> optional = manager.get(warpName);
     if (!optional.isPresent()) {
-      player.sendError(MESSAGES.getString("warp-non-existent", player, warpName)); // NON-NLS-1
+      player.sendError(MESSAGES.getString("warp-non-existent", player, warpName));
       return;
     }
     final Warp warp = optional.get();
 
     if (!warp.isUsable(player)) {
-      player.sendError(MESSAGES.getString("use-warp-permission", player, warpName)); // NON-NLS-1
+      player.sendError(MESSAGES.getString("use-warp-permission", player, warpName));
       return;
     }
 
@@ -100,21 +100,21 @@ public class WarpSignManager {
    */
   public boolean validateWarpSign(String[] lines, LocalPlayer player) {
     LocaleManager.setLocale(player.getLocale());
-    if (!player.hasPermission("mywarp.warp.sign.create")) { // NON-NLS
-      player.sendError(MESSAGES.getString("create-permission", player)); // NON-NLS-1
+    if (!player.hasPermission("mywarp.warp.sign.create")) {
+      player.sendError(MESSAGES.getString("create-permission", player));
       return false;
     }
     String name = lines[WARPNAME_LINE];
     Optional<Warp> optional = manager.get(name);
 
     if (!optional.isPresent()) {
-      player.sendError(MESSAGES.getString("warp-non-existent", player, name)); // NON-NLS-1
+      player.sendError(MESSAGES.getString("warp-non-existent", player, name));
       return false;
     }
     Warp warp = optional.get();
 
-    if (!warp.isModifiable(player) && !player.hasPermission("mywarp.warp.sign.create.all")) { // NON-NLS
-      player.sendError(MESSAGES.getString("create-warp-permission", player, name)); // NON-NLS-1
+    if (!warp.isModifiable(player) && !player.hasPermission("mywarp.warp.sign.create.all")) {
+      player.sendError(MESSAGES.getString("create-warp-permission", player, name));
       return false;
     }
 
@@ -128,7 +128,7 @@ public class WarpSignManager {
     line = line.substring(1, line.length() - 1);
     lines[IDENTIFIER_LINE] = "[" + identifiers.ceiling(line) + "]";
 
-    player.sendMessage(MESSAGES.getString("created-successful", player)); // NON-NLS-1
+    player.sendMessage(MESSAGES.getString("created-successful", player));
     return true;
   }
 

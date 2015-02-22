@@ -92,8 +92,8 @@ public abstract class LegacyMigrator {
             .from(tableByName(tableName)).fetch();
     log.info(String.format("%d entries found.", results.size()));
 
-    Set<String> playerNames = new HashSet<String>(results.getValues("creator", String.class)); // NON-NLS
-    for (String invitedPlayers : results.getValues("permissions", String.class)) { // NON-NLS
+    Set<String> playerNames = new HashSet<String>(results.getValues("creator", String.class));
+    for (String invitedPlayers : results.getValues("permissions", String.class)) {
       Iterables.addAll(playerNames, splitter.split(invitedPlayers));
     }
     log.info(String.format("Looking up unique IDs for %d unique players.", playerNames.size()));

@@ -95,7 +95,7 @@ public class JooqConnection implements DataConnection {
         conn.close();
       }
     } catch (SQLException e) {
-      log.log(Level.WARNING, "Failed to close SQL connection.", e); // NON-NLS
+      log.log(Level.WARNING, "Failed to close SQL connection.", e);
     }
 
   }
@@ -208,7 +208,7 @@ public class JooqConnection implements DataConnection {
       @Override
       public Collection<Warp> call() {
         // Alias for the player-table to represent the warp-creator
-        Player creatorTable = PLAYER.as("c"); //NON-NLS
+        Player creatorTable = PLAYER.as("c");
 
         // query the database and group results by name - each map-entry
         // contains all values for one single warp

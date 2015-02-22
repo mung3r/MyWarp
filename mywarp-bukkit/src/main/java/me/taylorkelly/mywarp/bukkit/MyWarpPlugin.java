@@ -133,7 +133,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     // setup the configurations
     settings =
         new BukkitSettings(new File(getDataFolder(), "config.yml"),
-                           YamlConfiguration.loadConfiguration(getTextResource("config.yml")), adapter); // NON-NLS
+                           YamlConfiguration.loadConfiguration(getTextResource("config.yml")), adapter);
 
     // setup the Game
     game = new BukkitGame(new BukkitExecutor(this), adapter);
@@ -202,18 +202,18 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     }
 
     if (settings.isDynmapEnabled()) {
-      Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap"); // NON-NLS
+      Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
       if (dynmap != null && dynmap.isEnabled()) {
         new DynmapMarkers(this, (DynmapCommonAPI) dynmap, myWarp.getWarpManager());
       } else {
-        getLogger().severe("Failed to hook into Dynmap. Disabling Dynmap support."); // NON-NLS
+        getLogger().severe("Failed to hook into Dynmap. Disabling Dynmap support.");
       }
     }
 
     // register world access permissions
     for (World loadedWorld : Bukkit.getWorlds()) {
-      Permission perm = new Permission("myWarp.warp.world." + loadedWorld.getName()); // NON-NLS
-      perm.addParent("myWarp.warp.world.*", true); // NON-NLS
+      Permission perm = new Permission("myWarp.warp.world." + loadedWorld.getName());
+      perm.addParent("myWarp.warp.world.*", true);
       BukkitPermissionsRegistration.INSTANCE.register(perm);
     }
   }
@@ -358,7 +358,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
             Bukkit.getServicesManager().getRegistration(Economy.class);
         if (economyProvider == null) {
           getLogger().severe(
-              "Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable."); // NON-NLS
+              "Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable.");
         } else {
           economyService = new VaultService(economyProvider, adapter);
         }

@@ -42,7 +42,7 @@ import java.util.Locale;
 public class StringPaginator<E> {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.StringPaginator");
-  // NON-NLS
+
 
   private final String header;
   private final List<? extends E> elements;
@@ -202,7 +202,7 @@ public class StringPaginator<E> {
      *                              exists
      */
     public String getPageAsString(Locale locale, int page) throws NoResultsException, UnknownPageException {
-      return Joiner.on(System.getProperty("line.separator")).join(getPage(page)); // NON-NLS
+      return Joiner.on(System.getProperty("line.separator")).join(getPage(page));
     }
 
     /**

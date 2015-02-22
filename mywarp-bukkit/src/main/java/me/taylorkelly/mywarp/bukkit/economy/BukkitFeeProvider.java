@@ -115,7 +115,7 @@ public class BukkitFeeProvider implements FeeProvider {
                      double privatizeFee, double publicizeFee, double uninviteFee, double updateFee,
                      double warpPlayerFee, double warpSignCreateFee, double warpSignUseFee, double warpFee,
                      double welcomeFee) {
-      super(identifier, "mywarp.economy"); // NON-NLS
+      super(identifier, "mywarp.economy");
 
       fees.put(FeeType.ASSETS, assetsFee);
       fees.put(FeeType.CREATE, createFee);

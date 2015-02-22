@@ -134,18 +134,18 @@ public class MyWarp {
 
     // Populate the warpManager when the warps are loaded. The callback is
     // executed in the server thread.
-    log.info("Loading warps..."); // NON-NLS
+    log.info("Loading warps...");
     Futures.addCallback(getDataConnection().getWarps(), new FutureCallback<Collection<Warp>>() {
 
       @Override
       public void onSuccess(Collection<Warp> result) {
         warpManager.populate(result);
-        log.info(warpManager.getSize() + " warps loaded."); // NON-NLS
+        log.info(warpManager.getSize() + " warps loaded.");
       }
 
       @Override
       public void onFailure(Throwable throwable) {
-        log.log(Level.SEVERE, "Failed to load warps from the database.", throwable); // NON-NLS
+        log.log(Level.SEVERE, "Failed to load warps from the database.", throwable);
       }
 
     }, platform.getGame().getExecutor());

@@ -54,7 +54,7 @@ import java.util.UUID;
  */
 public class ImportCommands {
 
-  private static final String IMPORT_PERMISSION = "mywarp.admin.import"; // NON-NLS
+  private static final String IMPORT_PERMISSION = "mywarp.admin.import";
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;

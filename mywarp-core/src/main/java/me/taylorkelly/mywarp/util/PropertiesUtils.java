@@ -91,7 +91,7 @@ public final class PropertiesUtils {
         try {
           reader.close();
         } catch (IOException e) {
-          log.log(Level.FINER, "Failed to close Reader for '" + file.getAbsolutePath() + "'.", e); // NON-NLS
+          log.log(Level.FINER, "Failed to close Reader for '" + file.getAbsolutePath() + "'.", e);
         }
       }
     }
@@ -118,15 +118,14 @@ public final class PropertiesUtils {
           try {
             writer.close();
           } catch (IOException e) {
-            log.log(Level.FINER, "Failed to close Writer to '" + file.getAbsolutePath() + "'.", e); // NON-NLS
+            log.log(Level.FINER, "Failed to close Writer to '" + file.getAbsolutePath() + "'.", e);
           }
         }
         if (outputStream != null) {
           try {
             outputStream.close();
           } catch (IOException e) {
-            log.log(Level.FINER, "Failed to close OutputStream to '" + file.getAbsolutePath() // NON-NLS
-                                 + "'.", e);
+            log.log(Level.FINER, "Failed to close OutputStream to '" + file.getAbsolutePath() + "'.", e);
           }
         }
       }
@@ -143,12 +142,11 @@ public final class PropertiesUtils {
    */
   private static String getHeader(Charset charset) {
     StrBuilder ret = new StrBuilder();
-    ret.append("This file is encoded in '"); // NON-NLS
+    ret.append("This file is encoded in '");
     ret.append(charset.name());
-    ret.append("', you MUST NOT change this encoding or special characters will brake."); // NON-NLS
+    ret.append("', you MUST NOT change this encoding or special characters will brake.");
     ret.appendNewLine();
-    ret.append(
-        "Use an appropriate editor when editing this file and make sure you know what you are doing!"); // NON-NLS
+    ret.append("Use an appropriate editor when editing this file and make sure you know what you are doing!");
     return ret.toString();
   }
 }

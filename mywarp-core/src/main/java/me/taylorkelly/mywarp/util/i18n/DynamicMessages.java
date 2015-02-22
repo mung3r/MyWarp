@@ -117,7 +117,7 @@ public class DynamicMessages {
   public String getString(String key, Locale locale, Object... args) {
     ResourceBundle bundle = getBundle(locale);
     try {
-      MessageFormat format = new MessageFormat(bundle.getString(key), locale);
+      MessageFormat format = new MessageFormat(bundle.getString(key), bundle.getLocale());
       return format.format(args);
     } catch (MissingResourceException e) {
       log.log(Level.WARNING, "Failed to find message.", e);
