@@ -29,6 +29,7 @@ import com.sk89q.intake.context.CommandLocals;
 import com.sk89q.intake.dispatcher.SimpleDispatcher;
 import com.sk89q.intake.parametric.ParameterException;
 import com.sk89q.intake.util.auth.AuthorizationException;
+import com.sk89q.intake.util.i18n.ResourceProvider;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
@@ -56,14 +57,13 @@ public class WarpDispatcher extends SimpleDispatcher {
 
   /**
    * Creates an instance.
-   *
-   * @param resourceProvider the ResourceProvider
+   *  @param resourceProvider the ResourceProvider
    * @param converter     the ExceptionConverter
    * @param playerBinding the PlayerBinding
    * @param warpBinding   the WarpBinding
    * @param usageCommands the UsageCommands
    */
-  public WarpDispatcher(DynamicResourceProvider resourceProvider, ExceptionConverter converter,
+  public WarpDispatcher(ResourceProvider resourceProvider, ExceptionConverter converter,
                         PlayerBinding playerBinding, WarpBinding warpBinding, UsageCommands usageCommands) {
     super(resourceProvider);
     this.converter = converter;

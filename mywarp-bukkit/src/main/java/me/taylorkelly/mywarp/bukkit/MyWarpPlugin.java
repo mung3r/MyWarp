@@ -27,6 +27,7 @@ import com.sk89q.intake.dispatcher.Dispatcher;
 import com.sk89q.intake.fluent.CommandGraph;
 import com.sk89q.intake.parametric.ParametricBuilder;
 import com.sk89q.intake.util.auth.AuthorizationException;
+import com.sk89q.intake.util.i18n.ResourceProvider;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.Game;
@@ -52,9 +53,10 @@ import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
 import me.taylorkelly.mywarp.bukkit.util.ActorAuthorizer;
 import me.taylorkelly.mywarp.bukkit.util.ActorBindung;
-import me.taylorkelly.mywarp.bukkit.util.DynamicResourceProvider;
+import me.taylorkelly.mywarp.bukkit.util.CommandResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.ExceptionConverter;
 import me.taylorkelly.mywarp.bukkit.util.FileBinding;
+import me.taylorkelly.mywarp.bukkit.util.IntakeResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding;
 import me.taylorkelly.mywarp.bukkit.util.ProfileBinding;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding;
@@ -150,13 +152,14 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     }
 
     // command registration
-    DynamicResourceProvider resourceProvider = new DynamicResourceProvider(control);
+    ResourceProvider resourceProvider = new IntakeResourceProvider(control);
     ExceptionConverter exceptionConverter = new ExceptionConverter();
     PlayerBinding playerBinding = new PlayerBinding(game);
     WarpBinding warpBinding = new WarpBinding(myWarp.getWarpManager());
 
     ParametricBuilder builder = new ParametricBuilder(resourceProvider);
     builder.setAuthorizer(new ActorAuthorizer());
+    builder.setExternalResourceProvider(new CommandResourceProvider(control));
     builder.addBinding(new ActorBindung());
     builder.addBinding(new FileBinding(getDataFolder()));
     builder.addBinding(playerBinding);
@@ -353,12 +356,10 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   public VaultService getEconomyService() {
     if (economyService == null) {
       try {
-        RegisteredServiceProvider<Economy>
-            economyProvider =
-            Bukkit.getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (economyProvider == null) {
-          getLogger().severe(
-              "Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable.");
+          getLogger()
+              .severe("Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable.");
         } else {
           economyService = new VaultService(economyProvider, adapter);
         }

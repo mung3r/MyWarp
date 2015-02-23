@@ -21,18 +21,18 @@ package me.taylorkelly.mywarp.bukkit.util;
 
 import com.sk89q.intake.util.i18n.ResourceProvider;
 
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Provides resources to Intake.
+ * Provides internal resources to Intake.
  *
  * @see me.taylorkelly.mywarp.util.i18n.DynamicMessages
  */
-public class DynamicResourceProvider implements ResourceProvider {
+public class IntakeResourceProvider implements ResourceProvider {
+
+  private static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Intake";
 
   private final ResourceBundle.Control control;
 
@@ -41,22 +41,12 @@ public class DynamicResourceProvider implements ResourceProvider {
    *
    * @param control the ResourceBundle.Control
    */
-  public DynamicResourceProvider(ResourceBundle.Control control) {
+  public IntakeResourceProvider(ResourceBundle.Control control) {
     this.control = control;
   }
 
   @Override
-  public Locale getLocale() {
-    return LocaleManager.getLocale();
-  }
-
-  @Override
-  public ResourceBundle getBundle(Locale locale) {
-    return ResourceBundle.getBundle(UsageCommands.RESOURCE_BUNDLE_NAME, getLocale(), control);
-  }
-
-  @Override
-  public boolean supportsCommandAnnotations() {
-    return true;
+  public ResourceBundle getBundle() {
+    return ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, LocaleManager.getLocale(), control);
   }
 }
