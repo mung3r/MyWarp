@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '1.2.0'
+    id 'com.github.johnrengelman.shadow' version '1.2.1'
 }
 
 repositories {
@@ -43,8 +43,7 @@ shadowJar {
         include(dependency('de.minehattan:intake'))
     }
     relocate('org.jooq', 'me.taylorkelly.mywarp.internal.jooq')
-    //currently this seems to ignore Flyways sql files
-    //relocate('org.flywaydb', 'me.taylorkelly.mywarp.internal.flyway')
+    relocate('org.flywaydb', 'me.taylorkelly.mywarp.internal.flyway')
     relocate('com.sk89q.squirrelid', 'me.taylorkelly.mywarp.internal.squirrelid')
     relocate('com.sk89q.intake', 'me.taylorkelly.mywarp.internal.intake')
 }
