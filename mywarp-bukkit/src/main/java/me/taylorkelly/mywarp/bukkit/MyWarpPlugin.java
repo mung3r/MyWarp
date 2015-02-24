@@ -182,7 +182,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
                 .registerMethods(new ManagementCommands(myWarp, new WelcomeEditorFactory(this, adapter)))
                 .registerMethods(new SocialCommands(game, myWarp.getLimitManager(), profileService,
                                                     new WarpAcceptancePromptFactory(this, adapter)))
-                .registerMethods(new UtilityCommands(myWarp))
+                .registerMethods(new UtilityCommands(myWarp, this))
                 .group("import", "migrate")
                   .describeAs("import.description")
                   .registerMethods(new ImportCommands(myWarp))
@@ -319,6 +319,14 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     return groupResolverManager;
   }
 
+  /**
+   * gets the Dispatcher.
+   *
+   * @return the Dispatcher
+   */
+  public Dispatcher getDispatcher() {
+    return dispatcher;
+  }
   // -- Platform methods
 
   @Override

@@ -74,10 +74,10 @@ public class SocialCommands {
    * Changes the owner of a Warp.
    *
    * @param actor        the Actor
-   * @param receiver     the Profile of the player who should receive the Warp
-   * @param warp         the Warp
    * @param giveDirectly whether the Warp should be given directly, without asking the owner for acceptance
    * @param ignoreLimits whether the limits of the new owner should be ignored
+   * @param receiver     the Profile of the player who should receive the Warp
+   * @param warp         the Warp
    * @throws CommandException       if the owner could not be changed
    * @throws AuthorizationException if the Actor does have enough permissions
    * @throws NoSuchPlayerException  if the receiver is offline and the flags to bypass this check where not given
@@ -85,8 +85,8 @@ public class SocialCommands {
   @Command(aliases = {"give"}, desc = "give.description", help = "give.help")
   @Require("mywarp.warp.soc.give")
   @Billable(FeeType.GIVE)
-  public void give(Actor actor, Profile receiver, @Condition(Type.MODIFIABLE) Warp warp,
-                   @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits)
+  public void give(Actor actor, @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits, Profile receiver,
+                   @Condition(Type.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException {
     if (giveDirectly && !actor.hasPermission("mywarp.warp.soc.give.direct")) {
       throw new AuthorizationException();
@@ -202,9 +202,9 @@ public class SocialCommands {
    * Invites players or groups to a Warp.
    *
    * @param actor             the Actor
+   * @param groupInvite       whether groups should be invited
    * @param inviteeIdentifier the identifier of the invitee
    * @param warp              the Warp
-   * @param groupInvite       whether groups should be invited
    * @throws CommandException       if the invitation fails
    * @throws AuthorizationException if the Actor does have enough permissions
    * @throws NoSuchProfileException if a player should be invited, but no Profile could be found for the given {@code
@@ -213,8 +213,8 @@ public class SocialCommands {
   @Command(aliases = {"invite"}, desc = "invite.description", help = "invite.help")
   @Require("mywarp.warp.soc.invite")
   @Billable(FeeType.INVITE)
-  public void invite(Actor actor, String inviteeIdentifier, @Condition(Condition.Type.MODIFIABLE) Warp warp,
-                     @Switch('g') boolean groupInvite)
+  public void invite(Actor actor, @Switch('g') boolean groupInvite, String inviteeIdentifier,
+                     @Condition(Type.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.warp.soc.invite.group")) {
@@ -270,9 +270,9 @@ public class SocialCommands {
    * Uninvites players or groups from a Warp.
    *
    * @param actor               the Actor
+   * @param groupInvite         whether groups should be uninvited
    * @param uninviteeIdentifier the identifier of the uninvitee
    * @param warp                the Warp
-   * @param groupInvite         whether groups should be uninvited
    * @throws CommandException       if the uninvitation fails
    * @throws AuthorizationException if the Actor does have enough permissions
    * @throws NoSuchProfileException if a player should be uninvited, but no Profile could be found for the given {@code
@@ -281,8 +281,8 @@ public class SocialCommands {
   @Command(aliases = {"uninvite"}, desc = "uninvite.description", help = "uninvite.help")
   @Require("mywarp.warp.soc.uninvite")
   @Billable(FeeType.UNINVITE)
-  public void uninvite(Actor actor, String uninviteeIdentifier, @Condition(Condition.Type.MODIFIABLE) Warp warp,
-                       @Switch('g') boolean groupInvite)
+  public void uninvite(Actor actor, @Switch('g') boolean groupInvite, String uninviteeIdentifier,
+                       @Condition(Type.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.warp.soc.uninvite.group")) {

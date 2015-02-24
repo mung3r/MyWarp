@@ -20,21 +20,32 @@
 package me.taylorkelly.mywarp.bukkit.commands;
 
 import com.sk89q.intake.Command;
+import com.sk89q.intake.CommandCallable;
+import com.sk89q.intake.CommandMapping;
 import com.sk89q.intake.Require;
+import com.sk89q.intake.context.CommandLocals;
+import com.sk89q.intake.dispatcher.Dispatcher;
 import com.sk89q.intake.parametric.annotation.Optional;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.Sender;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
 import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
+import me.taylorkelly.mywarp.bukkit.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
+import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
+
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Bundles utility commands.
@@ -43,14 +54,16 @@ public class UtilityCommands {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
   private final MyWarp myWarp;
+  private final MyWarpPlugin plugin;
 
   /**
    * Creates an instance.
    *
    * @param myWarp the MyWarp instance
    */
-  public UtilityCommands(MyWarp myWarp) {
+  public UtilityCommands(MyWarp myWarp, MyWarpPlugin plugin) {
     this.myWarp = myWarp;
+    this.plugin = plugin;
   }
 
   /**
@@ -63,8 +76,63 @@ public class UtilityCommands {
   @Require("mywarp.warp.basic.help")
   @Billable(FeeType.HELP)
   public void help(Actor actor, @Optional("1") int page) {
-    // XXX implement properly when Intake has the necessary options!
-    actor.sendMessage(ChatColor.GRAY + MESSAGES.getString("help.note"));
+    Set<String> usableCommands = new TreeSet<String>();
+    CommandLocals locals = new CommandLocals();
+    locals.put(Actor.class, actor);
+
+    flattenCommands(usableCommands, locals, "", plugin.getDispatcher());
+
+    StringPaginator.of(MESSAGES.getString("help.heading"), usableCommands)
+        .withNote(ChatColor.GRAY + MESSAGES.getString("help.note") + ChatColor.WHITE).paginate().display(actor, page);
+  }
+
+  /**
+   * Adds a all commands from the given Dispatcher to the given Collection, transforming them into Strings that include
+   * the full command string as the user would enter it. Commands that are not usable under the given CommandLocals are
+   * excluded and the given prefix is added before all commands. <p>This algorithm actually calls every Command, it is
+   * <b> not</b> lazy.</p>
+   *
+   * @param entries    the Collection the Commands are added to
+   * @param locals     the CommandLocals
+   * @param prefix     the prefix
+   * @param dispatcher the Dispatcher to add
+   */
+  private void flattenCommands(Collection<String> entries, CommandLocals locals, String prefix, Dispatcher dispatcher) {
+    for (CommandMapping rootCommand : dispatcher.getCommands()) {
+      flattenCommands(entries, locals, prefix, rootCommand);
+    }
+  }
+
+  /**
+   * Adds a all commands from the given CommandMapping to the given Collection, transforming them into Strings that
+   * include the full command string as the user would enter it. Commands that are not usable under the given
+   * CommandLocals are excluded and the given prefix is added before all commands. <p>This algorithm actually calls
+   * every Command, it is <b> not</b> lazy.</p>
+   *
+   * @param entries the Collection the Commands are added to
+   * @param locals  the CommandLocals
+   * @param prefix  the prefix
+   * @param current the CommandMapping to add
+   */
+  private void flattenCommands(Collection<String> entries, CommandLocals locals, String prefix,
+                               CommandMapping current) {
+    CommandCallable currentCallable = current.getCallable();
+    if (!currentCallable.testPermission(locals)) {
+      return;
+    }
+    StrBuilder builder = new StrBuilder().append(prefix).append(prefix.isEmpty() ? '/' : ' ');
+
+    //subcommands
+    if (currentCallable instanceof Dispatcher) {
+      builder.append(current.getPrimaryAlias());
+      flattenCommands(entries, locals, builder.toString(), (Dispatcher) currentCallable);
+    } else {
+      // the end
+      builder.appendWithSeparators(current.getAllAliases(), "|");
+      builder.append(' ');
+      builder.append(current.getDescription().getUsage());
+      entries.add(builder.toString());
+    }
   }
 
   /**
