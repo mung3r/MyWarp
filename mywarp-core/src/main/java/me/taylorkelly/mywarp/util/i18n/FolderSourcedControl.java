@@ -30,7 +30,6 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
@@ -58,10 +57,7 @@ public class FolderSourcedControl extends ResourceBundle.Control {
 
   @Override
   public List<String> getFormats(String baseName) {
-    if (baseName == null) {
-      throw new NullPointerException();
-    }
-    return Arrays.asList("properties");
+    return ResourceBundle.Control.FORMAT_PROPERTIES;
   }
 
   @Override

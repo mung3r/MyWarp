@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
+import com.google.common.base.Charsets;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.InvalidUsageException;
 import com.sk89q.intake.InvocationCommandException;
@@ -54,6 +55,7 @@ import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
 import me.taylorkelly.mywarp.bukkit.util.ActorAuthorizer;
 import me.taylorkelly.mywarp.bukkit.util.ActorBindung;
 import me.taylorkelly.mywarp.bukkit.util.CommandResourceProvider;
+import me.taylorkelly.mywarp.bukkit.util.EncodedControl;
 import me.taylorkelly.mywarp.bukkit.util.ExceptionConverter;
 import me.taylorkelly.mywarp.bukkit.util.FileBinding;
 import me.taylorkelly.mywarp.bukkit.util.IntakeResourceProvider;
@@ -96,8 +98,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final File bundleFolder = new File(getDataFolder(), "lang");
-  private final ResourceBundle.Control control = new ResourceBundle.Control() {
-  }; // new FolderSourcedControl(bundleFolder);
+  private final ResourceBundle.Control control = new EncodedControl(Charsets.UTF_8);
 
   private GroupResolverManager groupResolverManager;
   private SquirrelIdProfileService profileService;

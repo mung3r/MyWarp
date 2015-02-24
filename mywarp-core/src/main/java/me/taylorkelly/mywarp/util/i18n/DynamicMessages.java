@@ -84,8 +84,8 @@ public class DynamicMessages {
    * @return the localized string
    */
   public String getString(String key, Locale locale) {
-    ResourceBundle bundle = getBundle(locale);
     try {
+      ResourceBundle bundle = getBundle(locale);
       return bundle.getString(key);
     } catch (MissingResourceException e) {
       log.log(Level.WARNING, "Failed to find message.", e);
@@ -117,8 +117,8 @@ public class DynamicMessages {
    * @see java.text.MessageFormat
    */
   public String getString(String key, Locale locale, Object... args) {
-    ResourceBundle bundle = getBundle(locale);
     try {
+      ResourceBundle bundle = getBundle(locale);
       MessageFormat format = new MessageFormat(bundle.getString(key), bundle.getLocale());
       return format.format(args);
     } catch (MissingResourceException e) {
