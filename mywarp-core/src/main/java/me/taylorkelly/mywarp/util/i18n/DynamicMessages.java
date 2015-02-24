@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Provides translated messages using Java ResourceBundles. <p> When created, instances will uses the default resource
+ * Provides localized messages using Java ResourceBundles. <p> When created, instances will uses the default resource
  * bundle lookup as described in the {@link java.util.ResourceBundle} documentation. This process can be customized by
  * registering a custom {@link java.util.ResourceBundle.Control} via {@link #setControl(ResourceBundle.Control)}. </p>
  */
@@ -67,21 +67,21 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated string. <p> If no translation exits, {@code $&#123;key&#125;} will be returned. </p>
+   * Gets a localized string. <p>If no localization exits, {@code $&#123;key&#125;} will be returned.</p>
    *
    * @param key the key
-   * @return the translated string
+   * @return the localized string
    */
   public String getString(String key) {
     return getString(key, LocaleManager.getLocale());
   }
 
   /**
-   * Gets a translated string. <p> If no translation exits, {@code $&#123;key&#125;} will be returned. </p>
+   * Gets a localized string. <p>If no localization exits, {@code $&#123;key&#125;} will be returned.</p>
    *
    * @param key    the key
    * @param locale the Locale
-   * @return the translated string
+   * @return the localized string
    */
   public String getString(String key, Locale locale) {
     ResourceBundle bundle = getBundle(locale);
@@ -94,25 +94,27 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a translated and formatted string.
-   * <p> If no translation exits, {@code $&#123;key&#125;:args} will be returned. </p>
+   * Gets a localized and formatted string. <p> If no localization exits, {@code $&#123;key&#125;:args} will be
+   * returned. </p>
    *
    * @param key  the key
    * @param args the arguments
-   * @return the translated string
+   * @return the localized string
+   * @see java.text.MessageFormat
    */
   public String getString(String key, Object... args) {
     return getString(key, LocaleManager.getLocale(), args);
   }
 
   /**
-   * Gets a translated and formatted string.
-   * <p> If no translation exits, {@code $&#123;key&#125;:args} will be returned.</p>
+   * Gets a localized and formatted string. <p> If no localization exits, {@code $&#123;key&#125;:args} will be
+   * returned.</p>
    *
    * @param key    the key
    * @param locale the Locale
    * @param args   the arguments
-   * @return a translated string
+   * @return a localized string
+   * @see java.text.MessageFormat
    */
   public String getString(String key, Locale locale, Object... args) {
     ResourceBundle bundle = getBundle(locale);
