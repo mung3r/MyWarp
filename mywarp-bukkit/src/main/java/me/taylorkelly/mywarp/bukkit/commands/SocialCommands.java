@@ -322,7 +322,7 @@ public class SocialCommands {
       displayName = uninvitee.getName().get();
     }
 
-    actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("uninvited.player.successful", displayName, warp.getName()));
+    actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("uninvite.player.successful", displayName, warp.getName()));
     if (warp.getType() == Warp.Type.PUBLIC) {
       actor.sendMessage(ChatColor.GRAY + MESSAGES.getString("uninvite.public", warp.getName()));
     }
