@@ -33,6 +33,8 @@ import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.Player;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.GroupRecord;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.PlayerRecord;
+import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpGroupMapRecord;
+import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpPlayerMapRecord;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WorldRecord;
 import me.taylorkelly.mywarp.util.EulerDirection;
@@ -52,6 +54,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -133,6 +136,35 @@ public class JooqConnection implements DataConnection {
         record.setWelcomeMessage(warp.getWelcomeMessage());
 
         record.store();
+
+        //invitations...
+
+        //...groups
+        List<WarpGroupMapRecord> warpGroupMapRecords = new ArrayList<WarpGroupMapRecord>();
+        for (String groupName : warp.getInvitedGroups()) {
+          GroupRecord groupRecord = getOrCreateGroup(groupName);
+
+          WarpGroupMapRecord warpGroupMapRecord = create.newRecord(WARP_GROUP_MAP);
+          warpGroupMapRecord.setWarpId(record.getWarpId());
+          warpGroupMapRecord.setGroupId(groupRecord.getGroupId());
+
+          warpGroupMapRecords.add(warpGroupMapRecord);
+        }
+        create.batchStore(warpGroupMapRecords).execute();
+
+        //...players
+        List<WarpPlayerMapRecord> warpPlayerMapRecords = new ArrayList<WarpPlayerMapRecord>();
+        for (Profile profile : warp.getInvitedPlayers()) {
+          PlayerRecord inivtedPlayerRecord = getOrCreatePlayer(profile);
+
+          WarpPlayerMapRecord warpPlayerMapRecord = create.newRecord(WARP_PLAYER_MAP);
+          warpPlayerMapRecord.setWarpId(record.getWarpId());
+          warpPlayerMapRecord.setPlayerId(inivtedPlayerRecord.getPlayerId());
+
+          warpPlayerMapRecords.add(warpPlayerMapRecord);
+        }
+
+        create.batchStore(warpPlayerMapRecords).execute();
       }
 
     });
@@ -166,7 +198,7 @@ public class JooqConnection implements DataConnection {
     if (playerRecord == null) {
       playerRecord = create.newRecord(PLAYER);
       playerRecord.setUuid(profile.getUniqueId());
-      playerRecord.insert();
+      playerRecord.store();
     }
     return playerRecord;
   }
