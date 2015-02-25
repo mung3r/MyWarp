@@ -1,0 +1,2 @@
+ALTER TABLE `player` MODIFY `uuid` VARCHAR(36);
+ALTER TABLE `world` MODIFY `uuid` VARCHAR(36);
