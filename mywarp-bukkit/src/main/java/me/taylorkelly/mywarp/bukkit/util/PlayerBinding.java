@@ -90,7 +90,7 @@ public class PlayerBinding extends BindingHelper {
    * @throws IllegalArgumentException      if CommandLocals does not contain a mapping for the {@link Actor} class
    * @throws IllegalCommandSenderException if the mapping for the {@link Actor} class is not a player
    */
-  protected LocalPlayer getPlayerFromLocals(CommandLocals locals) throws IllegalCommandSenderException {
+  private LocalPlayer getPlayerFromLocals(CommandLocals locals) throws IllegalCommandSenderException {
     Actor actor = locals.get(Actor.class);
     if (actor == null) {
       throw new IllegalArgumentException(

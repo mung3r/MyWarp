@@ -73,7 +73,7 @@ public class UsageCommands {
    *                               command
    */
   @Command(aliases = {"to"}, desc = "warp-to.description")
-  @Require("mywarp.warp.basic.warp-to")
+  @Require("mywarp.warp.basic.warp")
   public void to(@Sender LocalPlayer player, @Condition(Type.USABLE) Warp warp) throws TimerRunningException {
     FeeType feeType = FeeType.WARP_TO;
 

@@ -20,6 +20,8 @@
 package me.taylorkelly.mywarp.bukkit;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Iterables;
+import com.sk89q.intake.CommandCallable;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.InvalidUsageException;
 import com.sk89q.intake.InvocationCommandException;
@@ -57,12 +59,12 @@ import me.taylorkelly.mywarp.bukkit.util.ActorBindung;
 import me.taylorkelly.mywarp.bukkit.util.CommandResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.EncodedControl;
 import me.taylorkelly.mywarp.bukkit.util.ExceptionConverter;
+import me.taylorkelly.mywarp.bukkit.util.FallbackDispatcher;
 import me.taylorkelly.mywarp.bukkit.util.FileBinding;
 import me.taylorkelly.mywarp.bukkit.util.IntakeResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding;
 import me.taylorkelly.mywarp.bukkit.util.ProfileBinding;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding;
-import me.taylorkelly.mywarp.bukkit.util.WarpDispatcher;
 import me.taylorkelly.mywarp.bukkit.util.economy.EconomyInvokeHandler;
 import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -172,12 +174,14 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
 
     UsageCommands usageCommands = new UsageCommands(myWarp);
 
+    //TODO this should be covered by unit tests
+    CommandCallable fallback = Iterables.getOnlyElement(builder.build(usageCommands).values());
+
     // @formatter:off
     dispatcher = new CommandGraph(resourceProvider).builder(builder)
             .commands()
               .registerMethods(usageCommands)
-              .group(new WarpDispatcher(resourceProvider, exceptionConverter, playerBinding, warpBinding,
-                                        usageCommands), "warp", "myWarp", "mw")
+              .group(new FallbackDispatcher(resourceProvider, fallback), "warp", "myWarp", "mw")
                 .describeAs("warp-to.description")
                 .registerMethods(new InformativeCommands(myWarp.getLimitManager(), settings, myWarp.getWarpManager()))
                 .registerMethods(new ManagementCommands(myWarp, new WelcomeEditorFactory(this, adapter)))

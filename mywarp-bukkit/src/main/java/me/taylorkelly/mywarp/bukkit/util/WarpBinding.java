@@ -38,7 +38,9 @@ import me.taylorkelly.mywarp.warp.WarpManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * A binding for {@link Warp}s.
@@ -99,7 +101,7 @@ public class WarpBinding extends BindingHelper {
    * @return the matching Warp
    * @throws NoSuchWarpException if such a Warp does not exist
    */
-  protected Warp getWarp(String query, Predicate<Warp> predicate) throws NoSuchWarpException {
+  private Warp getWarp(String query, Predicate<Warp> predicate) throws NoSuchWarpException {
     MatchList matches = warpManager.getMatchingWarps(query, predicate);
     Optional<Warp> exactMatch = matches.getExactMatch();
 
@@ -112,8 +114,8 @@ public class WarpBinding extends BindingHelper {
   /**
    * Represents the condition a certain Warp must meat.
    */
-  @java.lang.annotation.Retention(RetentionPolicy.RUNTIME)
-  @java.lang.annotation.Target(ElementType.PARAMETER)
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.PARAMETER)
   public @interface Condition {
 
     /**
