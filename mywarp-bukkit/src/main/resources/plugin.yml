@@ -18,8 +18,11 @@ main: me.taylorkelly.mywarp.bukkit.MyWarpPlugin
 commands:
   warp:
     aliases: ['mywarp', 'mw']
-    description: All of the MyWarp commands
+    description: MyWarp usage and management commands
     usage: /<command> help - Displays the help for MyWarp
+  to:
+    description: Teleports the user to warps
+    usage: /to <warp>
 permissions:
   mywarp.admin.accessall:
     description: Can access all warps
