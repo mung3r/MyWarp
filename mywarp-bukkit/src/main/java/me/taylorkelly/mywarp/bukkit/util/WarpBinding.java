@@ -38,9 +38,7 @@ import me.taylorkelly.mywarp.warp.WarpManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * A binding for {@link Warp}s.
@@ -114,8 +112,8 @@ public class WarpBinding extends BindingHelper {
   /**
    * Represents the condition a certain Warp must meat.
    */
-  @Retention(RetentionPolicy.RUNTIME)
-  @Target(ElementType.PARAMETER)
+  @java.lang.annotation.Retention(RetentionPolicy.RUNTIME)
+  @java.lang.annotation.Target(ElementType.PARAMETER)
   public @interface Condition {
 
     /**
