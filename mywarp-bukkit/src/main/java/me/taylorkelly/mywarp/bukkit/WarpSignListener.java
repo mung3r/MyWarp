@@ -39,7 +39,6 @@ import org.bukkit.material.Attachable;
  */
 public class WarpSignListener extends AbstractListener {
 
-  public static final int WARPNAME_LINE = WarpSignManager.WARPNAME_LINE;
   private static final ImmutableSet<Material>
       SUPPORTED_ATTACHABLES =
       ImmutableSet.of(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
@@ -97,7 +96,7 @@ public class WarpSignListener extends AbstractListener {
         Sign sign = (Sign) block.getState();
 
         if (warpSignManager.isWarpSign(sign.getLines())) {
-          warpSignManager.warpFromSign(sign.getLine(WARPNAME_LINE), adapter.adapt(event.getPlayer()));
+          warpSignManager.warpFromSign(sign.getLine(WarpSignManager.WARPNAME_LINE), adapter.adapt(event.getPlayer()));
           event.setCancelled(true);
         }
 
@@ -117,7 +116,7 @@ public class WarpSignListener extends AbstractListener {
           return;
         }
 
-        warpSignManager.warpFromSign(signBut.getLine(WARPNAME_LINE), adapter.adapt(event.getPlayer()));
+        warpSignManager.warpFromSign(signBut.getLine(WarpSignManager.WARPNAME_LINE), adapter.adapt(event.getPlayer()));
       }
       // a player stepped on something
     } else if (event.getAction().equals(Action.PHYSICAL)) {
@@ -132,7 +131,8 @@ public class WarpSignListener extends AbstractListener {
         if (!warpSignManager.isWarpSign(signBelow.getLines())) {
           return;
         }
-        warpSignManager.warpFromSign(signBelow.getLine(WARPNAME_LINE), adapter.adapt(event.getPlayer()));
+        warpSignManager
+            .warpFromSign(signBelow.getLine(WarpSignManager.WARPNAME_LINE), adapter.adapt(event.getPlayer()));
       }
     }
   }

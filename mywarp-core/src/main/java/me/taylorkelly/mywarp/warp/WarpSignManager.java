@@ -35,8 +35,8 @@ import java.util.TreeSet;
  */
 public class WarpSignManager {
 
-  public static final int WARPNAME_LINE = 2;
   private static final int IDENTIFIER_LINE = 1;
+  public static final int WARPNAME_LINE = 2;
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.WarpSignManager");
 
   private final EconomyManager economyManager;
@@ -82,7 +82,7 @@ public class WarpSignManager {
       return;
     }
 
-    if (economyManager.informativeHasAtLeast(player, FeeType.WARP_SIGN_USE)) {
+    if (!economyManager.informativeHasAtLeast(player, FeeType.WARP_SIGN_USE)) {
       return;
     }
 
@@ -108,7 +108,7 @@ public class WarpSignManager {
     Optional<Warp> optional = manager.get(name);
 
     if (!optional.isPresent()) {
-      player.sendError(MESSAGES.getString("warp-non-existent", player, name));
+      player.sendError(MESSAGES.getString("warp-non-existent", name));
       return false;
     }
     Warp warp = optional.get();
@@ -118,7 +118,7 @@ public class WarpSignManager {
       return false;
     }
 
-    if (economyManager.informativeHasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
+    if (!economyManager.informativeHasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
       return false;
     }
     economyManager.informativeWithdraw(player, FeeType.WARP_SIGN_CREATE);
