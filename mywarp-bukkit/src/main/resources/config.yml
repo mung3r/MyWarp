@@ -2,10 +2,7 @@ settings:
   controlWorldAccess: false
   preloadChunks: false
   teleportHorses: true
-  teleportLeashed: false
   showTeleportEffect: true
-dynamics:
-  suggestWarps: true
 localization:
   defaultLocale: en_US
   perPlayer: true

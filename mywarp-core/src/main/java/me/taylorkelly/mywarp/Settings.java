@@ -49,25 +49,11 @@ public interface Settings {
   boolean isTeleportTamedHorses();
 
   /**
-   * Returns whether entities who are leashed by the entity who is teleported, should be teleported too.
-   *
-   * @return true if leashed entities should be teleported too
-   */
-  boolean isTeleportLeashedEntities();
-
-  /**
    * Returns whether an effect should be shown at the location of entities who are teleported.
    *
    * @return true if the effect should be shown
    */
   boolean isShowTeleportEffect();
-
-  /**
-   * Returns whether warps should be suggested base on popularity when multiple warps match a query.
-   *
-   * @return true if warps should be suggested
-   */
-  boolean isDynamicsSuggestWarps();
 
   /**
    * Returns whether MySQL is enabled.
@@ -194,54 +180,5 @@ public interface Settings {
    * @return true if users should be informed after a transaction
    */
   boolean isEconomyInformAfterTransaction();
-
-  /**
-   * Returns whether Dynmap should be used as marker-service.
-   *
-   * @return true if Dynmap should be used
-   */
-  boolean isDynmapEnabled();
-
-  /**
-   * Gets the display name of the layer that stores MyWarp's markers.
-   *
-   * @return the layer's display name
-   */
-  String getDynmapLayerDisplayName();
-
-  /**
-   * Returns whether the layer that stores MyWarp's markers is hidden by default.
-   *
-   * @return true if the layer is hidden by default
-   */
-  boolean isDynmapLayerHiddenByDefault();
-
-  /**
-   * Gets the priority of the layer that stores MyWarp's markers.
-   *
-   * @return the layer's priority
-   */
-  int getDynmapLayerPriority();
-
-  /**
-   * Gets the Dynmap identifier of the icon that is used for MyWarp's markers.
-   *
-   * @return the icon's identifier
-   */
-  String getDynmapMarkerIconId();
-
-  /**
-   * Gets the minimal zoom level that must be meat to display MyWarp's markers.
-   *
-   * @return the minimal zoom level
-   */
-  int getDynmapMarkerMinZoom();
-
-  /**
-   * Returns whether MyWarp's markers should show a label by default.
-   *
-   * @return true if the label is visible by default
-   */
-  boolean isDynmapMarkerShowLable();
 
 }

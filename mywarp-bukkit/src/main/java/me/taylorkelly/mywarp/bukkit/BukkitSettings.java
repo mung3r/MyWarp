@@ -130,16 +130,6 @@ public class BukkitSettings implements Settings {
   }
 
   @Override
-  public boolean isTeleportLeashedEntities() {
-    return config.getBoolean("settings.teleportLeashed");
-  }
-
-  @Override
-  public boolean isDynamicsSuggestWarps() {
-    return config.getBoolean("dynamics.suggestWarps");
-  }
-
-  @Override
   public Locale getLocalizationDefaultLocale() {
     return defaultLocale;
   }
@@ -369,37 +359,65 @@ public class BukkitSettings implements Settings {
                          values.getDouble("warpTo", 0), values.getDouble("welcome", 0));
   }
 
-  @Override
+  /**
+   * Returns whether Dynmap should be used as marker-service.
+   *
+   * @return true if Dynmap should be used
+   */
   public boolean isDynmapEnabled() {
     return config.getBoolean("dynmap.enabled");
   }
 
-  @Override
+  /**
+   * Gets the display name of the layer that stores MyWarp's markers.
+   *
+   * @return the layer's display name
+   */
   public String getDynmapLayerDisplayName() {
     return config.getString("dynmap.layer.displayName");
   }
 
-  @Override
+  /**
+   * Returns whether the layer that stores MyWarp's markers is hidden by default.
+   *
+   * @return true if the layer is hidden by default
+   */
   public boolean isDynmapLayerHiddenByDefault() {
     return config.getBoolean("dynmap.layer.hiddenByDefault");
   }
 
-  @Override
+  /**
+   * Gets the priority of the layer that stores MyWarp's markers.
+   *
+   * @return the layer's priority
+   */
   public int getDynmapLayerPriority() {
     return config.getInt("dynmap.layer.priority");
   }
 
-  @Override
+  /**
+   * Gets the Dynmap identifier of the icon that is used for MyWarp's markers.
+   *
+   * @return the icon's identifier
+   */
   public String getDynmapMarkerIconId() {
     return config.getString("dynmap.marker.iconID");
   }
 
-  @Override
+  /**
+   * Gets the minimal zoom level that must be meat to display MyWarp's markers.
+   *
+   * @return the minimal zoom level
+   */
   public int getDynmapMarkerMinZoom() {
     return config.getInt("dynmap.marker.minZoom");
   }
 
-  @Override
+  /**
+   * Returns whether MyWarp's markers should show a label by default.
+   *
+   * @return true if the label is visible by default
+   */
   public boolean isDynmapMarkerShowLable() {
     return config.getBoolean("dynmap.marker.showLabel");
   }

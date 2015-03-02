@@ -200,7 +200,7 @@ public class BukkitPlayer extends AbstractPlayer {
         bukkitLoc =
         new Location(adapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getPitch(),
                      rotation.getYaw());
-    teleportRecursive(player, bukkitLoc, true, true);
+    teleportRecursive(player, bukkitLoc, true);
   }
 
   /**
@@ -209,10 +209,8 @@ public class BukkitPlayer extends AbstractPlayer {
    * @param teleportee          the Entity to teleport
    * @param bukkitLoc           the Location where the Entity is teleported
    * @param teleportTamedHorses whether ridden, tamed horses should be teleported too
-   * @param teleportLeashed     whether Entities leashed by the teleported Entity should be teleported too
    */
-  private void teleportRecursive(Entity teleportee, Location bukkitLoc, boolean teleportTamedHorses,
-                                 boolean teleportLeashed) {
+  private void teleportRecursive(Entity teleportee, Location bukkitLoc, boolean teleportTamedHorses) {
     Entity vehicle = null;
 
     // handle vehicles
@@ -222,23 +220,6 @@ public class BukkitPlayer extends AbstractPlayer {
       }
     }
     teleportee.leaveVehicle();
-
-    // //handle leashed entities
-    // List<LivingEntity> leashedEntities = null;
-    // if (teleportLeashed) {
-    // leashedEntities = new ArrayList<LivingEntity>();
-    // for (Entity leashed : player.getNearbyEntities(10, 7, 10)) {
-    // if (!(leashed instanceof LivingEntity)) {
-    // continue;
-    // }
-    // LivingEntity leashedEntity = (LivingEntity) leashed;
-    // if (!leashedEntity.isLeashed() ||
-    // !leashedEntity.getLeashHolder().equals(player)) {
-    // continue;
-    // }
-    // leashedEntities.add(leashedEntity);
-    // }
-    // }
 
     // load the chunk if needed
     int blockX = bukkitLoc.getBlockX();
@@ -257,17 +238,8 @@ public class BukkitPlayer extends AbstractPlayer {
 
     // teleport the vehicle
     if (vehicle != null) {
-      teleportRecursive(vehicle, bukkitLoc, teleportTamedHorses, teleportLeashed);
+      teleportRecursive(vehicle, bukkitLoc, teleportTamedHorses);
       vehicle.setPassenger(teleportee);
     }
-
-    // //teleport leashed entities
-    // if (leashedEntities != null && !leashedEntities.isEmpty()) {
-    // for (LivingEntity leashedEntity : leashedEntities) {
-    // teleportRecursive(leashedEntity, bukkitLoc, teleportTamedHorses,
-    // teleportLeashed);
-    // leashedEntity.setLeashHolder(teleportee);
-    // }
-    // }
   }
 }

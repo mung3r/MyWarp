@@ -21,7 +21,7 @@ package me.taylorkelly.mywarp.bukkit.markers;
 
 import com.google.common.eventbus.Subscribe;
 
-import me.taylorkelly.mywarp.Settings;
+import me.taylorkelly.mywarp.bukkit.BukkitSettings;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -51,7 +51,7 @@ public class DynmapMarkers {
   private static final Logger log = Logger.getLogger(DynmapMarkers.class.getName());
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.DynmapMarkers");
 
-  private final Settings settings;
+  private final BukkitSettings settings;
 
   private MarkerIcon markerIcon;
   private MarkerSet markerSet;
