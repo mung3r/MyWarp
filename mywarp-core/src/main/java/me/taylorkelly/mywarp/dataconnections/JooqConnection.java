@@ -274,7 +274,7 @@ public class JooqConnection implements DataConnection {
           Profile creator = myWarp.getProfileService().getByUniqueId(r.getValue(0, creatorTable.UUID));
 
           Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
-          EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.YAW), r.getValue(0, WARP.PITCH), 0);
+          EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.PITCH), r.getValue(0, WARP.YAW), 0);
 
           WarpBuilder
               builder =

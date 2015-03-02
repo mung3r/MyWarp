@@ -80,16 +80,25 @@ public abstract class LegacyMigrator {
    * @throws DataConnectionException if the player UUID conversion fails
    */
   public Collection<Warp> migrateLegacyWarps(DSLContext create, String tableName) throws DataConnectionException {
+    // @formatter:off
     Result<Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String,
         String>>
         results =
-        create.select(fieldByName(String.class, "name"), fieldByName(String.class, "creator"),
-                      fieldByName(Boolean.class, "publicAll"), fieldByName(Double.class, "x"),
-                      fieldByName(Double.class, "y"), fieldByName(Double.class, "z"), fieldByName(Float.class, "yaw"),
-                      fieldByName(Float.class, "pitch"), fieldByName(String.class, "world"),
-                      fieldByName(Integer.class, "visits"), fieldByName(String.class, "welcomeMessage"),
-                      fieldByName(String.class, "permissions"), fieldByName(String.class, "groupPermissions"))
+        create.select(fieldByName(String.class, "name"), //1
+                      fieldByName(String.class, "creator"), //2
+                      fieldByName(Boolean.class, "publicAll"), //3
+                      fieldByName(Double.class, "x"), //4
+                      fieldByName(Double.class, "y"), //5
+                      fieldByName(Double.class, "z"), //6
+                      fieldByName(Float.class, "yaw"), //7
+                      fieldByName(Float.class, "pitch"), //8
+                      fieldByName(String.class, "world"), //9
+                      fieldByName(Integer.class, "visits"), //10
+                      fieldByName(String.class, "welcomeMessage"), //11
+                      fieldByName(String.class, "permissions"), //12
+                      fieldByName(String.class, "groupPermissions")) //13
             .from(tableByName(tableName)).fetch();
+    // @formatter:on
     log.info(String.format("%d entries found.", results.size()));
 
     Set<String> playerNames = new HashSet<String>(results.getValues("creator", String.class));
@@ -133,7 +142,7 @@ public abstract class LegacyMigrator {
       Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
 
       Vector3 position = new Vector3(r.value4(), r.value5(), r.value6());
-      EulerDirection rotation = new EulerDirection(r.value7(), r.value8(), 0);
+      EulerDirection rotation = new EulerDirection(r.value8(), r.value7(), 0);
 
       String worldName = r.value9();
       UUID worldId = worldsSnapshot.get(worldName);

@@ -129,8 +129,7 @@ public class BukkitPlayer extends AbstractPlayer {
           LOCALE_CACHE.put(minecraftLocale, locale);
         }
       } catch (Exception e) {
-        log.log(Level.WARNING, String.format("Failed to get locale from %1$s, defaulting to %2$s.",
-                                             getName(), locale));
+        log.log(Level.WARNING, String.format("Failed to get locale from %1$s, defaulting to %2$s.", getName(), locale));
       }
     }
     return locale;
@@ -198,8 +197,8 @@ public class BukkitPlayer extends AbstractPlayer {
   public void teleport(LocalWorld world, Vector3 position, EulerDirection rotation) {
     Location
         bukkitLoc =
-        new Location(adapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getPitch(),
-                     rotation.getYaw());
+        new Location(adapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getYaw(),
+                     rotation.getPitch());
     teleportRecursive(player, bukkitLoc, true);
   }
 
