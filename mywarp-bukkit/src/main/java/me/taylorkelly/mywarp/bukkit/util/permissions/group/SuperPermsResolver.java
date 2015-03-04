@@ -17,21 +17,20 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.permissions;
+package me.taylorkelly.mywarp.bukkit.util.permissions.group;
 
 import org.bukkit.entity.Player;
 
 /**
- * Resolves permission-groups when running on Bukkit.
+ * Handler for Bukkit's SuperPerms. It actually checks if a player has a specific permission that indicates he is part
+ * of the group.
  */
-public interface GroupResolver {
+public class SuperPermsResolver implements GroupResolver {
 
-  /**
-   * Returns whether the given player is in the group identified by the given group-id.
-   *
-   * @param player  the player
-   * @param groupId the name of the group
-   * @return true if the player is in the group
-   */
-  boolean hasGroup(Player player, String groupId);
+  private static final String groupPrefix = "group.";
+
+  @Override
+  public boolean hasGroup(Player player, String group) {
+    return player.hasPermission(groupPrefix + group);
+  }
 }

@@ -17,19 +17,29 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.permissions;
+package me.taylorkelly.mywarp.bukkit.util.permissions.group;
 
+import org.anjocaido.groupmanager.GroupManager;
 import org.bukkit.entity.Player;
 
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 /**
- * Handler for PermissionsEx.
+ * Handler for GroupManager.
  */
-public class PermissionsExResolver implements GroupResolver {
+public class GroupManagerResolver implements GroupResolver {
+
+  private final GroupManager groupManager;
+
+  /**
+   * Initializes this handler on the given GroupManager instance.
+   *
+   * @param groupManager the running GroupManager plugin
+   */
+  public GroupManagerResolver(final GroupManager groupManager) {
+    this.groupManager = groupManager;
+  }
 
   @Override
   public boolean hasGroup(Player player, String group) {
-    return PermissionsEx.getPermissionManager().getUser(player.getName()).inGroup(group, player.getWorld().getName());
+    return groupManager.getWorldsHolder().getWorldPermissions(player).inGroup(player.getName(), group);
   }
 }

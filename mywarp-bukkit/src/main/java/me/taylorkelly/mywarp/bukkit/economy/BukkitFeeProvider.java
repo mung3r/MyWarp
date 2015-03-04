@@ -22,8 +22,8 @@ package me.taylorkelly.mywarp.bukkit.economy;
 import com.google.common.collect.ImmutableSortedSet;
 
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.bukkit.permissions.BukkitPermissionsRegistration;
-import me.taylorkelly.mywarp.bukkit.permissions.bundles.ValueBundle;
+import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistration;
+import me.taylorkelly.mywarp.bukkit.util.permissions.ValueBundle;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 
 import org.bukkit.permissions.Permission;

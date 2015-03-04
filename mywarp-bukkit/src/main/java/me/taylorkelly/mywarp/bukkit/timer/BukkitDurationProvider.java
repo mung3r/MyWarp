@@ -23,8 +23,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.bukkit.permissions.BukkitPermissionsRegistration;
-import me.taylorkelly.mywarp.bukkit.permissions.bundles.ValueBundle;
+import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistration;
+import me.taylorkelly.mywarp.bukkit.util.permissions.ValueBundle;
 import me.taylorkelly.mywarp.timer.Duration;
 import me.taylorkelly.mywarp.timer.DurationProvider;
 import me.taylorkelly.mywarp.timer.TimerAction;

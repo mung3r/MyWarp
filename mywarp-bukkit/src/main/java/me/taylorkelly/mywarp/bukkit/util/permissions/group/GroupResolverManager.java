@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.permissions;
+package me.taylorkelly.mywarp.bukkit.util.permissions.group;
 
 import net.milkbowl.vault.permission.Permission;
 
@@ -40,7 +40,7 @@ public class GroupResolverManager implements GroupResolver {
   /**
    * Setups a GroupResolver by searching for supported plugins on the server. Vault will always take preference over
    * other supported plugins for obvious reasons. <p> This method will never return {@code null}, but a {@link
-   * me.taylorkelly.mywarp.bukkit.permissions.SuperpermsResolver} instead. </p>
+   * SuperPermsResolver} instead. </p>
    *
    * @return the created GroupResolver
    */
@@ -55,38 +55,27 @@ public class GroupResolverManager implements GroupResolver {
         return new VaultResolver(permissionProvider.getProvider());
       }
     } catch (NoClassDefFoundError e) {
-      // the class is not in the classpath (perhaps Vault is
-      // not installed), so we continue.
+      // the class is not in the classpath (perhaps Vault is not installed), so we continue.
     }
 
     Plugin checkPlugin;
 
     checkPlugin = Bukkit.getPluginManager().getPlugin("bPermissions");
-    if (checkPlugin != null && checkPlugin.isEnabled()) {
+    if (checkPlugin != null && checkPlugin.isEnabled() && checkPlugin.getDescription().getVersion().charAt(0) == '2') {
       // we support bPermissions2 only
-      if (checkPlugin.getDescription().getVersion().charAt(0) == '2') {
-        log.info("Using bPermissions v" + checkPlugin.getDescription().getVersion()
-                 + " for group support.");
-        return new BPermissions2Resolver();
-      }
+      log.info("Using bPermissions v" + checkPlugin.getDescription().getVersion() + " for group support.");
+      return new BPermissions2Resolver();
     }
 
     checkPlugin = Bukkit.getPluginManager().getPlugin("GroupManager");
     if (checkPlugin != null && checkPlugin.isEnabled()) {
-      log.info("Using GroupManager v" + checkPlugin.getDescription().getVersion()
-               + " for group support.");
+      log.info("Using GroupManager v" + checkPlugin.getDescription().getVersion() + " for group support.");
       return new GroupManagerResolver((GroupManager) checkPlugin);
     }
 
-    checkPlugin = Bukkit.getPluginManager().getPlugin("PermissionsEx");
-    if (checkPlugin != null && checkPlugin.isEnabled()) {
-      log.info("Using PermissionsEx v" + checkPlugin.getDescription().getVersion()
-               + " for group support.");
-      return new PermissionsExResolver();
-    }
-
-    log.info("No supported permissions plugin found, using Superperms fallback for group support.");
-    return new SuperpermsResolver();
+    // PermissionsEx automatically applies these
+    log.info("Using Superperms fallback ('group.[GROUPNAME]) for group support.");
+    return new SuperPermsResolver();
   }
 
   @Override

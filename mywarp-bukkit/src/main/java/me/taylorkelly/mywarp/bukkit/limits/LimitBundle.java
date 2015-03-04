@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableSet;
 
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
-import me.taylorkelly.mywarp.bukkit.permissions.bundles.ValueBundle;
+import me.taylorkelly.mywarp.bukkit.util.permissions.ValueBundle;
 import me.taylorkelly.mywarp.limits.Limit;
 
 import org.bukkit.Bukkit;

@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.permissions.bundles;
+package me.taylorkelly.mywarp.bukkit.util.permissions;
 
 /**
  * A bundle of various values that are assigned with a single permission.
