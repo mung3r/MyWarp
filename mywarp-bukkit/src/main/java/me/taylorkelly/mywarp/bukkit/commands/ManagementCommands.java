@@ -21,12 +21,15 @@ package me.taylorkelly.mywarp.bukkit.commands;
 
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
+import com.sk89q.intake.CommandMapping;
 import com.sk89q.intake.Require;
+import com.sk89q.intake.dispatcher.Dispatcher;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.bukkit.conversation.WelcomeEditorFactory;
 import me.taylorkelly.mywarp.bukkit.util.LimitExceededException;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.Sender;
@@ -51,17 +54,19 @@ public class ManagementCommands {
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
+  private final MyWarpPlugin plugin;
   private final WelcomeEditorFactory welcomeEditorFactory;
 
   /**
    * Creates an instance.
    *
    * @param myWarp               the MyWarp instance
+   * @param plugin               the running plugin instance
    * @param welcomeEditorFactory the WelcomeEditorFactory
    */
-  public ManagementCommands(MyWarp myWarp, WelcomeEditorFactory welcomeEditorFactory) {
-
+  public ManagementCommands(MyWarp myWarp, MyWarpPlugin plugin, WelcomeEditorFactory welcomeEditorFactory) {
     this.myWarp = myWarp;
+    this.plugin = plugin;
     this.welcomeEditorFactory = welcomeEditorFactory;
   }
 
@@ -117,7 +122,9 @@ public class ManagementCommands {
     if (name.length() > WarpUtils.MAX_NAME_LENGTH) {
       throw new CommandException(MESSAGES.getString("create.name-too-long", WarpUtils.MAX_NAME_LENGTH));
     }
-    // XXX check for existing commands
+    if (isWarpSubCmd(plugin.getDispatcher(), name)) {
+      throw new CommandException(MESSAGES.getString("create.name-is-cmd", name));
+    }
 
     LimitManager.EvaluationResult
         result =
@@ -128,6 +135,23 @@ public class ManagementCommands {
 
     WarpBuilder builder = new WarpBuilder(myWarp, name, creator.getProfile(), type, world, position, rotation);
     myWarp.getWarpManager().add(builder.build());
+  }
+
+  /**
+   * Returns whether the given String is a sub command of the {@code warp} command in the given Dispatcher.
+   *
+   * @param root the root dispatcher
+   * @param str  the String
+   * @return {@code true} if the String is a sub command of the warp command
+   */
+  private boolean isWarpSubCmd(Dispatcher root, String str) {
+    //XXX this should probably be covered by unit tests
+    CommandMapping mapping = root.get("warp");
+    if (mapping == null || !(mapping.getCallable() instanceof Dispatcher)) {
+      return false;
+    }
+    Dispatcher dispatcher = (Dispatcher) mapping.getCallable();
+    return dispatcher.contains(str);
   }
 
   /**

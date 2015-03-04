@@ -174,7 +174,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
 
     UsageCommands usageCommands = new UsageCommands(myWarp);
 
-    //TODO this should be covered by unit tests
+    //XXX this should be covered by unit tests
     CommandCallable fallback = Iterables.getOnlyElement(builder.build(usageCommands).values());
 
     // @formatter:off
@@ -184,7 +184,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
               .group(new FallbackDispatcher(resourceProvider, fallback), "warp", "myWarp", "mw")
                 .describeAs("warp-to.description")
                 .registerMethods(new InformativeCommands(myWarp.getLimitManager(), settings, myWarp.getWarpManager()))
-                .registerMethods(new ManagementCommands(myWarp, new WelcomeEditorFactory(this, adapter)))
+                .registerMethods(new ManagementCommands(myWarp, this, new WelcomeEditorFactory(this, adapter)))
                 .registerMethods(new SocialCommands(game, myWarp.getLimitManager(), profileService,
                                                     new WarpAcceptancePromptFactory(this, adapter)))
                 .registerMethods(new UtilityCommands(myWarp, this))
