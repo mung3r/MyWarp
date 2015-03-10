@@ -23,6 +23,7 @@ import com.google.common.eventbus.Subscribe;
 
 import me.taylorkelly.mywarp.bukkit.BukkitSettings;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.EventWarpManager;
@@ -36,8 +37,7 @@ import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 /**
  * Sets location-markers for public warps on the map provided by Dynmap.
@@ -48,7 +48,7 @@ public class DynmapMarkers {
   private static final String MARKER_ID_PREFIX = "mywarp.warp.";
   private static final String ICON_ID = "mywarp_warp-32";
 
-  private static final Logger log = Logger.getLogger(DynmapMarkers.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(DynmapMarkers.class);
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.DynmapMarkers");
 
   private final BukkitSettings settings;
@@ -71,7 +71,7 @@ public class DynmapMarkers {
     // get Icon for all markers
     markerIcon = markerApi.getMarkerIcon(settings.getDynmapMarkerIconId());
     if (markerIcon == null && !settings.getDynmapMarkerIconId().equals(ICON_ID)) {
-      log.warning("MarkerIcon '" + settings.getDynmapMarkerIconId() + "' does not exist. Using the default one.");
+      log.warn("MarkerIcon '{}' does not exist. Using the default one.", markerIcon.getMarkerIconID());
       markerIcon = markerApi.getMarkerIcon(ICON_ID);
     }
     if (markerIcon == null) {

@@ -24,6 +24,7 @@ import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.util.EulerDirection;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
@@ -35,6 +36,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -42,8 +44,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A reference to a Player in Bukkit.
@@ -51,7 +51,7 @@ import java.util.logging.Logger;
 public class BukkitPlayer extends AbstractPlayer {
 
   private static final Map<String, Locale> LOCALE_CACHE = new HashMap<String, Locale>();
-  private static final Logger log = Logger.getLogger(BukkitPlayer.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(BukkitPlayer.class);
 
   private final Player player;
   private final BukkitAdapter adapter;
@@ -129,7 +129,7 @@ public class BukkitPlayer extends AbstractPlayer {
           LOCALE_CACHE.put(minecraftLocale, locale);
         }
       } catch (Exception e) {
-        log.log(Level.WARNING, String.format("Failed to get locale from %1$s, defaulting to %2$s.", getName(), locale));
+        log.warn(String.format("Failed to get locale from %s, defaulting to %s.", getName(), locale));
       }
     }
     return locale;

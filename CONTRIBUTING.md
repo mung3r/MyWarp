@@ -7,7 +7,7 @@ Please note that MyWarp is build against **Java 6**. All contributions must be l
 
 Coding Style
 ---------
-MyWarp follows the [Google coding conventions](https://google-styleguide.googlecode.com/svn-history/r130/trunk/javaguide.html) with two modifications:
+MyWarp follows the [Google coding conventions](https://google-styleguide.googlecode.com/svn-history/r130/trunk/javaguide.html) with a few modifications:
 
 1. The column limit is set to 120 characters. This replaces point 4.4, while the exceptions defined there still apply.
 2. Switch cases can come without a `default` statement if, and only if, they cover all possible cases. This replaces point 4.8.4.3.
@@ -22,6 +22,6 @@ The build process automatically checks most of these conventions using Checkstyl
 Code Conventions
 ---------
 * Use [Optionals](https://code.google.com/p/guava-libraries/wiki/UsingAndAvoidingNullExplained) instead of returning `null`.
-* Method parameters accepting `null` must be annotated with `@Nullable` (from javax.*), all methods and parameters are `@Nonnull` by default.
+* Method parameters accepting `null` must be annotated with `@javax.annotation.Nullable`, all methods and parameters are nonnull by default.
 * Use [Google Preconditions](https://code.google.com/p/guava-libraries/wiki/PreconditionsExplained) for null- and argument checking.
-* If a class needs to log something, create a private static final instance of `java.util.logging.Logger` with the classes name as the logger's name.
+* Use `me.taylorkelly.mywarp.util.MyWarpLogger.getLogger(Class<?>)` to create per-class loggers, if needed.

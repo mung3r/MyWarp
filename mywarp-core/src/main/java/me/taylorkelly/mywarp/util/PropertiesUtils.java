@@ -22,6 +22,7 @@ package me.taylorkelly.mywarp.util;
 import com.google.common.base.Charsets;
 
 import org.apache.commons.lang.text.StrBuilder;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,15 +37,13 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Provides utility methods for working with {@link Properties}.
  */
 public final class PropertiesUtils {
 
-  private static final Logger log = Logger.getLogger(PropertiesUtils.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(PropertiesUtils.class);
 
   /**
    * Block initialization of this class.
@@ -91,7 +90,7 @@ public final class PropertiesUtils {
         try {
           reader.close();
         } catch (IOException e) {
-          log.log(Level.FINER, "Failed to close Reader for '" + file.getAbsolutePath() + "'.", e);
+          log.debug(String.format("Failed to close Reader for '%s'.", file.getAbsolutePath()), e);
         }
       }
     }
@@ -118,14 +117,14 @@ public final class PropertiesUtils {
           try {
             writer.close();
           } catch (IOException e) {
-            log.log(Level.FINER, "Failed to close Writer to '" + file.getAbsolutePath() + "'.", e);
+            log.debug(String.format("Failed to close Writer to '%s'.", file.getAbsolutePath()), e);
           }
         }
         if (outputStream != null) {
           try {
             outputStream.close();
           } catch (IOException e) {
-            log.log(Level.FINER, "Failed to close OutputStream to '" + file.getAbsolutePath() + "'.", e);
+            log.debug(String.format("Failed to close OutputStream to '%s'.", file.getAbsolutePath()), e);
           }
         }
       }
@@ -134,7 +133,7 @@ public final class PropertiesUtils {
   }
 
   /**
-   * Gets the header for the given Charset. The header includes informations about the Charset and on how to edit the
+   * Gets the header for the given Charset. The header includes information about the Charset and on how to edit the
    * file.
    *
    * @param charset the Charset

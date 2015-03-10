@@ -19,13 +19,15 @@
 
 package me.taylorkelly.mywarp.util.i18n;
 
+import me.taylorkelly.mywarp.util.MyWarpLogger;
+
+import org.slf4j.Logger;
+
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Provides localized messages using Java ResourceBundles. <p> When created, instances will uses the default resource
@@ -34,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class DynamicMessages {
 
-  private static final Logger log = Logger.getLogger(DynamicMessages.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(DynamicMessages.class);
 
   private static ResourceBundle.Control control = new ResourceBundle.Control() {
   };
@@ -88,7 +90,7 @@ public class DynamicMessages {
       ResourceBundle bundle = getBundle(locale);
       return bundle.getString(key);
     } catch (MissingResourceException e) {
-      log.log(Level.WARNING, "Failed to find message.", e);
+      log.warn("Failed to find message.", e);
     }
     return "${" + key + "}";
   }
@@ -122,7 +124,7 @@ public class DynamicMessages {
       MessageFormat format = new MessageFormat(bundle.getString(key), bundle.getLocale());
       return format.format(args);
     } catch (MissingResourceException e) {
-      log.log(Level.WARNING, "Failed to find message.", e);
+      log.warn("Failed to find message.", e);
     }
     return "${" + key + "}:" + Arrays.toString(args);
   }

@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit.util.permissions.group;
 
+import me.taylorkelly.mywarp.util.MyWarpLogger;
+
 import net.milkbowl.vault.permission.Permission;
 
 import org.anjocaido.groupmanager.GroupManager;
@@ -26,15 +28,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 /**
  * Resolves the group of a player by calling a configured {@link GroupResolver}.
  */
 public class GroupResolverManager implements GroupResolver {
 
-  private static final Logger log = Logger.getLogger(GroupResolver.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(GroupResolver.class);
   private final GroupResolver resolver = setupResolver();
 
   /**

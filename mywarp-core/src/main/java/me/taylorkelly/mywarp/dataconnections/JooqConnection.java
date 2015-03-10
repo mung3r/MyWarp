@@ -38,6 +38,7 @@ import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpPlayer
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WarpRecord;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.WorldRecord;
 import me.taylorkelly.mywarp.util.EulerDirection;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -48,6 +49,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record14;
 import org.jooq.Result;
 import org.jooq.types.UInteger;
+import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -58,15 +60,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The connection to a SQL database via JOOQ.
  */
 public class JooqConnection implements DataConnection {
 
-  private static final Logger log = Logger.getLogger(JooqConnection.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(JooqConnection.class);
 
   private final Connection conn;
   private final DSLContext create;
@@ -98,7 +98,7 @@ public class JooqConnection implements DataConnection {
         conn.close();
       }
     } catch (SQLException e) {
-      log.log(Level.WARNING, "Failed to close SQL connection.", e);
+      log.debug("Failed to close SQL connection.", e);
     }
 
   }

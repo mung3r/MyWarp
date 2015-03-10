@@ -25,11 +25,13 @@ import com.google.common.util.concurrent.ListenableFutureTask;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -37,15 +39,13 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A migrator for legacy (pre 2.7) MySQL databases.
  */
 public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator {
 
-  private static final Logger log = Logger.getLogger(LegacyMySqlMigrator.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(LegacyMySqlMigrator.class);
 
   private final String dsn;
   private final String user;
@@ -92,7 +92,7 @@ public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator 
           try {
             conn.close();
           } catch (SQLException e) {
-            log.log(Level.WARNING, "Failed to close import SQL connection.", e);
+            log.debug("Failed to close import SQL connection.", e);
           }
         }
 

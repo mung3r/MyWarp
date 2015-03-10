@@ -25,6 +25,7 @@ import me.taylorkelly.mywarp.bukkit.economy.BukkitFeeProvider.FeeBundle;
 import me.taylorkelly.mywarp.bukkit.limits.LimitBundle;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider.DurationBundle;
 import me.taylorkelly.mywarp.timer.Duration;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.bukkit.Bukkit;
@@ -33,6 +34,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The settings when running on Bukkit. This implementation relies on Bukkit's configuration API to manage the actual
@@ -49,7 +49,7 @@ import java.util.logging.Logger;
  */
 public class BukkitSettings implements Settings {
 
-  private static final Logger log = Logger.getLogger(BukkitSettings.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(BukkitSettings.class);
 
   private final File configFile;
   private final Configuration defaultConfiguration;
@@ -83,9 +83,9 @@ public class BukkitSettings implements Settings {
         log.info(String.format("Default '%1$s' created successfully.", configFile.getName()));
 
       } catch (IOException e) {
-        log.log(Level.SEVERE, String
-            .format("Failed to create the default configuration file ('%1$s'), using build-in defaults for all values.",
-                    configFile.getAbsolutePath()), e);
+        log.error(String.format(
+            "Failed to create the default configuration file ('%1$s'), using build-in defaults for all values.",
+            configFile.getAbsolutePath()), e);
         config = defaultConfiguration;
         return;
       }
@@ -98,9 +98,8 @@ public class BukkitSettings implements Settings {
     try {
       fileConfig.save(configFile);
     } catch (IOException e) {
-      log.log(Level.SEVERE, String
-          .format("Failed to save configuration to '%1$s', using build-in defaults for missing values.",
-                  configFile.getAbsolutePath()), e);
+      log.error(String.format("Failed to save configuration to '%1$s', using build-in defaults for missing values.",
+                              configFile.getAbsolutePath()), e);
     }
     config = fileConfig;
 

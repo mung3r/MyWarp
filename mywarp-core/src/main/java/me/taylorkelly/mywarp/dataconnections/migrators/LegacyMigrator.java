@@ -30,6 +30,7 @@ import com.google.common.collect.Iterables;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.util.EulerDirection;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -38,6 +39,7 @@ import me.taylorkelly.mywarp.warp.WarpBuilder;
 import org.jooq.DSLContext;
 import org.jooq.Record13;
 import org.jooq.Result;
+import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -45,8 +47,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * An abstract migrator for legacy (pre 3.0) database layouts. Running the migration will convert player names to UUIDs
@@ -54,7 +54,7 @@ import java.util.logging.Logger;
  */
 public abstract class LegacyMigrator {
 
-  private static final Logger log = Logger.getLogger(LegacyMigrator.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(LegacyMigrator.class);
 
   private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
   private final MyWarp myWarp;
@@ -99,16 +99,16 @@ public abstract class LegacyMigrator {
                       fieldByName(String.class, "groupPermissions")) //13
             .from(tableByName(tableName)).fetch();
     // @formatter:on
-    log.info(String.format("%d entries found.", results.size()));
+    log.info("{} entries found.", results.size());
 
     Set<String> playerNames = new HashSet<String>(results.getValues("creator", String.class));
     for (String invitedPlayers : results.getValues("permissions", String.class)) {
       Iterables.addAll(playerNames, splitter.split(invitedPlayers));
     }
-    log.info(String.format("Looking up unique IDs for %d unique players.", playerNames.size()));
+    log.info("Looking up unique IDs for {} unique players.", playerNames.size());
 
     List<Profile> profiles = myWarp.getProfileService().getByName(playerNames);
-    log.info(String.format("%d unique IDs found.", profiles.size()));
+    log.info("{} unique IDs found.", profiles.size());
 
     // the legacy database may contain player-names with a wrong case, so the lookup must be case insensitive
     TreeMap<String, Profile> profileLookup = new TreeMap<String, Profile>(String.CASE_INSENSITIVE_ORDER);
@@ -134,8 +134,8 @@ public abstract class LegacyMigrator {
       String creatorName = r.value2();
       Profile creator = profileLookup.get(creatorName);
       if (creator == null) {
-        log.warning(String.format("For the creator of '%s' (%s) no unique ID could be found. The warp will be ignored.",
-                                  warpName, creatorName));
+        log.warn("For the creator of '{}' ({}) no unique ID could be found. The warp will be ignored.", warpName,
+                 creatorName);
         continue;
       }
 
@@ -147,8 +147,8 @@ public abstract class LegacyMigrator {
       String worldName = r.value9();
       UUID worldId = worldsSnapshot.get(worldName);
       if (worldId == null) {
-        log.warning(String.format("For the world of '%s' (%s) no unique ID could be found. The warp will be ignored.",
-                                  warpName, worldName));
+        log.warn("For the world of '{}' ({}) no unique ID could be found. The warp will be ignored.", warpName,
+                 worldName);
         continue;
       }
 
@@ -164,19 +164,18 @@ public abstract class LegacyMigrator {
       for (String playerName : splitter.split(r.value12())) {
         Profile invitee = profileLookup.get(playerName);
         if (invitee == null) {
-          log.warning(String.format(
-              "%s, who is invited to '%s' does not have a unique ID. The invitation will be ignored.", playerName,
-              warpName));
+          log.warn("{}, who is invited to '{}' does not have a unique ID. The invitation will be ignored.", playerName,
+                   warpName);
           continue;
         }
         builder.addInvitedPlayer(invitee);
       }
 
       ret.add(builder.build());
-      log.log(Level.FINE, String.format("Warp '%s' exported.", warpName));
+      log.debug("Warp '{}' exported.", warpName);
     }
 
-    log.info(String.format("%d warps exported from source.", ret.size()));
+    log.info("{} warps exported from source.", ret.size());
     return ret;
   }
 

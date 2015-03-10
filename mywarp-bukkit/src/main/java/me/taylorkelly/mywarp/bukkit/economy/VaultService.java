@@ -22,21 +22,21 @@ package me.taylorkelly.mywarp.bukkit.economy;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
 import me.taylorkelly.mywarp.economy.EconomyService;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 /**
  * An EconomyService that uses Vault to resolve requests.
  */
 public class VaultService implements EconomyService {
 
-  private static final Logger log = Logger.getLogger(VaultService.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(VaultService.class);
 
   private final Economy economy;
   private final BukkitAdapter adapter;
@@ -64,7 +64,7 @@ public class VaultService implements EconomyService {
     EconomyResponse response = economy.withdrawPlayer(bukkitPlayer, bukkitPlayer.getWorld().getName(), amount);
 
     if (!response.transactionSuccess()) {
-      log.severe("Could not withdraw " + bukkitPlayer.getName() + ", " + response.errorMessage);
+      log.error("Could not withdraw {}: {}", bukkitPlayer.getName(), response.errorMessage);
     }
   }
 }

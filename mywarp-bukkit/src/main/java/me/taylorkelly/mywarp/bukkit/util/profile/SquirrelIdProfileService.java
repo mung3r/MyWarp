@@ -31,6 +31,7 @@ import com.sk89q.squirrelid.resolver.CombinedProfileService;
 import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 
 import me.taylorkelly.mywarp.bukkit.AbstractListener;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.profile.NameProvidingProfileService;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
@@ -38,19 +39,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A ProfileService implementation that uses the SquirrelID library to lookup UUIDs.
  */
 public class SquirrelIdProfileService extends AbstractListener implements NameProvidingProfileService {
 
-  private static final Logger log = Logger.getLogger(SquirrelIdProfileService.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(SquirrelIdProfileService.class);
 
   private final CacheForwardingService resolver;
   private ProfileCache cache;
@@ -64,7 +64,7 @@ public class SquirrelIdProfileService extends AbstractListener implements NamePr
     try {
       cache = new SQLiteCache(cacheFile);
     } catch (IOException e) {
-      log.log(Level.WARNING, "Failed to access SQLite profile cache. Player names will be resolved from memory.", e);
+      log.warn("Failed to access SQLite profile cache. Player names will be resolved from memory.", e);
       cache = new HashMapCache();
     }
     resolver =
@@ -85,9 +85,9 @@ public class SquirrelIdProfileService extends AbstractListener implements NamePr
         return Optional.of(wrap(profile));
       }
     } catch (IOException e) {
-      log.log(Level.SEVERE, String.format("Failed to find UUID for '%s'.", name), e);
+      log.error(String.format("Failed to find UUID for '%s'.", name), e);
     } catch (InterruptedException e) {
-      log.log(Level.SEVERE, String.format("Failed to find UUID for '%s' as the process was interrupted.", name), e);
+      log.error(String.format("Failed to find UUID for '%s' as the process was interrupted.", name), e);
     }
     return Optional.absent();
   }
@@ -105,9 +105,9 @@ public class SquirrelIdProfileService extends AbstractListener implements NamePr
         }
       });
     } catch (IOException e) {
-      log.log(Level.SEVERE, "Failed to lookup UUIDs.", e);
+      log.error("Failed to lookup UUIDs.", e);
     } catch (InterruptedException e) {
-      log.log(Level.SEVERE, "Failed to lookup UUIDs as the process was interrupted.", e);
+      log.error("Failed to lookup UUIDs as the process was interrupted.", e);
     }
 
     return builder.build();

@@ -67,6 +67,7 @@ import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistrati
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolverManager;
 import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 
@@ -85,10 +86,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapCommonAPI;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 
@@ -98,6 +99,7 @@ import javax.annotation.Nullable;
 public class MyWarpPlugin extends JavaPlugin implements Platform {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final Logger log = MyWarpLogger.getLogger(MyWarpPlugin.class);
 
   private final File bundleFolder = new File(getDataFolder(), "lang");
   private final ResourceBundle.Control control = new EncodedControl(Charsets.UTF_8);
@@ -147,9 +149,8 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     try {
       myWarp = new MyWarp(this);
     } catch (InitializationException e) {
-      getLogger().log(Level.SEVERE,
-                      "A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be "
-                      + "disabled.", e);
+      log.error("A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be disabled.",
+                e);
       Bukkit.getPluginManager().disablePlugin(this);
       return;
     }
@@ -214,7 +215,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
       if (dynmap != null && dynmap.isEnabled()) {
         new DynmapMarkers(this, (DynmapCommonAPI) dynmap, myWarp.getWarpManager());
       } else {
-        getLogger().severe("Failed to hook into Dynmap. Disabling Dynmap support.");
+        log.error("Failed to hook into Dynmap. Disabling Dynmap support.");
       }
     }
 
@@ -261,16 +262,15 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     try {
       return dispatcher.call(builder.toString(), locals, parentCommands);
     } catch (IllegalStateException e) {
-      getLogger().log(Level.SEVERE, String
-          .format("The command '%s' could not be executed as the underling method could not be called.",
-                  cmd.toString()), e);
+      log.error(String.format("The command '%s' could not be executed as the underling method could not be called.",
+                              cmd.toString()), e);
       actor.sendError(MESSAGES.getString("exception.unknown"));
     } catch (InvocationCommandException e) {
       // An InvocationCommandException can only be thrown if a thrown
       // Exception is not covered by our ExceptionConverter and is
       // therefore unintended behavior.
       actor.sendError(MESSAGES.getString("exception.unknown"));
-      getLogger().log(Level.SEVERE, String.format("The command '%s' could not be executed.", cmd), e);
+      log.error(String.format("The command '%s' could not be executed.", cmd), e);
     } catch (InvalidUsageException e) {
       StrBuilder error = new StrBuilder();
       error.append(e.getSimpleUsageString("/"));
@@ -371,14 +371,13 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
       try {
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (economyProvider == null) {
-          getLogger()
-              .severe("Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be avilable.");
+          log.error("Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be available.");
         } else {
           economyService = new VaultService(economyProvider, adapter);
         }
       } catch (NoClassDefFoundError e) {
-        getLogger().severe(
-            "Failed to hook into Vault (EconomyProviderClass not available). EconomySupport will not be avilable.");
+        log.error(
+            "Failed to hook into Vault (EconomyProviderClass not available). EconomySupport will not be available.");
       }
       throw new UnsupportedOperationException();
     }

@@ -35,17 +35,18 @@ import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.limits.SimpleLimitManager;
 import me.taylorkelly.mywarp.safety.CubicLocationSafety;
 import me.taylorkelly.mywarp.safety.TeleportService;
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.EventWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpSignManager;
 
+import org.slf4j.Logger;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Entry point and container for a working MyWarp implementation. <p> An instance of this class holds and manages
@@ -54,7 +55,7 @@ import java.util.logging.Logger;
  */
 public class MyWarp {
 
-  private static final Logger log = Logger.getLogger(MyWarp.class.getName());
+  private static final Logger log = MyWarpLogger.getLogger(MyWarp.class);
 
   private final Platform platform;
   private final EventWarpManager warpManager;
@@ -140,12 +141,12 @@ public class MyWarp {
       @Override
       public void onSuccess(Collection<Warp> result) {
         warpManager.populate(result);
-        log.info(warpManager.getSize() + " warps loaded.");
+        log.info("{} warps loaded.", warpManager.getSize());
       }
 
       @Override
       public void onFailure(Throwable throwable) {
-        log.log(Level.SEVERE, "Failed to load warps from the database.", throwable);
+        log.error("Failed to load warps from the database.", throwable);
       }
 
     }, platform.getGame().getExecutor());
@@ -241,6 +242,12 @@ public class MyWarp {
     return warpSignManager;
   }
 
+
+  /**
+   * Gets the Settings instance of this MyWarp instance.
+   *
+   * @return the Settings
+   */
   public Settings getSettings() {
     return platform.getSettings();
   }
@@ -254,6 +261,11 @@ public class MyWarp {
     return platform.getProfileService();
   }
 
+  /**
+   * Gets the Game instance of this MyWarp instance.
+   *
+   * @return the Game
+   */
   public Game getGame() {
     return platform.getGame();
   }
