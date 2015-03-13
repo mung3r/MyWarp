@@ -80,7 +80,7 @@ public class LegacyMySqlMigrator extends LegacyMigrator implements DataMigrator 
         try {
           conn = DriverManager.getConnection(dsn, user, password);
         } catch (SQLException e) {
-          throw new DataConnectionException("Failed to connect to the database.", e);
+          throw new DataConnectionException(e);
         }
 
         DSLContext create = DSL.using(conn, SQLDialect.MYSQL);
