@@ -1,7 +1,4 @@
-plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow' version '1.2.1'
-}
+apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
     maven { url "http://repo.bukkit.org/content/groups/public/" }

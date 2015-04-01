@@ -1,3 +1,32 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
+        classpath 'org.ajoberstar:grgit:0.1.0'
+    }
+}
+
+// Define variables
+if (!project.hasProperty("buildNumber")) {
+    ext.buildNumber = '0'
+}
+if (!project.hasProperty("ciSystem")) {
+    ext.ciSystem = 'unknown'
+}
+if (!project.hasProperty("commitHash")) {
+    try {
+        def repo = org.ajoberstar.grgit.Grgit.open(rootProject.file('.'))
+        ext.commitHash = repo.head().abbreviatedId
+    } catch (Exception e) {
+        ext.commitHash = 'unknown'
+    }
+}
+
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -16,12 +45,7 @@ subprojects {
     ext.url = 'https://thee.github.io/MyWarp/'
     ext.projectDescription = 'Social and dynamic warps for Minecraft'
 
-    // Define variables
-    ext.buildNumber = project.hasProperty("buildNumber") ? buildNumber : '0'
-    ext.ciSystem = project.hasProperty("ciSystem") ? ciSystem : 'unknown'
-    ext.commit = project.hasProperty("commit") ? commit : 'unknown'
-
-    ext.internalVersion = version + "+" + ciSystem + "-b" + buildNumber + ".git-" + commit
+    ext.internalVersion = version + "+" + ciSystem + "-b" + buildNumber + ".git-" + commitHash
 
     // Minimum version of Java required
     sourceCompatibility = 1.6
