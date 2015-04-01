@@ -1,6 +1,6 @@
-name: MyWarp
+name: ${projectName}
 version: ${version}
-description: Social and dynamic warps for Minecraft
+description: ${projectDescription}
 authors:
   - tkelly
   - flames
@@ -10,10 +10,9 @@ authors:
 softdepend:
   - dynmap
   - bPermissions
-  - PermissionsEx
   - GroupManager
   - Vault
-website: https://thee.github.io/MyWarp/
+website: ${url}
 main: me.taylorkelly.mywarp.bukkit.MyWarpPlugin
 commands:
   warp:
