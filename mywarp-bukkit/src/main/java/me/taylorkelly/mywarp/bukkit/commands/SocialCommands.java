@@ -262,7 +262,7 @@ public class SocialCommands {
     Optional<LocalPlayer> invitedPlayer = game.getPlayer(invitee.getUniqueId());
     if (invitedPlayer.isPresent()) {
       invitedPlayer.get().sendMessage(
-          ChatColor.AQUA + MESSAGES.getString("invite.player.player-invited", displayName, warp.getName()));
+          ChatColor.AQUA + MESSAGES.getString("invite.player.player-invited", actor.getName(), warp.getName()));
     }
   }
 
