@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * Resolves the Locale of {@link Player}s using the Locale of the player's client. <p>The resolver uses reflection to
  * load Minecraft's player-object through CraftBukkit's {@code getHandle()} method, and then accesses it's {@code
- * locale} field. The process may fail, if future Minecraft or CraftBukkit change this structure. It is recommended to
+ * locale} field. The process may fail if future Minecraft or CraftBukkit change this structure. It is recommended to
  * supply a fallback for such cases.</p> <p>This class is not threadsafe.</p>
  */
 public enum ReflectiveLocaleResolver {
@@ -65,7 +65,8 @@ public enum ReflectiveLocaleResolver {
   public Locale resolve(Player player) throws UnresolvableLocaleException {
     if (handleMethod == null) {
       try {
-        handleMethod = Player.class.getMethod("getHandle");
+        //CraftBukkit implements Player in CraftPlayer with has the 'getHandle()' method
+        handleMethod = player.getClass().getMethod("getHandle");
       } catch (NoSuchMethodException e) {
         log.debug("Failed to resolve the locale because the 'getHandle()' method does not exist.", e);
         throw new UnresolvableLocaleException(e);
