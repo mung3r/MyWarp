@@ -99,10 +99,16 @@ permissions:
     description: Can uninvite groups from your /warp
     default: op
   mywarp.warp.soc.private:
-    description: Disallow anyone to use your /warp
+    description: Can privatize a /warp
+    default: op
+  mywarp.warp.soc.private.force:
+    description: Can privatize a /warp and ignore limits
     default: op
   mywarp.warp.soc.public:
-    description: Allow anyone to use your /warp
+    description: Can publicise a /warp
+    default: op
+  mywarp.warp.soc.public.force:
+    description: Can publicise a /warp and ignore limits
     default: op
   mywarp.warp.sign.use:
     description: Can use sign warps
@@ -169,7 +175,9 @@ permissions:
       mywarp.warp.soc.uninvite: true
       mywarp.warp.soc.uninvite.group: true
       mywarp.warp.soc.public: true
+      mywarp.warp.soc.public.force: true
       mywarp.warp.soc.private: true
+      mywarp.warp.soc.private.force: true
   mywarp.warp.sign.*:
     description: All sign based warp permissions
     children:
