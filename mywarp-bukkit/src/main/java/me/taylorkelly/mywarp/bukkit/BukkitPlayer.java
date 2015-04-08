@@ -22,6 +22,7 @@ package me.taylorkelly.mywarp.bukkit;
 import me.taylorkelly.mywarp.AbstractPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.Settings;
+import me.taylorkelly.mywarp.bukkit.util.ReflectiveLocaleResolver;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
@@ -29,7 +30,6 @@ import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -38,11 +38,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.slf4j.Logger;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -50,7 +46,6 @@ import java.util.UUID;
  */
 public class BukkitPlayer extends AbstractPlayer {
 
-  private static final Map<String, Locale> LOCALE_CACHE = new HashMap<String, Locale>();
   private static final Logger log = MyWarpLogger.getLogger(BukkitPlayer.class);
 
   private final Player player;
@@ -121,38 +116,12 @@ public class BukkitPlayer extends AbstractPlayer {
     Locale locale = settings.getLocalizationDefaultLocale();
     if (settings.isLocalizationPerPlayer()) {
       try {
-        String minecraftLocale = getLanguage(player);
-        if (LOCALE_CACHE.containsKey(minecraftLocale)) {
-          locale = LOCALE_CACHE.get(minecraftLocale);
-        } else {
-          locale = LocaleUtils.toLocale(minecraftLocale);
-          LOCALE_CACHE.put(minecraftLocale, locale);
-        }
-      } catch (Exception e) {
-        log.warn(String.format("Failed to get locale from %s, defaulting to %s.", getName(), locale));
+        locale = ReflectiveLocaleResolver.INSTANCE.resolve(player);
+      } catch (ReflectiveLocaleResolver.UnresolvableLocaleException e) {
+        log.warn(String.format("Failed to resolve the Locale for %s, defaulting to %s.", player.getName(), locale), e);
       }
     }
     return locale;
-  }
-
-  /**
-   * Attempts to get the locale used by the given player (client-side). <p> This method relies on reflection to load the
-   * minecraft-player-object through the craftbukkit-implementation and access its {@code locale} field. It may break on
-   * Minecraft or CraftBukkit updates. </p>
-   *
-   * @param player the player
-   * @return the used locale as string
-   * @throws IllegalAccessException    if the underlying reflection fails
-   * @throws NoSuchFieldException      if the underlying reflection fails
-   * @throws InvocationTargetException if the underlying reflection fails
-   * @throws NoSuchMethodException     if the underlying reflection fails
-   */
-  private String getLanguage(Player player)
-      throws IllegalAccessException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
-    Object minecraftHandle = player.getClass().getMethod("getHandle").invoke(player);
-    Field localeField = minecraftHandle.getClass().getDeclaredField("locale");
-    localeField.setAccessible(true);
-    return (String) localeField.get(minecraftHandle);
   }
 
   @Override

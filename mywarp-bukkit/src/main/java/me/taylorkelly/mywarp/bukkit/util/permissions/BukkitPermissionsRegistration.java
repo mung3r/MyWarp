@@ -32,7 +32,7 @@ import java.util.Set;
 public enum BukkitPermissionsRegistration {
 
   /**
-   * The singleton.
+   * The singleton instance.
    */
   INSTANCE;
 
