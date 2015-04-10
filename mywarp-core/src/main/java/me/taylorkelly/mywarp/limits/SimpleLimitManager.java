@@ -90,7 +90,7 @@ public class SimpleLimitManager implements LimitManager {
     filteredWarps = Iterables.filter(filteredWarps, type.getCondition());
     int limitMaximum = limit.getLimit(type);
     if (IterableUtils.atLeast(filteredWarps, limitMaximum)) {
-      return new LimitManager.EvaluationResult(true, type, limitMaximum);
+      return new LimitManager.EvaluationResult(type, limitMaximum);
     }
     return LimitManager.EvaluationResult.LIMIT_MEAT;
   }

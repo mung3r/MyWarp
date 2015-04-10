@@ -33,7 +33,7 @@ import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.bukkit.conversation.WelcomeEditorFactory;
 import me.taylorkelly.mywarp.bukkit.util.LimitExceededException;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.Sender;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
 import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limits.LimitManager;
@@ -130,7 +130,7 @@ public class ManagementCommands {
         result =
         myWarp.getLimitManager().evaluateLimit(creator, world, type.getLimit(), true);
     if (result.exceedsLimit()) {
-      throw new LimitExceededException(result.getExceededLimit().get(), result.getLimitMaximum().get());
+      throw new LimitExceededException(result.getExceededLimit(), result.getLimitMaximum());
     }
 
     WarpBuilder builder = new WarpBuilder(myWarp, name, creator.getProfile(), type, world, position, rotation);
@@ -163,7 +163,7 @@ public class ManagementCommands {
   @Command(aliases = {"delete", "remove"}, desc = "delete.description", help = "delete.help")
   @Require("mywarp.warp.basic.delete")
   @Billable(FeeType.DELETE)
-  public void delete(Actor actor, @Condition(Condition.Type.MODIFIABLE) Warp warp) {
+  public void delete(Actor actor, @Name(Name.Condition.MODIFIABLE) Warp warp) {
     myWarp.getWarpManager().remove(warp);
     actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("delete.deleted-successful", warp.getName()));
   }
@@ -177,7 +177,7 @@ public class ManagementCommands {
   @Command(aliases = {"update"}, desc = "update.description", help = "update.help")
   @Require("mywarp.warp.basic.update")
   @Billable(FeeType.UPDATE)
-  public void update(@Sender LocalPlayer player, @Condition(Condition.Type.MODIFIABLE) Warp warp) {
+  public void update(@Sender LocalPlayer player, @Name(Name.Condition.MODIFIABLE) Warp warp) {
     warp.setLocation(player.getWorld(), player.getPosition(), player.getRotation());
     player.sendMessage(ChatColor.AQUA + MESSAGES.getString("update.update-successful", warp.getName()));
   }
@@ -191,7 +191,7 @@ public class ManagementCommands {
   @Command(aliases = {"welcome"}, desc = "welcome.description", help = "welcome.help")
   @Require("mywarp.warp.basic.welcome")
   @Billable(FeeType.WELCOME)
-  public void welcome(@Sender LocalPlayer player, @Condition(Condition.Type.MODIFIABLE) Warp warp) {
+  public void welcome(@Sender LocalPlayer player, @Name(Name.Condition.MODIFIABLE) Warp warp) {
     welcomeEditorFactory.create(player, warp);
   }
 

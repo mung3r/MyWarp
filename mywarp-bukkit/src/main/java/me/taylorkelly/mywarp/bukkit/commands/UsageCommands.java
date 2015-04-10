@@ -28,8 +28,8 @@ import me.taylorkelly.mywarp.bukkit.timer.WarpCooldown;
 import me.taylorkelly.mywarp.bukkit.timer.WarpWarmup;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.Sender;
 import me.taylorkelly.mywarp.bukkit.util.TimerRunningException;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.timer.Duration;
 import me.taylorkelly.mywarp.timer.DurationProvider;
@@ -74,7 +74,7 @@ public class UsageCommands {
    */
   @Command(aliases = {"to"}, desc = "warp-to.description")
   @Require("mywarp.warp.basic.warp")
-  public void to(@Sender LocalPlayer player, @Condition(Type.USABLE) Warp warp) throws TimerRunningException {
+  public void to(@Sender LocalPlayer player, @Name(Condition.USABLE) Warp warp) throws TimerRunningException {
     FeeType feeType = FeeType.WARP_TO;
 
     if (!myWarp.getEconomyManager().informativeHasAtLeast(player, feeType)) {

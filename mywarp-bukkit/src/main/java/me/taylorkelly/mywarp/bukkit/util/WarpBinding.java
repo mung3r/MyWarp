@@ -30,7 +30,7 @@ import com.sk89q.intake.parametric.binding.BindingMatch;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -65,9 +65,9 @@ public class WarpBinding extends BindingHelper {
    * @throws NoSuchWarpException if no Warp matching the query and Condition exists
    * @throws ParameterException  on a parameter error
    */
-  @BindingMatch(classifier = Condition.class, type = Warp.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1)
+  @BindingMatch(classifier = Name.class, type = Warp.class, behavior = BindingBehavior.CONSUMES, consumedCount = 1)
   public Warp getWarp(ArgumentStack context, Annotation classifier) throws NoSuchWarpException, ParameterException {
-    Type conditionValue = ((Condition) classifier).value();
+    Condition conditionValue = ((Name) classifier).value();
 
     CommandLocals locals = context.getContext().getLocals();
     Actor actor = locals.get(Actor.class);
@@ -110,21 +110,21 @@ public class WarpBinding extends BindingHelper {
   }
 
   /**
-   * Represents the condition a certain Warp must meat.
+   * Indicates that a warp is parsed by name.
    */
   @java.lang.annotation.Retention(RetentionPolicy.RUNTIME)
   @java.lang.annotation.Target(ElementType.PARAMETER)
-  public @interface Condition {
+  public @interface Name {
 
     /**
-     * The type of condition.
+     * The condition the parsed warp must meat.
      */
-    Type value();
+    Condition value();
 
     /**
-     * The type of condition.
+     * The condition a warp must meat.
      */
-    enum Type {
+    enum Condition {
       /**
        * The Warp is viewable.
        *
@@ -151,7 +151,7 @@ public class WarpBinding extends BindingHelper {
        *
        * @param clazz the class of the instance that corresponds with this Condition.
        */
-      private Type(Class<?> clazz) {
+      private Condition(Class<?> clazz) {
         this.clazz = clazz;
       }
     }
@@ -159,7 +159,7 @@ public class WarpBinding extends BindingHelper {
   }
 
   /**
-   * Thrown when none of the Warps has a name that matches the given query.
+   * Indicates that none of the Warps has a name that matches the given query.
    */
   public class NoSuchWarpException extends Exception {
 

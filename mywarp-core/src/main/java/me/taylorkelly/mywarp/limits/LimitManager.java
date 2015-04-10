@@ -19,7 +19,8 @@
 
 package me.taylorkelly.mywarp.limits;
 
-import com.google.common.base.Optional;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.Multimap;
 
 import me.taylorkelly.mywarp.LocalPlayer;
@@ -69,30 +70,31 @@ public interface LimitManager {
      */
     public static final EvaluationResult LIMIT_MEAT = new EvaluationResult();
     private final boolean exceedsLimit;
-    private final Optional<Limit.Type> exceededLimit;
-    private final Optional<Integer> limitMaximum;
+    @Nullable
+    private final Limit.Type exceededLimit;
+    @Nullable
+    private final Integer limitMaximum;
 
     /**
      * Creates an instance that indicates that all limits were meat.
      */
     private EvaluationResult() {
       this.exceedsLimit = false;
-      this.exceededLimit = Optional.absent();
-      this.limitMaximum = Optional.absent();
+      this.exceededLimit = null;
+      this.limitMaximum = null;
     }
 
     /**
-     * Creates an instance. Use {@link #LIMIT_MEAT} to get an instance that indicates that all limits are meat.
+     * Creates an instance indicating that a limit was exceeded. Use {@link #LIMIT_MEAT} to get an instance that
+     * indicates that all limits are meat.
      *
-     * @param exceedsLimit  whether a limit was exceeded
-     * @param exceededLimit the exceeded limit - can be {@code null} if no limit was exceeded
-     * @param limitMaximum  the maximum number of warps a user can create under the exceeded limit - can be {@code null}
-     *                      if no limit was exceeded
+     * @param exceededLimit the exceeded limit
+     * @param limitMaximum  the maximum number of warps a user can create under the exceeded limit
      */
-    public EvaluationResult(boolean exceedsLimit, Type exceededLimit, int limitMaximum) {
-      this.exceedsLimit = exceedsLimit;
-      this.exceededLimit = Optional.of(exceededLimit);
-      this.limitMaximum = Optional.of(limitMaximum);
+    public EvaluationResult(Type exceededLimit, int limitMaximum) {
+      this.exceedsLimit = true;
+      this.exceededLimit = exceededLimit;
+      this.limitMaximum = limitMaximum;
     }
 
     /**
@@ -105,24 +107,24 @@ public interface LimitManager {
     }
 
     /**
-     * Gets an Optional containing the exceeded limit. Returns {@link Optional#absent()} if, and only if no limit is
-     * exceeded and thus {@link #exceedsLimit()} returns {@code true}.
+     * Gets an Optional containing the exceeded limit.
      *
      * @return the exceeded limit
+     * @throws IllegalStateException if no limit is exceeded and thus {@link #exceedsLimit()} returns {@code true}.
      */
-    @Nullable
-    public Optional<Limit.Type> getExceededLimit() {
+    public Limit.Type getExceededLimit() {
+      checkState(exceededLimit != null);
       return exceededLimit;
     }
 
     /**
-     * Gets the maximum number of warps a user can create under the exceeded limit. Returns @link {@link
-     * Optional#absent()} if, and only if no limit is exceeded and thus {@link #exceedsLimit()} returns {@code true}.
+     * Gets the maximum number of warps a user can create under the exceeded limit.
      *
      * @return the maximum number of warps of the exceeded limit
+     * @throws IllegalStateException if no limit is exceeded and thus {@link #exceedsLimit()} returns {@code true}.
      */
-    @Nullable
-    public Optional<Integer> getLimitMaximum() {
+    public Integer getLimitMaximum() {
+      checkState(limitMaximum != null);
       return limitMaximum;
     }
 

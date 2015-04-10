@@ -37,8 +37,8 @@ import me.taylorkelly.mywarp.bukkit.commands.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.bukkit.commands.printer.InfoPrinter;
 import me.taylorkelly.mywarp.bukkit.util.FormattingUtils;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.IllegalCommandSenderException;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.bukkit.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
@@ -227,7 +227,7 @@ public class InformativeCommands {
   @Command(aliases = {"info", "stats"}, desc = "info.description", help = "info.help")
   @Require("mywarp.warp.basic.info")
   @Billable(FeeType.INFO)
-  public void info(Actor actor, @Condition(Type.VIEWABLE) Warp warp) {
+  public void info(Actor actor, @Name(Condition.VIEWABLE) Warp warp) {
     new InfoPrinter(warp).print(actor);
   }
 }

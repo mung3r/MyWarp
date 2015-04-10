@@ -32,8 +32,8 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.Sender;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.bukkit.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
@@ -144,7 +144,7 @@ public class UtilityCommands {
   @Command(aliases = {"point"}, desc = "point.description", help = "point.help")
   @Require("mywarp.warp.basic.compass")
   @Billable(FeeType.POINT)
-  public void point(@Sender LocalPlayer player, @Optional @Condition(Type.USABLE) Warp warp) {
+  public void point(@Sender LocalPlayer player, @Optional @Name(Condition.USABLE) Warp warp) {
     if (warp != null) {
       warp.asCompassTarget(player);
       player.sendMessage(ChatColor.AQUA + MESSAGES.getString("point.set", player, warp.getName()));
@@ -164,7 +164,7 @@ public class UtilityCommands {
   @Command(aliases = {"player"}, desc = "warp-player.description", help = "warp-player.help")
   @Require("mywarp.admin.warpto")
   @Billable(FeeType.WARP_PLAYER)
-  public void player(Actor actor, LocalPlayer teleportee, @Condition(Type.USABLE) Warp warp) {
+  public void player(Actor actor, LocalPlayer teleportee, @Name(Condition.USABLE) Warp warp) {
     switch (warp.teleport(teleportee)) {
       case NONE:
         actor.sendError(MESSAGES.getString("warp-player.teleport-failed", teleportee.getName(), warp.getName()));

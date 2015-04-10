@@ -33,8 +33,8 @@ import me.taylorkelly.mywarp.bukkit.conversation.WarpAcceptancePromptFactory;
 import me.taylorkelly.mywarp.bukkit.util.LimitExceededException;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.NoSuchPlayerException;
 import me.taylorkelly.mywarp.bukkit.util.ProfileBinding.NoSuchProfileException;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Condition.Type;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limits.LimitManager;
@@ -86,15 +86,8 @@ public class SocialCommands {
   @Require("mywarp.warp.soc.give")
   @Billable(FeeType.GIVE)
   public void give(Actor actor, @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits, Profile receiver,
-                   @Condition(Type.MODIFIABLE) Warp warp)
+                   @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException {
-    if (giveDirectly && !actor.hasPermission("mywarp.warp.soc.give.direct")) {
-      throw new AuthorizationException();
-    }
-    if (ignoreLimits && !actor.hasPermission("mywarp.warp.soc.give.force")) {
-      throw new AuthorizationException();
-    }
-
     if (warp.isCreator(receiver)) {
       throw new CommandException("give.is-owner");
     }
@@ -110,9 +103,15 @@ public class SocialCommands {
       if (result.exceedsLimit()) {
         throw new CommandException(MESSAGES.getString("give.receiver-limits"));
       }
+    } else if (!actor.hasPermission("mywarp.warp.soc.give.force")) {
+      throw new AuthorizationException();
     }
 
     if (giveDirectly) {
+      if (!actor.hasPermission("mywarp.warp.soc.give.direct")) {
+        throw new AuthorizationException();
+      }
+
       warp.setCreator(receiver);
 
       actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("give.given-successful", warp.getName(),
@@ -150,7 +149,7 @@ public class SocialCommands {
   @Command(aliases = {"private"}, desc = "private.description", help = "private.help")
   @Require("mywarp.warp.soc.private")
   @Billable(FeeType.PRIVATE)
-  public void privatize(Actor actor, @Switch('f') boolean ignoreLimits, @Condition(Type.MODIFIABLE) Warp warp)
+  public void privatize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException, LimitExceededException {
     if (warp.isType(Warp.Type.PRIVATE)) {
       throw new CommandException(MESSAGES.getString("private.already-private", warp.getName()));
@@ -165,7 +164,7 @@ public class SocialCommands {
           result =
           manager.evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PRIVATE.getLimit(), false);
       if (result.exceedsLimit()) {
-        throw new LimitExceededException(result.getExceededLimit().get(), result.getLimitMaximum().get());
+        throw new LimitExceededException(result.getExceededLimit(), result.getLimitMaximum());
       }
     } else if (!actor.hasPermission("mywarp.warp.soc.private.force")) {
       throw new AuthorizationException();
@@ -190,7 +189,7 @@ public class SocialCommands {
   @Command(aliases = {"public"}, desc = "public.description", help = "public.help")
   @Require("mywarp.warp.soc.public")
   @Billable(FeeType.PUBLIC)
-  public void publicize(Actor actor, @Switch('f') boolean ignoreLimits, @Condition(Type.MODIFIABLE) Warp warp)
+  public void publicize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException, LimitExceededException {
     if (warp.isType(Warp.Type.PUBLIC)) {
       throw new CommandException(MESSAGES.getString("public.already-public", warp.getName()));
@@ -205,7 +204,7 @@ public class SocialCommands {
           result =
           manager.evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PUBLIC.getLimit(), false);
       if (result.exceedsLimit()) {
-        throw new LimitExceededException(result.getExceededLimit().get(), result.getLimitMaximum().get());
+        throw new LimitExceededException(result.getExceededLimit(), result.getLimitMaximum());
       }
     } else if (!actor.hasPermission("mywarp.warp.soc.public.force")) {
       throw new AuthorizationException();
@@ -230,7 +229,7 @@ public class SocialCommands {
   @Require("mywarp.warp.soc.invite")
   @Billable(FeeType.INVITE)
   public void invite(Actor actor, @Switch('g') boolean groupInvite, String inviteeIdentifier,
-                     @Condition(Type.MODIFIABLE) Warp warp)
+                     @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.warp.soc.invite.group")) {
@@ -298,7 +297,7 @@ public class SocialCommands {
   @Require("mywarp.warp.soc.uninvite")
   @Billable(FeeType.UNINVITE)
   public void uninvite(Actor actor, @Switch('g') boolean groupInvite, String uninviteeIdentifier,
-                       @Condition(Type.MODIFIABLE) Warp warp)
+                       @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.warp.soc.uninvite.group")) {
