@@ -23,14 +23,16 @@ import me.taylorkelly.mywarp.limits.Limit;
 import me.taylorkelly.mywarp.limits.Limit.Type;
 
 /**
- * Indicates that a Limit was exceeded.
+ * Indicates that an action exceeds or would exceed the limit of the initiator himself.
+ *
+ * @see ExceedsLimitException for an Exception thrown when the limit is unknown by the initiator
  */
-public class LimitExceededException extends Exception {
+public class ExceedsInitiatorLimitException extends Exception {
 
   private static final long serialVersionUID = 1167613312996698929L;
 
   private final Limit.Type exceededLimit;
-  private final Integer limitMaximum;
+  private final int limitMaximum;
 
   /**
    * Constructs an instance.
@@ -38,7 +40,7 @@ public class LimitExceededException extends Exception {
    * @param exceededLimit the exceeded Limit.Type
    * @param limitMaximum  the maximum number of warps a user can create under the exceeded limit
    */
-  public LimitExceededException(Type exceededLimit, Integer limitMaximum) {
+  public ExceedsInitiatorLimitException(Type exceededLimit, int limitMaximum) {
     this.exceededLimit = exceededLimit;
     this.limitMaximum = limitMaximum;
   }
@@ -57,7 +59,7 @@ public class LimitExceededException extends Exception {
    *
    * @return the maximum number of warps of the exceeded limit
    */
-  public Integer getLimitMaximum() {
+  public int getLimitMaximum() {
     return limitMaximum;
   }
 

@@ -210,4 +210,24 @@ public class BukkitPlayer extends AbstractPlayer {
       vehicle.setPassenger(teleportee);
     }
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    BukkitPlayer that = (BukkitPlayer) o;
+
+    return player.equals(that.player);
+
+  }
+
+  @Override
+  public int hashCode() {
+    return player.hashCode();
+  }
 }

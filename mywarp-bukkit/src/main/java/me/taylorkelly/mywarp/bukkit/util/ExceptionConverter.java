@@ -31,6 +31,7 @@ import me.taylorkelly.mywarp.bukkit.util.ProfileBinding.NoSuchProfileException;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding.NoSuchWarpException;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import org.apache.commons.lang.text.StrBuilder;
@@ -91,30 +92,43 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   }
 
   /**
-   * Converts a {@link LimitExceededException} to a human readable {@link CommandException}.
+   * Converts a {@link ExceedsInitiatorLimitException} to a human readable {@link CommandException}.
+   *
+   * @param ex the ExceedsInitiatorLimitException
+   * @throws CommandException the wrapped exception
+   */
+  @ExceptionMatch
+  public void convert(ExceedsInitiatorLimitException ex) throws CommandException {
+    StrBuilder builder = new StrBuilder();
+
+    switch (ex.getExceededLimit()) {
+      case TOTAL:
+        builder.append(MESSAGES.getString("exception.exceeds-initiator-limit.total", ex.getLimitMaximum()));
+        break;
+      case PRIVATE:
+        builder.append(MESSAGES.getString("exception.exceeds-initiator-limit.private", ex.getLimitMaximum()));
+        break;
+      case PUBLIC:
+        builder.append(MESSAGES.getString("exception.exceeds-initiator-limit.public", ex.getLimitMaximum()));
+        break;
+    }
+    builder.appendNewLine();
+    builder.append(MESSAGES.getString("exception.exceeds-initiator-limit.delete-warps"));
+
+    throw new CommandException(builder.toString(), ex);
+  }
+
+  /**
+   * Converts a {@link ExceedsLimitException} to a human readable {@link CommandException}.
    *
    * @param ex the LimitExceededException
    * @throws CommandException the wrapped exception
    */
   @ExceptionMatch
-  public void convert(LimitExceededException ex) throws CommandException {
-    StrBuilder builder = new StrBuilder();
-
-    switch (ex.getExceededLimit()) {
-      case TOTAL:
-        builder.append(MESSAGES.getString("exception.limit-exceeded.total", ex.getLimitMaximum()));
-        break;
-      case PRIVATE:
-        builder.append(MESSAGES.getString("exception.limit-exceeded.private", ex.getLimitMaximum()));
-        break;
-      case PUBLIC:
-        builder.append(MESSAGES.getString("exception.limit-exceeded.public", ex.getLimitMaximum()));
-        break;
-    }
-    builder.appendNewLine();
-    builder.append(MESSAGES.getString("exception.limit-exceeded.delete-warps"));
-
-    throw new CommandException(builder.toString(), ex);
+  public void convert(ExceedsLimitException ex) throws CommandException {
+    Profile subject = ex.getSubject();
+    throw new CommandException(
+        MESSAGES.getString("exception.exceeds-limit", subject.getName().or(subject.getUniqueId().toString())), ex);
   }
 
   /**

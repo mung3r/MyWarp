@@ -30,7 +30,8 @@ import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.conversation.WarpAcceptancePromptFactory;
-import me.taylorkelly.mywarp.bukkit.util.LimitExceededException;
+import me.taylorkelly.mywarp.bukkit.util.ExceedsInitiatorLimitException;
+import me.taylorkelly.mywarp.bukkit.util.ExceedsLimitException;
 import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.NoSuchPlayerException;
 import me.taylorkelly.mywarp.bukkit.util.ProfileBinding.NoSuchProfileException;
 import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
@@ -78,16 +79,17 @@ public class SocialCommands {
    * @param ignoreLimits whether the limits of the new owner should be ignored
    * @param receiver     the Profile of the player who should receive the Warp
    * @param warp         the Warp
-   * @throws CommandException       if the owner could not be changed
+   * @throws CommandException       if the warp is owned by the receiver
    * @throws AuthorizationException if the Actor does have enough permissions
    * @throws NoSuchPlayerException  if the receiver is offline and the flags to bypass this check where not given
+   * @throws ExceedsLimitException  if the limits of the receiver would be exceeded
    */
   @Command(aliases = {"give"}, desc = "give.description", help = "give.help")
   @Require("mywarp.warp.soc.give")
   @Billable(FeeType.GIVE)
   public void give(Actor actor, @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits, Profile receiver,
                    @Name(Condition.MODIFIABLE) Warp warp)
-      throws CommandException, AuthorizationException, NoSuchPlayerException {
+      throws CommandException, AuthorizationException, NoSuchPlayerException, ExceedsLimitException {
     if (warp.isCreator(receiver)) {
       throw new CommandException("give.is-owner");
     }
@@ -101,7 +103,7 @@ public class SocialCommands {
           result =
           manager.evaluateLimit(receiverPlayer.get(), warp.getWorld(), warp.getType().getLimit(), true);
       if (result.exceedsLimit()) {
-        throw new CommandException(MESSAGES.getString("give.receiver-limits"));
+        throw new ExceedsLimitException(receiver);
       }
     } else if (!actor.hasPermission("mywarp.warp.soc.give.force")) {
       throw new AuthorizationException();
@@ -139,18 +141,21 @@ public class SocialCommands {
    * @param actor        the Actor
    * @param ignoreLimits whether the limits of the owner should be ignored
    * @param warp         the warp
-   * @throws CommandException       if the Warp is already private
-   * @throws AuthorizationException if {@code ignoreLimits} is {@code true}, but the given Actor does not have the
-   *                                required permission
-   * @throws NoSuchPlayerException  if the warp's creator is offline and {@code ignoreLimits} is {@code false}
-   * @throws LimitExceededException if a Limit would be exceeded by privatizing the warp and {@code ignoreLimits} is
-   *                                {@code false}
+   * @throws CommandException               if the Warp is already private
+   * @throws AuthorizationException         if {@code ignoreLimits} is {@code true}, but the given Actor does not have
+   *                                        the required permission
+   * @throws NoSuchPlayerException          if the warp's creator is offline and {@code ignoreLimits} is {@code false}
+   * @throws ExceedsInitiatorLimitException if the limit of the Actor would be exceeded by privatizing the warp and
+   *                                        {@code ignoreLimits} is {@code false}
+   * @throws ExceedsLimitException          if a Limit would be exceeded by privatizing the warp and {@code
+   *                                        ignoreLimits} is {@code false}
    */
   @Command(aliases = {"private"}, desc = "private.description", help = "private.help")
   @Require("mywarp.warp.soc.private")
   @Billable(FeeType.PRIVATE)
   public void privatize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(Condition.MODIFIABLE) Warp warp)
-      throws CommandException, AuthorizationException, NoSuchPlayerException, LimitExceededException {
+      throws CommandException, AuthorizationException, NoSuchPlayerException, ExceedsInitiatorLimitException,
+             ExceedsLimitException {
     if (warp.isType(Warp.Type.PRIVATE)) {
       throw new CommandException(MESSAGES.getString("private.already-private", warp.getName()));
     }
@@ -160,12 +165,19 @@ public class SocialCommands {
       if (!creatorPlayer.isPresent()) {
         throw new NoSuchPlayerException(creator);
       }
+
       LimitManager.EvaluationResult
           result =
           manager.evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PRIVATE.getLimit(), false);
+
       if (result.exceedsLimit()) {
-        throw new LimitExceededException(result.getExceededLimit(), result.getLimitMaximum());
+        if (actor instanceof LocalPlayer && creatorPlayer.get().equals(actor)) {
+          throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
+        } else {
+          throw new ExceedsLimitException(creator);
+        }
       }
+
     } else if (!actor.hasPermission("mywarp.warp.soc.private.force")) {
       throw new AuthorizationException();
     }
@@ -179,18 +191,21 @@ public class SocialCommands {
    *
    * @param actor the Actor
    * @param warp  the warp
-   * @throws CommandException       if the Warp is already public
-   * @throws AuthorizationException if {@code ignoreLimits} is {@code true}, but the given Actor does not have the
-   *                                required permission
-   * @throws NoSuchPlayerException  if the warp's creator is offline and {@code ignoreLimits} is {@code false}
-   * @throws LimitExceededException if a Limit would be exceeded by publicizing the warp and {@code ignoreLimits} is
-   *                                {@code false}
+   * @throws CommandException               if the Warp is already public
+   * @throws AuthorizationException         if {@code ignoreLimits} is {@code true}, but the given Actor does not have
+   *                                        the required permission
+   * @throws NoSuchPlayerException          if the warp's creator is offline and {@code ignoreLimits} is {@code false}
+   * @throws ExceedsInitiatorLimitException if the limit of the Actor would be exceeded by publicizing the warp and
+   *                                        {@code ignoreLimits} is {@code false}
+   * @throws ExceedsLimitException          if a Limit would be exceeded by publicizing the warp and {@code
+   *                                        ignoreLimits} is {@code false}
    */
   @Command(aliases = {"public"}, desc = "public.description", help = "public.help")
   @Require("mywarp.warp.soc.public")
   @Billable(FeeType.PUBLIC)
   public void publicize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(Condition.MODIFIABLE) Warp warp)
-      throws CommandException, AuthorizationException, NoSuchPlayerException, LimitExceededException {
+      throws CommandException, AuthorizationException, NoSuchPlayerException, ExceedsInitiatorLimitException,
+             ExceedsLimitException {
     if (warp.isType(Warp.Type.PUBLIC)) {
       throw new CommandException(MESSAGES.getString("public.already-public", warp.getName()));
     }
@@ -200,12 +215,19 @@ public class SocialCommands {
       if (!creatorPlayer.isPresent()) {
         throw new NoSuchPlayerException(creator);
       }
+
       LimitManager.EvaluationResult
           result =
           manager.evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PUBLIC.getLimit(), false);
+
       if (result.exceedsLimit()) {
-        throw new LimitExceededException(result.getExceededLimit(), result.getLimitMaximum());
+        if (actor instanceof LocalPlayer && creatorPlayer.get().equals(actor)) {
+          throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
+        } else {
+          throw new ExceedsLimitException(creator);
+        }
       }
+
     } else if (!actor.hasPermission("mywarp.warp.soc.public.force")) {
       throw new AuthorizationException();
     }
