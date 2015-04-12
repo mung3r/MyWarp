@@ -6,6 +6,7 @@ buildscript {
 
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
+        //last version to run with Java6
         classpath 'org.ajoberstar:grgit:0.1.0'
     }
 }
@@ -57,6 +58,7 @@ subprojects {
     }
 
     checkstyle {
+        //last version to run with Java6
         toolVersion = '6.1'
 
         configProperties.checkstyleConfigDir = new File(rootProject.projectDir, 'config/checkstyle')

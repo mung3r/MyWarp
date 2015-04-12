@@ -54,7 +54,7 @@ import java.util.UUID;
  */
 public class ImportCommands {
 
-  private static final String IMPORT_PERMISSION = "mywarp.admin.import";
+  private static final String IMPORT_PERMISSION = "mywarp.cmd.import";
   private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
@@ -160,8 +160,10 @@ public class ImportCommands {
         if (notImportedWarps.isEmpty()) {
           initiator.sendMessage(ChatColor.AQUA + MESSAGES.getString("import.import-successful", warps.size()));
         } else {
-          initiator.sendError(MESSAGES.getString("import.import-with-skips", warps.size(), notImportedWarps.size()));
-          initiator.sendMessage(CommandUtils.joinWarps(notImportedWarps));
+          int successfullyImported = warps.size() - notImportedWarps.size();
+          initiator
+              .sendError(MESSAGES.getString("import.import-with-skips", successfullyImported, notImportedWarps.size()));
+          initiator.sendError(CommandUtils.joinWarps(notImportedWarps));
         }
 
       }

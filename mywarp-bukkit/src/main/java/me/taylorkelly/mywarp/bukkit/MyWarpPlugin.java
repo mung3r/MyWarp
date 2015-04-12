@@ -221,8 +221,8 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
 
     // register world access permissions
     for (World loadedWorld : Bukkit.getWorlds()) {
-      Permission perm = new Permission("myWarp.warp.world." + loadedWorld.getName());
-      perm.addParent("myWarp.warp.world.*", true);
+      Permission perm = new Permission("mywarp.world-access." + loadedWorld.getName());
+      perm.addParent("mywarp.world-access.*", true);
       BukkitPermissionsRegistration.INSTANCE.register(perm);
     }
   }

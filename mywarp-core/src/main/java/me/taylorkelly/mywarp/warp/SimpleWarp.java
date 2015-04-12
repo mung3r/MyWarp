@@ -101,10 +101,13 @@ public class SimpleWarp implements Warp {
 
   @Override
   public boolean isViewable(Actor actor) {
+    if (actor.hasPermission("mywarp.override.view")) {
+      return true;
+    }
     if (actor instanceof LocalEntity) {
       return isUsable((LocalEntity) actor);
     }
-    return actor.hasPermission("mywarp.admin.accessall");
+    return false;
   }
 
   @Override
@@ -117,7 +120,7 @@ public class SimpleWarp implements Warp {
 
         }
       }
-      if (player.hasPermission("mywarp.admin.accessall")) {
+      if (player.hasPermission("mywarp.override.use")) {
         return true;
       }
       if (isCreator(player)) {
@@ -132,12 +135,12 @@ public class SimpleWarp implements Warp {
         }
       }
     }
-    return type == Warp.Type.PUBLIC;
+    return isType(Warp.Type.PUBLIC);
   }
 
   @Override
   public boolean isModifiable(Actor actor) {
-    if (actor.hasPermission("mywarp.admin.modifyall")) {
+    if (actor.hasPermission("mywarp.override.modify")) {
       return true;
     }
     if (actor instanceof LocalPlayer && isCreator((LocalPlayer) actor)) {
@@ -256,10 +259,7 @@ public class SimpleWarp implements Warp {
 
   @Override
   public String replacePlaceholders(String str) {
-    Optional<String> nameOptional = creator.getName();
-    if (nameOptional.isPresent()) {
-      str = StringUtils.replace(str, "%creator%", nameOptional.get());
-    }
+    str = StringUtils.replace(str, "%creator%", creator.getName().or(creator.getUniqueId().toString()));
 
     str = StringUtils.replace(str, "%warp%", name);
     str = StringUtils.replace(str, "%visits%", Integer.toString(visits));

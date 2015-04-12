@@ -85,7 +85,7 @@ public class SocialCommands {
    * @throws ExceedsLimitException  if the limits of the receiver would be exceeded
    */
   @Command(aliases = {"give"}, desc = "give.description", help = "give.help")
-  @Require("mywarp.warp.soc.give")
+  @Require("mywarp.cmd.give")
   @Billable(FeeType.GIVE)
   public void give(Actor actor, @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits, Profile receiver,
                    @Name(Condition.MODIFIABLE) Warp warp)
@@ -105,12 +105,12 @@ public class SocialCommands {
       if (result.exceedsLimit()) {
         throw new ExceedsLimitException(receiver);
       }
-    } else if (!actor.hasPermission("mywarp.warp.soc.give.force")) {
+    } else if (!actor.hasPermission("mywarp.cmd.give.force")) {
       throw new AuthorizationException();
     }
 
     if (giveDirectly) {
-      if (!actor.hasPermission("mywarp.warp.soc.give.direct")) {
+      if (!actor.hasPermission("mywarp.cmd.give.direct")) {
         throw new AuthorizationException();
       }
 
@@ -151,7 +151,7 @@ public class SocialCommands {
    *                                        ignoreLimits} is {@code false}
    */
   @Command(aliases = {"private"}, desc = "private.description", help = "private.help")
-  @Require("mywarp.warp.soc.private")
+  @Require("mywarp.cmd.private")
   @Billable(FeeType.PRIVATE)
   public void privatize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException, ExceedsInitiatorLimitException,
@@ -178,7 +178,7 @@ public class SocialCommands {
         }
       }
 
-    } else if (!actor.hasPermission("mywarp.warp.soc.private.force")) {
+    } else if (!actor.hasPermission("mywarp.cmd.private.force")) {
       throw new AuthorizationException();
     }
 
@@ -201,7 +201,7 @@ public class SocialCommands {
    *                                        ignoreLimits} is {@code false}
    */
   @Command(aliases = {"public"}, desc = "public.description", help = "public.help")
-  @Require("mywarp.warp.soc.public")
+  @Require("mywarp.cmd.public")
   @Billable(FeeType.PUBLIC)
   public void publicize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException, ExceedsInitiatorLimitException,
@@ -228,7 +228,7 @@ public class SocialCommands {
         }
       }
 
-    } else if (!actor.hasPermission("mywarp.warp.soc.public.force")) {
+    } else if (!actor.hasPermission("mywarp.cmd.public.force")) {
       throw new AuthorizationException();
     }
     warp.setType(Warp.Type.PUBLIC);
@@ -248,13 +248,13 @@ public class SocialCommands {
    *                                inviteeIdentifier}
    */
   @Command(aliases = {"invite"}, desc = "invite.description", help = "invite.help")
-  @Require("mywarp.warp.soc.invite")
+  @Require("mywarp.cmd.invite")
   @Billable(FeeType.INVITE)
   public void invite(Actor actor, @Switch('g') boolean groupInvite, String inviteeIdentifier,
                      @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
-      if (!actor.hasPermission("mywarp.warp.soc.invite.group")) {
+      if (!actor.hasPermission("mywarp.cmd.invite.group")) {
         throw new AuthorizationException();
       }
 
@@ -316,13 +316,13 @@ public class SocialCommands {
    *                                uninviteeIdentifier}
    */
   @Command(aliases = {"uninvite"}, desc = "uninvite.description", help = "uninvite.help")
-  @Require("mywarp.warp.soc.uninvite")
+  @Require("mywarp.cmd.uninvite")
   @Billable(FeeType.UNINVITE)
   public void uninvite(Actor actor, @Switch('g') boolean groupInvite, String uninviteeIdentifier,
                        @Name(Condition.MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
-      if (!actor.hasPermission("mywarp.warp.soc.uninvite.group")) {
+      if (!actor.hasPermission("mywarp.cmd.uninvite.group")) {
         throw new AuthorizationException();
       }
 

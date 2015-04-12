@@ -73,7 +73,7 @@ public class UtilityCommands {
    * @param page  the page
    */
   @Command(aliases = {"help"}, desc = "help.description", help = "help.help")
-  @Require("mywarp.warp.basic.help")
+  @Require("mywarp.cmd.help")
   @Billable(FeeType.HELP)
   public void help(Actor actor, @Optional("1") int page) {
     Set<String> usableCommands = new TreeSet<String>();
@@ -142,7 +142,7 @@ public class UtilityCommands {
    * @param warp   the Warp
    */
   @Command(aliases = {"point"}, desc = "point.description", help = "point.help")
-  @Require("mywarp.warp.basic.compass")
+  @Require("mywarp.cmd.point")
   @Billable(FeeType.POINT)
   public void point(@Sender LocalPlayer player, @Optional @Name(Condition.USABLE) Warp warp) {
     if (warp != null) {
@@ -162,7 +162,7 @@ public class UtilityCommands {
    * @param warp       the Warp
    */
   @Command(aliases = {"player"}, desc = "warp-player.description", help = "warp-player.help")
-  @Require("mywarp.admin.warpto")
+  @Require("mywarp.cmd.player")
   @Billable(FeeType.WARP_PLAYER)
   public void player(Actor actor, LocalPlayer teleportee, @Name(Condition.USABLE) Warp warp) {
     switch (warp.teleport(teleportee)) {
@@ -184,7 +184,7 @@ public class UtilityCommands {
    * @param actor the Actor
    */
   @Command(aliases = {"reload"}, desc = "reload.description", help = "reload.help")
-  @Require("mywarp.admin.reload")
+  @Require("mywarp.cmd.reload")
   public void reload(Actor actor) {
     myWarp.reload();
     actor.sendMessage(ChatColor.AQUA + MESSAGES.getString("reload.reload-message"));

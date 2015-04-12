@@ -79,7 +79,7 @@ public class ManagementCommands {
    * @throws ExceedsInitiatorLimitException if a Limit would be exceeded by creating the warp
    */
   @Command(aliases = {"pcreate", "pset"}, desc = "create.private.description", help = "create.private.help")
-  @Require("mywarp.warp.basic.createprivate")
+  @Require("mywarp.cmd.create-private")
   @Billable(FeeType.CREATE_PRIVATE)
   public void pcreate(@Sender LocalPlayer player, String name) throws CommandException, ExceedsInitiatorLimitException {
     addWarp(player, player.getWorld(), player.getPosition(), player.getRotation(), Warp.Type.PRIVATE, name);
@@ -95,7 +95,7 @@ public class ManagementCommands {
    * @throws ExceedsInitiatorLimitException if a Limit would be exceeded by creating the warp
    */
   @Command(aliases = {"create", "set"}, desc = "create.public.description", help = "create.public.help")
-  @Require("mywarp.warp.basic.createpublic")
+  @Require("mywarp.cmd.create-public")
   @Billable(FeeType.CREATE)
   public void create(@Sender LocalPlayer player, String name) throws CommandException, ExceedsInitiatorLimitException {
     addWarp(player, player.getWorld(), player.getPosition(), player.getRotation(), Warp.Type.PUBLIC, name);
@@ -161,7 +161,7 @@ public class ManagementCommands {
    * @param warp  the Warp
    */
   @Command(aliases = {"delete", "remove"}, desc = "delete.description", help = "delete.help")
-  @Require("mywarp.warp.basic.delete")
+  @Require("mywarp.cmd.delete")
   @Billable(FeeType.DELETE)
   public void delete(Actor actor, @Name(Name.Condition.MODIFIABLE) Warp warp) {
     myWarp.getWarpManager().remove(warp);
@@ -175,7 +175,7 @@ public class ManagementCommands {
    * @param warp   the Warp
    */
   @Command(aliases = {"update"}, desc = "update.description", help = "update.help")
-  @Require("mywarp.warp.basic.update")
+  @Require("mywarp.cmd.update")
   @Billable(FeeType.UPDATE)
   public void update(@Sender LocalPlayer player, @Name(Name.Condition.MODIFIABLE) Warp warp) {
     warp.setLocation(player.getWorld(), player.getPosition(), player.getRotation());
@@ -189,7 +189,7 @@ public class ManagementCommands {
    * @param warp   the Warp
    */
   @Command(aliases = {"welcome"}, desc = "welcome.description", help = "welcome.help")
-  @Require("mywarp.warp.basic.welcome")
+  @Require("mywarp.cmd.welcome")
   @Billable(FeeType.WELCOME)
   public void welcome(@Sender LocalPlayer player, @Name(Name.Condition.MODIFIABLE) Warp warp) {
     welcomeEditorFactory.create(player, warp);

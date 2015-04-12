@@ -65,20 +65,20 @@ public class WarpSignManager {
    */
   public void warpFromSign(String warpName, final LocalPlayer player) {
     LocaleManager.setLocale(player.getLocale());
-    if (!player.hasPermission("mywarp.warp.sign.use")) {
-      player.sendError(MESSAGES.getString("use-permission", player));
+    if (!player.hasPermission("mywarp.sign.use")) {
+      player.sendError(MESSAGES.getString("use-permission"));
       return;
     }
 
     Optional<Warp> optional = manager.get(warpName);
     if (!optional.isPresent()) {
-      player.sendError(MESSAGES.getString("warp-non-existent", player, warpName));
+      player.sendError(MESSAGES.getString("warp-non-existent", warpName));
       return;
     }
     final Warp warp = optional.get();
 
     if (!warp.isUsable(player)) {
-      player.sendError(MESSAGES.getString("use-warp-permission", player, warpName));
+      player.sendError(MESSAGES.getString("use-warp-permission", warpName));
       return;
     }
 
@@ -100,8 +100,8 @@ public class WarpSignManager {
    */
   public boolean validateWarpSign(String[] lines, LocalPlayer player) {
     LocaleManager.setLocale(player.getLocale());
-    if (!player.hasPermission("mywarp.warp.sign.create")) {
-      player.sendError(MESSAGES.getString("create-permission", player));
+    if (!player.hasPermission("mywarp.sign.create.self")) {
+      player.sendError(MESSAGES.getString("create-permission"));
       return false;
     }
     String name = lines[WARPNAME_LINE];
@@ -113,8 +113,8 @@ public class WarpSignManager {
     }
     Warp warp = optional.get();
 
-    if (!warp.isModifiable(player) && !player.hasPermission("mywarp.warp.sign.create.all")) {
-      player.sendError(MESSAGES.getString("create-warp-permission", player, name));
+    if (!warp.isModifiable(player) && !player.hasPermission("mywarp.sign.create")) {
+      player.sendError(MESSAGES.getString("create-warp-permission", name));
       return false;
     }
 
@@ -128,7 +128,7 @@ public class WarpSignManager {
     line = line.substring(1, line.length() - 1);
     lines[IDENTIFIER_LINE] = "[" + identifiers.ceiling(line) + "]";
 
-    player.sendMessage(MESSAGES.getString("created-successful", player));
+    player.sendMessage(MESSAGES.getString("created-successful"));
     return true;
   }
 

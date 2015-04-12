@@ -28,6 +28,7 @@ import com.sk89q.intake.Require;
 import com.sk89q.intake.parametric.annotation.Optional;
 import com.sk89q.intake.parametric.annotation.Range;
 import com.sk89q.intake.parametric.annotation.Switch;
+import com.sk89q.intake.util.auth.AuthorizationException;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
@@ -89,15 +90,18 @@ public class InformativeCommands {
    * @throws IllegalCommandSenderException if no {@code creator} is given and the given Actor is not a player
    */
   @Command(aliases = {"assets", "limits"}, desc = "assets.description", help = "assets.help")
-  @Require("mywarp.warp.basic.assets")
+  @Require("mywarp.cmd.assets.self")
   @Billable(FeeType.ASSETS)
-  public void assets(Actor actor, @Optional LocalPlayer creator) throws IllegalCommandSenderException {
+  public void assets(Actor actor, @Optional LocalPlayer creator)
+      throws IllegalCommandSenderException, AuthorizationException {
     if (creator == null) {
       if (actor instanceof LocalPlayer) {
         creator = (LocalPlayer) actor;
       } else {
         throw new IllegalCommandSenderException(actor);
       }
+    } else if (!actor.hasPermission("mywarp.cmd.assets")) {
+      throw new AuthorizationException();
     }
     new AssetsPrinter(creator, limitManager, settings).print(actor);
 
@@ -115,7 +119,7 @@ public class InformativeCommands {
    * @throws IllegalCommandSenderException if the {@code r} flag is used by an Actor that is not an Entity
    */
   @Command(aliases = {"list", "alist"}, desc = "list.description", help = "list.help")
-  @Require("mywarp.warp.basic.list")
+  @Require("mywarp.cmd.list")
   @Billable(FeeType.LIST)
   public void list(final Actor actor, @Optional("1") int page, @Switch('c') final String creator,
                    @Switch('n') final String name,
@@ -225,7 +229,7 @@ public class InformativeCommands {
    * @param warp  the Warp
    */
   @Command(aliases = {"info", "stats"}, desc = "info.description", help = "info.help")
-  @Require("mywarp.warp.basic.info")
+  @Require("mywarp.cmd.info")
   @Billable(FeeType.INFO)
   public void info(Actor actor, @Name(Condition.VIEWABLE) Warp warp) {
     new InfoPrinter(warp).print(actor);

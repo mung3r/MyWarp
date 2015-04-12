@@ -35,6 +35,7 @@ import org.bukkit.World;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,24 +66,22 @@ public class BukkitLimitProvider implements LimitProvider {
     for (ValueBundle bundle : configuredLimits) {
       BukkitPermissionsRegistration.INSTANCE.register(new Permission(bundle.getPermission(), PermissionDefault.FALSE));
     }
+
     // register per-world overrides
+    String base = "mywarp.limit.disobey";
+
     for (World world : Bukkit.getWorlds()) {
-      String perm = "mywarp.limit.disobey." + world.getName();
-      // mywarp.limit.disobey.[WORLDNAME].total
-      Permission totalPerm = new Permission(perm + ".total");
-      totalPerm.addParent("mywarp.limit.disobey.total", true);
-      totalPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
-      BukkitPermissionsRegistration.INSTANCE.register(totalPerm);
-      // mywarp.limit.disobey.[WORLDNAME].private
-      Permission privatePerm = new Permission(perm + ".private");
-      privatePerm.addParent("mywarp.limit.disobey.private", true);
-      privatePerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
-      BukkitPermissionsRegistration.INSTANCE.register(privatePerm);
-      // mywarp.limit.disobey.[WORLDNAME].public
-      Permission publicPerm = new Permission(perm + ".public");
-      publicPerm.addParent("mywarp.limit.disobey.public", true);
-      publicPerm.addParent("mywarp.limit.disobey." + world.getName() + ".*", true);
-      BukkitPermissionsRegistration.INSTANCE.register(publicPerm);
+      // mywarp.limit.disobey.[WORLDNAME].*
+      Permission worldPerm = new Permission(base + "." + world.getName() + ".*");
+      worldPerm.addParent(base + ".*", true);
+      BukkitPermissionsRegistration.INSTANCE.register(worldPerm);
+
+      // mywarp.limit.disobey.[WORLDNAME].total etc.
+      for (String type : Arrays.asList("total", "private", "public")) {
+        Permission perm = new Permission(base + "." + world.getName() + "." + type);
+        perm.addParent(worldPerm, true);
+        BukkitPermissionsRegistration.INSTANCE.register(perm);
+      }
     }
   }
 

@@ -26,13 +26,7 @@ public abstract class AbstractPlayer implements LocalPlayer {
 
   @Override
   public boolean canAccessWorld(LocalWorld world) {
-    if (getWorld().equals(world) && hasPermission("mywarp.warp.world.currentworld")) {
-      return true;
-    }
-    if (hasPermission("mywarp.warp.world." + world.getName())) {
-      return true;
-    }
-    return false;
+    return hasPermission("mywarp.world-access." + world.getName());
   }
 
 }
