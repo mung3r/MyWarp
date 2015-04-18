@@ -27,7 +27,6 @@ if (!project.hasProperty("commitHash")) {
     }
 }
 
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -84,6 +83,11 @@ subprojects {
 
     javadoc {
         options.setEncoding('UTF-8')
+
+        if (JavaVersion.current().isJava8Compatible()) {
+            // disable the super-strict doclint tool in Java 8
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
     }
 
     artifacts {

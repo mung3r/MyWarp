@@ -36,9 +36,9 @@ import java.util.Map;
  * Provides an event-framework for the Warps managed by it. Warps can fire {@link WarpEvent}s through this manager and
  * the manager itself will fire {@link WarpAdditionEvent}s and {@link WarpRemovalEvent}s when Warps are added to or
  * removed from it. Handlers can listen to these events by registering themselves at this manager and providing the
- * appropriate handler methods annotated by {@link com.google.common.eventbus.Subscribe} annotations. <p/> <p> This
- * manager fires all events in the thread it runs. Events cannot be expected to be threadsafe and it lies in the
- * responsibility of the handler to manage further thread-safety if required. </p>
+ * appropriate handler methods annotated by {@link com.google.common.eventbus.Subscribe} annotations.<p> This manager
+ * fires all events in the thread it runs. Events cannot be expected to be threadsafe and it lies in the responsibility
+ * of the handler to manage further thread-safety if required. </p>
  *
  * @see com.google.common.eventbus.EventBus
  */

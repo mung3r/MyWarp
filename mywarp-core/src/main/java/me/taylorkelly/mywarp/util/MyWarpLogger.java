@@ -47,6 +47,7 @@ public class MyWarpLogger implements Logger {
    * Return a logger named corresponding to the class passed as parameter.
    *
    * @param clazz the returned logger will be named after clazz
+   * @return the logger
    * @see org.slf4j.LoggerFactory#getLogger(java.lang.Class)
    */
   public static Logger getLogger(Class<?> clazz) {
