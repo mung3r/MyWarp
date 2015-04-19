@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util.economy;
+package me.taylorkelly.mywarp.bukkit.util.parametric.economy;
 
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.context.CommandContext;
@@ -37,7 +37,7 @@ import java.lang.reflect.Method;
 /**
  * By registering this InvokeHandler at a {@link com.sk89q.intake.parametric.ParametricBuilder}, command methods created
  * by this builder will require a certain fee when used if the method is annotated with {@link
- * me.taylorkelly.mywarp.bukkit.util.economy.Billable}.
+ * Billable}.
  */
 public class EconomyInvokeHandler extends AbstractInvokeListener implements InvokeHandler {
 

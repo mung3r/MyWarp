@@ -24,17 +24,18 @@ import com.sk89q.intake.Require;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.bukkit.timer.WarpCooldown;
-import me.taylorkelly.mywarp.bukkit.timer.WarpWarmup;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.Sender;
-import me.taylorkelly.mywarp.bukkit.util.TimerRunningException;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
+import me.taylorkelly.mywarp.bukkit.util.parametric.TimerRunningException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding.Sender;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.timer.Duration;
 import me.taylorkelly.mywarp.timer.DurationProvider;
 import me.taylorkelly.mywarp.timer.TimerService;
 import me.taylorkelly.mywarp.timer.TimerService.EvaluationResult;
+import me.taylorkelly.mywarp.timer.WarpCooldown;
+import me.taylorkelly.mywarp.timer.WarpWarmup;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -47,11 +48,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class UsageCommands {
 
-  // REVIEW move these somewhere else - where? MyWarp?
-  public static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Commands";
-  public static final String CONVERSATIONS_RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Conversations";
-
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
 

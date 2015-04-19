@@ -23,8 +23,8 @@ import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
 import me.taylorkelly.mywarp.bukkit.commands.printer.InfoPrinter;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -48,7 +48,7 @@ public class WarpAcceptancePromptFactory {
 
   private static final int TIMEOUT = 30;
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
 
   private final ConversationFactory factory;
   private final BukkitAdapter adapter;

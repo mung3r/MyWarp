@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric.binding;
 
 import com.google.common.base.Optional;
 import com.sk89q.intake.context.CommandLocals;

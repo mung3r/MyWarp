@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric;
 
 import me.taylorkelly.mywarp.limits.Limit;
 import me.taylorkelly.mywarp.limits.Limit.Type;

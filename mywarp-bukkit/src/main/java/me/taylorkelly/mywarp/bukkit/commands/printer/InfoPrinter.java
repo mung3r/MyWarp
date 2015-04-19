@@ -23,7 +23,7 @@ import com.google.common.collect.Ordering;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public class InfoPrinter {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final Warp warp;
 

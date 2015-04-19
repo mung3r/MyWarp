@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric.binding;
 
 import com.sk89q.intake.parametric.argument.ArgumentStack;
 import com.sk89q.intake.parametric.binding.BindingBehavior;

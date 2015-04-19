@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.util;
 
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -31,6 +31,9 @@ import java.util.Collection;
  * be static.
  */
 public class CommandUtils {
+
+  public static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Commands";
+  public static final String CONVERSATIONS_RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Conversations";
 
   /**
    * Block initialization of this class.

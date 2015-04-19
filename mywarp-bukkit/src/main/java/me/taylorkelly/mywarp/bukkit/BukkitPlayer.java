@@ -22,7 +22,7 @@ package me.taylorkelly.mywarp.bukkit;
 import me.taylorkelly.mywarp.AbstractPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.Settings;
-import me.taylorkelly.mywarp.bukkit.util.ReflectiveLocaleResolver;
+import me.taylorkelly.mywarp.bukkit.util.parametric.ReflectiveLocaleResolver;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MyWarpLogger;

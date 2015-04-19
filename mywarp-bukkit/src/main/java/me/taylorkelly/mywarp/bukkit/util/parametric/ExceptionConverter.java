@@ -17,18 +17,18 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric;
 
 import com.google.common.base.Optional;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.parametric.handler.ExceptionConverterHelper;
 import com.sk89q.intake.parametric.handler.ExceptionMatch;
 
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.IllegalCommandSenderException;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.NoSuchPlayerException;
-import me.taylorkelly.mywarp.bukkit.util.ProfileBinding.NoSuchProfileException;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.NoSuchWarpException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding.IllegalCommandSenderException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding.NoSuchPlayerException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ProfileBinding.NoSuchProfileException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.NoSuchWarpException;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExceptionConverter extends ExceptionConverterHelper {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   /**
    * Converts a {@link NoSuchPlayerException} to a human readable {@link CommandException}.

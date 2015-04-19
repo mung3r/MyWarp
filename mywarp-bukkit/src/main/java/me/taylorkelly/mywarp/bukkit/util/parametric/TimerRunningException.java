@@ -17,34 +17,35 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric;
 
-import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.timer.Duration;
 
 /**
- * Indicates that an action exceeds a limit of somebody else than the initiator.
- *
- * @see ExceedsInitiatorLimitException for an Exception thrown when the limit of the initiator is exceeded
+ * Thrown when a Timer is already running.
  */
-public class ExceedsLimitException extends Exception {
+public class TimerRunningException extends Exception {
 
-  private final Profile subject;
+  private static final long serialVersionUID = -1170656232204925816L;
+
+  private final Duration durationLeft;
 
   /**
    * Constructs an instance.
    *
-   * @param subject the subject whose limits are or would be exceeded
+   * @param durationLeft the duration until the running timer is done
    */
-  public ExceedsLimitException(Profile subject) {
-    this.subject = subject;
+  public TimerRunningException(Duration durationLeft) {
+    this.durationLeft = durationLeft;
   }
 
   /**
-   * Gets the subject whose limits are or would be exceeded.
+   * Gets the Duration that is left until running Timer is done.
    *
-   * @return the subject
+   * @return the Duration left
    */
-  public Profile getSubject() {
-    return subject;
+  public Duration getDurationLeft() {
+    return durationLeft;
   }
+
 }

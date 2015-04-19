@@ -17,16 +17,14 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.timer;
+package me.taylorkelly.mywarp.timer;
 
 import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.timer.AbortableTimerAction;
-import me.taylorkelly.mywarp.timer.Duration;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
@@ -40,7 +38,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
 
   private static final int ALLOWED_DISTANCE = 2;
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
   private final Warp warp;

@@ -17,22 +17,26 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util.economy;
+package me.taylorkelly.mywarp.bukkit.util.parametric;
 
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import com.sk89q.intake.context.CommandLocals;
+import com.sk89q.intake.util.auth.Authorizer;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import me.taylorkelly.mywarp.Actor;
 
 /**
- * Annotates a method that withdraws a certain fee from callers once executed successfully.
+ * An Authorizer for {@link Actor}s.
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Billable {
+public class ActorAuthorizer implements Authorizer {
 
-  /**
-   * The FeeType referencing the fee.
-   */
-  FeeType value();
+  @Override
+  public boolean testPermission(CommandLocals locals, String permission) {
+    Actor actor = locals.get(Actor.class);
+    if (actor == null) {
+      throw new IllegalArgumentException(
+          "No Actor available. Either this command was not used by one or he is missing from the CommandLocales.");
+    }
+    return actor.hasPermission(permission);
+  }
 
 }

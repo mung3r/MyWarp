@@ -25,11 +25,10 @@ import com.google.common.collect.Multimap;
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.Settings;
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
-import me.taylorkelly.mywarp.bukkit.util.CommandUtils;
 import me.taylorkelly.mywarp.bukkit.util.FormattingUtils;
 import me.taylorkelly.mywarp.limits.Limit;
 import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -47,7 +46,7 @@ import java.util.Map.Entry;
 public class AssetsPrinter {
 
   private static final List<Limit.Type> DISPLAYABLE_TYPES = Arrays.asList(Limit.Type.PRIVATE, Limit.Type.PUBLIC);
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final LocalPlayer creator;
   private final LimitManager limitManager;

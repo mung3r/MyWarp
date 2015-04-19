@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric.binding;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -30,7 +30,7 @@ import com.sk89q.intake.parametric.binding.BindingMatch;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;

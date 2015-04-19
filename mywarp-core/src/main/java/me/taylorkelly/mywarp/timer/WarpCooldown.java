@@ -17,26 +17,23 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.timer;
+package me.taylorkelly.mywarp.timer;
 
 import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
-import me.taylorkelly.mywarp.timer.TimerAction;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.util.profile.Profile;
-
-import org.bukkit.ChatColor;
 
 /**
  * A cooldown that blocks a player from using warps.
  */
 public class WarpCooldown extends TimerAction<Profile> {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
 
@@ -59,7 +56,7 @@ public class WarpCooldown extends TimerAction<Profile> {
       if (optionalPlayer.isPresent()) {
         LocalPlayer player = optionalPlayer.get();
         LocaleManager.setLocale(player.getLocale());
-        player.sendMessage(ChatColor.AQUA + MESSAGES.getString("warp-to.cooldown.ended"));
+        player.sendMessage(MESSAGES.getString("warp-to.cooldown.ended"));
       }
     }
   }

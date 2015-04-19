@@ -30,13 +30,13 @@ import com.sk89q.intake.Require;
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.bukkit.util.CommandUtils;
 import me.taylorkelly.mywarp.dataconnections.MySqlConnection;
 import me.taylorkelly.mywarp.dataconnections.SqLiteConnection;
 import me.taylorkelly.mywarp.dataconnections.migrators.DataConnectionMigrator;
 import me.taylorkelly.mywarp.dataconnections.migrators.DataMigrator;
 import me.taylorkelly.mywarp.dataconnections.migrators.LegacyMySqlMigrator;
 import me.taylorkelly.mywarp.dataconnections.migrators.LegacySqLiteMigrator;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
@@ -55,7 +55,7 @@ import java.util.UUID;
 public class ImportCommands {
 
   private static final String IMPORT_PERMISSION = "mywarp.cmd.import";
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
 

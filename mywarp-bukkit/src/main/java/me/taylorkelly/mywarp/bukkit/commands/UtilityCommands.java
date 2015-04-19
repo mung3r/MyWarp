@@ -31,12 +31,13 @@ import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.Sender;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
-import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.bukkit.util.paginator.StringPaginator;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding.Sender;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name.Condition;
+import me.taylorkelly.mywarp.bukkit.util.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -52,7 +53,7 @@ import java.util.TreeSet;
  */
 public class UtilityCommands {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
   private final MyWarp myWarp;
   private final MyWarpPlugin plugin;
 

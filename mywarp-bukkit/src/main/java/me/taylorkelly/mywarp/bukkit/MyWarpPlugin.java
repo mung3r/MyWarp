@@ -51,22 +51,23 @@ import me.taylorkelly.mywarp.bukkit.limits.BukkitLimitProvider;
 import me.taylorkelly.mywarp.bukkit.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
-import me.taylorkelly.mywarp.bukkit.util.ActorAuthorizer;
-import me.taylorkelly.mywarp.bukkit.util.ActorBindung;
-import me.taylorkelly.mywarp.bukkit.util.CommandResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.EncodedControl;
-import me.taylorkelly.mywarp.bukkit.util.ExceptionConverter;
-import me.taylorkelly.mywarp.bukkit.util.FallbackDispatcher;
-import me.taylorkelly.mywarp.bukkit.util.FileBinding;
-import me.taylorkelly.mywarp.bukkit.util.IntakeResourceProvider;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding;
-import me.taylorkelly.mywarp.bukkit.util.ProfileBinding;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding;
-import me.taylorkelly.mywarp.bukkit.util.economy.EconomyInvokeHandler;
+import me.taylorkelly.mywarp.bukkit.util.parametric.ActorAuthorizer;
+import me.taylorkelly.mywarp.bukkit.util.parametric.CommandResourceProvider;
+import me.taylorkelly.mywarp.bukkit.util.parametric.ExceptionConverter;
+import me.taylorkelly.mywarp.bukkit.util.parametric.FallbackDispatcher;
+import me.taylorkelly.mywarp.bukkit.util.parametric.IntakeResourceProvider;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ActorBindung;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.FileBinding;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ProfileBinding;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding;
+import me.taylorkelly.mywarp.bukkit.util.parametric.economy.EconomyInvokeHandler;
 import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistration;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolverManager;
 import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
@@ -98,7 +99,7 @@ import javax.annotation.Nullable;
  */
 public class MyWarpPlugin extends JavaPlugin implements Platform {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
   private static final Logger log = MyWarpLogger.getLogger(MyWarpPlugin.class);
 
   private final File bundleFolder = new File(getDataFolder(), "lang");

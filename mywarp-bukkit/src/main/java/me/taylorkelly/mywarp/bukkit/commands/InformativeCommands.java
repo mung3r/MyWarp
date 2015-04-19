@@ -37,13 +37,14 @@ import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.commands.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.bukkit.commands.printer.InfoPrinter;
 import me.taylorkelly.mywarp.bukkit.util.FormattingUtils;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.IllegalCommandSenderException;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
-import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
 import me.taylorkelly.mywarp.bukkit.util.paginator.StringPaginator;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding.IllegalCommandSenderException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name.Condition;
+import me.taylorkelly.mywarp.bukkit.util.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -63,7 +64,7 @@ import java.util.UUID;
  */
 public class InformativeCommands {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final LimitManager limitManager;
   private final Settings settings;

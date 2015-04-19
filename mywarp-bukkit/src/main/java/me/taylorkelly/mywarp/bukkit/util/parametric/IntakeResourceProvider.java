@@ -17,22 +17,22 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric;
 
 import com.sk89q.intake.util.i18n.ResourceProvider;
 
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 
 import java.util.ResourceBundle;
 
 /**
- * Provides resources for command annotations to Intake.
+ * Provides internal resources to Intake.
  *
  * @see me.taylorkelly.mywarp.util.i18n.DynamicMessages
- * @see com.sk89q.intake.parametric.ParametricBuilder#setExternalResourceProvider(ResourceProvider)
  */
-public class CommandResourceProvider implements ResourceProvider {
+public class IntakeResourceProvider implements ResourceProvider {
+
+  private static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Intake";
 
   private final ResourceBundle.Control control;
 
@@ -41,12 +41,12 @@ public class CommandResourceProvider implements ResourceProvider {
    *
    * @param control the ResourceBundle.Control
    */
-  public CommandResourceProvider(ResourceBundle.Control control) {
+  public IntakeResourceProvider(ResourceBundle.Control control) {
     this.control = control;
   }
 
   @Override
   public ResourceBundle getBundle() {
-    return ResourceBundle.getBundle(UsageCommands.RESOURCE_BUNDLE_NAME, LocaleManager.getLocale(), control);
+    return ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, LocaleManager.getLocale(), control);
   }
 }

@@ -28,6 +28,8 @@ import me.taylorkelly.mywarp.bukkit.util.permissions.ValueBundle;
 import me.taylorkelly.mywarp.timer.Duration;
 import me.taylorkelly.mywarp.timer.DurationProvider;
 import me.taylorkelly.mywarp.timer.TimerAction;
+import me.taylorkelly.mywarp.timer.WarpCooldown;
+import me.taylorkelly.mywarp.timer.WarpWarmup;
 
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;

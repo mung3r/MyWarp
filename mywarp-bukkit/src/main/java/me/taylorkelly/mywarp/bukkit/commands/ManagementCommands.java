@@ -31,12 +31,13 @@ import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.bukkit.conversation.WelcomeEditorFactory;
-import me.taylorkelly.mywarp.bukkit.util.ExceedsInitiatorLimitException;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.Sender;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
-import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
+import me.taylorkelly.mywarp.bukkit.util.parametric.ExceedsInitiatorLimitException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding.Sender;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
@@ -51,7 +52,7 @@ import org.bukkit.ChatColor;
  */
 public class ManagementCommands {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
   private final MyWarpPlugin plugin;

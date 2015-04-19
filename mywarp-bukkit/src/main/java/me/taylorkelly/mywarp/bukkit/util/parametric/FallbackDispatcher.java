@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric;
 
 import com.google.common.base.Joiner;
 import com.sk89q.intake.CommandCallable;
@@ -30,7 +30,7 @@ import com.sk89q.intake.dispatcher.SimpleDispatcher;
 import com.sk89q.intake.util.auth.AuthorizationException;
 import com.sk89q.intake.util.i18n.ResourceProvider;
 
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 import java.util.Arrays;
@@ -41,7 +41,7 @@ import java.util.Arrays;
  */
 public class FallbackDispatcher extends SimpleDispatcher {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final CommandCallable fallback;
 

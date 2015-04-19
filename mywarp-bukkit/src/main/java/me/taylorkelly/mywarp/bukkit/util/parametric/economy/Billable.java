@@ -17,35 +17,22 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric.economy;
 
-import me.taylorkelly.mywarp.timer.Duration;
+import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * Thrown when a Timer is already running.
+ * Annotates a method that withdraws a certain fee from callers once executed successfully.
  */
-public class TimerRunningException extends Exception {
-
-  private static final long serialVersionUID = -1170656232204925816L;
-
-  private final Duration durationLeft;
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Billable {
 
   /**
-   * Constructs an instance.
-   *
-   * @param durationLeft the duration until the running timer is done
+   * The FeeType referencing the fee.
    */
-  public TimerRunningException(Duration durationLeft) {
-    this.durationLeft = durationLeft;
-  }
-
-  /**
-   * Gets the Duration that is left until running Timer is done.
-   *
-   * @return the Duration left
-   */
-  public Duration getDurationLeft() {
-    return durationLeft;
-  }
+  FeeType value();
 
 }

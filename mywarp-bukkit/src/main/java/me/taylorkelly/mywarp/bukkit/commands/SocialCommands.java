@@ -30,15 +30,16 @@ import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.conversation.WarpAcceptancePromptFactory;
-import me.taylorkelly.mywarp.bukkit.util.ExceedsInitiatorLimitException;
-import me.taylorkelly.mywarp.bukkit.util.ExceedsLimitException;
-import me.taylorkelly.mywarp.bukkit.util.PlayerBinding.NoSuchPlayerException;
-import me.taylorkelly.mywarp.bukkit.util.ProfileBinding.NoSuchProfileException;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name;
-import me.taylorkelly.mywarp.bukkit.util.WarpBinding.Name.Condition;
-import me.taylorkelly.mywarp.bukkit.util.economy.Billable;
+import me.taylorkelly.mywarp.bukkit.util.parametric.ExceedsInitiatorLimitException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.ExceedsLimitException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding.NoSuchPlayerException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ProfileBinding.NoSuchProfileException;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name.Condition;
+import me.taylorkelly.mywarp.bukkit.util.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
@@ -51,7 +52,7 @@ import org.bukkit.ChatColor;
  */
 public class SocialCommands {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(UsageCommands.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final Game game;
   private final LimitManager manager;

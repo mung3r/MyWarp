@@ -17,26 +17,34 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit.util;
+package me.taylorkelly.mywarp.bukkit.util.parametric;
 
-import com.sk89q.intake.context.CommandLocals;
-import com.sk89q.intake.util.auth.Authorizer;
-
-import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
- * An Authorizer for {@link Actor}s.
+ * Indicates that an action exceeds a limit of somebody else than the initiator.
+ *
+ * @see ExceedsInitiatorLimitException for an Exception thrown when the limit of the initiator is exceeded
  */
-public class ActorAuthorizer implements Authorizer {
+public class ExceedsLimitException extends Exception {
 
-  @Override
-  public boolean testPermission(CommandLocals locals, String permission) {
-    Actor actor = locals.get(Actor.class);
-    if (actor == null) {
-      throw new IllegalArgumentException(
-          "No Actor available. Either this command was not used by one or he is missing from the CommandLocales.");
-    }
-    return actor.hasPermission(permission);
+  private final Profile subject;
+
+  /**
+   * Constructs an instance.
+   *
+   * @param subject the subject whose limits are or would be exceeded
+   */
+  public ExceedsLimitException(Profile subject) {
+    this.subject = subject;
   }
 
+  /**
+   * Gets the subject whose limits are or would be exceeded.
+   *
+   * @return the subject
+   */
+  public Profile getSubject() {
+    return subject;
+  }
 }
