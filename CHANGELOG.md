@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 Starting with version 3, this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [3.0-beta-1]
 
 ### Added:
 * Added support for UUIDs
@@ -321,7 +321,8 @@ Starting with version 3, this project adheres to [Semantic Versioning](http://se
 * Updated for Permissions 2.5.5 or higher (tested with 2.6 and 2.7)
 * Changed update URL where MyWarp downloads sqlite libraries
 
-[Unreleased]: https://github.com/TheE/MyWarp/compare/v2.6.5...HEAD
+[Unreleased]: https://github.com/TheE/MyWarp/compare/v3.0-beta-1...HEAD
+[3.0-beta-1]: https://github.com/TheE/MyWarp/compare/v2.6.5...v3.0-beta-1
 [2.6.5]: https://github.com/TheE/MyWarp/compare/v2.6.4...v2.6.5
 [2.6.4]: https://github.com/TheE/MyWarp/compare/v2.6.3...v2.6.4
 [2.6.3]: https://github.com/TheE/MyWarp/compare/v2.6.2...v2.6.3
