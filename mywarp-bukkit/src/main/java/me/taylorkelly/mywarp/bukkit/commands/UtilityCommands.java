@@ -165,7 +165,7 @@ public class UtilityCommands {
   @Command(aliases = {"player"}, desc = "warp-player.description", help = "warp-player.help")
   @Require("mywarp.cmd.player")
   @Billable(FeeType.WARP_PLAYER)
-  public void player(Actor actor, LocalPlayer teleportee, @Name(Condition.USABLE) Warp warp) {
+  public void player(Actor actor, LocalPlayer teleportee, @Name(Condition.VIEWABLE) Warp warp) {
     switch (warp.teleport(teleportee)) {
       case NONE:
         actor.sendError(MESSAGES.getString("warp-player.teleport-failed", teleportee.getName(), warp.getName()));

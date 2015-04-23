@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 Starting with version 3, this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed:
+* Fixed '/warp player' being unusable by non-players
+
 ## [3.0-beta-1]
 
 ### Added:
