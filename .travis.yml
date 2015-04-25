@@ -8,7 +8,7 @@ jdk:
 - oraclejdk8
 env:
   global:
-  - secure: KxG+5vnyU5Wkh7kiUATeZIFJRPQHQ7LQr95R0KbBd3dEz1MTEMC98jnFgjWEmS9NxAjEkVJs8jJ5SQogblctqqg60rciyN3xsaI/gIVaMotJ2a70Bm9t/vtpdw16sAZBWzeiOOdlh/XSUNIh2zrgb7HtHlPePT/DfA2zGDz0ZI8=
+  - secure: "QAWiPamdQhDz66ThCL91EVBg9nZGXkBY/0IG4x5lG9xh3hkhobMC2727O9cqf2p4+Dbf9XZqZs6Ry/pN/bcPoxJUQKuH7oo3iRaM/dQINMjlBBSVuUDq81lSNjXvckg7ru5hbl11ZhyokKDd3/QPM6fSrWQv8bLDjwy08rFE49A="
 before_install:
 - chmod +x gradlew
 - chmod +x config/publish-javadoc.sh
