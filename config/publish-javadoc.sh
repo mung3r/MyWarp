@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Publish Javadoc of successful CI builds to https://thee.github.io/MyWarp/javadoc-latest
+# Publish Javadoc of successful CI builds to https://thee.github.io/MyWarp/javadoc
 # See https://web.archive.org/web/20150107174657/http://benlimmer.com/2013/12/26/automatically-publish-javadoc-to-gh-pages-with-travis-ci/
 
 if [ "$TRAVIS_REPO_SLUG" == "TheE/MyWarp" ] && \
@@ -10,7 +10,8 @@ if [ "$TRAVIS_REPO_SLUG" == "TheE/MyWarp" ] && \
 
   echo -e "Publishing javadoc...\n"
 
-  cp -R build/docs/javadoc $HOME/javadoc-latest
+  cp -R mywarp-core/build/docs/javadoc $HOME/javadoc-latest/mywarp-core
+  cp -R mywarp-bukkit/build/docs/javadoc $HOME/javadoc-latest/mywarp-bukkit
 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
