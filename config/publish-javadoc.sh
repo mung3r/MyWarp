@@ -11,10 +11,10 @@ if [ "$TRAVIS_REPO_SLUG" == "TheE/MyWarp" ] && \
   echo -e "Publishing javadoc...\n"
 
   mkdir -p $HOME/javadoc-latest/mywarp-core
-  cp -R mywarp-core/build/docs/javadoc $HOME/javadoc-latest/mywarp-core
+  cp -R mywarp-core/build/docs/javadoc/ $HOME/javadoc-latest/mywarp-core
 
   mkdir -p $HOME/javadoc-latest/mywarp-bukkit
-  cp -R mywarp-bukkit/build/docs/javadoc $HOME/javadoc-latest/mywarp-bukkit
+  cp -R mywarp-bukkit/build/docs/javadoc/ $HOME/javadoc-latest/mywarp-bukkit
 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
