@@ -6,7 +6,9 @@ jdk:
 - oraclejdk8
 notifications:
   email: false
-before_install: chmod +x gradlew
-after_success: ./config/publish-javadoc.sh
+before_install:
+- chmod +x gradlew
+- chmod +x config/publish-javadoc.sh
+after_success: config/publish-javadoc.sh
 GH_TOKEN=:
   secure: KxG+5vnyU5Wkh7kiUATeZIFJRPQHQ7LQr95R0KbBd3dEz1MTEMC98jnFgjWEmS9NxAjEkVJs8jJ5SQogblctqqg60rciyN3xsaI/gIVaMotJ2a70Bm9t/vtpdw16sAZBWzeiOOdlh/XSUNIh2zrgb7HtHlPePT/DfA2zGDz0ZI8=
