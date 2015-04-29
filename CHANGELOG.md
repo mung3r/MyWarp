@@ -7,6 +7,7 @@ Starting with version 3, this project adheres to [Semantic Versioning](http://se
 
 ### Fixed:
 * Fixed '/warp player' being unusable by non-players
+* Fixed NPE thrown when formatting special characters
 
 ## [3.0-beta-1]
 

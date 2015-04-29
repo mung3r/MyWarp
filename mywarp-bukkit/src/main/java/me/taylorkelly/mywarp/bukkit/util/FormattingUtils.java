@@ -89,7 +89,11 @@ public final class FormattingUtils {
    * @return the width of the character in pixels
    */
   public static int getWidth(char character) {
-    return CHAR_WIDTHS.get(character);
+    int width = 0;
+    if (CHAR_WIDTHS.containsKey(character)) {
+      width = CHAR_WIDTHS.get(character);
+    }
+    return width;
   }
 
   /**
