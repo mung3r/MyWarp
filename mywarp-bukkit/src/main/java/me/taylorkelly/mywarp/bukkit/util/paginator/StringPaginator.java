@@ -32,7 +32,6 @@ import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Paginates results.
@@ -194,14 +193,13 @@ public class StringPaginator<E> {
     /**
      * Gets the given page as String.
      *
-     * @param locale the locale of the page
      * @param page   the page number
      * @return the given page as String
      * @throws NoResultsException   if there are no results that could be paginated
      * @throws UnknownPageException if there are results that could be paginated, but no page with the given number
      *                              exists
      */
-    public String getPageAsString(Locale locale, int page) throws NoResultsException, UnknownPageException {
+    public String getPageAsString(int page) throws NoResultsException, UnknownPageException {
       return Joiner.on(System.getProperty("line.separator")).join(getPage(page));
     }
 
@@ -214,7 +212,7 @@ public class StringPaginator<E> {
      */
     public void display(Actor actor, int page) {
       try {
-        actor.sendMessage(getPageAsString(actor.getLocale(), page));
+        actor.sendMessage(getPageAsString(page));
       } catch (NoResultsException e) {
         actor.sendError(MESSAGES.getString("no-results"));
       } catch (UnknownPageException e) {
