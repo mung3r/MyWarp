@@ -10,21 +10,24 @@ if [ "$TRAVIS_REPO_SLUG" == "TheE/MyWarp" ] && \
 
   echo -e "Publishing javadoc...\n"
 
-  mkdir -p $HOME/javadoc-latest/mywarp-core
-  cp -R mywarp-core/build/docs/javadoc/ $HOME/javadoc-latest/mywarp-core
-
-  mkdir -p $HOME/javadoc-latest/mywarp-bukkit
-  cp -R mywarp-bukkit/build/docs/javadoc/ $HOME/javadoc-latest/mywarp-bukkit
-
-  cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/TheE/MyWarp gh-pages > /dev/null
+  git clone --branch=gh-pages https://${GH_TOKEN}@github.com/TheE/MyWarp $HOME/gh-pages > /dev/null
+  cd $HOME/gh-pages
 
-  cd gh-pages
-  git rm -rf ./javadoc
-  cp -Rf $HOME/javadoc-latest ./javadoc
-  git add -f .
+  echo -e "Pages repository cloned."
+
+  for module in mywarp-core mywarp-bukkit; do
+    echo -e $module
+
+    mkdir -p ./javadoc/$module
+    git rm -rf ./javadoc/$module/*
+
+    cp -Rf $TRAVIS_BUILD_DIR/$module/build/docs/javadoc/ ./javadoc/$module
+    git add -f ./javadoc/$module
+    echo -e "Javadocs for '$module' added."
+  done
+
   git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
   git push -fq origin gh-pages > /dev/null
 
