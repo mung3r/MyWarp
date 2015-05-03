@@ -12,14 +12,12 @@ if [ "$TRAVIS_REPO_SLUG" == "TheE/MyWarp" ] && \
 
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
-  git clone --branch=gh-pages https://${GH_TOKEN}@github.com/TheE/MyWarp $HOME/gh-pages > /dev/null
+  git clone --quit --branch=gh-pages https://${GH_TOKEN}@github.com/TheE/MyWarp $HOME/gh-pages > /dev/null
   cd $HOME/gh-pages
 
   echo -e "Pages repository cloned."
 
   for module in mywarp-core mywarp-bukkit; do
-    echo -e $module
-
     mkdir -p ./javadoc/$module
     git rm -rf ./javadoc/$module/*
 
