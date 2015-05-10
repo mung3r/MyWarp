@@ -19,9 +19,7 @@
 
 package me.taylorkelly.mywarp.limits;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 
 import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
@@ -30,6 +28,11 @@ import me.taylorkelly.mywarp.limits.Limit.Type;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A LimitManager implementation that does absolutely nothing. Limit evaluation will always result in a positive
@@ -57,7 +60,7 @@ public class DummyLimitManager implements LimitManager {
   }
 
   @Override
-  public Multimap<Limit, Warp> getWarpsPerLimit(LocalPlayer creator) {
+  public Map<Limit, List<Warp>> getWarpsPerLimit(LocalPlayer creator) {
     Limit dummyLimit = new Limit() {
 
       @Override
@@ -76,8 +79,11 @@ public class DummyLimitManager implements LimitManager {
       }
 
     };
-    return ImmutableMultimap.<Limit, Warp>builder()
-        .putAll(dummyLimit, manager.filter(WarpUtils.isCreator(creator.getProfile()))).build();
+
+    Map<Limit, List<Warp>> ret = new HashMap<Limit, List<Warp>>();
+    ret.put(dummyLimit, new ArrayList<Warp>(manager.filter(WarpUtils.isCreator(creator.getProfile()))));
+
+    return ret;
   }
 
 }

@@ -19,10 +19,8 @@
 
 package me.taylorkelly.mywarp.limits;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
@@ -31,8 +29,11 @@ import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Manages {@link Limit}s. <p> The SimpleLimitManager operates on a {@link LimitProvider} that provides the actual
@@ -96,20 +97,23 @@ public class SimpleLimitManager implements LimitManager {
   }
 
   @Override
-  public Multimap<Limit, Warp> getWarpsPerLimit(LocalPlayer creator) {
+  public Map<Limit, List<Warp>> getWarpsPerLimit(LocalPlayer creator) {
     Collection<Warp> warps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
-    ImmutableMultimap.Builder<Limit, Warp> builder = ImmutableMultimap.builder();
+    Map<Limit, List<Warp>> ret = new HashMap<Limit, List<Warp>>();
+
+    for (Limit limit : provider.getEffectiveLimits(creator)) {
+      ret.put(limit, new ArrayList<Warp>());
+    }
 
     // sort warps to limits
     for (Warp warp : warps) {
-      for (Limit limit : provider.getEffectiveLimits(creator)) {
+      for (Limit limit : ret.keySet()) {
         if (limit.isAffectedWorld(warp.getWorld())) {
-          builder.put(limit, warp);
+         ret.get(limit).add(warp);
         }
       }
     }
-
-    return builder.build();
+    return ret;
   }
 
 }

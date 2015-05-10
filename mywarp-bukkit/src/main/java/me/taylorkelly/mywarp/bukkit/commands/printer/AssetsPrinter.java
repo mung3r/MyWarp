@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.bukkit.commands.printer;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
@@ -38,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -76,8 +76,8 @@ public class AssetsPrinter {
     receiver.sendMessage(ChatColor.GOLD + FormattingUtils.center(heading, '-'));
 
     // display the limits
-    Multimap<Limit, Warp> index = limitManager.getWarpsPerLimit(creator);
-    for (Entry<Limit, Collection<Warp>> entry : index.asMap().entrySet()) {
+    Map<Limit, List<Warp>> index = limitManager.getWarpsPerLimit(creator);
+    for (Entry<Limit, List<Warp>> entry : index.entrySet()) {
       printLimit(receiver, entry.getKey(), entry.getValue());
     }
   }

@@ -6,8 +6,10 @@ Starting with version 3, this project adheres to [Semantic Versioning](http://se
 ## [Unreleased]
 
 ### Fixed:
-* Fixed '/warp player' being unusable by non-players
+* Fixed `/warp player` being unusable by non-players
 * Fixed NPE thrown when formatting special characters
+* Fixed invalid variables in German (un)invite messages for public warps
+* Fixed `/warp assets` being completely empty for players without warps
 
 ## [3.0-beta-1]
 

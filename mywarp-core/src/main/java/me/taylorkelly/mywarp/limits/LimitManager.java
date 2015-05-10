@@ -21,12 +21,13 @@ package me.taylorkelly.mywarp.limits;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.collect.Multimap;
-
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.limits.Limit.Type;
 import me.taylorkelly.mywarp.warp.Warp;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -50,20 +51,21 @@ public interface LimitManager {
                                               boolean evaluateParents);
 
   /**
-   * Gets all warps created by the given LocalPlayer mapped under the applicable {@link Limit}. A warp may be mapped
-   * multiple times.
+   * Gets all warps created by the given LocalPlayer mapped under the applicable {@link Limit}. The map is guaranteed to
+   * include all limits that effect the given player. If no warp exists for a certain limit, {@code get(Limit)} will
+   * return an empty list.
    *
    * @param creator the creator
-   * @return a Multimap with all matching warps
+   * @return a Map with all matching warps
    */
-  Multimap<Limit, Warp> getWarpsPerLimit(LocalPlayer creator);
+  Map<Limit, List<Warp>> getWarpsPerLimit(LocalPlayer creator);
 
   /**
    * The result of a limit evaluation.
    *
    * @see LimitManager#evaluateLimit(LocalPlayer, LocalWorld, Limit.Type, boolean)
    */
-  public static class EvaluationResult {
+  class EvaluationResult {
 
     /**
      * Indicates that no limit was exceeded.
