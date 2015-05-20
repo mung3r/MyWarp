@@ -24,17 +24,13 @@ import com.google.common.util.concurrent.ListenableFuture;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
+import java.io.Closeable;
 import java.util.Collection;
 
 /**
  * A connection to a data-source.
  */
-public interface DataConnection {
-
-  /**
-   * Closes any connection to the underlying data-source.
-   */
-  void close();
+public interface DataConnection  extends Closeable {
 
   /**
    * Adds the given warp to the underlying data-source.

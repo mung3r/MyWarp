@@ -27,7 +27,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 import me.taylorkelly.mywarp.dataconnections.DataConnection;
 import me.taylorkelly.mywarp.warp.Warp;
 
+import java.io.IOException;
 import java.util.Collection;
+
+import javax.annotation.Nullable;
 
 /**
  * Migrates data from a {@link DataConnection}.
@@ -65,20 +68,31 @@ public class DataConnectionMigrator implements DataMigrator {
 
       @Override
       public void onFailure(Throwable throwable) {
-        if (storedConn != null) {
-          storedConn.close();
-        }
+        closeQuit(storedConn);
       }
 
       @Override
       public void onSuccess(Collection<Warp> warps) {
-        if (storedConn != null) {
-          storedConn.close();
-        }
+        closeQuit(storedConn);
       }
 
     });
     return futureWarps;
+  }
+
+  /**
+   * Closes the given {@code DataConnection}.
+   *
+   * @param conn the {@code DataConnection} - can be {@code null}
+   */
+  private void closeQuit(@Nullable DataConnection conn) {
+    if (storedConn != null) {
+      try {
+        storedConn.close();
+      } catch (IOException e) {
+        //XXX log instead of ignoring?
+      }
+    }
   }
 
 }

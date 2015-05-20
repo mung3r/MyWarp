@@ -76,7 +76,7 @@ public class ManagementCommands {
    *
    * @param player the LocalPlayer
    * @param name   the name
-   * @throws CommandException       if the Warp could not be created
+   * @throws CommandException               if the Warp could not be created
    * @throws ExceedsInitiatorLimitException if a Limit would be exceeded by creating the warp
    */
   @Command(aliases = {"pcreate", "pset"}, desc = "create.private.description", help = "create.private.help")
@@ -92,7 +92,7 @@ public class ManagementCommands {
    *
    * @param player the LocalPlayer
    * @param name   the name
-   * @throws CommandException       if the Warp could not be created
+   * @throws CommandException               if the Warp could not be created
    * @throws ExceedsInitiatorLimitException if a Limit would be exceeded by creating the warp
    */
   @Command(aliases = {"create", "set"}, desc = "create.public.description", help = "create.public.help")
@@ -112,7 +112,7 @@ public class ManagementCommands {
    * @param rotation the rotation of the warp
    * @param type     the warp's Warp.Type
    * @param name     the warp's name
-   * @throws CommandException       if the Warp cannot be created
+   * @throws CommandException               if the Warp cannot be created
    * @throws ExceedsInitiatorLimitException if a Limit would be exceeded by creating the warp
    */
   private void addWarp(LocalPlayer creator, LocalWorld world, Vector3 position, EulerDirection rotation, Warp.Type type,
@@ -134,8 +134,9 @@ public class ManagementCommands {
       throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
     }
 
-    WarpBuilder builder = new WarpBuilder(myWarp, name, creator.getProfile(), type, world, position, rotation);
-    myWarp.getWarpManager().add(builder.build());
+    myWarp.getWarpManager().add(
+        new WarpBuilder(myWarp, name, creator.getProfile(), world.getUniqueId(), position, rotation).setType(type)
+            .build());
   }
 
   /**

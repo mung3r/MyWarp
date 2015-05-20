@@ -22,9 +22,7 @@ package me.taylorkelly.mywarp.warp;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
-import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.util.MatchList;
-import me.taylorkelly.mywarp.util.profile.Profile;
 
 import java.util.Collection;
 
@@ -41,11 +39,25 @@ public interface WarpManager {
   void add(Warp warp);
 
   /**
+   * Populates this manager with the given Warps. Unlike {@link #add(Warp)} this method must only be used to
+   * <b>populate</b> the warp manager with already existing warps.
+   *
+   * @param warps the Warps
+   */
+  void populate(Iterable<Warp> warps);
+
+  /**
    * Deletes the given Warp from this manager.
    *
    * @param warp the warp
    */
   void remove(Warp warp);
+
+  /**
+   * Clears this manager, removing all Warps previously managed by it. Unlike {@link #remove(Warp)} this method must
+   * only be used to <b>clear</b> the warp manager, it does not represent a removal of a warp.
+   */
+  void clear();
 
   /**
    * Gets the number of all Warps managed by this manger.
@@ -71,36 +83,16 @@ public interface WarpManager {
   Optional<Warp> get(String name);
 
   /**
-   * Gets all Warps on this manager that fulfill the given Predicate. The returned collection is a live view, changes to
-   * one affect the other. If a live view is not needed, it may be faster to create a copy of the Warps returned by this
+   * Gets all Warps on this manager that fulfill the given Predicate. The returned collection is a live view, changes
+   * to
+   * one affect the other. If a live view is not needed, it may be faster to create a copy of the Warps returned by
+   * this
    * method.
    *
    * @param predicate the predicate
    * @return all Warps that fulfill the Predicate
    */
   Collection<Warp> filter(Predicate<Warp> predicate);
-
-  /**
-   * Gets an Optional containing a warp's creator whose name uniquely matches the given filter within the Warps
-   * fulfilling the given Predicate ,if such a creator exists.
-   *
-   * @param filter    the filter
-   * @param predicate the predicate
-   * @return an Optional containing the matching creator
-   */
-  @Deprecated
-  Optional<Profile> getMatchingCreator(String filter, Predicate<Warp> predicate);
-
-  /**
-   * Gets an Optional containing a warp's world whose name uniquely matches the given filter within the Warps fulfilling
-   * the given Predicate, if such a world exists.
-   *
-   * @param filter    the filter
-   * @param predicate the predicate
-   * @return an Optional containing the matching world
-   */
-  @Deprecated
-  Optional<LocalWorld> getMatchingWorld(String filter, Predicate<Warp> predicate);
 
   /**
    * Gets a MatchList containing Warps fulfilling the given predicate.

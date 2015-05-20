@@ -60,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The connection to a SQL database via JOOQ.
@@ -92,6 +93,16 @@ public class JooqConnection implements DataConnection {
   @Override
   public void close() {
     executor.shutdown();
+
+    try {
+      if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+        List<Runnable> droppedTasks = executor.shutdownNow();
+        log.warn("SQL executor did not terminate within 30 seconds and is terminated. {} tasks will not be "
+                 + "executed, recent changes may be missing in the database.", droppedTasks.size());
+      }
+    } catch (InterruptedException e) {
+      log.error("Failed to terminate SQL executor as the process was interrupted.", e);
+    }
 
     try {
       if (conn != null && !conn.isClosed()) {
@@ -278,13 +289,13 @@ public class JooqConnection implements DataConnection {
 
           WarpBuilder
               builder =
-              new WarpBuilder(myWarp, r.getValue(0, WARP.NAME), creator, r.getValue(0, WARP.TYPE),
-                              r.getValue(0, WORLD.UUID), position, rotation);
+              new WarpBuilder(myWarp, r.getValue(0, WARP.NAME), creator, r.getValue(0, WORLD.UUID), position, rotation);
 
           // optional values
-          builder.withCreationDate(r.getValue(0, WARP.CREATION_DATE));
-          builder.withVisits(r.getValue(0, WARP.VISITS).intValue());
-          builder.withWelcomeMessage(r.getValue(0, WARP.WELCOME_MESSAGE));
+          builder.setType(r.getValue(0, WARP.TYPE));
+          builder.setCreationDate(r.getValue(0, WARP.CREATION_DATE));
+          builder.setVisits(r.getValue(0, WARP.VISITS).intValue());
+          builder.setWelcomeMessage(r.getValue(0, WARP.WELCOME_MESSAGE));
 
           for (String groupName : r.getValues(GROUP.NAME)) {
             if (groupName != null) {

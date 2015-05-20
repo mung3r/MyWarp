@@ -46,15 +46,14 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The simple implementation of a Warp.
+ * A simple implementation of a Warp. Use a {@link WarpBuilder} to create instances.
  */
-public class SimpleWarp implements Warp {
+class SimpleWarp implements Warp {
 
   private static final double GRAVITY_CONSTANT = 0.8;
   private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
-
   private final String name;
   private final Date creationDate;
   private final Set<Profile> invitedPlayers;
@@ -68,30 +67,41 @@ public class SimpleWarp implements Warp {
   private volatile String welcomeMessage;
 
   /**
-   * Creates a warp from the given Builder.
+   * Creates a instance with the given values.
+   * <p>This method should never be called manually. Use a {@link WarpBuilder} instead.</p>
    *
-   * @param myWarp  the MyWarp instance
-   * @param builder the Builder
-   * @throws NullPointerException     if any of the Builder's fields is {@code null}
-   * @throws IllegalArgumentException if the Builder's {@code invitedPlayerIds} or {@code invitedGroups} contains {@code
-   *                                  null}
+   * @param myWarp          the running MyWarp instance
+   * @param name            the warp's name
+   * @param creationDate    the warp's creation date
+   * @param invitedPlayers  a Set of player profiles invited to this warp
+   * @param invitedGroups   a set of group identifiers invited to this warp
+   * @param creator         the profile of the warp's creator
+   * @param type            the warp's type
+   * @param worldIdentifier the identifier of the world that holds the warp
+   * @param position        the warp's position
+   * @param rotation        the warp's rotation
+   * @param visits          the number of times the warp has been visited
+   * @param welcomeMessage  the warp's welcome message
+   * @throws NullPointerException     if one of the given values is {@code null}
+   * @throws IllegalArgumentException if {@code invitedPlayers} or {@code invitedGroups} contains {@code null}
    */
-  SimpleWarp(MyWarp myWarp, WarpBuilder builder) {
-    this.name = checkNotNull(builder.getName());
-    this.creator = checkNotNull(builder.getCreator());
-    this.type = checkNotNull(builder.getType());
-    this.worldIdentifier = checkNotNull(builder.getWorldIdentifier());
-    this.position = checkNotNull(builder.getPosition());
-    this.rotation = checkNotNull(builder.getRotation());
-    this.creationDate = checkNotNull(builder.getCreationDate());
-    this.visits = checkNotNull(builder.getVisits());
-    this.welcomeMessage = checkNotNull(builder.getWelcomeMessage());
-    checkArgument(!builder.getInvitedPlayers().contains(null));
-    this.invitedPlayers = builder.getInvitedPlayers();
-    checkArgument(!builder.getInvitedGroups().contains(null));
-    this.invitedGroups = builder.getInvitedGroups();
-
-    this.myWarp = myWarp;
+  SimpleWarp(MyWarp myWarp, String name, Date creationDate, Set<Profile> invitedPlayers, Set<String> invitedGroups,
+             Profile creator, Type type, UUID worldIdentifier, Vector3 position, EulerDirection rotation, int visits,
+             String welcomeMessage) {
+    this.myWarp = checkNotNull(myWarp);
+    this.name = checkNotNull(name);
+    this.creationDate = checkNotNull(creationDate);
+    checkArgument(!checkNotNull(invitedPlayers).contains(null), "'invitedPlayers' must not contain null.");
+    this.invitedPlayers = invitedPlayers;
+    checkArgument(!checkNotNull(invitedGroups).contains(null), "'invitedGroups' must not contain null.");
+    this.invitedGroups = invitedGroups;
+    this.creator = checkNotNull(creator);
+    this.type = checkNotNull(type);
+    this.worldIdentifier = checkNotNull(worldIdentifier);
+    this.position = checkNotNull(position);
+    this.rotation = checkNotNull(rotation);
+    this.visits = checkNotNull(visits);
+    this.welcomeMessage = checkNotNull(welcomeMessage);
   }
 
   @Override

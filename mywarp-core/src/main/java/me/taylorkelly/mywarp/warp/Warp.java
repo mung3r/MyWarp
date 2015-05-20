@@ -38,8 +38,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Represents a Warp. Implementations must ensure that two Warps are equal if, and only if their names are equal. <p> To
- * create new warps use a {@link WarpBuilder}. </p>
+ * Represents a Warp. Implementations must ensure that two Warps are equal if, and only if their names are equal. <p>
+ * To create a Warp use the {@link WarpBuilder}.</p>
  */
 public interface Warp extends Comparable<Warp> {
 
@@ -197,9 +197,6 @@ public interface Warp extends Comparable<Warp> {
    * @return the string with replaced placeholder
    */
   String replacePlaceholders(String str);
-
-  @Override
-  int compareTo(Warp that);
 
   /**
    * Gets the Profile of this Warp's creator.
@@ -364,7 +361,7 @@ public interface Warp extends Comparable<Warp> {
      *
      * @param colorCharacter the color character
      */
-    private Type(char colorCharacter) {
+    Type(char colorCharacter) {
       this.colorCharacter = colorCharacter;
     }
 
@@ -383,7 +380,7 @@ public interface Warp extends Comparable<Warp> {
      * @return the limit
      */
     public Limit.Type getLimit() {
-      // putting these informations in the respective constructor will not
+      // putting these information in the respective constructor will not
       // work as the classloader runs into problems when initializing both
       // enums!
       switch (this) {
@@ -395,14 +392,13 @@ public interface Warp extends Comparable<Warp> {
           return Limit.Type.TOTAL;
 
       }
-      // return limit;
     }
   }
 
   /**
-   * A custom comparator that orders Warps by there popularity: popular Warps come first, unpopular last.
+   * A custom comparator that orders Warps by popularity: popular Warps come first, unpopular last.
    */
-  public static class PopularityComparator implements Comparator<Warp> {
+  class PopularityComparator implements Comparator<Warp> {
 
     @Override
     public int compare(Warp w1, Warp w2) {

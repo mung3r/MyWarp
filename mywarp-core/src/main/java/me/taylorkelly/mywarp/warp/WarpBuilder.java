@@ -19,13 +19,13 @@
 
 package me.taylorkelly.mywarp.warp;
 
-import me.taylorkelly.mywarp.LocalWorld;
+import com.google.common.collect.Iterables;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
-import me.taylorkelly.mywarp.warp.Warp.Type;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -33,224 +33,144 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A Builder for warps.
+ * Builds {@link Warp}s.
  */
 public class WarpBuilder {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
-
   private final String name;
+  private final Set<Profile> invitedPlayers;
+  private final Set<String> invitedGroups;
   private final Profile creator;
-  private final Type type;
   private final UUID worldIdentifier;
   private final Vector3 position;
   private final EulerDirection rotation;
-  private final Set<Profile> invitedPlayers = new HashSet<Profile>();
-  private final Set<String> invitedGroups = new HashSet<String>();
+
   private Date creationDate = new Date();
-  private int visits;
+  private Warp.Type type = Warp.Type.PUBLIC;
+  private int visits = 0;
   private String welcomeMessage = MESSAGES.getString("default-welcome-message");
 
   /**
-   * Creates a Builder that will build a Warp with the given values.
+   * Creates a {@code WarpBuilder} that builds {@code Warp}s using the given values.
    *
-   * @param myWarp   the MyWarp instance
-   * @param name     the name of the warp
-   * @param creator  the Profile of the player who created the warp
-   * @param type     the type
-   * @param world    the world where the warp is placed
-   * @param position the position of the warp
-   * @param rotation the rotation of the warp
+   * @param myWarp          the running MyWarp instance
+   * @param name            the {@code Warp}'s name
+   * @param creator         the {@code Warp}'s creator
+   * @param worldIdentifier the identifier of the world the {@code Warp} is located in
+   * @param position        the {@code Warp}'s position
+   * @param rotation        the {@code Warp}'s rotation
    */
-  public WarpBuilder(MyWarp myWarp, String name, Profile creator, Type type, LocalWorld world, Vector3 position,
-                     EulerDirection rotation) {
-    this(myWarp, name, creator, type, world.getUniqueId(), position, rotation);
-  }
+  public WarpBuilder(MyWarp myWarp, String name, Profile creator, UUID worldIdentifier, Vector3 position,
+                      EulerDirection rotation) {
+    this.invitedPlayers = new HashSet<Profile>();
+    this.invitedGroups = new HashSet<String>();
 
-  /**
-   * Creates a Builder that will build a Warp with the given values.
-   *
-   * @param myWarp          the MyWarp instance
-   * @param name            the name of the warp
-   * @param creator         the Profile of the player who created the warp
-   * @param type            the type
-   * @param worldIdentifier the name of the world where the warp is placed
-   * @param position        the position of the warp
-   * @param rotation        the rotation of the warp
-   */
-  public WarpBuilder(MyWarp myWarp, String name, Profile creator, Type type, UUID worldIdentifier, Vector3 position,
-                     EulerDirection rotation) {
     this.myWarp = myWarp;
     this.name = name;
     this.creator = creator;
-    this.type = type;
     this.worldIdentifier = worldIdentifier;
     this.position = position;
     this.rotation = rotation;
   }
 
   /**
-   * Sets the creation-date of the warp.
+   * Sets the creation date of the {@code Warp}.
    *
-   * @param creationDate the creation-date
-   * @return this Builder for chaining
+   * @param creationDate the creation date
+   * @return this {@code WarpBuilder}
    */
-  public WarpBuilder withCreationDate(Date creationDate) {
+  public WarpBuilder setCreationDate(Date creationDate) {
     this.creationDate = creationDate;
     return this;
   }
 
   /**
-   * Sets the visits-count of the warp.
+   * Adds the player to the set of players invited to the {@code Warp}.
    *
-   * @param visits the visits-count
-   * @return this Builder for chaining
+   * @param player the player profiles
+   * @return this {@code WarpBuilder}
    */
-  public WarpBuilder withVisits(int visits) {
+  public WarpBuilder addInvitedPlayer(Profile player) {
+    invitedPlayers.add(player);
+    return this;
+  }
+
+  /**
+   * Adds each player to the set of players invited to the {@code Warp}.
+   *
+   * @param players the Iterable of player profiles
+   * @return this {@code WarpBuilder}
+   */
+  public WarpBuilder addInvitedPlayers(Iterable<Profile> players) {
+    Iterables.addAll(invitedPlayers, players);
+    return this;
+  }
+
+  /**
+   * Adds the group to the set of groups invited to the {@code Warp}.
+   *
+   * @param groupId the group identifier
+   * @return this {@code WarpBuilder}
+   */
+  public WarpBuilder addInvitedGroup(String groupId) {
+    invitedGroups.add(groupId);
+    return this;
+  }
+
+  /**
+   * Adds each group to the set of groups invited to the {@code Warp}.
+   *
+   * @param groupIds the {@code Iterable} of group identifier
+   * @return this {@code WarpBuilder}
+   */
+  public WarpBuilder addInvitedGroups(Iterable<String> groupIds) {
+    Iterables.addAll(invitedGroups, groupIds);
+    return this;
+  }
+
+  /**
+   * Sets the type of the {@code Warp}.
+   *
+   * @param type the type
+   * @return this {@code WarpBuilder}
+   */
+  public WarpBuilder setType(Warp.Type type) {
+    this.type = type;
+    return this;
+  }
+
+  /**
+   * Sets the amount of visits of the {@code Warp}.
+   *
+   * @param visits the amount of visits
+   * @return this {@code WarpBuilder}
+   */
+  public WarpBuilder setVisits(int visits) {
     this.visits = visits;
     return this;
   }
 
   /**
-   * Sets the welcome-message of the warp.
+   * Sets the welcome message of the {@code Warp}.
    *
-   * @param welcomeMessage the welcome-message
-   * @return this Builder for chaining
+   * @param welcomeMessage the welcome message
+   * @return this {@code WarpBuilder}
    */
-  public WarpBuilder withWelcomeMessage(String welcomeMessage) {
+  public WarpBuilder setWelcomeMessage(String welcomeMessage) {
     this.welcomeMessage = welcomeMessage;
     return this;
   }
 
   /**
-   * Adds the given player-profile to the set of invited players for this warp.
+   * Builds the {@code Warp} based on the contents of the {@code WarpBuilder}.
    *
-   * @param player the profile of the player
-   * @return this Builder for chaining
-   */
-  public WarpBuilder addInvitedPlayer(Profile player) {
-    this.invitedPlayers.add(player);
-    return this;
-  }
-
-  /**
-   * Adds the given group-ID to the set of invited groups for this warp.
-   *
-   * @param groupId the ID of the group
-   * @return this Builder for chaining
-   */
-  public WarpBuilder addInvitedGroup(String groupId) {
-    this.invitedGroups.add(groupId);
-    return this;
-  }
-
-  /**
-   * Builds the Warp.
-   *
-   * @return the builded warp
+   * @return the newly-created {@code Warp}
    */
   public Warp build() {
-    return new SimpleWarp(myWarp, this);
-  }
-
-  /**
-   * Gets the name.
-   *
-   * @return the name
-   */
-  protected String getName() {
-    return name;
-  }
-
-  /**
-   * Gets the creator.
-   *
-   * @return the creator
-   */
-  protected Profile getCreator() {
-    return creator;
-  }
-
-  /**
-   * Gets the type.
-   *
-   * @return the type
-   */
-  protected Type getType() {
-    return type;
-  }
-
-  /**
-   * Gets the unique identifier of the world.
-   *
-   * @return the world's unique identifier
-   */
-  protected UUID getWorldIdentifier() {
-    return worldIdentifier;
-  }
-
-  /**
-   * Gets the position.
-   *
-   * @return the position
-   */
-  protected Vector3 getPosition() {
-    return position;
-  }
-
-  /**
-   * Gets the rotation.
-   *
-   * @return the rotation
-   */
-  protected EulerDirection getRotation() {
-    return rotation;
-  }
-
-  /**
-   * Gets the creationDate.
-   *
-   * @return the creationDate
-   */
-  protected Date getCreationDate() {
-    return creationDate;
-  }
-
-  /**
-   * Gets the visits.
-   *
-   * @return the visits
-   */
-  protected int getVisits() {
-    return visits;
-  }
-
-  /**
-   * Gets the welcomeMessage.
-   *
-   * @return the welcomeMessage
-   */
-  protected String getWelcomeMessage() {
-    return welcomeMessage;
-  }
-
-  /**
-   * Gets the invitedPlayers.
-   *
-   * @return the invitedPlayers
-   */
-  protected Set<Profile> getInvitedPlayers() {
-    return invitedPlayers;
-  }
-
-  /**
-   * Gets the invitedGroups.
-   *
-   * @return the invitedGroups
-   */
-  protected Set<String> getInvitedGroups() {
-    return invitedGroups;
+    return new SimpleWarp(myWarp, name, creationDate, invitedPlayers, invitedGroups, creator, type, worldIdentifier,
+                          position, rotation, visits, welcomeMessage);
   }
 }

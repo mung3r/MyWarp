@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp.bukkit.markers;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import me.taylorkelly.mywarp.bukkit.BukkitSettings;
@@ -26,8 +27,8 @@ import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.warp.EventWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.event.WarpAdditionEvent;
 import me.taylorkelly.mywarp.warp.event.WarpRemovalEvent;
 import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
@@ -61,9 +62,10 @@ public class DynmapMarkers {
    *
    * @param plugin       the running plugin instance
    * @param dynmapPlugin the running Dynmap instance to use
-   * @param manager      the EventWarpManager this Markers run on
+   * @param manager      the WarpManager whose warps are shown on Dynmap
+   * @param eventBus     the EventBus that fires the events that initiate marker changes
    */
-  public DynmapMarkers(MyWarpPlugin plugin, DynmapCommonAPI dynmapPlugin, EventWarpManager manager) {
+  public DynmapMarkers(MyWarpPlugin plugin, DynmapCommonAPI dynmapPlugin, WarpManager manager, EventBus eventBus) {
     this.settings = plugin.getSettings();
 
     MarkerAPI markerApi = dynmapPlugin.getMarkerAPI();
@@ -71,7 +73,7 @@ public class DynmapMarkers {
     // get Icon for all markers
     markerIcon = markerApi.getMarkerIcon(settings.getDynmapMarkerIconId());
     if (markerIcon == null && !settings.getDynmapMarkerIconId().equals(ICON_ID)) {
-      log.warn("MarkerIcon '{}' does not exist. Using the default one.", markerIcon.getMarkerIconID());
+      log.warn("MarkerIcon '{}' does not exist. Using the default one.", settings.getDynmapMarkerIconId());
       markerIcon = markerApi.getMarkerIcon(ICON_ID);
     }
     if (markerIcon == null) {
@@ -94,7 +96,7 @@ public class DynmapMarkers {
     for (Warp warp : manager.filter(WarpUtils.isType(Warp.Type.PUBLIC))) {
       addMarker(warp);
     }
-    manager.registerHandler(this);
+    eventBus.register(this);
   }
 
   /**

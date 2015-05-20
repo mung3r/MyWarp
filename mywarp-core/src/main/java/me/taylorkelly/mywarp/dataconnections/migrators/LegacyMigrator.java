@@ -152,15 +152,15 @@ public abstract class LegacyMigrator {
         continue;
       }
 
-      WarpBuilder builder = new WarpBuilder(myWarp, warpName, creator, type, worldId, position, rotation);
+      WarpBuilder builder = new WarpBuilder(myWarp, warpName, creator, worldId, position, rotation);
 
       // optional values
-      builder.withVisits(r.value10());
-      builder.withWelcomeMessage(r.value11());
+      builder.setType(type);
+      builder.setVisits(r.value10());
+      builder.setWelcomeMessage(r.value11());
 
-      for (String groupId : splitter.split(r.value13())) {
-        builder.addInvitedGroup(groupId);
-      }
+      builder.addInvitedGroups(splitter.split(r.value13()));
+
       for (String playerName : splitter.split(r.value12())) {
         Profile invitee = profileLookup.get(playerName);
         if (invitee == null) {

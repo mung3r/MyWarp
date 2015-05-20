@@ -19,12 +19,12 @@
 
 package me.taylorkelly.mywarp;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import me.taylorkelly.mywarp.dataconnections.DataConnection;
-import me.taylorkelly.mywarp.dataconnections.EventConnectionBridge;
 import me.taylorkelly.mywarp.dataconnections.MySqlConnection;
 import me.taylorkelly.mywarp.dataconnections.SqLiteConnection;
 import me.taylorkelly.mywarp.economy.DummyEconomyManager;
@@ -38,13 +38,17 @@ import me.taylorkelly.mywarp.safety.TeleportService;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
-import me.taylorkelly.mywarp.warp.EventWarpManager;
+import me.taylorkelly.mywarp.warp.EventfulWarpManager;
+import me.taylorkelly.mywarp.warp.PersistentWarpManager;
+import me.taylorkelly.mywarp.warp.MemoryWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.WarpSignManager;
 
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
@@ -58,15 +62,15 @@ public class MyWarp {
   private static final Logger log = MyWarpLogger.getLogger(MyWarp.class);
 
   private final Platform platform;
-  private final EventWarpManager warpManager;
+  private final WarpManager warpManager;
   private final DataConnection dataConnection;
+  private final EventBus eventBus;
 
   private EconomyManager economyManager;
   private LimitManager limitManager;
   private WarpSignManager warpSignManager;
 
   private TeleportService teleportService;
-
 
   /**
    * Creates an instance of MyWarp, running on the given Platform.
@@ -95,8 +99,10 @@ public class MyWarp {
       throw new InitializationException("Failed to get a connection to the database.", e.getCause());
     }
 
+    eventBus = new EventBus();
+
     // setup the warpManager
-    warpManager = new EventWarpManager(new EventConnectionBridge(dataConnection));
+    warpManager = new EventfulWarpManager(new PersistentWarpManager(new MemoryWarpManager(), dataConnection), eventBus);
 
     DynamicMessages.setControl(platform.getResourceBundleControl());
 
@@ -105,6 +111,13 @@ public class MyWarp {
 
     // setup the rest of the plugin
     setupPlugin();
+
+
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      public void run() {
+        unload();
+      }
+    });
   }
 
   /**
@@ -167,12 +180,16 @@ public class MyWarp {
   }
 
   /**
-   * Unloads MyWarp. Using this method will effectively shutdown MyWarp. If its called, the platform running MyWarp
+   * Unloads MyWarp. Using this method will effectively shutdown MyWarp. If it is called, the platform running MyWarp
    * <b>must</b> unload or deactivate MyWarp too or things will get ugly.
    */
   public void unload() {
     if (dataConnection != null) {
-      dataConnection.close();
+      try {
+        dataConnection.close();
+      } catch (IOException e) {
+        log.warn("Failed to close data connection.", e);
+      }
     }
   }
 
@@ -229,7 +246,7 @@ public class MyWarp {
    *
    * @return the WarpManager
    */
-  public EventWarpManager getWarpManager() {
+  public WarpManager getWarpManager() {
     return warpManager;
   }
 
@@ -268,5 +285,14 @@ public class MyWarp {
    */
   public Game getGame() {
     return platform.getGame();
+  }
+
+  /**
+   * Gets the internal EventBus that keeps track of {@link me.taylorkelly.mywarp.warp.event.WarpEvent}s.
+   *
+   * @return the EventBus
+   */
+  public EventBus getEventBus() {
+    return eventBus;
   }
 }

@@ -214,7 +214,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     if (settings.isDynmapEnabled()) {
       Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
       if (dynmap != null && dynmap.isEnabled()) {
-        new DynmapMarkers(this, (DynmapCommonAPI) dynmap, myWarp.getWarpManager());
+        new DynmapMarkers(this, (DynmapCommonAPI) dynmap, myWarp.getWarpManager(), myWarp.getEventBus());
       } else {
         log.error("Failed to hook into Dynmap. Disabling Dynmap support.");
       }
