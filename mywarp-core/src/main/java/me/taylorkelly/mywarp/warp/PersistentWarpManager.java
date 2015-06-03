@@ -19,9 +19,14 @@
 
 package me.taylorkelly.mywarp.warp;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 import me.taylorkelly.mywarp.LocalEntity;
+import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.dataconnections.DataConnection;
+import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.safety.TeleportService;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -65,6 +70,17 @@ public class PersistentWarpManager extends ForwardingWarpManager {
     connection.removeWarp(warp);
   }
 
+  @Override
+  public void populate(Iterable<Warp> warps) {
+    delegate().populate(Iterables.transform(warps, new Function<Warp, Warp>() {
+
+      @Override
+      public PersistentWarp apply(Warp input) {
+        return new PersistentWarp(input);
+      }
+    }));
+  }
+
   /**
    * A Warp that persists its values using a {@link PersistentWarpManager}.
    */
@@ -89,6 +105,34 @@ public class PersistentWarpManager extends ForwardingWarpManager {
     @Override
     public TeleportService.TeleportStatus teleport(LocalEntity entity) {
       TeleportService.TeleportStatus ret = super.teleport(entity);
+      switch (ret) {
+        case ORIGINAL_LOC:
+        case SAFE_LOC:
+          connection.updateVisits(warp);
+          break;
+        case NONE:
+          break;
+      }
+      return ret;
+    }
+
+    @Override
+    public TeleportService.TeleportStatus teleport(LocalPlayer player) {
+      TeleportService.TeleportStatus ret = super.teleport(player);
+      switch (ret) {
+        case ORIGINAL_LOC:
+        case SAFE_LOC:
+          connection.updateVisits(warp);
+          break;
+        case NONE:
+          break;
+      }
+      return ret;
+    }
+
+    @Override
+    public TeleportService.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
+      TeleportService.TeleportStatus ret = super.teleport(player, fee);
       switch (ret) {
         case ORIGINAL_LOC:
         case SAFE_LOC:
