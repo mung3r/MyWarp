@@ -67,6 +67,7 @@ import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistrati
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolverManager;
 import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
+import me.taylorkelly.mywarp.dataconnections.DataService;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -90,6 +91,7 @@ import org.dynmap.DynmapCommonAPI;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import javax.annotation.Nullable;
@@ -105,6 +107,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   private final File bundleFolder = new File(getDataFolder(), "lang");
   private final ResourceBundle.Control control = new EncodedControl(Charsets.UTF_8);
 
+  private BukkitDataService dataService;
   private GroupResolverManager groupResolverManager;
   private SquirrelIdProfileService profileService;
   private BukkitSettings settings;
@@ -145,6 +148,15 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
 
     // setup the Game
     game = new BukkitGame(new BukkitExecutor(this), adapter);
+
+    try {
+      dataService = new BukkitDataService(settings, getDataFolder());
+    } catch (SQLException e) {
+      log.error("A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be disabled.",
+                e);
+      Bukkit.getPluginManager().disablePlugin(this);
+      return;
+    }
 
     // try to setup the core
     try {
@@ -233,9 +245,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     HandlerList.unregisterAll(this);
     BukkitPermissionsRegistration.INSTANCE.unregisterAll();
 
-    if (myWarp != null) {
-      myWarp.unload();
-    }
+    dataService.shutdown();
   }
 
   @Override
@@ -354,6 +364,11 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   @Override
   public Game getGame() {
     return game;
+  }
+
+  @Override
+  public DataService getDataService() {
+    return dataService;
   }
 
   @Override

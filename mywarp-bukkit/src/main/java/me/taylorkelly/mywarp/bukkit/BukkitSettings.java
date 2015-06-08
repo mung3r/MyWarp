@@ -158,22 +158,38 @@ public class BukkitSettings implements Settings {
     return config.getStringList("warpSigns.identifiers");
   }
 
-  @Override
+  /**
+   * Returns whether MySQL is enabled.
+   *
+   * @return true if MySQL is enabled
+   */
   public boolean isMysqlEnabled() {
     return config.getBoolean("mysql.enabled");
   }
 
-  @Override
+  /**
+   * Gets data source name of the MySQL server.
+   *
+   * @return the MySQL server's dsn
+   */
   public String getMysqlDsn() {
     return config.getString("mysql.dsn");
   }
 
-  @Override
+  /**
+   * Gets the username of the MySQL user.
+   *
+   * @return the username
+   */
   public String getMysqlUsername() {
     return config.getString("mysql.username");
   }
 
-  @Override
+  /**
+   * Gets the password of the MySQL user.
+   *
+   * @return the password
+   */
   public String getMysqlPassword() {
     return config.getString("mysql.password");
   }
@@ -225,10 +241,12 @@ public class BukkitSettings implements Settings {
       List<LocalWorld> worlds = new ArrayList<LocalWorld>();
       for (String name : values.getStringList("affectedWorlds")) {
         World world = Bukkit.getWorld(name);
-        if (world != null) {
-          // REVIEW log error on null?
-          worlds.add(adapter.adapt(world));
+        if (world == null) {
+          log.warn("The world name '{}' configured for the limit '{}' does not match any existing world and will be "
+                   + "ignored.", name, identifier);
+          continue;
         }
+        worlds.add(adapter.adapt(world));
       }
       return new LimitBundle(identifier, values.getInt("totalLimit"), values.getInt("publicLimit"),
                              values.getInt("privateLimit"), worlds, adapter);

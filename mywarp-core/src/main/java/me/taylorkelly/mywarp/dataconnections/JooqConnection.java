@@ -26,9 +26,6 @@ import static me.taylorkelly.mywarp.dataconnections.generated.Tables.WARP_GROUP_
 import static me.taylorkelly.mywarp.dataconnections.generated.Tables.WARP_PLAYER_MAP;
 import static me.taylorkelly.mywarp.dataconnections.generated.Tables.WORLD;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.Player;
 import me.taylorkelly.mywarp.dataconnections.generated.tables.records.GroupRecord;
@@ -45,141 +42,99 @@ import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.Warp.Type;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
 
+import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Record14;
 import org.jooq.Result;
+import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 import org.slf4j.Logger;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 /**
- * The connection to a SQL database via JOOQ.
+ * A connection to an SQL database that relies on <a href="http://www.jooq.org/">JOOQ</a>.
  */
-public class JooqConnection implements DataConnection {
+class JooqConnection implements DataConnection {
 
   private static final Logger log = MyWarpLogger.getLogger(JooqConnection.class);
 
-  private final Connection conn;
   private final DSLContext create;
-  private final ListeningExecutorService executor;
   private final MyWarp myWarp;
 
   /**
-   * Creates this JooqConnection using the given DSLContext with the given connection, using the given executor to run
-   * all tasks.
+   * Creates an instance that uses the given {@code Configuration}.
    *
-   * @param myWarp   the MyWarp instance
-   * @param conn     the Connection to use
-   * @param executor the executor that runs all tasks
-   * @param create   the DSLContext to use
+   * @param myWarp the MyWarp instance
+   * @param config the Configuration
    */
-  protected JooqConnection(MyWarp myWarp, Connection conn, ListeningExecutorService executor, DSLContext create) {
-    this.create = create;
-    this.conn = conn;
-    this.executor = executor;
+  JooqConnection(MyWarp myWarp, Configuration config) {
+    this.create = DSL.using(config);
     this.myWarp = myWarp;
   }
 
   @Override
-  public void close() {
-    executor.shutdown();
-
-    try {
-      if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
-        List<Runnable> droppedTasks = executor.shutdownNow();
-        log.warn("SQL executor did not terminate within 30 seconds and is terminated. {} tasks will not be "
-                 + "executed, recent changes may be missing in the database.", droppedTasks.size());
-      }
-    } catch (InterruptedException e) {
-      log.error("Failed to terminate SQL executor as the process was interrupted.", e);
-    }
-
-    try {
-      if (conn != null && !conn.isClosed()) {
-        conn.close();
-      }
-    } catch (SQLException e) {
-      log.debug("Failed to close SQL connection.", e);
-    }
-
-  }
-
-  @Override
   public void addWarp(final Warp warp) {
-    executor.submit(new Runnable() {
+    WarpRecord record = create.newRecord(WARP);
+    record.setName(warp.getName());
 
-      @Override
-      public void run() {
-        WarpRecord record = create.newRecord(WARP);
-        record.setName(warp.getName());
+    PlayerRecord playerRecord = getOrCreatePlayer(warp.getCreator());
+    record.setPlayerId(playerRecord.getPlayerId());
+    record.setType(warp.getType());
 
-        PlayerRecord playerRecord = getOrCreatePlayer(warp.getCreator());
-        record.setPlayerId(playerRecord.getPlayerId());
-        record.setType(warp.getType());
+    // position
+    Vector3 position = warp.getPosition();
+    record.setX(position.getX());
+    record.setY(position.getY());
+    record.setZ(position.getZ());
 
-        // position
-        Vector3 position = warp.getPosition();
-        record.setX(position.getX());
-        record.setY(position.getY());
-        record.setZ(position.getZ());
+    // rotation
+    EulerDirection rotation = warp.getRotation();
+    record.setPitch(rotation.getPitch());
+    record.setYaw(rotation.getYaw());
 
-        // rotation
-        EulerDirection rotation = warp.getRotation();
-        record.setPitch(rotation.getPitch());
-        record.setYaw(rotation.getYaw());
+    // world
+    WorldRecord worldRecord = getOrCreateWorld(warp.getWorldIdentifier());
+    record.setWorldId(worldRecord.getWorldId());
 
-        // world
-        WorldRecord worldRecord = getOrCreateWorld(warp.getWorldIdentifier());
-        record.setWorldId(worldRecord.getWorldId());
+    record.setCreationDate(warp.getCreationDate());
+    record.setVisits(UInteger.valueOf(warp.getVisits()));
+    record.setWelcomeMessage(warp.getWelcomeMessage());
 
-        record.setCreationDate(warp.getCreationDate());
-        record.setVisits(UInteger.valueOf(warp.getVisits()));
-        record.setWelcomeMessage(warp.getWelcomeMessage());
+    record.store();
 
-        record.store();
+    //invitations...
 
-        //invitations...
+    //...groups
+    List<WarpGroupMapRecord> warpGroupMapRecords = new ArrayList<WarpGroupMapRecord>();
+    for (String groupName : warp.getInvitedGroups()) {
+      GroupRecord groupRecord = getOrCreateGroup(groupName);
 
-        //...groups
-        List<WarpGroupMapRecord> warpGroupMapRecords = new ArrayList<WarpGroupMapRecord>();
-        for (String groupName : warp.getInvitedGroups()) {
-          GroupRecord groupRecord = getOrCreateGroup(groupName);
+      WarpGroupMapRecord warpGroupMapRecord = create.newRecord(WARP_GROUP_MAP);
+      warpGroupMapRecord.setWarpId(record.getWarpId());
+      warpGroupMapRecord.setGroupId(groupRecord.getGroupId());
 
-          WarpGroupMapRecord warpGroupMapRecord = create.newRecord(WARP_GROUP_MAP);
-          warpGroupMapRecord.setWarpId(record.getWarpId());
-          warpGroupMapRecord.setGroupId(groupRecord.getGroupId());
+      warpGroupMapRecords.add(warpGroupMapRecord);
+    }
+    create.batchStore(warpGroupMapRecords).execute();
 
-          warpGroupMapRecords.add(warpGroupMapRecord);
-        }
-        create.batchStore(warpGroupMapRecords).execute();
+    //...players
+    List<WarpPlayerMapRecord> warpPlayerMapRecords = new ArrayList<WarpPlayerMapRecord>();
+    for (Profile profile : warp.getInvitedPlayers()) {
+      PlayerRecord inivtedPlayerRecord = getOrCreatePlayer(profile);
 
-        //...players
-        List<WarpPlayerMapRecord> warpPlayerMapRecords = new ArrayList<WarpPlayerMapRecord>();
-        for (Profile profile : warp.getInvitedPlayers()) {
-          PlayerRecord inivtedPlayerRecord = getOrCreatePlayer(profile);
+      WarpPlayerMapRecord warpPlayerMapRecord = create.newRecord(WARP_PLAYER_MAP);
+      warpPlayerMapRecord.setWarpId(record.getWarpId());
+      warpPlayerMapRecord.setPlayerId(inivtedPlayerRecord.getPlayerId());
 
-          WarpPlayerMapRecord warpPlayerMapRecord = create.newRecord(WARP_PLAYER_MAP);
-          warpPlayerMapRecord.setWarpId(record.getWarpId());
-          warpPlayerMapRecord.setPlayerId(inivtedPlayerRecord.getPlayerId());
+      warpPlayerMapRecords.add(warpPlayerMapRecord);
+    }
 
-          warpPlayerMapRecords.add(warpPlayerMapRecord);
-        }
-
-        create.batchStore(warpPlayerMapRecords).execute();
-      }
-
-    });
-
+    create.batchStore(warpPlayerMapRecords).execute();
   }
 
   /**
@@ -233,257 +188,168 @@ public class JooqConnection implements DataConnection {
 
   @Override
   public void removeWarp(final Warp warp) {
-    executor.submit(new Runnable() {
-
-      @Override
-      public void run() {
-        create.delete(WARP).where(WARP.NAME.eq(warp.getName())).execute();
-      }
-
-    });
+    create.delete(WARP).where(WARP.NAME.eq(warp.getName())).execute();
   }
 
   @Override
-  public ListenableFuture<Collection<Warp>> getWarps() {
-    return executor.submit(new Callable<Collection<Warp>>() {
+  public List<Warp> getWarps() {
+    // Alias for the player-table to represent the warp-creator
+    Player creatorTable = PLAYER.as("c");
 
+    // query the database and group results by name - each map-entry
+    // contains all values for one single warp
+    // @formatter:off
+    Map<String, Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date,
+        UInteger, String, UUID, String>>> groupedResults = create
+            .select(WARP.NAME, creatorTable.UUID, WARP.TYPE, WARP.X, WARP.Y, WARP.Z, WARP.YAW,
+                    WARP.PITCH, WORLD.UUID, WARP.CREATION_DATE, WARP.VISITS,
+                    WARP.WELCOME_MESSAGE, PLAYER.UUID, GROUP.NAME)
+            .from(WARP
+                    .join(WORLD)
+                        .on(WARP.WORLD_ID.eq(WORLD.WORLD_ID))
+                    .join(creatorTable)
+                        .on(WARP.PLAYER_ID.eq(creatorTable.PLAYER_ID))
+                    .leftOuterJoin(WARP_PLAYER_MAP)
+                        .on(WARP_PLAYER_MAP.WARP_ID.eq(WARP.WARP_ID))
+                    .leftOuterJoin(PLAYER)
+                        .on(WARP_PLAYER_MAP.PLAYER_ID.eq(PLAYER.PLAYER_ID)))
+                    .leftOuterJoin(WARP_GROUP_MAP)
+                        .on(WARP_GROUP_MAP.WARP_ID.eq(WARP.WARP_ID))
+                    .leftOuterJoin(GROUP)
+                        .on(WARP_GROUP_MAP.GROUP_ID.eq(GROUP.GROUP_ID))
+            .fetch().intoGroups(WARP.NAME);
+    // @formatter:on
 
-      @Override
-      public Collection<Warp> call() {
-        // Alias for the player-table to represent the warp-creator
-        Player creatorTable = PLAYER.as("c");
+    // create warp-instances from the results
+    List<Warp> ret = new ArrayList<Warp>(groupedResults.size());
+    for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String,
+        UUID, String>> r : groupedResults
+        .values()) {
+      Profile creator = myWarp.getProfileService().getByUniqueId(r.getValue(0, creatorTable.UUID));
 
-        // query the database and group results by name - each map-entry
-        // contains all values for one single warp
-        // @formatter:off
-        Map<String, Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date,
-            UInteger, String, UUID, String>>> groupedResults = create
-                .select(WARP.NAME, creatorTable.UUID, WARP.TYPE, WARP.X, WARP.Y, WARP.Z, WARP.YAW,
-                        WARP.PITCH, WORLD.UUID, WARP.CREATION_DATE, WARP.VISITS,
-                        WARP.WELCOME_MESSAGE, PLAYER.UUID, GROUP.NAME)
-                .from(WARP
-                        .join(WORLD)
-                            .on(WARP.WORLD_ID.eq(WORLD.WORLD_ID))
-                        .join(creatorTable)
-                            .on(WARP.PLAYER_ID.eq(creatorTable.PLAYER_ID))
-                        .leftOuterJoin(WARP_PLAYER_MAP)
-                            .on(WARP_PLAYER_MAP.WARP_ID.eq(WARP.WARP_ID))
-                        .leftOuterJoin(PLAYER)
-                            .on(WARP_PLAYER_MAP.PLAYER_ID.eq(PLAYER.PLAYER_ID)))
-                        .leftOuterJoin(WARP_GROUP_MAP)
-                            .on(WARP_GROUP_MAP.WARP_ID.eq(WARP.WARP_ID))
-                        .leftOuterJoin(GROUP)
-                            .on(WARP_GROUP_MAP.GROUP_ID.eq(GROUP.GROUP_ID))
-                .fetch().intoGroups(WARP.NAME);
-        // @formatter:on
+      Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
+      EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.PITCH), r.getValue(0, WARP.YAW), 0);
 
-        // create warp-instances from the results
-        Collection<Warp> ret = new ArrayList<Warp>(groupedResults.size());
-        for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String,
-            UUID, String>> r : groupedResults
-            .values()) {
-          Profile creator = myWarp.getProfileService().getByUniqueId(r.getValue(0, creatorTable.UUID));
+      WarpBuilder
+          builder =
+          new WarpBuilder(myWarp, r.getValue(0, WARP.NAME), creator, r.getValue(0, WORLD.UUID), position, rotation);
 
-          Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
-          EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.PITCH), r.getValue(0, WARP.YAW), 0);
+      // optional values
+      builder.setType(r.getValue(0, WARP.TYPE));
+      builder.setCreationDate(r.getValue(0, WARP.CREATION_DATE));
+      builder.setVisits(r.getValue(0, WARP.VISITS).intValue());
+      builder.setWelcomeMessage(r.getValue(0, WARP.WELCOME_MESSAGE));
 
-          WarpBuilder
-              builder =
-              new WarpBuilder(myWarp, r.getValue(0, WARP.NAME), creator, r.getValue(0, WORLD.UUID), position, rotation);
-
-          // optional values
-          builder.setType(r.getValue(0, WARP.TYPE));
-          builder.setCreationDate(r.getValue(0, WARP.CREATION_DATE));
-          builder.setVisits(r.getValue(0, WARP.VISITS).intValue());
-          builder.setWelcomeMessage(r.getValue(0, WARP.WELCOME_MESSAGE));
-
-          for (String groupName : r.getValues(GROUP.NAME)) {
-            if (groupName != null) {
-              builder.addInvitedGroup(groupName);
-            }
-          }
-
-          for (UUID inviteeUniqueId : r.getValues(PLAYER.UUID)) {
-            if (inviteeUniqueId != null) {
-              Profile inviteeProfile = myWarp.getProfileService().getByUniqueId(inviteeUniqueId);
-              builder.addInvitedPlayer(inviteeProfile);
-            }
-          }
-
-          ret.add(builder.build());
+      for (String groupName : r.getValues(GROUP.NAME)) {
+        if (groupName != null) {
+          builder.addInvitedGroup(groupName);
         }
-
-        return ret;
       }
 
-    });
+      for (UUID inviteeUniqueId : r.getValues(PLAYER.UUID)) {
+        if (inviteeUniqueId != null) {
+          Profile inviteeProfile = myWarp.getProfileService().getByUniqueId(inviteeUniqueId);
+          builder.addInvitedPlayer(inviteeProfile);
+        }
+      }
 
+      ret.add(builder.build());
+    }
+
+    return ret;
   }
 
   @Override
   public void inviteGroup(final Warp warp, final String groupId) {
-    executor.submit(new Runnable() {
+    WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
+    GroupRecord groupRecord = getOrCreateGroup(groupId);
 
-      @Override
-      public void run() {
-        WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
-        GroupRecord groupRecord = getOrCreateGroup(groupId);
-
-        create.insertInto(WARP_GROUP_MAP).set(WARP_GROUP_MAP.WARP_ID, warpRecord.getWarpId())
-            .set(WARP_GROUP_MAP.GROUP_ID, groupRecord.getGroupId()).execute();
-      }
-
-    });
-
+    create.insertInto(WARP_GROUP_MAP).set(WARP_GROUP_MAP.WARP_ID, warpRecord.getWarpId())
+        .set(WARP_GROUP_MAP.GROUP_ID, groupRecord.getGroupId()).execute();
   }
 
   @Override
   public void invitePlayer(final Warp warp, final Profile profile) {
-    executor.submit(new Runnable() {
+    WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
+    PlayerRecord playerRecord = getOrCreatePlayer(profile);
 
-      @Override
-      public void run() {
-        WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
-        PlayerRecord playerRecord = getOrCreatePlayer(profile);
-
-        create.insertInto(WARP_PLAYER_MAP).set(WARP_PLAYER_MAP.WARP_ID, warpRecord.getWarpId())
-            .set(WARP_PLAYER_MAP.PLAYER_ID, playerRecord.getPlayerId()).execute();
-      }
-
-    });
-
+    create.insertInto(WARP_PLAYER_MAP).set(WARP_PLAYER_MAP.WARP_ID, warpRecord.getWarpId())
+        .set(WARP_PLAYER_MAP.PLAYER_ID, playerRecord.getPlayerId()).execute();
   }
 
   @Override
   public void uninviteGroup(final Warp warp, final String groupId) {
-    executor.submit(new Runnable() {
+    WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
+    GroupRecord groupRecord = getOrCreateGroup(groupId);
 
-      @Override
-      public void run() {
-        WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
-        GroupRecord groupRecord = getOrCreateGroup(groupId);
-
-        create.delete(WARP_GROUP_MAP).where(
-            WARP_GROUP_MAP.WARP_ID.eq(warpRecord.getWarpId()).and(WARP_GROUP_MAP.GROUP_ID.eq(groupRecord.getGroupId())))
-            .execute();
-      }
-
-    });
-
+    create.delete(WARP_GROUP_MAP).where(
+        WARP_GROUP_MAP.WARP_ID.eq(warpRecord.getWarpId()).and(WARP_GROUP_MAP.GROUP_ID.eq(groupRecord.getGroupId())))
+        .execute();
   }
 
   @Override
   public void uninvitePlayer(final Warp warp, final Profile profile) {
-    executor.submit(new Runnable() {
+    WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
+    PlayerRecord playerRecord = getOrCreatePlayer(profile);
 
-      @Override
-      public void run() {
-        WarpRecord warpRecord = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
-        PlayerRecord playerRecord = getOrCreatePlayer(profile);
-
-        create.delete(WARP_PLAYER_MAP).where(WARP_PLAYER_MAP.WARP_ID.eq(warpRecord.getWarpId())
-                                                 .and(WARP_PLAYER_MAP.PLAYER_ID.eq(playerRecord.getPlayerId())))
-            .execute();
-      }
-
-    });
-
+    create.delete(WARP_PLAYER_MAP).where(WARP_PLAYER_MAP.WARP_ID.eq(warpRecord.getWarpId())
+                                             .and(WARP_PLAYER_MAP.PLAYER_ID.eq(playerRecord.getPlayerId()))).execute();
   }
 
   @Override
   public void updateCreator(final Warp warp) {
-    executor.submit(new Runnable() {
+    WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
-      @Override
-      public void run() {
-        WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
+    PlayerRecord playerRecord = getOrCreatePlayer(warp.getCreator());
+    record.setPlayerId(playerRecord.getPlayerId());
 
-        PlayerRecord playerRecord = getOrCreatePlayer(warp.getCreator());
-        record.setPlayerId(playerRecord.getPlayerId());
-
-        record.update();
-      }
-
-    });
-
+    record.update();
   }
 
   @Override
   public void updateLocation(final Warp warp) {
-    executor.submit(new Runnable() {
+    WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
-      @Override
-      public void run() {
-        WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
+    // position
+    Vector3 position = warp.getPosition();
+    record.setX(position.getX());
+    record.setY(position.getY());
+    record.setZ(position.getZ());
 
-        // position
-        Vector3 position = warp.getPosition();
-        record.setX(position.getX());
-        record.setY(position.getY());
-        record.setZ(position.getZ());
+    // rotation
+    EulerDirection rotation = warp.getRotation();
+    record.setPitch(rotation.getPitch());
+    record.setYaw(rotation.getYaw());
 
-        // rotation
-        EulerDirection rotation = warp.getRotation();
-        record.setPitch(rotation.getPitch());
-        record.setYaw(rotation.getYaw());
+    // world
+    WorldRecord worldRecord = getOrCreateWorld(warp.getWorldIdentifier());
+    record.setWorldId(worldRecord.getWorldId());
 
-        // world
-        WorldRecord worldRecord = getOrCreateWorld(warp.getWorldIdentifier());
-        record.setWorldId(worldRecord.getWorldId());
-
-        record.update();
-      }
-
-    });
-
+    record.update();
   }
 
   @Override
   public void updateType(final Warp warp) {
-    executor.submit(new Runnable() {
+    WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
-      @Override
-      public void run() {
-        WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
-
-        record.setType(warp.getType());
-        record.update();
-      }
-
-    });
-
+    record.setType(warp.getType());
+    record.update();
   }
 
   @Override
   public void updateVisits(final Warp warp) {
-    executor.submit(new Runnable() {
+    WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
-      @Override
-      public void run() {
-        WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
-
-        record.setVisits(UInteger.valueOf(warp.getVisits()));
-        record.update();
-      }
-
-    });
-
+    record.setVisits(UInteger.valueOf(warp.getVisits()));
+    record.update();
   }
 
   @Override
   public void updateWelcomeMessage(final Warp warp) {
-    executor.submit(new Runnable() {
+    WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
 
-      @Override
-      public void run() {
-        WarpRecord record = create.fetchOne(WARP, WARP.NAME.eq(warp.getName()));
-
-        record.setWelcomeMessage(warp.getWelcomeMessage());
-        record.update();
-      }
-
-    });
-
+    record.setWelcomeMessage(warp.getWelcomeMessage());
+    record.update();
   }
 
 }

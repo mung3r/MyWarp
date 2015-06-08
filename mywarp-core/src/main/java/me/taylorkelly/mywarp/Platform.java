@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp;
 
+import me.taylorkelly.mywarp.dataconnections.DataService;
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.limits.LimitProvider;
@@ -51,64 +52,71 @@ public interface Platform {
   /**
    * Gets the {@link Settings} as implemented by this Platform.
    *
-   * @return the Settings
+   * @return the {@code Settings}
    */
   Settings getSettings();
 
   /**
    * Gets the {@link java.util.ResourceBundle.Control} as implemented by this Platform.
    *
-   * @return the ResourceBundle.Control
+   * @return the {@code ResourceBundle.Control}
    */
   ResourceBundle.Control getResourceBundleControl();
 
   /**
    * Gets the {@link Game} as implemented by this Platform.
    *
-   * @return the Game
+   * @return the {@code Game}
    */
   Game getGame();
 
   /**
+   * Gets the {@link DataService} as implemented by this Platform.
+   *
+   * @return the {@code DataService}
+   */
+  DataService getDataService();
+
+  /**
    * Gets the {@link ProfileService} as implemented by this Platform.
    *
-   * @return the ProfileService
+   * @return the {@code ProfileService}
    */
   ProfileService getProfileService();
 
   /**
    * Gets the {@link EconomyService} as implemented by this Platform.
    *
-   * @return the EconomyService
-   * @throws java.lang.UnsupportedOperationException if the Platform has no support for an economy
+   * @return the {@code EconomyService}
+   * @throws {@code java.lang.UnsupportedOperationException} if the Platform has no support for an economy
    */
   EconomyService getEconomyService();
 
   /**
    * Gets the {@link TimerService} as implemented by this Platform.
    *
-   * @return the TimerService
+   * @return the {@code TimerService}
    */
   TimerService getTimerService();
 
   /**
    * Gets the {@link FeeProvider} as implemented by this Platform.
    *
-   * @return the FeeProvider
+   * @return the {@code FeeProvider}
    */
   FeeProvider getFeeProvider();
 
   /**
    * Gets the {@link LimitProvider} as implemented by this Platform.
    *
-   * @return the LimitProvider
+   * @return the {@code LimitProvider}
    */
   LimitProvider getLimitProvider();
 
   /**
    * Gets the {@link DurationProvider} as implemented by this Platform.
    *
-   * @return the DurationProvider
+   * @return the {@code DurationProvider}
    */
   DurationProvider getDurationProvider();
 

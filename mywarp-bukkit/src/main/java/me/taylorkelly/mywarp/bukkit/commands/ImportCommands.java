@@ -19,10 +19,11 @@
 
 package me.taylorkelly.mywarp.bukkit.commands;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
@@ -30,12 +31,12 @@ import com.sk89q.intake.Require;
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.dataconnections.MySqlConnection;
-import me.taylorkelly.mywarp.dataconnections.SqLiteConnection;
-import me.taylorkelly.mywarp.dataconnections.migrators.DataConnectionMigrator;
-import me.taylorkelly.mywarp.dataconnections.migrators.DataMigrator;
-import me.taylorkelly.mywarp.dataconnections.migrators.LegacyMySqlMigrator;
-import me.taylorkelly.mywarp.dataconnections.migrators.LegacySqLiteMigrator;
+import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
+import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
+import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
+import me.taylorkelly.mywarp.dataconnections.DataConnectionFactory;
+import me.taylorkelly.mywarp.dataconnections.importer.LegacyWarpSource;
+import me.taylorkelly.mywarp.dataconnections.importer.WarpSource;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -44,10 +45,16 @@ import me.taylorkelly.mywarp.warp.WarpManager;
 import org.bukkit.ChatColor;
 
 import java.io.File;
-import java.util.Collection;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Bundles commands used to import Warps from an external source.
@@ -78,7 +85,14 @@ public class ImportCommands {
   @Command(aliases = {"sqlite"}, desc = "import.sqlite.description", help = "import.sqlite.help")
   @Require(IMPORT_PERMISSION)
   public void sqlite(Actor actor, File database) throws CommandException {
-    migrate(actor, new DataConnectionMigrator(SqLiteConnection.getConnection(myWarp, database, false)));
+    try {
+      SingleConnectionDataSource dataSource = DataSourceFactory.createSqliteSingleConnectionDataSource(database);
+      start(actor, DataConnectionFactory.create(myWarp, dataSource), dataSource);
+    } catch (DataConnectionException e) {
+      throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
+    } catch (SQLException e) {
+      throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
+    }
   }
 
   /**
@@ -91,8 +105,17 @@ public class ImportCommands {
    */
   @Command(aliases = {"mysql"}, desc = "import.mysql.description", help = "import.mysql.help")
   @Require(IMPORT_PERMISSION)
-  public void mysql(Actor actor, String dsn, String user, String password) {
-    migrate(actor, new DataConnectionMigrator(MySqlConnection.getConnection(myWarp, dsn, user, password, false)));
+  public void mysql(Actor actor, String dsn, String user, String password) throws CommandException {
+    try {
+      SingleConnectionDataSource
+          dataSource =
+          DataSourceFactory.createMySqlSingleConnectionDataSource(dsn, user, password);
+      start(actor, DataConnectionFactory.create(myWarp, dataSource), dataSource);
+    } catch (DataConnectionException e) {
+      throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
+    } catch (SQLException e) {
+      throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
+    }
   }
 
   /**
@@ -105,7 +128,12 @@ public class ImportCommands {
   @Command(aliases = {"pre3-sqlite"}, desc = "import.pre3-sqlite.description", help = "import.pre3-sqlite.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Sqlite(Actor actor, File database) throws CommandException {
-    migrate(actor, new LegacySqLiteMigrator(myWarp, getWorldSnapshot(), database));
+    try {
+      SingleConnectionDataSource dataSource = DataSourceFactory.createSqliteSingleConnectionDataSource(database);
+      start(actor, new LegacyWarpSource(dataSource, "warpTable", myWarp, getWorldSnapshot()), dataSource);
+    } catch (SQLException e) {
+      throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
+    }
   }
 
   /**
@@ -119,32 +147,50 @@ public class ImportCommands {
    */
   @Command(aliases = {"pre3-mysql"}, desc = "import.pre3-mysql.description", help = "import.pre3-mysql.help")
   @Require(IMPORT_PERMISSION)
-  public void pre3Mysql(Actor actor, String dsn, String user, String password, String tableName) {
-    migrate(actor, new LegacyMySqlMigrator(myWarp, getWorldSnapshot(), dsn, user, password, tableName));
+  public void pre3Mysql(Actor actor, String dsn, String user, String password, String tableName)
+      throws CommandException {
+    try {
+      SingleConnectionDataSource
+          dataSource =
+          DataSourceFactory.createMySqlSingleConnectionDataSource(dsn, user, password);
+      start(actor, new LegacyWarpSource(dataSource, tableName, myWarp, getWorldSnapshot()), dataSource);
+    } catch (SQLException e) {
+      throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
+    }
   }
 
   /**
-   * Migrates Warps from the given DataMigrator.
+   * Starts the import from the given {@code WarpSource}.
    *
-   * @param initiator the Actor who initiated the migration
-   * @param migrator  the DataMigrator
+   * @param initiator        the {@code Actor} who initated the import
+   * @param warpSource       the {@code WarpSource} to import from
+   * @param importDataSource the {@code DataSource} used to import
    */
-  private void migrate(final Actor initiator, DataMigrator migrator) {
+  private void start(final Actor initiator, final WarpSource warpSource,
+                     final SingleConnectionDataSource importDataSource) {
     initiator.sendMessage(ChatColor.AQUA + MESSAGES.getString("import.started"));
 
-    ListenableFuture<Collection<Warp>> futureWarps = migrator.getWarps();
+    final ListeningExecutorService
+        executorService =
+        MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
 
-    // The callback is called when the warps are loaded. It is executed in
-    // the server-thread.
-    Futures.addCallback(futureWarps, new FutureCallback<Collection<Warp>>() {
+    ListenableFuture<List<Warp>> futureWarps = executorService.submit(new Callable<List<Warp>>() {
+      @Override
+      public List<Warp> call() throws Exception {
+        return warpSource.getWarps();
+      }
+    });
+
+    Futures.addCallback(futureWarps, new FutureCallback<List<Warp>>() {
 
       @Override
       public void onFailure(final Throwable throwable) {
         initiator.sendError(MESSAGES.getString("import.no-connection", throwable.getMessage()));
+        close(executorService, importDataSource);
       }
 
       @Override
-      public void onSuccess(final Collection<Warp> warps) {
+      public void onSuccess(final List<Warp> warps) {
         Set<Warp> notImportedWarps = new HashSet<Warp>();
         WarpManager warpManager = myWarp.getWarpManager();
 
@@ -166,6 +212,7 @@ public class ImportCommands {
           initiator.sendError(CommandUtils.joinWarps(notImportedWarps));
         }
 
+        close(executorService, importDataSource);
       }
 
     }, myWarp.getGame().getExecutor());
@@ -176,12 +223,24 @@ public class ImportCommands {
    *
    * @return a mapping of the names to uniqueIds from all worlds
    */
-  private ImmutableMap<String, UUID> getWorldSnapshot() {
-    ImmutableMap.Builder<String, UUID> builder = ImmutableMap.builder();
+  private Map<String, UUID> getWorldSnapshot() {
+    Map<String, UUID> snapshot = new HashMap<String, UUID>();
     for (LocalWorld world : myWarp.getGame().getWorlds()) {
-      builder.put(world.getName(), world.getUniqueId());
+      snapshot.put(world.getName(), world.getUniqueId());
     }
-    return builder.build();
+    return snapshot;
+  }
+
+  /**
+   * Closes the given {@code ExecutorService} and {@code SingleConnectionDataSource} in this order.
+   *
+   * @param executorService the {@code ExecutorService} to close
+   * @param dataSource      the {@code SingleConnectionDataSource} to close
+   */
+  private void close(ExecutorService executorService, SingleConnectionDataSource dataSource) {
+    //REVIEW block until shutdown?
+    executorService.shutdown();
+    dataSource.close();
   }
 
 }

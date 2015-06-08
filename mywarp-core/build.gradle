@@ -1,6 +1,6 @@
 dependencies {
-    compile 'org.jooq:jooq:3.5.4'
-    //The SQLite driver bundled by Bukkit is not compatible with 3.1
+    compile 'org.jooq:jooq:3.6.2'
+    //The SQLite driver bundled by Bukkit is not compatible with 3.1+
     compile 'org.flywaydb:flyway-core:3.0'
     // Bukkit only bundles 2.3
     compile 'commons-lang:commons-lang:2.3'
@@ -8,6 +8,25 @@ dependencies {
     compile 'com.google.guava:guava:10.0.1'
     compile 'org.slf4j:slf4j-api:1.7.10'
 }
+
+/*
+ * Copyright (C) 2011 - 2015, MyWarp team and contributors
+ *
+ * This file is part of MyWarp.
+ *
+ * MyWarp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MyWarp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 // create the default fallback file (for all localizations) from the english localization
 task copyLocalizations(type: Copy) {

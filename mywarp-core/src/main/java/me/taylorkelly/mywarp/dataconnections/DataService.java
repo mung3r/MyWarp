@@ -17,24 +17,30 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections.migrators;
+package me.taylorkelly.mywarp.dataconnections;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
 
-import me.taylorkelly.mywarp.warp.Warp;
-
-import java.util.Collection;
+import javax.sql.DataSource;
 
 /**
- * A data migrator loads Warps from a read-only data source.
+ * A service that provides access to a SQL database as well as a custom {@code ExecutorService} that handles database
+ * communication.
  */
-public interface DataMigrator {
+public interface DataService {
 
   /**
-   * Gets all warps from the underlying data-source and cleans up afterwards.
+   * Gets a {@code DataSource} that provides a connection to an SQL database.
    *
-   * @return a ListanbleFuture containing a Collection of all loaded warps.
+   * @return a {@code DataSource}
    */
-  ListenableFuture<Collection<Warp>> getWarps();
+  DataSource getDataSource();
+
+  /**
+   * Gets a {@code ListeningExecutorService} that should be used to communicate with the database.
+   *
+   * @return a {@code ListeningExecutorService}
+   */
+  ListeningExecutorService getExecutorService();
 
 }

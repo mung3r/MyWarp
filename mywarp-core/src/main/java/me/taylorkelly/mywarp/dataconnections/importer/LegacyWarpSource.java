@@ -17,10 +17,12 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections.migrators;
+package me.taylorkelly.mywarp.dataconnections.importer;
 
-import static org.jooq.impl.DSL.fieldByName;
-import static org.jooq.impl.DSL.tableByName;
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.table;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
@@ -28,7 +30,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -36,68 +37,86 @@ import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
 
-import org.jooq.DSLContext;
+import org.jooq.Configuration;
 import org.jooq.Record13;
 import org.jooq.Result;
+import org.jooq.SQLDialect;
+import org.jooq.conf.RenderNameStyle;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.tools.jdbc.JDBCUtils;
 import org.slf4j.Logger;
 
-import java.util.Collection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-/**
- * An abstract migrator for legacy (pre 3.0) database layouts. Running the migration will convert player names to UUIDs
- * and world names to world UUIDs.
- */
-public abstract class LegacyMigrator {
+import javax.sql.DataSource;
 
-  private static final Logger log = MyWarpLogger.getLogger(LegacyMigrator.class);
+/**
+ * A {@link WarpSource} for databases with a legacy scheme (pre 3.0).
+ * <p>The legacy database stores player and world names as strings, instead of using unique IDs. Calling {@link
+ * #getWarps()} will convert both. Player names are accuired by calling the configured {@link
+ * me.taylorkelly.mywarp.util.profile.ProfileService}, witch may result in a blocking call.</p>
+ */
+public class LegacyWarpSource implements WarpSource {
+
+  private static final Logger log = MyWarpLogger.getLogger(LegacyWarpSource.class);
 
   private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
   private final MyWarp myWarp;
   private final ImmutableMap<String, UUID> worldsSnapshot;
+  private final Configuration configuration;
+  private final String tableName;
 
   /**
    * Creates an instance.
    *
    * @param myWarp         the MyWarp instance
    * @param worldsSnapshot a mapping of world names to uniqueIds
+   * @throws SQLException on a database error
    */
-  protected LegacyMigrator(MyWarp myWarp, ImmutableMap<String, UUID> worldsSnapshot) {
+  public LegacyWarpSource(DataSource dataSource, String tableName, MyWarp myWarp, Map<String, UUID> worldsSnapshot)
+      throws SQLException {
+    SQLDialect dialect = JDBCUtils.dialect(dataSource.getConnection());
+    checkArgument(dialect.equals(SQLDialect.MYSQL) || dialect.equals(SQLDialect.SQLITE));
+
     this.myWarp = myWarp;
-    this.worldsSnapshot = worldsSnapshot;
+    this.worldsSnapshot = ImmutableMap.copyOf(worldsSnapshot);
+
+    this.configuration =
+        new DefaultConfiguration().set(dialect).set(new Settings().withRenderNameStyle(RenderNameStyle.QUOTED))
+            .set(dataSource);
+    this.tableName = tableName;
   }
 
-  /**
-   * Migrates warps from the given DSLContext looking inside the table of the given name.
-   *
-   * @param create    the DSLContext that provides database access
-   * @param tableName the name of the table that contains the data
-   * @return a collection of warps migrated from the given data source
-   * @throws DataConnectionException if the player UUID conversion fails
-   */
-  public Collection<Warp> migrateLegacyWarps(DSLContext create, String tableName) throws DataConnectionException {
+  @Override
+  public List<Warp> getWarps() {
+
     // @formatter:off
     Result<Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String,
         String>>
         results =
-        create.select(fieldByName(String.class, "name"), //1
-                      fieldByName(String.class, "creator"), //2
-                      fieldByName(Boolean.class, "publicAll"), //3
-                      fieldByName(Double.class, "x"), //4
-                      fieldByName(Double.class, "y"), //5
-                      fieldByName(Double.class, "z"), //6
-                      fieldByName(Float.class, "yaw"), //7
-                      fieldByName(Float.class, "pitch"), //8
-                      fieldByName(String.class, "world"), //9
-                      fieldByName(Integer.class, "visits"), //10
-                      fieldByName(String.class, "welcomeMessage"), //11
-                      fieldByName(String.class, "permissions"), //12
-                      fieldByName(String.class, "groupPermissions")) //13
-            .from(tableByName(tableName)).fetch();
+        DSL.using(configuration).select(field(name("name"), String.class), //1
+                      field(name("creator"), String.class), //2
+                      field(name("publicAll"), Boolean.class), //3
+                      field(name("x"), Double.class), //4
+                      field(name("y"), Double.class), //5
+                      field(name("z"), Double.class), //6
+                      field(name("yaw"), Float.class), //7
+                      field(name("pitch"), Float.class), //8
+                      field(name("world"), String.class), //9
+                      field(name("visits"), Integer.class), //10
+                      field(name("welcomeMessage"), String.class), //11
+                      field(name("permissions"), String.class), //12
+                      field(name("groupPermissions"), String.class)) //13
+            .from(table(tableName)).fetch();
     // @formatter:on
     log.info("{} entries found.", results.size());
 
@@ -125,7 +144,7 @@ public abstract class LegacyMigrator {
       profileLookup.put(name.get(), profile);
     }
 
-    Set<Warp> ret = new HashSet<Warp>(results.size());
+    List<Warp> ret = new ArrayList<Warp>(results.size());
 
     for (Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String,
         String> r : results) {
@@ -178,5 +197,4 @@ public abstract class LegacyMigrator {
     log.info("{} warps exported from source.", ret.size());
     return ret;
   }
-
 }
