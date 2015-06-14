@@ -33,10 +33,10 @@ import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
-import me.taylorkelly.mywarp.dataconnections.DataConnectionException;
-import me.taylorkelly.mywarp.dataconnections.DataConnectionFactory;
-import me.taylorkelly.mywarp.dataconnections.importer.LegacyWarpSource;
-import me.taylorkelly.mywarp.dataconnections.importer.WarpSource;
+import me.taylorkelly.mywarp.storage.StorageInitializationException;
+import me.taylorkelly.mywarp.storage.WarpStorageFactory;
+import me.taylorkelly.mywarp.storage.source.LegacyWarpSource;
+import me.taylorkelly.mywarp.storage.source.WarpSource;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -87,8 +87,8 @@ public class ImportCommands {
   public void sqlite(Actor actor, File database) throws CommandException {
     try {
       SingleConnectionDataSource dataSource = DataSourceFactory.createSqliteSingleConnectionDataSource(database);
-      start(actor, DataConnectionFactory.create(myWarp, dataSource), dataSource);
-    } catch (DataConnectionException e) {
+      start(actor, WarpStorageFactory.create(myWarp, dataSource), dataSource);
+    } catch (StorageInitializationException e) {
       throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
     } catch (SQLException e) {
       throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
@@ -110,8 +110,8 @@ public class ImportCommands {
       SingleConnectionDataSource
           dataSource =
           DataSourceFactory.createMySqlSingleConnectionDataSource(dsn, user, password);
-      start(actor, DataConnectionFactory.create(myWarp, dataSource), dataSource);
-    } catch (DataConnectionException e) {
+      start(actor, WarpStorageFactory.create(myWarp, dataSource), dataSource);
+    } catch (StorageInitializationException e) {
       throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
     } catch (SQLException e) {
       throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));

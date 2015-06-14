@@ -17,17 +17,17 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections;
+package me.taylorkelly.mywarp.storage;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 
 import javax.sql.DataSource;
 
 /**
- * A service that provides access to a SQL database as well as a custom {@code ExecutorService} that handles database
- * communication.
+ * A service that provides access to a relational database as well as a custom {@code ExecutorService} that handles
+ * database communication.
  */
-public interface DataService {
+public interface RelationalDataService {
 
   /**
    * Gets a {@code DataSource} that provides a connection to an SQL database.

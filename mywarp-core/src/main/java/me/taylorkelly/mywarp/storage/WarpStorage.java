@@ -17,9 +17,9 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections;
+package me.taylorkelly.mywarp.storage;
 
-import me.taylorkelly.mywarp.dataconnections.importer.WarpSource;
+import me.taylorkelly.mywarp.storage.source.WarpSource;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * A connection to a data storage, e.g. a rational database.
  */
-public interface DataConnection extends WarpSource {
+public interface WarpStorage extends WarpSource {
 
   /**
    * Adds the given {@code Warp} to the underlying data storage.

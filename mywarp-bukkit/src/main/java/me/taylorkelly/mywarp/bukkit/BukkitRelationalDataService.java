@@ -24,7 +24,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
-import me.taylorkelly.mywarp.dataconnections.DataService;
+import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 
 import org.slf4j.Logger;
@@ -38,15 +38,16 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 /**
- * A {@link DataService} implementation for Bukkit that connects to either an SQLite or MySQL database. If {@link
+ * A {@link RelationalDataService} implementation for Bukkit that connects to either an SQLite or MySQL database. If
+ * {@link
  * BukkitSettings#isMysqlEnabled()} is set, MySQL is used. Otherwise an SQLite database is created in
  * MyWarp's plugin directory.</p>
  * <p>Both databases are accessed via a single connection using a  {@link SingleConnectionDataSource}. Since this is
  * not thread-safe, {@link #getExecutorService()} retruns a single thread executor.</p>
  */
-public class BukkitDataService implements DataService {
+public class BukkitRelationalDataService implements RelationalDataService {
 
-  private static final Logger log = MyWarpLogger.getLogger(BukkitDataService.class);
+  private static final Logger log = MyWarpLogger.getLogger(BukkitRelationalDataService.class);
 
   private final SingleConnectionDataSource dataSource;
   private final ListeningExecutorService executorService;
@@ -58,7 +59,7 @@ public class BukkitDataService implements DataService {
    * @param pluginFolder the plugin folder that contains the SQLite database
    * @throws SQLException on a database error
    */
-  public BukkitDataService(BukkitSettings settings, File pluginFolder) throws SQLException {
+  public BukkitRelationalDataService(BukkitSettings settings, File pluginFolder) throws SQLException {
     if (settings.isMysqlEnabled()) {
       this.dataSource =
           DataSourceFactory.createMySqlSingleConnectionDataSource(settings.getMysqlDsn(), settings.getMysqlUsername(),

@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections;
+package me.taylorkelly.mywarp.storage;
 
 import com.google.common.collect.ForwardingObject;
 
@@ -27,15 +27,15 @@ import me.taylorkelly.mywarp.warp.Warp;
 import java.util.List;
 
 /**
- * A DataConnection that forwards all its method calls to another DataConnection. Subclasses should override one or
+ * A WarpStorage that forwards all its method calls to another WarpStorage. Subclasses should override one or
  * more
- * methods to modify the behavior of the backing DataConnection as desired per the <a
+ * methods to modify the behavior of the backing WarpStorage as desired per the <a
  * href="http://en.wikipedia.org/wiki/Decorator_pattern">decorator pattern</a>.
  */
-abstract class ForwardingDataConnection extends ForwardingObject implements DataConnection {
+abstract class ForwardingWarpStorage extends ForwardingObject implements WarpStorage {
 
   @Override
-  protected abstract DataConnection delegate();
+  protected abstract WarpStorage delegate();
 
   @Override
   public void addWarp(Warp warp) {

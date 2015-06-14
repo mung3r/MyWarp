@@ -17,14 +17,14 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections;
+package me.taylorkelly.mywarp.storage;
 
-import static me.taylorkelly.mywarp.dataconnections.generated.Tables.GROUP;
-import static me.taylorkelly.mywarp.dataconnections.generated.Tables.PLAYER;
-import static me.taylorkelly.mywarp.dataconnections.generated.Tables.WARP;
-import static me.taylorkelly.mywarp.dataconnections.generated.Tables.WARP_GROUP_MAP;
-import static me.taylorkelly.mywarp.dataconnections.generated.Tables.WARP_PLAYER_MAP;
-import static me.taylorkelly.mywarp.dataconnections.generated.Tables.WORLD;
+import static me.taylorkelly.mywarp.storage.generated.Tables.GROUP;
+import static me.taylorkelly.mywarp.storage.generated.Tables.PLAYER;
+import static me.taylorkelly.mywarp.storage.generated.Tables.WARP;
+import static me.taylorkelly.mywarp.storage.generated.Tables.WARP_GROUP_MAP;
+import static me.taylorkelly.mywarp.storage.generated.Tables.WARP_PLAYER_MAP;
+import static me.taylorkelly.mywarp.storage.generated.Tables.WORLD;
 import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.selectOne;
 import static org.jooq.impl.DSL.val;
@@ -33,7 +33,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.dataconnections.generated.tables.Player;
+import me.taylorkelly.mywarp.storage.generated.tables.Player;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -61,10 +61,11 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * A connection to an SQL database that relies on <a href="http://www.jooq.org/">JOOQ</a>.
- * <p>This class is fully thread-safe.</p>
+ * A storage implementation that stores warps in a relational database.
+ * <p>This implementation is guaranteed to work with SQLite and MySQL, but might also work on other relational database
+ * management systems.</p>
  */
-class JooqConnection implements DataConnection {
+class RelationalWarpStorage implements WarpStorage {
 
   private final MyWarp myWarp;
   private final Configuration configuration;
@@ -75,7 +76,7 @@ class JooqConnection implements DataConnection {
    * @param myWarp        the MyWarp instance
    * @param configuration the Configuration
    */
-  JooqConnection(MyWarp myWarp, Configuration configuration) {
+  RelationalWarpStorage(MyWarp myWarp, Configuration configuration) {
     this.myWarp = myWarp;
     this.configuration = configuration;
   }

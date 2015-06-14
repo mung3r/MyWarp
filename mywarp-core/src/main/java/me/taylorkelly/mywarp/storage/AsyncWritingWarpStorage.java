@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections;
+package me.taylorkelly.mywarp.storage;
 
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -26,29 +26,29 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- * A {@code DataConnection} that works on top of another {@code DataConnection} and executes every <b>writing</b> task
- * asynchronous within a specified {@link Executor}.
+ * A {@code WarpStorage} that works on top of another {@code WarpStorage} and executes every <b>writing</b> task
+ * asynchronous on a specified {@link Executor}.
  */
-public class AsyncWritingDataConnection extends ForwardingDataConnection {
+public class AsyncWritingWarpStorage extends ForwardingWarpStorage {
 
-  private final DataConnection dataConnection;
+  private final WarpStorage warpStorage;
   private final Executor executor;
 
   /**
-   * Creates an instance. Every call is delegated to the given {@code DataConnection}, writing methods are executed in
+   * Creates an instance. Every call is delegated to the given {@code WarpStorage}, writing methods are executed in
    * the given {@code Executor}, reading methods still run in the thread that calls the method.
    *
-   * @param dataConnection the {@code DataConnection} whose writing methods should be executed asynchronous
+   * @param warpStorage the {@code WarpStorage} whose writing methods should be executed asynchronous
    * @param executor       the {@code Executor} that executes writing methods
    */
-  public AsyncWritingDataConnection(DataConnection dataConnection, Executor executor) {
-    this.dataConnection = dataConnection;
+  public AsyncWritingWarpStorage(WarpStorage warpStorage, Executor executor) {
+    this.warpStorage = warpStorage;
     this.executor = executor;
   }
 
   @Override
-  protected DataConnection delegate() {
-    return dataConnection;
+  protected WarpStorage delegate() {
+    return warpStorage;
   }
 
   @Override

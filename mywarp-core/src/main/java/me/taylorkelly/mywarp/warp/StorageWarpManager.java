@@ -25,29 +25,29 @@ import com.google.common.collect.Iterables;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.dataconnections.DataConnection;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.safety.TeleportService;
+import me.taylorkelly.mywarp.storage.WarpStorage;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
- * A WarpManager that persists all warps on it to a {@link DataConnection}. Calls are all delegated to an
- * underling WarpManager as required by the decorator pattern, persisting is implemented on top of it.
+ * A WarpManager that stores all warps on it to a {@link WarpStorage}. Calls are all delegated to an
+ * underling WarpManager as required by the decorator pattern, storage is implemented on top of it.
  */
-public class PersistentWarpManager extends ForwardingWarpManager {
+public class StorageWarpManager extends ForwardingWarpManager {
 
   private final WarpManager warpManager;
-  private final DataConnection connection;
+  private final WarpStorage connection;
 
   /**
    * Creates an instance that works on top the given WarpManager.
    *
    * @param warpManager the WarpManager
-   * @param connection  the DataConnection
+   * @param connection  the WarpStorage
    */
-  public PersistentWarpManager(WarpManager warpManager, DataConnection connection) {
+  public StorageWarpManager(WarpManager warpManager, WarpStorage connection) {
     this.warpManager = warpManager;
     this.connection = connection;
   }
@@ -82,7 +82,7 @@ public class PersistentWarpManager extends ForwardingWarpManager {
   }
 
   /**
-   * A Warp that persists its values using a {@link PersistentWarpManager}.
+   * A Warp that persists its values using a {@link StorageWarpManager}.
    */
   private class PersistentWarp extends ForwardingWarp {
 

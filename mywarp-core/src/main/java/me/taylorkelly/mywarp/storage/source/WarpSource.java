@@ -17,25 +17,22 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections.converter;
+package me.taylorkelly.mywarp.storage.source;
 
 import me.taylorkelly.mywarp.warp.Warp;
 
-import org.jooq.impl.EnumConverter;
-import org.jooq.types.UByte;
+import java.util.List;
 
 /**
- * Converts {@link UByte} to {@link me.taylorkelly.mywarp.warp.Warp.Type} and back.
+ * Indicates that an implementation stores {@code Warp}s that can be read.
  */
-public class TypeConverter extends EnumConverter<UByte, Warp.Type> {
-
-  private static final long serialVersionUID = -7704911259321558564L;
+public interface WarpSource {
 
   /**
-   * Initializes this converter.
+   * Gets all readable {@code Warp}s.
+   *
+   * @return a list with all readable {@code Warps}
    */
-  public TypeConverter() {
-    super(UByte.class, Warp.Type.class);
-  }
+  List<Warp> getWarps();
 
 }

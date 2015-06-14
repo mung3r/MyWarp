@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections.importer;
+package me.taylorkelly.mywarp.storage.source;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.jooq.impl.DSL.field;

@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections.converter;
+package me.taylorkelly.mywarp.storage.converter;
 
 import org.jooq.Converter;
 

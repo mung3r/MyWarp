@@ -67,7 +67,7 @@ import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistrati
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolverManager;
 import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
-import me.taylorkelly.mywarp.dataconnections.DataService;
+import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -107,7 +107,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   private final File bundleFolder = new File(getDataFolder(), "lang");
   private final ResourceBundle.Control control = new EncodedControl(Charsets.UTF_8);
 
-  private BukkitDataService dataService;
+  private BukkitRelationalDataService dataService;
   private GroupResolverManager groupResolverManager;
   private SquirrelIdProfileService profileService;
   private BukkitSettings settings;
@@ -150,7 +150,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     game = new BukkitGame(new BukkitExecutor(this), adapter);
 
     try {
-      dataService = new BukkitDataService(settings, getDataFolder());
+      dataService = new BukkitRelationalDataService(settings, getDataFolder());
     } catch (SQLException e) {
       log.error("A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be disabled.",
                 e);
@@ -367,7 +367,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   }
 
   @Override
-  public DataService getDataService() {
+  public RelationalDataService getDataService() {
     return dataService;
   }
 

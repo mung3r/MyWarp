@@ -19,10 +19,10 @@
 
 package me.taylorkelly.mywarp;
 
-import me.taylorkelly.mywarp.dataconnections.DataService;
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.limits.LimitProvider;
+import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.timer.DurationProvider;
 import me.taylorkelly.mywarp.timer.TimerService;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
@@ -71,11 +71,11 @@ public interface Platform {
   Game getGame();
 
   /**
-   * Gets the {@link DataService} as implemented by this Platform.
+   * Gets the {@link RelationalDataService} as implemented by this Platform.
    *
-   * @return the {@code DataService}
+   * @return the {@code RelationalDataService}
    */
-  DataService getDataService();
+  RelationalDataService getDataService();
 
   /**
    * Gets the {@link ProfileService} as implemented by this Platform.

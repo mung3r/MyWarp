@@ -17,19 +17,19 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.dataconnections;
+package me.taylorkelly.mywarp.storage;
 
 /**
- * Indicates an exception thrown when using a {@link DataConnection}.
+ * Thrown when a {@link WarpStorage} cannot be initialized.
  */
-public class DataConnectionException extends Exception {
+public class StorageInitializationException extends Exception {
 
   private static final long serialVersionUID = -2033822282111044971L;
 
   /**
    * Constructs this exception.
    */
-  public DataConnectionException() {
+  public StorageInitializationException() {
     super();
   }
 
@@ -38,7 +38,7 @@ public class DataConnectionException extends Exception {
    *
    * @param message the message
    */
-  public DataConnectionException(String message) {
+  public StorageInitializationException(String message) {
     super(message);
   }
 
@@ -48,7 +48,7 @@ public class DataConnectionException extends Exception {
    * @param message the message
    * @param cause   the cause of this exception
    */
-  public DataConnectionException(String message, Throwable cause) {
+  public StorageInitializationException(String message, Throwable cause) {
     super(message, cause);
   }
 
@@ -57,7 +57,7 @@ public class DataConnectionException extends Exception {
    *
    * @param cause the cause
    */
-  public DataConnectionException(Throwable cause) {
+  public StorageInitializationException(Throwable cause) {
     super(cause);
   }
 }
