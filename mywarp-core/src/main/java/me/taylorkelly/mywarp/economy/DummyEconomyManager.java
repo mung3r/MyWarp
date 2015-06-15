@@ -22,28 +22,30 @@ package me.taylorkelly.mywarp.economy;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 
+import java.math.BigDecimal;
+
 /**
- * An EconomyManager implementation that does absolutely nothing. Methods that require a return value will return a
+ * An EconomyManager implementation that does absolutely nothing. Methods that require a return value return a
  * positive one.
  */
 public class DummyEconomyManager implements EconomyManager {
 
   @Override
-  public boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier) {
+  public boolean hasAtLeast(LocalPlayer player, FeeType fee) {
     return true;
   }
 
   @Override
-  public boolean informativeHasAtLeast(LocalPlayer player, double amount) {
+  public boolean hasAtLeast(LocalPlayer player, BigDecimal amount) {
     return true;
   }
 
   @Override
-  public void informativeWithdraw(LocalPlayer player, FeeType identifier) {
+  public void withdraw(LocalPlayer player, FeeType fee) {
   }
 
   @Override
-  public void informativeWithdraw(LocalPlayer player, double amount) {
+  public void withdraw(LocalPlayer player, BigDecimal amount) {
   }
 
 }

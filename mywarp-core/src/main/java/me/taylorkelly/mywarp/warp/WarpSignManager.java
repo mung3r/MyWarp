@@ -82,7 +82,7 @@ public class WarpSignManager {
       return;
     }
 
-    if (!economyManager.informativeHasAtLeast(player, FeeType.WARP_SIGN_USE)) {
+    if (!economyManager.hasAtLeast(player, FeeType.WARP_SIGN_USE)) {
       return;
     }
 
@@ -118,10 +118,10 @@ public class WarpSignManager {
       return false;
     }
 
-    if (!economyManager.informativeHasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
+    if (!economyManager.hasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
       return false;
     }
-    economyManager.informativeWithdraw(player, FeeType.WARP_SIGN_CREATE);
+    economyManager.withdraw(player, FeeType.WARP_SIGN_CREATE);
 
     // get the right spelling (case) out of the config
     String line = lines[IDENTIFIER_LINE];

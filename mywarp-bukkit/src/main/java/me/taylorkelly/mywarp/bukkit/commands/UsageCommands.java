@@ -74,7 +74,7 @@ public class UsageCommands {
   public void to(@Sender LocalPlayer player, @Name(Condition.USABLE) Warp warp) throws TimerRunningException {
     FeeType feeType = FeeType.WARP_TO;
 
-    if (!myWarp.getEconomyManager().informativeHasAtLeast(player, feeType)) {
+    if (!myWarp.getEconomyManager().hasAtLeast(player, feeType)) {
       return;
     }
 

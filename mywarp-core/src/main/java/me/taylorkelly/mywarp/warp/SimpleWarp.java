@@ -204,7 +204,7 @@ class SimpleWarp implements Warp {
           break;
         case ORIGINAL_LOC:
         case SAFE_LOC:
-          myWarp.getEconomyManager().informativeWithdraw(player, fee);
+          myWarp.getEconomyManager().withdraw(player, fee);
       }
     }
     return status;

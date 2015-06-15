@@ -75,7 +75,7 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
     }
 
     FeeType feeType = method.getAnnotation(Billable.class).value();
-    return economyManager.informativeHasAtLeast((LocalPlayer) actor, feeType);
+    return economyManager.hasAtLeast((LocalPlayer) actor, feeType);
   }
 
   @Override
@@ -90,7 +90,7 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
     }
 
     FeeType feeType = method.getAnnotation(Billable.class).value();
-    economyManager.informativeWithdraw((LocalPlayer) actor, feeType);
+    economyManager.withdraw((LocalPlayer) actor, feeType);
   }
 
 }

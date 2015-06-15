@@ -21,25 +21,29 @@ package me.taylorkelly.mywarp.economy;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 
+import java.math.BigDecimal;
+
 /**
- * Represents a service that provides basic economy logic.
+ * Provides raw access to an economy system.
  */
 public interface EconomyService {
 
   /**
-   * Checks if the given LocalPlayer has at least the given amount.
+   * Returns whether the given {@code player} has at least the given {@code amount}.
    *
-   * @param player the LocalPlayer to check
+   * @param player the player to check
    * @param amount the amount to check
-   * @return true if the LocalPlayer has at least the given amount
+   * @return {@code true} if the player has at least the given amount
+   * @throws IllegalArgumentException if the given {@code amount} is not greater than 0
    */
-  boolean hasAtLeast(LocalPlayer player, double amount);
+  boolean hasAtLeast(LocalPlayer player, BigDecimal amount);
 
   /**
-   * Withdraws the given LocalPlayer with the given amount.
+   * Withdraws the given {@code player} with the given {@code amount}.
    *
-   * @param player the LocalPlayer to check
+   * @param player the player to check
    * @param amount the amount to withdraw
+   * @throws IllegalArgumentException if the given {@code amount} is not greater than 0
    */
-  void withdraw(LocalPlayer player, double amount);
+  void withdraw(LocalPlayer player, BigDecimal amount);
 }

@@ -21,19 +21,12 @@ package me.taylorkelly.mywarp.economy;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 
+import java.math.BigDecimal;
+
 /**
- * Provides the actual fees that affect a user under certain conditions.
+ * Provides the amount of a fee that affects a user under certain conditions.
  */
 public interface FeeProvider {
-
-  /**
-   * Gets the fee that referenced by the given type, for the given LocalPlayer.
-   *
-   * @param player the LocalPlayer
-   * @param type   the type
-   * @return the actual fee
-   */
-  double getFee(LocalPlayer player, FeeType type);
 
   /**
    * The different types of fees.
@@ -42,5 +35,14 @@ public interface FeeProvider {
     ASSETS, CREATE, CREATE_PRIVATE, DELETE, GIVE, HELP, INFO, INVITE, LIST, POINT, PRIVATE, PUBLIC, UNINVITE, UPDATE,
     WARP_PLAYER, WARP_SIGN_CREATE, WARP_SIGN_USE, WARP_TO, WELCOME
   }
+
+  /**
+   * Gets the amount of the given {@code fee} for the given {@code player}.
+   *
+   * @param player the player
+   * @param fee    the identifier of the actual fee
+   * @return the corresponding amount
+   */
+  BigDecimal getAmount(LocalPlayer player, FeeType fee);
 
 }

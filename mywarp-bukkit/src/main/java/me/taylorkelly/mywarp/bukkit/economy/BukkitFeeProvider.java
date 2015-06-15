@@ -29,6 +29,7 @@ import me.taylorkelly.mywarp.economy.FeeProvider;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
+import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.SortedSet;
 
@@ -59,8 +60,8 @@ public class BukkitFeeProvider implements FeeProvider {
   }
 
   @Override
-  public double getFee(LocalPlayer player, FeeType identifier) {
-    return getFeeBundle(player).get(identifier);
+  public BigDecimal getAmount(LocalPlayer player, FeeType fee) {
+    return getFeeBundle(player).get(fee);
   }
 
   /**
@@ -84,7 +85,7 @@ public class BukkitFeeProvider implements FeeProvider {
    */
   public static class FeeBundle extends ValueBundle {
 
-    private EnumMap<FeeType, Double> fees = new EnumMap<FeeType, Double>(FeeType.class);
+    private EnumMap<FeeType, BigDecimal> fees = new EnumMap<FeeType, BigDecimal>(FeeType.class);
 
     /**
      * Initializes this bundle.
@@ -110,11 +111,12 @@ public class BukkitFeeProvider implements FeeProvider {
      * @param warpFee           used when a users warps to a warp
      * @param welcomeFee        used when the welcome message is changed
      */
-    public FeeBundle(String identifier, double assetsFee, double createFee, double createPrivateFee, double deleteFee,
-                     double giveFee, double helpFee, double infoFee, double inviteFee, double listFee, double pointFee,
-                     double privatizeFee, double publicizeFee, double uninviteFee, double updateFee,
-                     double warpPlayerFee, double warpSignCreateFee, double warpSignUseFee, double warpFee,
-                     double welcomeFee) {
+    public FeeBundle(String identifier, BigDecimal assetsFee, BigDecimal createFee, BigDecimal createPrivateFee,
+                     BigDecimal deleteFee, BigDecimal giveFee, BigDecimal helpFee, BigDecimal infoFee,
+                     BigDecimal inviteFee, BigDecimal listFee, BigDecimal pointFee, BigDecimal privatizeFee,
+                     BigDecimal publicizeFee, BigDecimal uninviteFee, BigDecimal updateFee, BigDecimal warpPlayerFee,
+                     BigDecimal warpSignCreateFee, BigDecimal warpSignUseFee, BigDecimal warpFee,
+                     BigDecimal welcomeFee) {
       super(identifier, "mywarp.economy");
 
       fees.put(FeeType.ASSETS, assetsFee);
@@ -144,7 +146,7 @@ public class BukkitFeeProvider implements FeeProvider {
      * @param type the FeeType
      * @return the fee
      */
-    public double get(FeeType type) {
+    public BigDecimal get(FeeType type) {
       return fees.get(type);
     }
   }

@@ -70,7 +70,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
     LocaleManager.setLocale(player.getLocale());
 
     if (myWarp.getSettings().isEconomyEnabled()) {
-      if (myWarp.getEconomyManager().informativeHasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
+      if (myWarp.getEconomyManager().hasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
         return;
       }
     }

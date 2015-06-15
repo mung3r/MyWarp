@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit.economy;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
 import me.taylorkelly.mywarp.economy.EconomyService;
@@ -31,6 +33,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.slf4j.Logger;
 
+import java.math.BigDecimal;
+
 /**
  * An EconomyService that uses Vault to resolve requests.
  */
@@ -42,7 +46,7 @@ public class VaultService implements EconomyService {
   private final BukkitAdapter adapter;
 
   /**
-   * Initializes this service.
+   * Creates an instance that uses the given {@code economyProvider} to connect with Vault.
    *
    * @param economyProvider the economy service provider from Vault
    * @param adapter         the adapter
@@ -53,15 +57,19 @@ public class VaultService implements EconomyService {
   }
 
   @Override
-  public boolean hasAtLeast(LocalPlayer player, double amount) {
+  public boolean hasAtLeast(LocalPlayer player, BigDecimal amount) {
+    checkArgument(amount.signum() == 1, "The amount must be greater than 0.");
     Player bukkitPlayer = adapter.adapt(player);
-    return economy.has(bukkitPlayer, bukkitPlayer.getWorld().getName(), amount);
+    return economy.has(bukkitPlayer, bukkitPlayer.getWorld().getName(), amount.doubleValue());
   }
 
   @Override
-  public void withdraw(LocalPlayer player, double amount) {
+  public void withdraw(LocalPlayer player, BigDecimal amount) {
+    checkArgument(amount.signum() == 1, "The amount must be greater than 0.");
     Player bukkitPlayer = adapter.adapt(player);
-    EconomyResponse response = economy.withdrawPlayer(bukkitPlayer, bukkitPlayer.getWorld().getName(), amount);
+    EconomyResponse
+        response =
+        economy.withdrawPlayer(bukkitPlayer, bukkitPlayer.getWorld().getName(), amount.doubleValue());
 
     if (!response.transactionSuccess()) {
       log.error("Could not withdraw {}: {}", bukkitPlayer.getName(), response.errorMessage);

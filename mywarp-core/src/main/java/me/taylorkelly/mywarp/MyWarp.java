@@ -29,7 +29,7 @@ import me.taylorkelly.mywarp.dataconnections.MySqlConnection;
 import me.taylorkelly.mywarp.dataconnections.SqLiteConnection;
 import me.taylorkelly.mywarp.economy.DummyEconomyManager;
 import me.taylorkelly.mywarp.economy.EconomyManager;
-import me.taylorkelly.mywarp.economy.SimpleEconomyManager;
+import me.taylorkelly.mywarp.economy.InformativeEconomyManager;
 import me.taylorkelly.mywarp.limits.DummyLimitManager;
 import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.limits.SimpleLimitManager;
@@ -39,8 +39,8 @@ import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.EventfulWarpManager;
-import me.taylorkelly.mywarp.warp.PersistentWarpManager;
 import me.taylorkelly.mywarp.warp.MemoryWarpManager;
+import me.taylorkelly.mywarp.warp.PersistentWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.WarpSignManager;
@@ -135,7 +135,7 @@ public class MyWarp {
     try {
       if (getSettings().isEconomyEnabled()) {
         economyManager =
-            new SimpleEconomyManager(getSettings(), platform.getFeeProvider(), platform.getEconomyService());
+            new InformativeEconomyManager(getSettings(), platform.getFeeProvider(), platform.getEconomyService());
       } else {
         economyManager = new DummyEconomyManager();
       }

@@ -19,18 +19,21 @@
 
 package me.taylorkelly.mywarp.economy;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
+import java.math.BigDecimal;
+
 /**
- * Manages the economy tasks. <p> The SimpleEconomyManager operates on a {@link FeeProvider} that provides the actual
- * fees and a {@link EconomyService} that provides a connection with the actual economy of the platform. </p>
+ * Informs users after a transaction about the result. <p>This implementation operates on a {@link FeeProvider}
+ * that provides the amount of the fees and a {@link EconomyService} that provides a connection with the actual
+ * economy.</p>
  */
-public class SimpleEconomyManager implements EconomyManager {
+public class InformativeEconomyManager implements EconomyManager {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.Economy");
 
@@ -39,36 +42,40 @@ public class SimpleEconomyManager implements EconomyManager {
   private final EconomyService service;
 
   /**
-   * Initializes this SimpleEconomyManager, acting on the given EconomyService and FeeProvider.
+   * Creates an instance.
    *
-   * @param settings the Settings
-   * @param provider the FeeProvider
-   * @param service  the EconomyService
+   * @param settings the {@code Settings} to use
+   * @param provider the {@code FeeProvider} to use
+   * @param service  the {@code EconomyService} to use
    */
-  public SimpleEconomyManager(Settings settings, FeeProvider provider, EconomyService service) {
+  public InformativeEconomyManager(Settings settings, FeeProvider provider, EconomyService service) {
     this.settings = settings;
     this.provider = provider;
     this.service = service;
   }
 
   /**
-   * Returns whether the given LocalPlayer can disobey fees.
+   * Returns whether the given {@code player} can disobey fees.
    *
-   * @param player the LocalPlayer
-   * @return true if the Player can disobey fees
+   * @param player the player
+   * @return true if the player can disobey fees
    */
   private boolean canDisobeyFees(LocalPlayer player) {
     return player.hasPermission("mywarp.economy.disobey");
   }
 
   @Override
-  public boolean informativeHasAtLeast(LocalPlayer player, FeeType identifier) {
-    return informativeHasAtLeast(player, provider.getFee(player, identifier));
+  public boolean hasAtLeast(LocalPlayer player, FeeType fee) {
+    BigDecimal amount = provider.getAmount(player, fee);
+    if (amount.signum() != 1) {
+      return true;
+    }
+    return hasAtLeast(player, amount);
   }
 
   @Override
-  public boolean informativeHasAtLeast(LocalPlayer player, double amount) {
-    Preconditions.checkArgument(amount > 0, "The amount must be greater than 0.");
+  public boolean hasAtLeast(LocalPlayer player, BigDecimal amount) {
+    checkArgument(amount.signum() == 1, "The amount must be greater than 0.");
     if (canDisobeyFees(player)) {
       return true;
     }
@@ -80,13 +87,17 @@ public class SimpleEconomyManager implements EconomyManager {
   }
 
   @Override
-  public void informativeWithdraw(LocalPlayer player, FeeType identifier) {
-    informativeWithdraw(player, provider.getFee(player, identifier));
+  public void withdraw(LocalPlayer player, FeeType fee) {
+    BigDecimal amount = provider.getAmount(player, fee);
+    if (amount.signum() != 1) {
+      return;
+    }
+    withdraw(player, amount);
   }
 
   @Override
-  public void informativeWithdraw(LocalPlayer player, double amount) {
-    Preconditions.checkArgument(amount > 0, "The amount must be greater than 0.");
+  public void withdraw(LocalPlayer player, BigDecimal amount) {
+    checkArgument(amount.signum() == 1, "The amount must be greater than 0.");
     if (canDisobeyFees(player)) {
       return;
     }
