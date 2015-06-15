@@ -371,16 +371,17 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     if (economyService == null) {
       try {
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServicesManager().getRegistration(Economy.class);
-        if (economyProvider == null) {
-          log.error("Failed to hook into Vault (EconomyProvider is null). EconomySupport will not be available.");
-        } else {
+        if (economyProvider != null) {
           economyService = new VaultService(economyProvider, adapter);
+        } else {
+          log.error("Failed to hook into Vault (EconomyProvider is null). Economy support will not be available.");
+          throw new UnsupportedOperationException();
         }
       } catch (NoClassDefFoundError e) {
         log.error(
-            "Failed to hook into Vault (EconomyProviderClass not available). EconomySupport will not be available.");
+            "Failed to hook into Vault (EconomyProviderClass not available). Economy support will not be available.");
+        throw new UnsupportedOperationException();
       }
-      throw new UnsupportedOperationException();
     }
 
     return economyService;
