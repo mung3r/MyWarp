@@ -10,6 +10,9 @@ Starting with version 3, this project adheres to [Semantic Versioning](http://se
 * Fixed NPE thrown when formatting special characters
 * Fixed invalid variables in German (un)invite messages for public warps
 * Fixed `/warp assets` being completely empty for players without warps
+* Fixed #47 - Economy support not working
+* Fixed #49 - Irregular handling of AuthorizationExceptions for `/warp <warp>`
+
 
 ## [3.0-beta-1]
 

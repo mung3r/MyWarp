@@ -30,9 +30,6 @@ import com.sk89q.intake.dispatcher.SimpleDispatcher;
 import com.sk89q.intake.util.auth.AuthorizationException;
 import com.sk89q.intake.util.i18n.ResourceProvider;
 
-import me.taylorkelly.mywarp.util.CommandUtils;
-import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-
 import java.util.Arrays;
 
 /**
@@ -40,8 +37,6 @@ import java.util.Arrays;
  * do not match any of the registered sub-commands, tries to parse se input against a registered fallback command.
  */
 public class FallbackDispatcher extends SimpleDispatcher {
-
-  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final CommandCallable fallback;
 
@@ -100,6 +95,8 @@ public class FallbackDispatcher extends SimpleDispatcher {
     // sub-command matching the given argument so the fallback command should handle it.
     try {
       fallback.call(Joiner.on(" ").join(split), locals, parentCommands);
+    } catch (AuthorizationException e) {
+      throw e;
     } catch (CommandException e) {
       throw e;
     } catch (Throwable t) {
