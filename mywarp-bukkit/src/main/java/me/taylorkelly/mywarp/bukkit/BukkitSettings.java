@@ -24,6 +24,7 @@ import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.economy.BukkitFeeProvider.FeeBundle;
 import me.taylorkelly.mywarp.bukkit.limits.LimitBundle;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider.DurationBundle;
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.timer.Duration;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 
@@ -96,6 +97,7 @@ public class BukkitSettings implements Settings {
     // add defaults
     fileConfig.setDefaults(defaultConfiguration);
     fileConfig.options().copyDefaults(true);
+    fileConfig.addDefault("storage.url", "jdbc:h2:" + configFile.getParentFile().getAbsolutePath() + "/warps");
     try {
       fileConfig.save(configFile);
     } catch (IOException e) {
@@ -160,26 +162,6 @@ public class BukkitSettings implements Settings {
   }
 
   @Override
-  public boolean isMysqlEnabled() {
-    return config.getBoolean("mysql.enabled");
-  }
-
-  @Override
-  public String getMysqlDsn() {
-    return config.getString("mysql.dsn");
-  }
-
-  @Override
-  public String getMysqlUsername() {
-    return config.getString("mysql.username");
-  }
-
-  @Override
-  public String getMysqlPassword() {
-    return config.getString("mysql.password");
-  }
-
-  @Override
   public boolean isLimitsEnabled() {
     return config.getBoolean("limits.enabled");
   }
@@ -226,10 +208,12 @@ public class BukkitSettings implements Settings {
       List<LocalWorld> worlds = new ArrayList<LocalWorld>();
       for (String name : values.getStringList("affectedWorlds")) {
         World world = Bukkit.getWorld(name);
-        if (world != null) {
-          // REVIEW log error on null?
-          worlds.add(adapter.adapt(world));
+        if (world == null) {
+          log.warn("The world name '{}' configured for the limit '{}' does not match any existing world and will be "
+                   + "ignored.", name, identifier);
+          continue;
         }
+        worlds.add(adapter.adapt(world));
       }
       return new LimitBundle(identifier, values.getInt("totalLimit"), values.getInt("publicLimit"),
                              values.getInt("privateLimit"), worlds, adapter);
@@ -431,6 +415,60 @@ public class BukkitSettings implements Settings {
    */
   public boolean isDynmapMarkerShowLable() {
     return config.getBoolean("dynmap.marker.showLabel");
+  }
+
+  /**
+   * Gets the URL of the database within that warps should be stored.
+   *
+   * @return the URL
+   */
+  private String getStorageUrl() {
+    return config.getString("storage.url");
+  }
+
+  /**
+   * Gets the schema that contains MyWarp's table structure.
+   *
+   * @return the schema
+   */
+  private String getStorageSchema() {
+    return config.getString("storage.schema");
+  }
+
+  /**
+   * Gets the user used to connect to the relational database.
+   *
+   * @return the user
+   */
+  private String getStorageUser() {
+    return config.getString("storage.user");
+  }
+
+  /**
+   * Gets the password of the user used to connect to the relational database.
+   *
+   * @return the user's password
+   */
+  private String getStoragePassword() {
+    return config.getString("storage.password");
+  }
+
+  /**
+   * Gets the {@code ConnectionConfiguration} of the database within that warps should be stored.
+   *
+   * @return the {@code ConnectionConfiguration}
+   */
+  public ConnectionConfiguration getStorageConfiguration() {
+    ConnectionConfiguration config = new ConnectionConfiguration(getStorageUrl());
+
+    if (config.supportsSchemas()) {
+      config.setSchema(getStorageSchema());
+    }
+    if (config.supportsAuthentication()) {
+      config.setUser(getStorageUser());
+      config.setPassword(getStoragePassword());
+    }
+    return config;
   }
 
 }

@@ -3,6 +3,11 @@ settings:
   preloadChunks: false
   teleportHorses: true
   showTeleportEffect: true
+storage:
+  url: # path is set programatically to a h2 database file in MyWarp's plugin folder
+  schema: 'mywarp'
+  user: 'mywarp'
+  password: 'mywarp'
 localization:
   defaultLocale: en_US
   perPlayer: true
@@ -14,11 +19,6 @@ warpSigns:
   identifiers:
   - MyWarp
   - Warp
-mysql:
-  enabled: false
-  dsn: 'jdbc:mysql://localhost/mywarp'
-  username: 'username'
-  password: 'password'
 limits:
   enabled: true
   defaultLimit:

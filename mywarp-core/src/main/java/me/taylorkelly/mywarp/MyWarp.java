@@ -24,9 +24,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import me.taylorkelly.mywarp.dataconnections.DataConnection;
-import me.taylorkelly.mywarp.dataconnections.MySqlConnection;
-import me.taylorkelly.mywarp.dataconnections.SqLiteConnection;
 import me.taylorkelly.mywarp.economy.DummyEconomyManager;
 import me.taylorkelly.mywarp.economy.EconomyManager;
 import me.taylorkelly.mywarp.economy.InformativeEconomyManager;
@@ -35,22 +32,26 @@ import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.limits.SimpleLimitManager;
 import me.taylorkelly.mywarp.safety.CubicLocationSafety;
 import me.taylorkelly.mywarp.safety.TeleportService;
+import me.taylorkelly.mywarp.storage.AsyncWritingWarpStorage;
+import me.taylorkelly.mywarp.storage.RelationalDataService;
+import me.taylorkelly.mywarp.storage.StorageInitializationException;
+import me.taylorkelly.mywarp.storage.WarpStorage;
+import me.taylorkelly.mywarp.storage.WarpStorageFactory;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.EventfulWarpManager;
 import me.taylorkelly.mywarp.warp.MemoryWarpManager;
-import me.taylorkelly.mywarp.warp.PersistentWarpManager;
+import me.taylorkelly.mywarp.warp.StorageWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.WarpSignManager;
 
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * Entry point and container for a working MyWarp implementation. <p> An instance of this class holds and manages
@@ -63,7 +64,7 @@ public class MyWarp {
 
   private final Platform platform;
   private final WarpManager warpManager;
-  private final DataConnection dataConnection;
+  private final WarpStorage warpStorage;
   private final EventBus eventBus;
 
   private EconomyManager economyManager;
@@ -78,31 +79,25 @@ public class MyWarp {
    * @param platform the Platform MyWarp runs on
    * @throws InitializationException if the initialization fails and MyWarp is unable to continue
    */
-  public MyWarp(Platform platform) throws InitializationException {
+  public MyWarp(final Platform platform) throws InitializationException {
     this.platform = platform;
 
-    // setup dataConnection
-    ListenableFuture<DataConnection> futureConnection;
-    if (getSettings().isMysqlEnabled()) {
-      futureConnection =
-          MySqlConnection.getConnection(this, getSettings().getMysqlDsn(), getSettings().getMysqlUsername(),
-                                        getSettings().getMysqlPassword(), true);
-    } else {
-      futureConnection = SqLiteConnection.getConnection(this, new File(platform.getDataFolder(), "mywarp.db"), true);
-    }
+    //setup the WarpStorage
+    RelationalDataService dataService = platform.getDataService();
     try {
-      dataConnection = futureConnection.get();
-    } catch (InterruptedException e) {
-      throw new InitializationException("Failed to get a connection to the database as the process was interrupted.",
-                                        e);
-    } catch (ExecutionException e) {
-      throw new InitializationException("Failed to get a connection to the database.", e.getCause());
+      warpStorage =
+          new AsyncWritingWarpStorage(
+              WarpStorageFactory.createInitialized(this, dataService.getDataSource(), dataService.getConfiguration()),
+              dataService.getExecutorService());
+
+    } catch (StorageInitializationException e) {
+      throw new InitializationException("Failed to get a connection to the database.", e);
     }
 
     eventBus = new EventBus();
 
-    // setup the warpManager
-    warpManager = new EventfulWarpManager(new PersistentWarpManager(new MemoryWarpManager(), dataConnection), eventBus);
+    // setup the WarpManager
+    warpManager = new EventfulWarpManager(new StorageWarpManager(new MemoryWarpManager(), warpStorage), eventBus);
 
     DynamicMessages.setControl(platform.getResourceBundleControl());
 
@@ -111,13 +106,6 @@ public class MyWarp {
 
     // setup the rest of the plugin
     setupPlugin();
-
-
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      public void run() {
-        unload();
-      }
-    });
   }
 
   /**
@@ -146,10 +134,17 @@ public class MyWarp {
     //TODO this might not be needed
     warpSignManager = new WarpSignManager(getSettings().getWarpSignsIdentifiers(), economyManager, warpManager);
 
-    // Populate the warpManager when the warps are loaded. The callback is
-    // executed in the server thread.
     log.info("Loading warps...");
-    Futures.addCallback(getDataConnection().getWarps(), new FutureCallback<Collection<Warp>>() {
+    ListenableFuture<List<Warp>>
+        futureWarps =
+        platform.getDataService().getExecutorService().submit(new Callable<List<Warp>>() {
+          @Override
+          public List<Warp> call() throws Exception {
+            return warpStorage.getWarps();
+          }
+        });
+
+    Futures.addCallback(futureWarps, new FutureCallback<Collection<Warp>>() {
 
       @Override
       public void onSuccess(Collection<Warp> result) {
@@ -177,20 +172,6 @@ public class MyWarp {
     // setup new stuff
     platform.reload();
     setupPlugin();
-  }
-
-  /**
-   * Unloads MyWarp. Using this method will effectively shutdown MyWarp. If it is called, the platform running MyWarp
-   * <b>must</b> unload or deactivate MyWarp too or things will get ugly.
-   */
-  public void unload() {
-    if (dataConnection != null) {
-      try {
-        dataConnection.close();
-      } catch (IOException e) {
-        log.warn("Failed to close data connection.", e);
-      }
-    }
   }
 
   /**
@@ -233,12 +214,12 @@ public class MyWarp {
   }
 
   /**
-   * Gets the DataConnection of this MyWarp instance.
+   * Gets the WarpStorage of this MyWarp instance.
    *
-   * @return the DataConnection
+   * @return the WarpStorage
    */
-  public DataConnection getDataConnection() {
-    return dataConnection;
+  public WarpStorage getWarpStorage() {
+    return warpStorage;
   }
 
   /**

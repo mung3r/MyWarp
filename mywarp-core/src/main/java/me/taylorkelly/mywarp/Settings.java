@@ -56,34 +56,6 @@ public interface Settings {
   boolean isShowTeleportEffect();
 
   /**
-   * Returns whether MySQL is enabled.
-   *
-   * @return true if MySQL is enabled
-   */
-  boolean isMysqlEnabled();
-
-  /**
-   * Gets data source name of the MySQL server.
-   *
-   * @return the MySQL server's dsn
-   */
-  String getMysqlDsn();
-
-  /**
-   * Gets the username of the MySQL user.
-   *
-   * @return the username
-   */
-  String getMysqlUsername();
-
-  /**
-   * Gets the password of the MySQL user.
-   *
-   * @return the password
-   */
-  String getMysqlPassword();
-
-  /**
    * Gets the default locale.
    *
    * @return the default locale
