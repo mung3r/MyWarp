@@ -31,6 +31,8 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
@@ -131,6 +133,11 @@ public class SingleConnectionDataSource implements DataSource {
   @Override
   public void setLogWriter(PrintWriter pw) throws SQLException {
     throw new UnsupportedOperationException("setLogWriter");
+  }
+
+  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    //method was added to CommonDataSource in Java7
+    throw new SQLFeatureNotSupportedException();
   }
 
   @Override
