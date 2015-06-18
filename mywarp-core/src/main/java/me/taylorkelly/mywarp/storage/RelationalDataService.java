@@ -24,8 +24,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import javax.sql.DataSource;
 
 /**
- * A service that provides access to a relational database as well as a custom {@code ExecutorService} that handles
- * database communication.
+ * A service that provides access to a relational database.
  */
 public interface RelationalDataService {
 
@@ -37,7 +36,14 @@ public interface RelationalDataService {
   DataSource getDataSource();
 
   /**
-   * Gets a {@code ListeningExecutorService} that should be used to communicate with the database.
+   * Gets the {@code ConnectionConfiguration} of the underling database management system.
+   *
+   * @return the configuration
+   */
+  ConnectionConfiguration getConfiguration();
+
+  /**
+   * Gets a {@code ListeningExecutorService} that should execute database calls.
    *
    * @return a {@code ListeningExecutorService}
    */

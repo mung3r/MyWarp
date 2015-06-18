@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.storage.source;
+package me.taylorkelly.mywarp.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.jooq.impl.DSL.field;
@@ -27,6 +27,7 @@ import static org.jooq.impl.DSL.table;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 import me.taylorkelly.mywarp.MyWarp;
@@ -38,17 +39,15 @@ import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
 
 import org.jooq.Configuration;
+import org.jooq.Name;
 import org.jooq.Record13;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
-import org.jooq.conf.RenderNameStyle;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
-import org.jooq.tools.jdbc.JDBCUtils;
 import org.slf4j.Logger;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -68,32 +67,30 @@ import javax.sql.DataSource;
 public class LegacyWarpSource implements WarpSource {
 
   private static final Logger log = MyWarpLogger.getLogger(LegacyWarpSource.class);
+  private static final ImmutableSet<SQLDialect>
+      SUPPORTED_DIALECTS =
+      ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.SQLITE);
 
   private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
   private final MyWarp myWarp;
   private final ImmutableMap<String, UUID> worldsSnapshot;
   private final Configuration configuration;
-  private final String tableName;
+  private final Name tableName;
 
   /**
    * Creates an instance.
    *
    * @param myWarp         the MyWarp instance
    * @param worldsSnapshot a mapping of world names to uniqueIds
-   * @throws SQLException on a database error
    */
-  public LegacyWarpSource(DataSource dataSource, String tableName, MyWarp myWarp, Map<String, UUID> worldsSnapshot)
-      throws SQLException {
-    SQLDialect dialect = JDBCUtils.dialect(dataSource.getConnection());
-    checkArgument(dialect.equals(SQLDialect.MYSQL) || dialect.equals(SQLDialect.SQLITE));
+  public LegacyWarpSource(MyWarp myWarp, DataSource dataSource, ConnectionConfiguration config, String tableName,
+                          Map<String, UUID> worldsSnapshot) {
+    checkArgument(SUPPORTED_DIALECTS.contains(config.getDialect()));
 
+    this.configuration = new DefaultConfiguration().set(config.getDialect()).set(new Settings()).set(dataSource);
+    this.tableName = config.supportsSchemas() ? name(config.getSchema(), tableName) : name(tableName);
     this.myWarp = myWarp;
     this.worldsSnapshot = ImmutableMap.copyOf(worldsSnapshot);
-
-    this.configuration =
-        new DefaultConfiguration().set(dialect).set(new Settings().withRenderNameStyle(RenderNameStyle.QUOTED))
-            .set(dataSource);
-    this.tableName = tableName;
   }
 
   @Override

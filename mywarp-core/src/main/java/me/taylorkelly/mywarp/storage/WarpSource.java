@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.storage.source;
+package me.taylorkelly.mywarp.storage;
 
 import me.taylorkelly.mywarp.warp.Warp;
 

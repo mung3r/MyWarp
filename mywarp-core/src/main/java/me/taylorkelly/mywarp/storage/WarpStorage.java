@@ -19,7 +19,6 @@
 
 package me.taylorkelly.mywarp.storage;
 
-import me.taylorkelly.mywarp.storage.source.WarpSource;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 

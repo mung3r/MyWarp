@@ -20,56 +20,43 @@
 package me.taylorkelly.mywarp.bukkit;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 
-import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
 /**
- * A {@link RelationalDataService} implementation for Bukkit that connects to either an SQLite or MySQL database. If
- * {@link
- * BukkitSettings#isMysqlEnabled()} is set, MySQL is used. Otherwise an SQLite database is created in
- * MyWarp's plugin directory.</p>
- * <p>Both databases are accessed via a single connection using a  {@link SingleConnectionDataSource}. Since this is
- * not thread-safe, {@link #getExecutorService()} retruns a single thread executor.</p>
+ * An {@link RelationalDataService} that uses a {@link SingleConnectionDataSource}.
  */
-public class BukkitRelationalDataService implements RelationalDataService {
+public class SingleConnectionDataService implements RelationalDataService {
 
-  private static final Logger log = MyWarpLogger.getLogger(BukkitRelationalDataService.class);
+  private static final Logger log = MyWarpLogger.getLogger(SingleConnectionDataService.class);
 
   private final SingleConnectionDataSource dataSource;
+  private final ConnectionConfiguration config;
   private final ListeningExecutorService executorService;
 
   /**
-   * Creates a new instance, based on the given {@code Settings}.
+   * Creates an instance that uses the given {@code dataSource}, the given {@code config} and the given {@code
+   * executorService}.
    *
-   * @param settings     the {@code BukkitSettings}
-   * @param pluginFolder the plugin folder that contains the SQLite database
-   * @throws SQLException on a database error
+   * @param dataSource      the data-source
+   * @param config          the config
+   * @param executorService the executor-service
    */
-  public BukkitRelationalDataService(BukkitSettings settings, File pluginFolder) throws SQLException {
-    if (settings.isMysqlEnabled()) {
-      this.dataSource =
-          DataSourceFactory.createMySqlSingleConnectionDataSource(settings.getMysqlDsn(), settings.getMysqlUsername(),
-                                                                  settings.getMysqlPassword());
-    } else {
-      //use SQLite
-      this.dataSource = DataSourceFactory.createSqliteSingleConnectionDataSource(new File(pluginFolder, "mywarp.db"));
-    }
-
-    this.executorService = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
+  public SingleConnectionDataService(SingleConnectionDataSource dataSource, ConnectionConfiguration config,
+                                     ListeningExecutorService executorService) {
+    this.dataSource = dataSource;
+    this.config = config;
+    this.executorService = executorService;
   }
 
   @Override
@@ -80,6 +67,11 @@ public class BukkitRelationalDataService implements RelationalDataService {
   @Override
   public ListeningExecutorService getExecutorService() {
     return executorService;
+  }
+
+  @Override
+  public ConnectionConfiguration getConfiguration() {
+    return config;
   }
 
   /**

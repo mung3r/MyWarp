@@ -24,6 +24,7 @@ import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.economy.BukkitFeeProvider.FeeBundle;
 import me.taylorkelly.mywarp.bukkit.limits.LimitBundle;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider.DurationBundle;
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.timer.Duration;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 
@@ -95,6 +96,7 @@ public class BukkitSettings implements Settings {
     // add defaults
     fileConfig.setDefaults(defaultConfiguration);
     fileConfig.options().copyDefaults(true);
+    fileConfig.addDefault("storage.url", "jdbc:h2:" + configFile.getParentFile().getAbsolutePath() + "/warps");
     try {
       fileConfig.save(configFile);
     } catch (IOException e) {
@@ -156,42 +158,6 @@ public class BukkitSettings implements Settings {
   @Override
   public List<String> getWarpSignsIdentifiers() {
     return config.getStringList("warpSigns.identifiers");
-  }
-
-  /**
-   * Returns whether MySQL is enabled.
-   *
-   * @return true if MySQL is enabled
-   */
-  public boolean isMysqlEnabled() {
-    return config.getBoolean("mysql.enabled");
-  }
-
-  /**
-   * Gets data source name of the MySQL server.
-   *
-   * @return the MySQL server's dsn
-   */
-  public String getMysqlDsn() {
-    return config.getString("mysql.dsn");
-  }
-
-  /**
-   * Gets the username of the MySQL user.
-   *
-   * @return the username
-   */
-  public String getMysqlUsername() {
-    return config.getString("mysql.username");
-  }
-
-  /**
-   * Gets the password of the MySQL user.
-   *
-   * @return the password
-   */
-  public String getMysqlPassword() {
-    return config.getString("mysql.password");
   }
 
   @Override
@@ -437,6 +403,60 @@ public class BukkitSettings implements Settings {
    */
   public boolean isDynmapMarkerShowLable() {
     return config.getBoolean("dynmap.marker.showLabel");
+  }
+
+  /**
+   * Gets the URL of the database within that warps should be stored.
+   *
+   * @return the URL
+   */
+  private String getStorageUrl() {
+    return config.getString("storage.url");
+  }
+
+  /**
+   * Gets the schema that contains MyWarp's table structure.
+   *
+   * @return the schema
+   */
+  private String getStorageSchema() {
+    return config.getString("storage.schema");
+  }
+
+  /**
+   * Gets the user used to connect to the relational database.
+   *
+   * @return the user
+   */
+  private String getStorageUser() {
+    return config.getString("storage.user");
+  }
+
+  /**
+   * Gets the password of the user used to connect to the relational database.
+   *
+   * @return the user's password
+   */
+  private String getStoragePassword() {
+    return config.getString("storage.password");
+  }
+
+  /**
+   * Gets the {@code ConnectionConfiguration} of the database within that warps should be stored.
+   *
+   * @return the {@code ConnectionConfiguration}
+   */
+  public ConnectionConfiguration getStorageConfiguration() {
+    ConnectionConfiguration config = new ConnectionConfiguration(getStorageUrl());
+
+    if (config.supportsSchemas()) {
+      config.setSchema(getStorageSchema());
+    }
+    if (config.supportsAuthentication()) {
+      config.setUser(getStorageUser());
+      config.setPassword(getStoragePassword());
+    }
+    return config;
   }
 
 }

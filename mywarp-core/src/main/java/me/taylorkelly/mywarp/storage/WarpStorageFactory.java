@@ -19,20 +19,19 @@
 
 package me.taylorkelly.mywarp.storage;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.storage.generated.Tables;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
-import org.jooq.Configuration;
 import org.jooq.SQLDialect;
+import org.jooq.conf.MappedSchema;
+import org.jooq.conf.RenderMapping;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DefaultConfiguration;
-import org.jooq.tools.jdbc.JDBCUtils;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
@@ -42,8 +41,8 @@ import javax.sql.DataSource;
 public class WarpStorageFactory {
 
   private static final ImmutableSet<SQLDialect>
-      SUPPORRTED_DIALECTS =
-      ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.SQLITE);
+      SUPPORTED_DIALECTS =
+      ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.SQLITE, SQLDialect.H2);
 
   /**
    * Block initialization of this class.
@@ -53,46 +52,64 @@ public class WarpStorageFactory {
 
   /**
    * Creates a new {@code WarpStorage} to the given {@code DataSource}.
-   * <p>Use {@link #createInitialized(MyWarp, DataSource)} to create an initialized {@code
+   * <p>Use {@link #createInitialized(MyWarp, DataSource, ConnectionConfiguration)} to create an initialized {@code
    * WarpStorage} that guarantees existence of MyWarp's table structure.</p>
    *
    * @param myWarp     the MyWarp instance
    * @param dataSource the DataSource
+   * @param config     the config
    * @return the {@code WarpStorage}
    * @throws StorageInitializationException if a database error occurs or the underling database management system is
    *                                        not supported
    */
-  public static WarpStorage create(MyWarp myWarp, DataSource dataSource) throws StorageInitializationException {
-    return createRelationalWarpStorage(myWarp, getSupportedDialectOrFail(dataSource), dataSource);
+  public static WarpStorage create(MyWarp myWarp, DataSource dataSource, ConnectionConfiguration config)
+      throws StorageInitializationException {
+    SQLDialect dialect = config.getDialect();
+    if (!SUPPORTED_DIALECTS.contains(dialect)) {
+      throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
+    }
+    return createRelationalWarpStorage(myWarp, config.getDialect(), createSettings(config), dataSource);
   }
 
   /**
    * Creates a new initialized {@code WarpStorage} to the given {@code DataSource}, attempting to create or update
    * MyWarp's table structure if necessary.
-   * <p>Use {@link #create(MyWarp, DataSource,)} to create a {@code WarpStorage} that does not create or update the
-   * table structure.</p>
+   * <p>Use {@link #create(MyWarp, DataSource, ConnectionConfiguration)} to create a {@code WarpStorage} that does
+   * not create or update the table structure.</p>
    *
    * @param myWarp     the MyWarp instance
    * @param dataSource the DataSource
+   * @param config     the config
    * @return the {@code WarpStorage}
    * @throws StorageInitializationException if a database error occurs, the underling database management system is
    *                                        not supported or initialization of MyWarp's table structure fails
    */
-  public static WarpStorage createInitialized(MyWarp myWarp, DataSource dataSource)
+  public static WarpStorage createInitialized(MyWarp myWarp, DataSource dataSource, ConnectionConfiguration config)
       throws StorageInitializationException {
-    SQLDialect dialect = getSupportedDialectOrFail(dataSource);
+    SQLDialect dialect = config.getDialect();
+    if (!SUPPORTED_DIALECTS.contains(dialect)) {
+      throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
+    }
 
     Flyway flyway = new Flyway();
     flyway.setClassLoader(myWarp.getClass().getClassLoader());
     flyway.setDataSource(dataSource);
     flyway.setLocations("migrations/" + dialect.getNameLC());
 
+    if (config.supportsSchemas()) {
+      flyway.setSchemas(config.getSchema());
+      flyway.setPlaceholders(ImmutableMap.of("schema", config.getSchema()));
+    }
+
     try {
+      //Fix stored checksums on databases that where created with older scripts
+      flyway.repair();
       flyway.migrate();
     } catch (FlywayException e) {
       throw new StorageInitializationException("Failed to execute migration process.", e);
     }
-    return createRelationalWarpStorage(myWarp, dialect, dataSource);
+
+    return createRelationalWarpStorage(myWarp, dialect, createSettings(config), dataSource);
   }
 
   /**
@@ -102,38 +119,26 @@ public class WarpStorageFactory {
    * @param dataSource the DataSource
    * @return a new {@code RelationalWarpStorage}
    */
-  private static RelationalWarpStorage createRelationalWarpStorage(MyWarp myWarp, SQLDialect dialect,
+  private static RelationalWarpStorage createRelationalWarpStorage(MyWarp myWarp, SQLDialect dialect, Settings settings,
                                                                    DataSource dataSource) {
-    Configuration
-        config =
-        new DefaultConfiguration().set(dialect).set(new Settings().withRenderSchema(false)).set(dataSource);
-
-    return new RelationalWarpStorage(myWarp, config);
+    return new RelationalWarpStorage(myWarp, new DefaultConfiguration().set(dialect).set(settings).set(dataSource));
   }
 
   /**
-   * Gets the {@link SQLDialect} from the given {@code DataSource} or fails fast if the dialect is not supported or a
-   * database error occurs.
+   * Creates a new {@link Settings} instance based on the given {@code config}.
    *
-   * @param dataSource the {@code DataSource} to get the dialect from
-   * @return the {@code SQLDialect}
-   * @throws StorageInitializationException if a database error occurs or the dialect is not supported
+   * @param config the config
+   * @return a new {@code Settings} instance
    */
-  private static SQLDialect getSupportedDialectOrFail(DataSource dataSource) throws StorageInitializationException {
-    SQLDialect dialect;
-    Connection connection = null;
-    try {
-      connection = dataSource.getConnection();
-      dialect = JDBCUtils.dialect(connection);
-    } catch (SQLException e) {
-      throw new StorageInitializationException("Failed to connect to the database.", e);
-    } finally {
-      JDBCUtils.safeClose(connection);
+  private static Settings createSettings(ConnectionConfiguration config) {
+    Settings settings = new Settings();
+    if (config.supportsSchemas()) {
+      settings.withRenderMapping(new RenderMapping().withSchemata(
+          new MappedSchema().withInput(Tables.WARP.getSchema().getName()).withOutput(config.getSchema())));
+    } else {
+      settings.withRenderSchema(false);
     }
-    if (!SUPPORRTED_DIALECTS.contains(dialect)) {
-      throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
-    }
-    return dialect;
+    return settings;
   }
 
 }

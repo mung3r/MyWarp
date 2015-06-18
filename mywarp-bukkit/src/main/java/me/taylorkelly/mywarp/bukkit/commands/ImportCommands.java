@@ -33,10 +33,11 @@ import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
+import me.taylorkelly.mywarp.storage.LegacyWarpSource;
 import me.taylorkelly.mywarp.storage.StorageInitializationException;
+import me.taylorkelly.mywarp.storage.WarpSource;
 import me.taylorkelly.mywarp.storage.WarpStorageFactory;
-import me.taylorkelly.mywarp.storage.source.LegacyWarpSource;
-import me.taylorkelly.mywarp.storage.source.WarpSource;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -76,44 +77,22 @@ public class ImportCommands {
   }
 
   /**
-   * Imports Warps from an SQLite database.
+   * Imports Warps from a relational database with an up-to-date table structure.
    *
-   * @param actor    the Actor
-   * @param database the database file
-   * @throws CommandException if the file does not exist
+   * @param actor  the Actor
+   * @param config the config of the relational database
+   * @throws CommandException if the import fails
    */
-  @Command(aliases = {"sqlite"}, desc = "import.sqlite.description", help = "import.sqlite.help")
+  @Command(aliases = {"current", "curr"}, desc = "import.current.description", help = "import.current.help")
   @Require(IMPORT_PERMISSION)
-  public void sqlite(Actor actor, File database) throws CommandException {
+  public void current(Actor actor, ConnectionConfiguration config) throws CommandException {
+    SingleConnectionDataSource dataSource;
     try {
-      SingleConnectionDataSource dataSource = DataSourceFactory.createSqliteSingleConnectionDataSource(database);
-      start(actor, WarpStorageFactory.create(myWarp, dataSource), dataSource);
-    } catch (StorageInitializationException e) {
-      throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
+      dataSource = DataSourceFactory.createSingleConnectionDataSource(config);
+      start(actor, WarpStorageFactory.create(myWarp, dataSource, config), dataSource);
     } catch (SQLException e) {
       throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
-    }
-  }
-
-  /**
-   * Imports Warps from an MySQL database.
-   *
-   * @param actor    the Actor
-   * @param dsn      the dsn of the database
-   * @param user     the MySQL user to use
-   * @param password the user's password
-   */
-  @Command(aliases = {"mysql"}, desc = "import.mysql.description", help = "import.mysql.help")
-  @Require(IMPORT_PERMISSION)
-  public void mysql(Actor actor, String dsn, String user, String password) throws CommandException {
-    try {
-      SingleConnectionDataSource
-          dataSource =
-          DataSourceFactory.createMySqlSingleConnectionDataSource(dsn, user, password);
-      start(actor, WarpStorageFactory.create(myWarp, dataSource), dataSource);
     } catch (StorageInitializationException e) {
-      throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
-    } catch (SQLException e) {
       throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
     }
   }
@@ -123,14 +102,15 @@ public class ImportCommands {
    *
    * @param actor    the Actor
    * @param database the database file
-   * @throws CommandException if the file does not exist
+   * @throws CommandException if the import fails
    */
   @Command(aliases = {"pre3-sqlite"}, desc = "import.pre3-sqlite.description", help = "import.pre3-sqlite.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Sqlite(Actor actor, File database) throws CommandException {
+    ConnectionConfiguration config = new ConnectionConfiguration("jdbc:sqlite:" + database.getAbsolutePath());
     try {
-      SingleConnectionDataSource dataSource = DataSourceFactory.createSqliteSingleConnectionDataSource(database);
-      start(actor, new LegacyWarpSource(dataSource, "warpTable", myWarp, getWorldSnapshot()), dataSource);
+      SingleConnectionDataSource dataSource = DataSourceFactory.createSingleConnectionDataSource(config);
+      start(actor, new LegacyWarpSource(myWarp, dataSource, config, "warpTable", getWorldSnapshot()), dataSource);
     } catch (SQLException e) {
       throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
     }
@@ -144,16 +124,18 @@ public class ImportCommands {
    * @param user      the MySQL user to use
    * @param password  the user's password
    * @param tableName the name of the table that contains the data
+   * @throws CommandException if the import fails
    */
   @Command(aliases = {"pre3-mysql"}, desc = "import.pre3-mysql.description", help = "import.pre3-mysql.help")
   @Require(IMPORT_PERMISSION)
-  public void pre3Mysql(Actor actor, String dsn, String user, String password, String tableName)
+  public void pre3Mysql(Actor actor, String dsn, String schema, String user, String password, String tableName)
       throws CommandException {
+    ConnectionConfiguration
+        config =
+        new ConnectionConfiguration(dsn).setSchema(schema).setUser(user).setPassword(password);
     try {
-      SingleConnectionDataSource
-          dataSource =
-          DataSourceFactory.createMySqlSingleConnectionDataSource(dsn, user, password);
-      start(actor, new LegacyWarpSource(dataSource, tableName, myWarp, getWorldSnapshot()), dataSource);
+      SingleConnectionDataSource dataSource = DataSourceFactory.createSingleConnectionDataSource(config);
+      start(actor, new LegacyWarpSource(myWarp, dataSource, config, tableName, getWorldSnapshot()), dataSource);
     } catch (SQLException e) {
       throw new CommandException(MESSAGES.getString("import.no-connection", e.getMessage()));
     }

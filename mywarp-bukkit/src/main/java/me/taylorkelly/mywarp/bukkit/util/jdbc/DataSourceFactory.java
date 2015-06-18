@@ -19,7 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit.util.jdbc;
 
-import java.io.File;
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
+
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -32,51 +33,47 @@ import javax.sql.DataSource;
 public class DataSourceFactory {
 
   /**
-   * Creates a new {@link SingleConnectionDataSource} to the SQLite database found in the given file.
+   * Creates a new {@code SingleConnectionDataSource} with the given {@code config}.
    *
-   * @param database the database {@code File}
+   * @param config the config of the relational database
    * @return a new {@code SingleConnectionDataSource}
    * @throws SQLException on a database error
    */
-  public static SingleConnectionDataSource createSqliteSingleConnectionDataSource(final File database)
+  public static SingleConnectionDataSource createSingleConnectionDataSource(ConnectionConfiguration config)
       throws SQLException {
-    Properties config = new Properties();
-    config.setProperty("foreign_keys", "on");
+    Properties properties = new Properties();
 
-    return createSingleConnectionDataSource("jdbc:sqlite://" + database.getAbsolutePath(), config);
+    if (config.getDriver().equals("org.sqlite.JDBC")) {
+      properties.setProperty("foreign_keys", "on");
+    } else if (config.getDriver().equals("org.h2.Driver")) {
+      try {
+        Class.forName("org.h2.Driver");
+      } catch (ClassNotFoundException e) {
+        //REVIEW throw SQLException?
+        throw new IllegalStateException("H2 driver class not found.");
+      }
+      properties.setProperty("user", config.getUser());
+      properties.setProperty("password", config.getPassword());
+    } else {
+      properties.setProperty("user", config.getUser());
+      properties.setProperty("password", config.getPassword());
+    }
+
+    return createSingleConnectionDataSource(config.getUrl(), properties);
   }
 
   /**
-   * Creates a new {@link SingleConnectionDataSource} to the MySQL server available under the given {@code url}, using
-   * the given credentials.
-   *
-   * @param url      the URL of the MySQL server
-   * @param user     the name of the user
-   * @param password the password of the user
-   * @return a new {@code SingleConnectionDataSource}
-   * @throws SQLException on a database error
-   */
-  public static SingleConnectionDataSource createMySqlSingleConnectionDataSource(String url, String user,
-                                                                                 String password) throws SQLException {
-    Properties config = new Properties();
-    config.setProperty("user", user);
-    config.setProperty("password", password);
-
-    return createSingleConnectionDataSource(url, config);
-  }
-
-  /**
-   * Creates a new {@code SingleConnectionDataSource} from the given {@code url}, using the given {@code Properties} as
+   * Creates a new {@code SingleConnectionDataSource} from the given {@code dsn}, using the given {@code Properties} as
    * configuration.
    *
-   * @param url    the url
-   * @param config the {@code Properties}
+   * @param dsn        the data source name
+   * @param properties the {@code Properties}
    * @return a new {@code SingleConnectionDataSource}
    * @throws SQLException on a database error
    */
-  private static SingleConnectionDataSource createSingleConnectionDataSource(String url, Properties config)
+  private static SingleConnectionDataSource createSingleConnectionDataSource(String dsn, Properties properties)
       throws SQLException {
-    return new SingleConnectionDataSource(DriverManager.getConnection(url, config));
+    return new SingleConnectionDataSource(DriverManager.getConnection(dsn, properties));
   }
 
 }

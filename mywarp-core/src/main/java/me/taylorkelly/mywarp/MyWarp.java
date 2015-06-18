@@ -33,6 +33,7 @@ import me.taylorkelly.mywarp.limits.SimpleLimitManager;
 import me.taylorkelly.mywarp.safety.CubicLocationSafety;
 import me.taylorkelly.mywarp.safety.TeleportService;
 import me.taylorkelly.mywarp.storage.AsyncWritingWarpStorage;
+import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.storage.StorageInitializationException;
 import me.taylorkelly.mywarp.storage.WarpStorage;
 import me.taylorkelly.mywarp.storage.WarpStorageFactory;
@@ -81,11 +82,13 @@ public class MyWarp {
   public MyWarp(final Platform platform) throws InitializationException {
     this.platform = platform;
 
+    //setup the WarpStorage
+    RelationalDataService dataService = platform.getDataService();
     try {
       warpStorage =
           new AsyncWritingWarpStorage(
-              WarpStorageFactory.createInitialized(MyWarp.this, platform.getDataService().getDataSource()),
-              platform.getDataService().getExecutorService());
+              WarpStorageFactory.createInitialized(this, dataService.getDataSource(), dataService.getConfiguration()),
+              dataService.getExecutorService());
 
     } catch (StorageInitializationException e) {
       throw new InitializationException("Failed to get a connection to the database.", e);
@@ -93,7 +96,7 @@ public class MyWarp {
 
     eventBus = new EventBus();
 
-    // setup the warpManager
+    // setup the WarpManager
     warpManager = new EventfulWarpManager(new StorageWarpManager(new MemoryWarpManager(), warpStorage), eventBus);
 
     DynamicMessages.setControl(platform.getResourceBundleControl());

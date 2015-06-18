@@ -21,6 +21,8 @@ package me.taylorkelly.mywarp.bukkit;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.sk89q.intake.CommandCallable;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.InvalidUsageException;
@@ -52,12 +54,15 @@ import me.taylorkelly.mywarp.bukkit.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
 import me.taylorkelly.mywarp.bukkit.util.EncodedControl;
+import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
+import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
 import me.taylorkelly.mywarp.bukkit.util.parametric.ActorAuthorizer;
 import me.taylorkelly.mywarp.bukkit.util.parametric.CommandResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.parametric.ExceptionConverter;
 import me.taylorkelly.mywarp.bukkit.util.parametric.FallbackDispatcher;
 import me.taylorkelly.mywarp.bukkit.util.parametric.IntakeResourceProvider;
 import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ActorBindung;
+import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ConnectionConfigurationBinding;
 import me.taylorkelly.mywarp.bukkit.util.parametric.binding.FileBinding;
 import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding;
 import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ProfileBinding;
@@ -67,6 +72,7 @@ import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistrati
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolverManager;
 import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
@@ -93,6 +99,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
@@ -107,7 +114,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   private final File bundleFolder = new File(getDataFolder(), "lang");
   private final ResourceBundle.Control control = new EncodedControl(Charsets.UTF_8);
 
-  private BukkitRelationalDataService dataService;
+  private SingleConnectionDataService dataService;
   private GroupResolverManager groupResolverManager;
   private SquirrelIdProfileService profileService;
   private BukkitSettings settings;
@@ -146,17 +153,25 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
         new BukkitSettings(new File(getDataFolder(), "config.yml"),
                            YamlConfiguration.loadConfiguration(getTextResource("config.yml")), adapter);
 
-    // setup the Game
-    game = new BukkitGame(new BukkitExecutor(this), adapter);
+    // setup the DataService
+    ConnectionConfiguration config = settings.getStorageConfiguration();
 
+    //TODO fail for SQLite driver 3.7.x...
+
+    SingleConnectionDataSource dataSource;
     try {
-      dataService = new BukkitRelationalDataService(settings, getDataFolder());
+      dataSource = DataSourceFactory.createSingleConnectionDataSource(config);
     } catch (SQLException e) {
-      log.error("A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be disabled.",
-                e);
+      log.error("Failed to connect to the database. MyWarp will be disabled.", e);
       Bukkit.getPluginManager().disablePlugin(this);
       return;
     }
+    ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
+
+    dataService = new SingleConnectionDataService(dataSource, config, executorService);
+
+    // setup the Game
+    game = new BukkitGame(new BukkitExecutor(this), adapter);
 
     // try to setup the core
     try {
@@ -178,6 +193,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     builder.setAuthorizer(new ActorAuthorizer());
     builder.setExternalResourceProvider(new CommandResourceProvider(control));
     builder.addBinding(new ActorBindung());
+    builder.addBinding(new ConnectionConfigurationBinding());
     builder.addBinding(new FileBinding(getDataFolder()));
     builder.addBinding(playerBinding);
     builder.addBinding(new ProfileBinding(profileService));
@@ -245,7 +261,9 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     HandlerList.unregisterAll(this);
     BukkitPermissionsRegistration.INSTANCE.unregisterAll();
 
-    dataService.shutdown();
+    if (dataService != null) {
+      dataService.shutdown();
+    }
   }
 
   @Override
