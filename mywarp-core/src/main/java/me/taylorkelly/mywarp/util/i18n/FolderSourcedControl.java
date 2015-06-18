@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.util.i18n;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Charsets;
 
 import java.io.File;
@@ -30,29 +32,46 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import javax.annotation.Nullable;
+
 /**
  * Searches for {@link PropertyResourceBundle}s in a folder, before trying to resolve them from the classpath.
- * ResourceBundles are loaded using <b>UTF-8</b> file-encoding.
  */
 public class FolderSourcedControl extends ResourceBundle.Control {
 
-  private static final Charset CHARSET = Charsets.UTF_8;
+  private static final Charset DEFAULT_ENCODING = Charsets.UTF_8;
 
+  private final Charset encoding;
   private final File bundleFolder;
 
   /**
-   * Initializes this instance. Resource bundles will be resolved from the given folder before falling back to the
-   * class-path.
+   * Creates an instance that tries to load bundles from the given {@code folder} before falling back to the classpath.
+   * Bundles are read with an {@code UTF-8} encoding.
    *
-   * @param bundleFolder the folder
+   * @param folder the folder to load from
    */
-  public FolderSourcedControl(File bundleFolder) {
-    this.bundleFolder = bundleFolder;
+  public FolderSourcedControl(File folder) {
+    this(DEFAULT_ENCODING, folder);
+  }
+
+  /**
+   * Creates an instance that tries to load bundles from the given {@code folder} before falling back to the classpath.
+   * Bundles are read with the given {@code encoding}.
+   *
+   * @param folder   the folder to load from
+   * @param encoding the encoding to use
+   */
+  public FolderSourcedControl(Charset encoding, File folder) {
+    this.encoding = encoding;
+    this.bundleFolder = folder;
   }
 
   @Override
@@ -61,40 +80,56 @@ public class FolderSourcedControl extends ResourceBundle.Control {
   }
 
   @Override
-  public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-      throws IOException {
+  @Nullable
+  public ResourceBundle newBundle(final String baseName, final Locale locale, final String format,
+                                  final ClassLoader loader, final boolean reload) throws IOException {
+    checkArgument(ResourceBundle.Control.FORMAT_PROPERTIES.contains(format), "unknown format: %s", format);
 
-    String bundleName = toBundleName(baseName, locale);
-    ResourceBundle bundle = null;
-
+    final String bundleName = toBundleName(baseName, locale);
     final String resourceName = toResourceName(bundleName, "properties");
-    InputStream stream = null;
-    final File bundleFile = new File(bundleFolder, resourceName);
 
-    if (bundleFile.isFile()) {
-      stream = new FileInputStream(bundleFile);
-    } else if (reload) {
-      URL url = loader.getResource(resourceName);
-      if (url != null) {
-        URLConnection connection = url.openConnection();
-        if (connection != null) {
-          // Disable caches to get fresh data for
-          // reloading.
-          connection.setUseCaches(false);
-          stream = connection.getInputStream();
+    ResourceBundle bundle = null;
+    InputStream stream;
+
+    //this implementation mirrors Java's but initializes the ResourceBundle with a Reader and encoding
+    try {
+      stream = AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
+        public InputStream run() throws IOException {
+          InputStream is = null;
+
+          //never load the base locale from a file
+          if (locale != Locale.ROOT) {
+            File bundleFile = new File(bundleFolder, resourceName);
+            if (bundleFile.isFile()) {
+              is = new FileInputStream(bundleFile);
+            }
+          }
+          if (is == null && reload) {
+            URL url = loader.getResource(resourceName);
+            if (url != null) {
+              URLConnection connection = url.openConnection();
+              if (connection != null) {
+                // Disable caches to get fresh data for reloading.
+                connection.setUseCaches(false);
+                is = connection.getInputStream();
+              }
+            }
+          }
+          if (is == null) {
+            is = loader.getResourceAsStream(resourceName);
+          }
+          return is;
         }
-
-      } else {
-        stream = loader.getResourceAsStream(resourceName);
-      }
+      });
+    } catch (PrivilegedActionException e) {
+      throw (IOException) e.getException();
     }
-    if (stream != null) {
-      Reader reader = new InputStreamReader(stream, CHARSET);
-      try {
 
+    if (stream != null) {
+      Reader reader = new InputStreamReader(stream, encoding);
+      try {
         bundle = new PropertyResourceBundle(reader);
       } finally {
-        // this also closes the stream
         reader.close();
       }
     }

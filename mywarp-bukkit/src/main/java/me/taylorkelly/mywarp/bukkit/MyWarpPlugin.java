@@ -19,7 +19,6 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -53,7 +52,6 @@ import me.taylorkelly.mywarp.bukkit.limits.BukkitLimitProvider;
 import me.taylorkelly.mywarp.bukkit.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
-import me.taylorkelly.mywarp.bukkit.util.EncodedControl;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
 import me.taylorkelly.mywarp.bukkit.util.parametric.ActorAuthorizer;
@@ -77,6 +75,7 @@ import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.util.i18n.FolderSourcedControl;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 
 import net.milkbowl.vault.economy.Economy;
@@ -112,7 +111,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   private static final Logger log = MyWarpLogger.getLogger(MyWarpPlugin.class);
 
   private final File bundleFolder = new File(getDataFolder(), "lang");
-  private final ResourceBundle.Control control = new EncodedControl(Charsets.UTF_8);
+  private final ResourceBundle.Control control = new FolderSourcedControl(bundleFolder);
 
   private SingleConnectionDataService dataService;
   private GroupResolverManager groupResolverManager;
