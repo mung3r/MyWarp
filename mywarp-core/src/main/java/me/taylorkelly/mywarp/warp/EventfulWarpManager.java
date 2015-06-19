@@ -27,7 +27,7 @@ import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.safety.TeleportService;
+import me.taylorkelly.mywarp.teleport.TeleportManager.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -114,43 +114,28 @@ public class EventfulWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public TeleportService.TeleportStatus teleport(LocalEntity entity) {
-      TeleportService.TeleportStatus ret = super.teleport(entity);
-      switch (ret) {
-        case ORIGINAL_LOC:
-        case SAFE_LOC:
-          eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
-          break;
-        case NONE:
-          break;
+    public TeleportStatus teleport(LocalEntity entity) {
+      TeleportStatus ret = super.teleport(entity);
+      if (ret.isPositionModified()) {
+        eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
       }
       return ret;
     }
 
     @Override
-    public TeleportService.TeleportStatus teleport(LocalPlayer player) {
-      TeleportService.TeleportStatus ret = super.teleport(player);
-      switch (ret) {
-        case ORIGINAL_LOC:
-        case SAFE_LOC:
-          eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
-          break;
-        case NONE:
-          break;
+    public TeleportStatus teleport(LocalPlayer player) {
+      TeleportStatus ret = super.teleport(player);
+      if (ret.isPositionModified()) {
+        eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
       }
       return ret;
     }
 
     @Override
-    public TeleportService.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
-      TeleportService.TeleportStatus ret = super.teleport(player, fee);
-      switch (ret) {
-        case ORIGINAL_LOC:
-        case SAFE_LOC:
-          eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
-          break;
-        case NONE:
-          break;
+    public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
+      TeleportStatus ret = super.teleport(player, fee);
+      if (ret.isPositionModified()) {
+        eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
       }
       return ret;
     }

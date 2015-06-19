@@ -30,8 +30,8 @@ import me.taylorkelly.mywarp.economy.InformativeEconomyManager;
 import me.taylorkelly.mywarp.limits.DummyLimitManager;
 import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.limits.SimpleLimitManager;
-import me.taylorkelly.mywarp.safety.CubicLocationSafety;
-import me.taylorkelly.mywarp.safety.TeleportService;
+import me.taylorkelly.mywarp.teleport.SafeTeleportManager;
+import me.taylorkelly.mywarp.teleport.TeleportManager;
 import me.taylorkelly.mywarp.storage.AsyncWritingWarpStorage;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.storage.StorageInitializationException;
@@ -71,7 +71,7 @@ public class MyWarp {
   private LimitManager limitManager;
   private WarpSignManager warpSignManager;
 
-  private TeleportService teleportService;
+  private TeleportManager teleportManager;
 
   /**
    * Creates an instance of MyWarp, running on the given Platform.
@@ -102,7 +102,7 @@ public class MyWarp {
     DynamicMessages.setControl(platform.getResourceBundleControl());
 
     // setup TeleportService
-    teleportService = new TeleportService(new CubicLocationSafety(), getSettings());
+    teleportManager = new SafeTeleportManager(getSettings());
 
     // setup the rest of the plugin
     setupPlugin();
@@ -179,8 +179,8 @@ public class MyWarp {
    *
    * @return the TeleportService
    */
-  public TeleportService getTeleportService() {
-    return teleportService;
+  public TeleportManager getTeleportManager() {
+    return teleportManager;
   }
 
   /**
@@ -239,7 +239,6 @@ public class MyWarp {
   public WarpSignManager getWarpSignManager() {
     return warpSignManager;
   }
-
 
   /**
    * Gets the Settings instance of this MyWarp instance.

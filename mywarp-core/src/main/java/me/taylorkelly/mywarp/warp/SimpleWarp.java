@@ -30,7 +30,7 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.safety.TeleportService.TeleportStatus;
+import me.taylorkelly.mywarp.teleport.TeleportManager.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -161,15 +161,9 @@ class SimpleWarp implements Warp {
 
   @Override
   public TeleportStatus teleport(LocalEntity entity) {
-    TeleportStatus status = myWarp.getTeleportService().safeTeleport(entity, getWorld(), position, rotation);
-
-    switch (status) {
-      case ORIGINAL_LOC:
-      case SAFE_LOC:
-        visits++;
-        break;
-      case NONE:
-        break;
+    TeleportStatus status = myWarp.getTeleportManager().teleport(entity, getWorld(), position, rotation);
+    if (status.isPositionModified()) {
+      visits++;
     }
     return status;
   }
@@ -179,13 +173,13 @@ class SimpleWarp implements Warp {
     TeleportStatus status = teleport((LocalEntity) player);
 
     switch (status) {
-      case ORIGINAL_LOC:
+      case ORIGINAL:
         if (!welcomeMessage.isEmpty()) {
           // TODO color in aqua
           player.sendMessage(getParsedWelcomeMessage(player));
         }
         break;
-      case SAFE_LOC:
+      case MODIFIED:
         player.sendError(MESSAGES.getString("unsafe-loc.closest-location", getName()));
         break;
       case NONE:
@@ -198,14 +192,8 @@ class SimpleWarp implements Warp {
   @Override
   public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
     TeleportStatus status = teleport(player);
-    if (myWarp.getSettings().isEconomyEnabled()) {
-      switch (status) {
-        case NONE:
-          break;
-        case ORIGINAL_LOC:
-        case SAFE_LOC:
-          myWarp.getEconomyManager().withdraw(player, fee);
-      }
+    if (myWarp.getSettings().isEconomyEnabled() && status.isPositionModified()) {
+      myWarp.getEconomyManager().withdraw(player, fee);
     }
     return status;
   }

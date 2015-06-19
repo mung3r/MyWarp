@@ -25,8 +25,9 @@ import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import java.math.BigDecimal;
 
 /**
- * Provides managed access to an economy system.
- * <p>For a raw access, use an {@link EconomyService}.</p>
+ * Provides managed access to an economy system. Implementations may call additional validation before, or call
+ * additional callback after a transactions is executed.
+ * <p>For a raw access use an {@link EconomyService}.</p>
  */
 public interface EconomyManager {
 

@@ -58,7 +58,7 @@ public interface TimerService {
    *
    * @see TimerService#has(Object, Class)
    */
-  public static class EvaluationResult {
+  class EvaluationResult {
 
     /**
      * Indicates that no timer is running.

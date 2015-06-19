@@ -166,16 +166,11 @@ public class UtilityCommands {
   @Require("mywarp.cmd.player")
   @Billable(FeeType.WARP_PLAYER)
   public void player(Actor actor, LocalPlayer teleportee, @Name(Condition.VIEWABLE) Warp warp) {
-    switch (warp.teleport(teleportee)) {
-      case NONE:
-        actor.sendError(MESSAGES.getString("warp-player.teleport-failed", teleportee.getName(), warp.getName()));
-        break;
-      case ORIGINAL_LOC:
-      case SAFE_LOC:
-        actor.sendMessage(ChatColor.AQUA + MESSAGES
-            .getString("warp-player.teleport-successful", teleportee.getName(), warp.getName()));
-        break;
-
+    if (warp.teleport(teleportee).isPositionModified()) {
+      actor.sendMessage(
+          ChatColor.AQUA + MESSAGES.getString("warp-player.teleport-successful", teleportee.getName(), warp.getName()));
+    } else {
+      actor.sendError(MESSAGES.getString("warp-player.teleport-failed", teleportee.getName(), warp.getName()));
     }
   }
 

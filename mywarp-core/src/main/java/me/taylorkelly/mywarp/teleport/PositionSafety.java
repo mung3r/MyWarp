@@ -17,18 +17,24 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.safety;
+package me.taylorkelly.mywarp.teleport;
 
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.util.Vector3;
 
 /**
- * Tests if a certain position is safe to stand on.
+ * Tests if a single position is safe for a normal entity.
  */
-public abstract class BlockSafety implements PositionSafety {
+class PositionSafety {
 
-  @Override
-  public boolean isPositionSafe(LocalWorld world, Vector3 position) {
+  /**
+   * Returns whether the given {@code position} in the given {@code world} is safe for a normal entity.
+   *
+   * @param world    the world that contains the position
+   * @param position the position
+   * @return {@code true} if the position is safe
+   */
+  public boolean isSafe(LocalWorld world, Vector3 position) {
     Vector3 upOne = position.add(0, 1, 0);
     Vector3 downOne = position.sub(0, 1, 0);
 

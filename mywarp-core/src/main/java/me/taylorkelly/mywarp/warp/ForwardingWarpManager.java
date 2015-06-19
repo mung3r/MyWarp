@@ -28,7 +28,7 @@ import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.safety.TeleportService;
+import me.taylorkelly.mywarp.teleport.TeleportManager.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -124,17 +124,17 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public TeleportService.TeleportStatus teleport(LocalEntity entity) {
+    public TeleportStatus teleport(LocalEntity entity) {
       return delegate().teleport(entity);
     }
 
     @Override
-    public TeleportService.TeleportStatus teleport(LocalPlayer player) {
+    public TeleportStatus teleport(LocalPlayer player) {
       return delegate().teleport(player);
     }
 
     @Override
-    public TeleportService.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
+    public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
       return delegate().teleport(player, fee);
     }
 

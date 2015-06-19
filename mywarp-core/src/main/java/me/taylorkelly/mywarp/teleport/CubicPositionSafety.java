@@ -17,7 +17,9 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.safety;
+package me.taylorkelly.mywarp.teleport;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.Optional;
 
@@ -25,16 +27,23 @@ import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.util.Vector3;
 
 /**
- * Searches for safe positions within a cube centered at the starting point.
+ * Searches for positions that are safe for a normal entity within a cube surrounding a given center position.
  */
-public class CubicLocationSafety extends BlockSafety {
+class CubicPositionSafety extends PositionSafety {
 
-  @Override
+  /**
+   * Gets an Optional with the first safe position found within the given tolerance, starting from the given position,
+   * if such a position exits.
+   *
+   * @param world     the world where the position is placed it
+   * @param center    the center position
+   * @param tolerance the acceptable tolerance
+   * @return the first safe position
+   */
   public Optional<Vector3> getSafePosition(LocalWorld world, Vector3 center, int tolerance) {
-    if (tolerance < 0) {
-      throw new IllegalArgumentException("halfEdgeLength must be greater than 0.");
-    }
-    if (isPositionSafe(world, center)) {
+    checkArgument(tolerance >= 0);
+
+    if (isSafe(world, center)) {
       return Optional.of(center);
     }
     Optional<Vector3> safePosition; // never modify the given location!
@@ -89,7 +98,7 @@ public class CubicLocationSafety extends BlockSafety {
    * @return the first safe position
    */
   private Optional<Vector3> checkHorizontalSquare(LocalWorld world, Vector3 center, int halfEdgeLength) {
-    if (isPositionSafe(world, center)) {
+    if (isSafe(world, center)) {
       return Optional.of(center);
     }
     Optional<Vector3> checkPosition;
@@ -106,7 +115,8 @@ public class CubicLocationSafety extends BlockSafety {
   }
 
   /**
-   * Gets an Optional with the first safe position from the outline of horizontal square with the given half-edge-length
+   * Gets an Optional with the first safe position from the outline of horizontal square with the given
+   * half-edge-length
    * centered at the given position in the given world, if such a position exits.
    *
    * @param world          the world where the position is placed it
@@ -120,27 +130,27 @@ public class CubicLocationSafety extends BlockSafety {
 
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(-1, 0, 0);
-      if (isPositionSafe(world, checkPosition)) {
+      if (isSafe(world, checkPosition)) {
         return Optional.of(checkPosition);
       }
     }
 
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(0, 0, -1);
-      if (isPositionSafe(world, checkPosition)) {
+      if (isSafe(world, checkPosition)) {
         return Optional.of(checkPosition);
       }
     }
 
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(1, 0, 0);
-      if (isPositionSafe(world, checkPosition)) {
+      if (isSafe(world, checkPosition)) {
         return Optional.of(checkPosition);
       }
     }
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(0, 0, 1);
-      if (isPositionSafe(world, checkPosition)) {
+      if (isSafe(world, checkPosition)) {
         return Optional.of(checkPosition);
       }
     }
@@ -148,7 +158,8 @@ public class CubicLocationSafety extends BlockSafety {
   }
 
   /**
-   * Gets the edge length of a square with the given half-edge-length. The later is expected to include the block at the
+   * Gets the edge length of a square with the given half-edge-length. The later is expected to include the block at
+   * the
    * center, e.g. the half-edge-length '2' would result in a edge-length of '3'.
    *
    * @param halfEdgeLength half of the effective edge length, including the block in the center
