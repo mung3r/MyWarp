@@ -155,11 +155,11 @@ public class DynmapMarkers {
    *
    * @param warp the Warp
    * @return the label for this Warp
-   * @see Warp#replacePlaceholders(String)
+   * @see WarpUtils#replaceTokens(String, Warp)
    */
   private String toLabelHtml(Warp warp) {
     String rawLabel = MESSAGES.getString("marker", settings.getLocalizationDefaultLocale());
-    return warp.replacePlaceholders(rawLabel);
+    return WarpUtils.replaceTokens(rawLabel, warp);
 
   }
 

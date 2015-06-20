@@ -44,7 +44,7 @@ public interface BlockType {
    * Returns whether this particular Block is smaller than a normal (full) block.
    *
    * @return true if this particular block is smaller than a normal block
-   * @deprecated This method exists only to suport warps created in legacy versions.
+   * @deprecated This method exists only to support warps created in legacy versions.
    */
   @Deprecated
   boolean isNotFullHeight();

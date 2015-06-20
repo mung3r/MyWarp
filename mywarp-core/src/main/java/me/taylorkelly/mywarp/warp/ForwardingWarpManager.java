@@ -189,16 +189,6 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public String replacePlaceholders(String str, LocalPlayer forWhom) {
-      return delegate().replacePlaceholders(str, forWhom);
-    }
-
-    @Override
-    public String replacePlaceholders(String str) {
-      return delegate().replacePlaceholders(str);
-    }
-
-    @Override
     public int compareTo(Warp that) {
       return delegate().compareTo(that);
     }

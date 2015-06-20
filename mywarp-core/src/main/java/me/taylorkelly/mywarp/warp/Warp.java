@@ -182,23 +182,6 @@ public interface Warp extends Comparable<Warp> {
   void uninvitePlayer(Profile player);
 
   /**
-   * Replaces all placeholder in the given string with the values applicable for this Warp and the given player.
-   *
-   * @param str     the string that contains the placeholder
-   * @param forWhom the player for whom the placeholder should be replaced - can be null if there is none
-   * @return the string with replaced placeholder
-   */
-  String replacePlaceholders(String str, LocalPlayer forWhom);
-
-  /**
-   * Replaces all placeholder in the given string with the values applicable for this Warp.
-   *
-   * @param str the string that contains the placeholder
-   * @return the string with replaced placeholder
-   */
-  String replacePlaceholders(String str);
-
-  /**
    * Gets the Profile of this Warp's creator.
    *
    * @return the Profile of the creator of this Warp

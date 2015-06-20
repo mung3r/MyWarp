@@ -34,10 +34,9 @@ import me.taylorkelly.mywarp.teleport.TeleportManager.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.Vector3;
+import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.util.Collections;
 import java.util.Date;
@@ -250,28 +249,6 @@ class SimpleWarp implements Warp {
   }
 
   @Override
-  public String replacePlaceholders(String str, LocalPlayer forWhom) {
-    str = StringUtils.replace(str, "%player%", forWhom.getName());
-    return replacePlaceholders(str);
-  }
-
-  @Override
-  public String replacePlaceholders(String str) {
-    str = StringUtils.replace(str, "%creator%", creator.getName().or(creator.getUniqueId().toString()));
-
-    str = StringUtils.replace(str, "%warp%", name);
-    str = StringUtils.replace(str, "%visits%", Integer.toString(visits));
-
-    str =
-        StringUtils.replace(str, "%loc%",
-                            "(" + position.getFloorX() + ", " + position.getFloorY() + ", " + position.getFloorZ()
-                            + ")");
-    str = StringUtils.replace(str, "%getWorld()%", getWorld().getName());
-
-    return str;
-  }
-
-  @Override
   public int compareTo(Warp that) {
     return this.name.compareTo(that.getName());
   }
@@ -334,7 +311,7 @@ class SimpleWarp implements Warp {
 
   @Override
   public String getParsedWelcomeMessage(LocalPlayer forWhom) {
-    return replacePlaceholders(welcomeMessage, forWhom);
+    return WarpUtils.replaceTokens(welcomeMessage, this, forWhom);
   }
 
   @Override
