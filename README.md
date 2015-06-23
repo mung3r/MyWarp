@@ -1,21 +1,10 @@
 ![MyWarp](http://dev.bukkit.org/media/images/55/821/MyWarp_horLogo.png)
 ==========
-[![Build Status](https://travis-ci.org/TheE/MyWarp.svg)](https://travis-ci.org/TheE/MyWarp)
+[![Build Status](https://travis-ci.org/TheE/MyWarp.svg)](https://travis-ci.org/TheE/MyWarp) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/mywarp/localized.png)](https://crowdin.com/project/mywarp)
 
-MyWarp is a dynamic and social warp plugin for Minecraft. It allows you to:
+MyWarp is an extension for the Minecraft multiplayer that allows players to share locations with each other. Shared locations (called ‘warps’) can be visited instantly by other players using a simple command. Creators remain in full control over their warps: They can remove them, change their locations, or invite players to or uninvite players from using them.
 
-* Create private and public warps,
-* Invite and uninvite players or whole permission-groups to warps or make them public so everyone can use them,
-* List all warps you can use and profit from the intelligent mechanism that determines warp-names based on name-parts,
-* Use creation-limits to regulate how many warps of a type a user can make,
-* Create warmups and/or cooldowns to regulate warp-usage even more,
-* Regulate access to warps based on worlds,
-* Create warp signs and connect them to buttons or levers,
-* Charge your users for using, creating, listing or any other warp-related task via Vault,
-* Translate every message the plugin outputs, either so it fits your servers theme of even into a whole new language,
-* Show warps on Dynmap using the built-in support.
-
-MyWarp is open source and is available under the GNU General Public License v3.
+MyWarp’s goal is to create a highly flexible system that allows players to dynamically connect with each other while beeing entirely self-managed. Once set up, administrative interventions are reduced to a bare minimum.
 
 Compiling
 ---------
@@ -53,4 +42,12 @@ Contributing
 
 We accept contributions, especially through pull requests on GitHub. Submissions must be licensed under the GNU General Public License v3.
 
-Please read CONTRIBUTING.md for important guidelines to follow.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for important guidelines to follow.
+
+Links
+-----
+* [Official Website](https://thee.github.io/MyWarp/)
+* [Documentation](https://github.com/TheE/MyWarp/wiki)
+* [Localization](https://crowdin.com/project/mywarp)
+* [Issue Tracker](https://github.com/TheE/MyWarp/issues)
+* [Continues Integration](https://thee140.ci.cloudbees.com/)
