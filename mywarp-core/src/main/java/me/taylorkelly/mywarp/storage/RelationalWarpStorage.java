@@ -62,8 +62,8 @@ import java.util.UUID;
 
 /**
  * A storage implementation that stores warps in a relational database.
- * <p>This implementation is guaranteed to work with SQLite, MySQL and H2, but might also work on other relational
- * database management systems.</p>
+ * <p>This implementation is guaranteed to work with SQLite, MySQL, MariaDB and H2, but might also work on other
+ * relational database management systems.</p>
  */
 class RelationalWarpStorage implements WarpStorage {
 

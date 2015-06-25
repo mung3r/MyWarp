@@ -42,7 +42,7 @@ public class WarpStorageFactory {
 
   private static final ImmutableSet<SQLDialect>
       SUPPORTED_DIALECTS =
-      ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.SQLITE, SQLDialect.H2);
+      ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.MARIADB, SQLDialect.SQLITE, SQLDialect.H2);
 
   /**
    * Block initialization of this class.
@@ -94,7 +94,7 @@ public class WarpStorageFactory {
     Flyway flyway = new Flyway();
     flyway.setClassLoader(myWarp.getClass().getClassLoader());
     flyway.setDataSource(dataSource);
-    flyway.setLocations("migrations/" + dialect.getNameLC());
+    flyway.setLocations(getMigrationLocation(dialect));
 
     if (config.supportsSchemas()) {
       flyway.setSchemas(config.getSchema());
@@ -139,6 +139,28 @@ public class WarpStorageFactory {
       settings.withRenderSchema(false);
     }
     return settings;
+  }
+
+  /**
+   * Gets the location to scan for migration scripts for the database management systems of the given {@code dialect}.
+   *
+   * @param dialect the dialect
+   * @throws StorageInitializationException if no migration scripts for the given {@code dialect} are bundled
+   * @see Flyway#setLocations(String...)
+   */
+  private static String getMigrationLocation(SQLDialect dialect) throws StorageInitializationException {
+    switch (dialect) {
+      case H2:
+        return "classpath:migrations/h2";
+      case MARIADB:
+      case MYSQL:
+        return "classpath:migrations/mysql";
+      case SQLITE:
+        return "classpath:migrations/sqlite";
+      default:
+        throw new StorageInitializationException(
+            String.format("Migrations are not supported for %s!", dialect.getName()));
+    }
   }
 
 }
