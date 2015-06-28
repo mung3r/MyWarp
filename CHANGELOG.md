@@ -3,16 +3,39 @@
 All notable changes to this project will be documented in this file.
 Starting with version 3, this project adheres to [Semantic Versioning](http://semver.org/).
 
+Unreleased APIs may change dramatically between `SNAPSHOT` versions.
+
 ## [Unreleased]
+
+### Added:
+* Added delay to the sever shutdown if changes are still written to the database
+* [[#48](https://github.com/TheE/MyWarp/issues/48)] - Added support for H2
+* [[#50](https://github.com/TheE/MyWarp/issues/50)] - Added support for MariaDB
+* [[#33](https://github.com/TheE/MyWarp/issues/33)] - Add manual addition or overwriting of bundled localizations
+
+### Changed:
+* [[#29](https://github.com/TheE/MyWarp/issues/29)] - Platform implementations completely manage the `DataSource`
+* Replace `DataConnection` with `WarpStorage`
+* Overhaul import from other databases
+* Overhaul SQL queries, remove overhead and use transactions
+* Internally represent currencies as `BigDecimal`
+* Overhaul `WarpManager` implementation, directly expose the `EventBus` in `MyWarp`
+* Overhaul `EconomyManager` definition and functionality
+* Replace `TeleportService` with `TeleportManager`
+* Move token functionality from `Warp` to `WarpUtils`
 
 ### Fixed:
 * Fixed `/warp player` being unusable by non-players
 * Fixed NPE thrown when formatting special characters
 * Fixed invalid variables in German (un)invite messages for public warps
 * Fixed `/warp assets` being completely empty for players without warps
-* Fixed #47 - Economy support not working
-* Fixed #49 - Irregular handling of AuthorizationExceptions for `/warp <warp>`
+* [[#43](https://github.com/TheE/MyWarp/issues/43)] - Warps with invitations are not deleted from the database
+* [[#47](https://github.com/TheE/MyWarp/issues/47)] - Economy support not working
+* [[#49](https://github.com/TheE/MyWarp/issues/49)] - Irregular handling of AuthorizationExceptions for `/warp <warp>`
+* [[#46](https://github.com/TheE/MyWarp/issues/46)] - Incompatibilities with recent Guava versions
 
+### Removed:
+* [Bukkit] Removed support for SQLite 3.7.x witch is bundled by CraftBukkit.
 
 ## [3.0-beta-1]
 
