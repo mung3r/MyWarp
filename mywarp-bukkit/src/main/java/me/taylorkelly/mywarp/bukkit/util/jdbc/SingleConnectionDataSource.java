@@ -19,9 +19,9 @@
 
 package me.taylorkelly.mywarp.bukkit.util.jdbc;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Objects;
+
+import me.taylorkelly.mywarp.util.MyWarpLogger;
 
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationHandler;
@@ -32,6 +32,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.Statement;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
@@ -44,13 +46,11 @@ import javax.sql.DataSource;
  */
 public class SingleConnectionDataSource implements DataSource {
 
-  private String url;
+  private static final org.slf4j.Logger log = MyWarpLogger.getLogger(SingleConnectionDataSource.class);
 
-  @Nullable
-  private String username;
-
-  @Nullable
-  private String password;
+  private final String url;
+  private final boolean driverSupportsIsValid;
+  private final Properties properties;
 
   @Nullable
   private Connection target;
@@ -59,56 +59,39 @@ public class SingleConnectionDataSource implements DataSource {
   private Connection proxy;
 
   /**
-   * Creates a new instance that connects to a database using the given {@code url}.
-   *
-   * @param url the database url
-   * @see DriverManager#getConnection(String)
-   */
-  public SingleConnectionDataSource(String url) {
-    this.url = url;
-  }
-
-  /**
    * Creates a new instance that connects to a database using the given {@code url}, {@code username} and {@code
    * password}.
    *
-   * @param url      the database url
-   * @param username the database user
-   * @param password the password of the databse user
+   * @param url                   the database url
+   * @param properties            the properties used to connect with the database
+   * @param driverSupportsIsValid whether the driver used to connect with the given URL implements {@link
+   *                              Connection#isValid(int)}
    * @see DriverManager#getConnection(String, String, String)
    */
-  public SingleConnectionDataSource(String url, String username, String password) {
+  SingleConnectionDataSource(String url, Properties properties, boolean driverSupportsIsValid) {
     this.url = url;
-    this.username = username;
-    this.password = password;
-  }
-
-  /**
-   * Creates a new instance that uses the given {@code Connection}. All {@code Connection}s returned by this instance
-   * will be wrapped versions of it.
-   *
-   * @param target the {@code Connection}
-   */
-  public SingleConnectionDataSource(Connection target) {
-    this.target = target;
-    this.proxy = getCloseSuppressingConnectionProxy(target);
+    this.properties = properties;
+    this.driverSupportsIsValid = driverSupportsIsValid;
   }
 
   @Override
   public Connection getConnection() throws SQLException {
     if (target == null || proxy == null) {
+      log.debug("Initializing connection.");
+      initiate();
+
+    }
+    if (!isValid(target)) {
+      log.debug("Target connection is invalid. Reconnecting...");
       initiate();
     }
-    if (target.isClosed()) {
-      throw new SQLException("The target connection is closed.");
-    }
-
     return proxy;
   }
 
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
-    if (Objects.equal(this.username, username) && Objects.equal(this.password, password)) {
+    if (Objects.equal(this.properties.getProperty("user"), username) && Objects
+        .equal(this.properties.getProperty("password"), password)) {
       throw new SQLException(
           "SingleConnectionDataSource does not support retrieving of connections with custom username and password.");
     }
@@ -162,12 +145,28 @@ public class SingleConnectionDataSource implements DataSource {
    * @throws IllegalStateException if {@code url} is not set
    */
   private void initiate() throws SQLException {
-    checkState(url != null, "To lazy initialize the target connection, 'url' must be set.");
-
     close();
 
-    target = DriverManager.getConnection(url, username, password);
+    log.debug("Connecting to {} with properties {},", url, properties);
+    target = DriverManager.getConnection(url, properties);
     proxy = getCloseSuppressingConnectionProxy(target);
+  }
+
+  private boolean isValid(Connection conn) throws SQLException {
+    if (conn.isClosed()) {
+      return false;
+    }
+
+    if (driverSupportsIsValid) {
+      return conn.isValid(5);
+    }
+
+    Statement statement = conn.createStatement();
+    try {
+      return statement.execute("select 1");
+    } finally {
+      statement.close();
+    }
   }
 
   /**

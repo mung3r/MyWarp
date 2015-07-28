@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.bukkit.util.jdbc;
 
 import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -43,8 +42,13 @@ public class DataSourceFactory {
       throws SQLException {
     Properties properties = new Properties();
 
+    boolean driverSupportsIsValid = true;
+
     if (config.getDriver().equals("org.sqlite.JDBC")) {
       properties.setProperty("foreign_keys", "on");
+
+      //CraftBukkit bundles SQLite 3.7.2 witch does not yet implement Connection#isValid(int)
+      driverSupportsIsValid = false;
     } else if (config.getDriver().equals("org.h2.Driver")) {
       try {
         Class.forName("org.h2.Driver");
@@ -59,21 +63,7 @@ public class DataSourceFactory {
       properties.setProperty("password", config.getPassword());
     }
 
-    return createSingleConnectionDataSource(config.getUrl(), properties);
-  }
-
-  /**
-   * Creates a new {@code SingleConnectionDataSource} from the given {@code dsn}, using the given {@code Properties} as
-   * configuration.
-   *
-   * @param dsn        the data source name
-   * @param properties the {@code Properties}
-   * @return a new {@code SingleConnectionDataSource}
-   * @throws SQLException on a database error
-   */
-  private static SingleConnectionDataSource createSingleConnectionDataSource(String dsn, Properties properties)
-      throws SQLException {
-    return new SingleConnectionDataSource(DriverManager.getConnection(dsn, properties));
+    return new SingleConnectionDataSource(config.getUrl(), properties, driverSupportsIsValid);
   }
 
 }
