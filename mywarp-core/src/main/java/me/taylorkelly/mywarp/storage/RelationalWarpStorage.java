@@ -394,6 +394,7 @@ class RelationalWarpStorage implements WarpStorage {
                 .where(PLAYER.UUID.eq(warp.getCreator().getUniqueId()))
                 .limit(1)
             )
+            .where(WARP.NAME.eq(warp.getName()))
         .execute();
         // @formatter:on
       }

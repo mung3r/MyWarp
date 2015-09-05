@@ -5,6 +5,12 @@ Starting with version 3, this project adheres to [Semantic Versioning](http://se
 
 Unreleased APIs may change dramatically between `SNAPSHOT` versions.
 
+
+## [Unreleased]
+
+### Fixed:
+* [[#53](https://github.com/TheE/MyWarp/issues/53)] - Ownership change of a single warp affects all warps of a player
+
 ## [3.0-beta-2]
 
 ### Added:
