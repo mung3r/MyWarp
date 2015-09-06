@@ -6,7 +6,7 @@ Starting with version 3, this project adheres to [Semantic Versioning](http://se
 Unreleased APIs may change dramatically between `SNAPSHOT` versions.
 
 
-## [Unreleased]
+## [3.0-beta-3]
 
 ### Fixed:
 * [[#58](https://github.com/TheE/MyWarp/issues/58)] - Connection timeout on MySQL
@@ -362,7 +362,8 @@ Unreleased APIs may change dramatically between `SNAPSHOT` versions.
 * Updated for Permissions 2.5.5 or higher (tested with 2.6 and 2.7)
 * Changed update URL where MyWarp downloads sqlite libraries
 
-[Unreleased]: https://github.com/TheE/MyWarp/compare/3.0-beta-2...HEAD
+[Unreleased]: https://github.com/TheE/MyWarp/compare/3.0-beta-3...HEAD
+[3.0-beta-3]: https://github.com/TheE/MyWarp/compare/3.0-beta-2...3.0-beta-3
 [3.0-beta-2]: https://github.com/TheE/MyWarp/compare/v3.0-beta-1...3.0-beta-2
 [3.0-beta-1]: https://github.com/TheE/MyWarp/compare/v2.6.5...v3.0-beta-1
 [2.6.5]: https://github.com/TheE/MyWarp/compare/v2.6.4...v2.6.5
