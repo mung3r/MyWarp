@@ -1,5 +1,5 @@
 dependencies {
-    compile 'org.jooq:jooq:3.6.2'
+    compile 'org.jooq:jooq:3.6.4'
     compile 'org.flywaydb:flyway-core:3.2.1'
     // Bukkit only bundles 2.3
     compile 'commons-lang:commons-lang:2.3'
