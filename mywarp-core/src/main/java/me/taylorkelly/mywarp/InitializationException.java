@@ -20,7 +20,7 @@
 package me.taylorkelly.mywarp;
 
 /**
- * Indicates a general Exception thrown by MyWarp.
+ * Indicates an non-recoverable exception thrown when initializing MyWarp.
  */
 public class InitializationException extends Exception {
 

@@ -46,7 +46,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
   private final double initialHealth;
 
   /**
-   * Initializes the warp-warmup.
+   * Creates an instance for the given {@code player} and {@code warp}.
    *
    * @param myWarp the MyWarp instance
    * @param player the player who is cooling down
@@ -70,7 +70,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
     LocaleManager.setLocale(player.getLocale());
 
     if (myWarp.getSettings().isEconomyEnabled()) {
-      if (myWarp.getEconomyManager().hasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
+      if (myWarp.getEconomyService().hasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
         return;
       }
     }

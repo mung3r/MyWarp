@@ -19,7 +19,7 @@
 
 package me.taylorkelly.mywarp;
 
-import me.taylorkelly.mywarp.economy.EconomyService;
+import me.taylorkelly.mywarp.economy.EconomyProvider;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.limits.LimitProvider;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
@@ -31,12 +31,13 @@ import java.io.File;
 import java.util.ResourceBundle;
 
 /**
- * Represents a platform MyWarp has been adapted to run on.
+ * Represents a platform MyWarp has been adapted to run on. <p>Typically an implementation is provided by the platform
+ * running MyWarp.</p>
  */
 public interface Platform {
 
   /**
-   * Reloads this Platform. Calling this method will unload  and reload all platform specific behaviors, as far as
+   * Reloads this Platform. Calling this method will unload and reload all platform specific behaviors, as far as
    * supported by the Platform.
    */
   void reload();
@@ -85,12 +86,12 @@ public interface Platform {
   ProfileService getProfileService();
 
   /**
-   * Gets the {@link EconomyService} as implemented by this Platform.
+   * Gets the {@link EconomyProvider} as implemented by this Platform.
    *
-   * @return the {@code EconomyService}
+   * @return the {@code EconomyProvider}
    * @throws {@code java.lang.UnsupportedOperationException} if the Platform has no support for an economy
    */
-  EconomyService getEconomyService();
+  EconomyProvider getEconomyService();
 
   /**
    * Gets the {@link TimerService} as implemented by this Platform.

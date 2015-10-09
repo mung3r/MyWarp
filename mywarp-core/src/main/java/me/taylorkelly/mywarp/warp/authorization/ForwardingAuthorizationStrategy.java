@@ -26,8 +26,8 @@ import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**
- * Forwards all method calls to another AuthorizationStrategy. Subclasses should override one or more methods to
- * modify the behavior of the backing AuthorizationStrategy as desired per the <a href="http://en.wikipedia
+ * Forwards all method calls to another AuthorizationStrategy. Subclasses should override one or more methods to modify
+ * the behavior of the backing AuthorizationStrategy as desired per the <a href="http://en.wikipedia
  * .org/wiki/Decorator_pattern">decorator pattern</a>.
  */
 abstract class ForwardingAuthorizationStrategy extends ForwardingObject implements AuthorizationStrategy {

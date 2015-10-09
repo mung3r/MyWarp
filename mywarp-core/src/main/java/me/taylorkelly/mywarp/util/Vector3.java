@@ -29,7 +29,7 @@ public class Vector3 {
   private final double z;
 
   /**
-   * Creates an instance.
+   * Creates an instance that uses the given components.
    *
    * @param x the x component.
    * @param y the y component.

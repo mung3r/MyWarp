@@ -25,12 +25,10 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**
- * Resolves a user's authentication for a certain warp based on properties of the warp:
- * <ul>
- * <li>A warp is <i>modifiable</i> if the Actor is the creator,</li>
- * <li>A warp is <i>usable</i> if the entity is the creator, or is an invited player, or the warp is public,</li>
- * <li>A warp is viewable if the Actor is an entity who can use the warp, or the warp is public.</li>
- * </ul>
+ * Resolves a user's authentication for a certain warp based on properties of the warp: <ul> <li>A warp is
+ * <i>modifiable</i> if the Actor is the creator,</li> <li>A warp is <i>usable</i> if the entity is the creator, or is
+ * an invited player, or the warp is public,</li> <li>A warp is viewable if the Actor is an entity who can use the warp,
+ * or the warp is public.</li> </ul>
  */
 public class WarpPropertiesAuthorizationStrategy implements AuthorizationStrategy {
 

@@ -27,10 +27,9 @@ import org.apache.commons.lang.text.StrBuilder;
 import java.util.Collection;
 
 /**
- * This class bundles all methods that are only used to simplify certain task when writing commands. All methods should
- * be static.
+ * Utility methods to write commands.
  */
-public class CommandUtils {
+public final class CommandUtils {
 
   public static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Commands";
   public static final String CONVERSATIONS_RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Conversations";

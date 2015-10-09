@@ -61,9 +61,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * A storage implementation that stores warps in a relational database.
- * <p>This implementation is guaranteed to work with SQLite, MySQL, MariaDB and H2, but might also work on other
- * relational database management systems.</p>
+ * A storage implementation that stores warps in a relational database. <p>This implementation is guaranteed to work
+ * with SQLite, MySQL, MariaDB and H2, but might also work on other relational database management systems.</p>
  */
 class RelationalWarpStorage implements WarpStorage {
 
@@ -466,10 +465,10 @@ class RelationalWarpStorage implements WarpStorage {
 
   /**
    * Creates an {@code INSERT ... ON DUPLICATE IGNORE} query that insert the given {@code value} into the given {@code
-   * uniqueField} in the given {@code table}, assuming that the given {@code value} should be unique.
-   * <p>JOOQ's native {@link org.jooq.InsertQuery#onDuplicateKeyIgnore(boolean)} implementation only supports CUBRID,
-   * HSQLDB, MariaDB and MySQL in JOOQ 3.6 - full support is added in 3.7.</p>
-   * <p>To be compatible with all supported databases, this implementation emulates the query as follows:
+   * uniqueField} in the given {@code table}, assuming that the given {@code value} should be unique. <p>JOOQ's native
+   * {@link org.jooq.InsertQuery#onDuplicateKeyIgnore(boolean)} implementation only supports CUBRID, HSQLDB, MariaDB and
+   * MySQL in JOOQ 3.6 - full support is added in 3.7.</p> <p>To be compatible with all supported databases, this
+   * implementation emulates the query as follows:
    * <code><pre>INSERT INTO [dst] ( ... )
    * SELECT [values]
    * WHERE NOT EXISTS (

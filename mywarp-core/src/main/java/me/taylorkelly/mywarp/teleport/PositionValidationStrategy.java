@@ -17,35 +17,25 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.economy;
+package me.taylorkelly.mywarp.teleport;
 
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import com.google.common.base.Optional;
 
-import java.math.BigDecimal;
+import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.util.Vector3;
 
 /**
- * An EconomyManager implementation that does absolutely nothing. Methods that require a return value return a
- * positive one.
+ * Validates a given position or suggests alternative ones.
  */
-public class DummyEconomyManager implements EconomyManager {
+public interface PositionValidationStrategy {
 
-  @Override
-  public boolean hasAtLeast(LocalPlayer player, FeeType fee) {
-    return true;
-  }
-
-  @Override
-  public boolean hasAtLeast(LocalPlayer player, BigDecimal amount) {
-    return true;
-  }
-
-  @Override
-  public void withdraw(LocalPlayer player, FeeType fee) {
-  }
-
-  @Override
-  public void withdraw(LocalPlayer player, BigDecimal amount) {
-  }
-
+  /**
+   * Returns an Optional containing the first valid position starting from the given {@code originalPosition} within the
+   * given {@code world} or {@code Optional.absend()} if no such position exists.
+   *
+   * @param originalPosition the original position
+   * @param world            the world that contains the position
+   * @return the first valid position
+   */
+  Optional<Vector3> getValidPosition(Vector3 originalPosition, LocalWorld world);
 }

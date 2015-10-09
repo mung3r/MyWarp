@@ -25,8 +25,9 @@ import java.util.UUID;
 
 /**
  * A ProfileService that has an additional method to get the current name of a uniqueId. By combining this with an
- * {@link me.taylorkelly.mywarp.util.profile.NameProvidingProfileService.LazyProfile} implementations can create lazy
- * profile services that query the name only when needed.
+ * {@link me.taylorkelly.mywarp.util.profile.NameProvidingProfileService.LazyProfile}, implementations can create lazy
+ * profile services that query the name only when needed. <p>Typically an implementation is provided by the platform
+ * running MyWarp.</p>
  */
 public interface NameProvidingProfileService extends ProfileService {
 
@@ -41,7 +42,7 @@ public interface NameProvidingProfileService extends ProfileService {
   /**
    * A Profile that uses an {@link NameProvidingProfileService} to get the name whenever necessary.
    */
-  public class LazyProfile extends AbstractProfile {
+  class LazyProfile implements Profile {
 
     private final NameProvidingProfileService service;
     private final UUID uniqueId;

@@ -36,31 +36,33 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Manages {@link Limit}s. <p> The SimpleLimitManager operates on a {@link LimitProvider} that provides the actual
- * limits and a {@link WarpManager} that holds the warps the limits apply on. </p>
+ * A simple implementation to manage and evaluate warp creation limits. <p> The SimpleLimitService operates on a {@link
+ * LimitProvider} that provides the actual limits and a {@link WarpManager} that holds the warps the limits apply on.
+ * </p>
  */
-public class SimpleLimitManager implements LimitManager {
+public class SimpleLimitService implements LimitService {
 
   private final LimitProvider provider;
-  private final WarpManager manager;
+  private final WarpManager warpManager;
 
   /**
-   * Initializes this SimpleLimitManager acting on the given LimitProvider and the given WarpManager.
+   * Creates an instance that acts on the given {@code warpManager} using the limits provided by the given {@code
+   * provider}.
    *
-   * @param provider the LimitProvider
-   * @param manager  the WarpManager
+   * @param provider    the LimitProvider
+   * @param warpManager the WarpManager
    */
-  public SimpleLimitManager(LimitProvider provider, WarpManager manager) {
+  public SimpleLimitService(LimitProvider provider, WarpManager warpManager) {
     this.provider = provider;
-    this.manager = manager;
+    this.warpManager = warpManager;
   }
 
   @Override
-  public LimitManager.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Limit.Type type,
+  public LimitService.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Limit.Type type,
                                                      boolean evaluateParents) {
     if (!type.canDisobey(creator, world)) {
 
-      Iterable<Warp> filteredWarps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
+      Iterable<Warp> filteredWarps = warpManager.filter(WarpUtils.isCreator(creator.getProfile()));
       Limit limit = provider.getLimit(creator, world);
 
       List<Limit.Type> limitsToCheck = Lists.newArrayList(type);
@@ -69,13 +71,13 @@ public class SimpleLimitManager implements LimitManager {
       }
 
       for (Limit.Type check : limitsToCheck) {
-        LimitManager.EvaluationResult result = evaluateLimit(limit, check, filteredWarps);
+        LimitService.EvaluationResult result = evaluateLimit(limit, check, filteredWarps);
         if (result.exceedsLimit()) {
           return result;
         }
       }
     }
-    return LimitManager.EvaluationResult.LIMIT_MEAT;
+    return LimitService.EvaluationResult.LIMIT_MEAT;
   }
 
   /**
@@ -87,18 +89,18 @@ public class SimpleLimitManager implements LimitManager {
    * @param filteredWarps the warps
    * @return an EvaluationResult representing the result of the evaluation
    */
-  private LimitManager.EvaluationResult evaluateLimit(Limit limit, Limit.Type type, Iterable<Warp> filteredWarps) {
+  private LimitService.EvaluationResult evaluateLimit(Limit limit, Limit.Type type, Iterable<Warp> filteredWarps) {
     filteredWarps = Iterables.filter(filteredWarps, type.getCondition());
     int limitMaximum = limit.getLimit(type);
     if (IterableUtils.atLeast(filteredWarps, limitMaximum)) {
-      return new LimitManager.EvaluationResult(type, limitMaximum);
+      return new LimitService.EvaluationResult(type, limitMaximum);
     }
-    return LimitManager.EvaluationResult.LIMIT_MEAT;
+    return LimitService.EvaluationResult.LIMIT_MEAT;
   }
 
   @Override
   public Map<Limit, List<Warp>> getWarpsPerLimit(LocalPlayer creator) {
-    Collection<Warp> warps = manager.filter(WarpUtils.isCreator(creator.getProfile()));
+    Collection<Warp> warps = warpManager.filter(WarpUtils.isCreator(creator.getProfile()));
     Map<Limit, List<Warp>> ret = new HashMap<Limit, List<Warp>>();
 
     for (Limit limit : provider.getEffectiveLimits(creator)) {
@@ -109,7 +111,7 @@ public class SimpleLimitManager implements LimitManager {
     for (Warp warp : warps) {
       for (Limit limit : ret.keySet()) {
         if (limit.isAffectedWorld(warp.getWorld())) {
-         ret.get(limit).add(warp);
+          ret.get(limit).add(warp);
         }
       }
     }

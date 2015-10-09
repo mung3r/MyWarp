@@ -23,7 +23,8 @@ import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 
 /**
- * Represents an entity.
+ * An entity currently existing on the server. <p>Typically an implementation is provided by the platform running
+ * MyWarp.</p>
  */
 public interface LocalEntity {
 

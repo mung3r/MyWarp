@@ -17,18 +17,24 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.util.profile;
+package me.taylorkelly.mywarp.bukkit.util;
 
-import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
 /**
- * An abstract {@link Profile} implementation.
+ * An abstract listener implementation that bundles Listener registration.
  */
-public abstract class AbstractProfile implements Profile {
+public abstract class AbstractListener implements Listener {
 
-  @Override
-  public boolean isProfileOf(UUID uniqueId) {
-    return getUniqueId().equals(uniqueId);
+  /**
+   * Registers this class as Listener.
+   *
+   * @param plugin the plugin that registers the listener
+   */
+  public void registerEvents(Plugin plugin) {
+    Bukkit.getPluginManager().registerEvents(this, plugin);
   }
 
 }

@@ -38,7 +38,7 @@ public class WarpCooldown extends TimerAction<Profile> {
   private final MyWarp myWarp;
 
   /**
-   * Initializes this WarpCooldown.
+   * Craetes an instance for the given {@code player}.
    *
    * @param myWarp the MyWarp instance
    * @param player the player who is cooling down

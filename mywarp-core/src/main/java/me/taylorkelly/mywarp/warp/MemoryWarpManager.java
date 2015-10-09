@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Stores warps managed by it in memory.
+ * Stores managed warp in memory.
  */
 public class MemoryWarpManager implements WarpManager {
 

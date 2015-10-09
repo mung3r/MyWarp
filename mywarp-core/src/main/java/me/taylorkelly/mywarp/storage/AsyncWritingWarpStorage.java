@@ -35,11 +35,11 @@ public class AsyncWritingWarpStorage extends ForwardingWarpStorage {
   private final Executor executor;
 
   /**
-   * Creates an instance. Every call is delegated to the given {@code WarpStorage}, writing methods are executed in
-   * the given {@code Executor}, reading methods still run in the thread that calls the method.
+   * Creates an instance. Every call is delegated to the given {@code WarpStorage}, writing methods are executed in the
+   * given {@code Executor}, reading methods still run in the thread that calls the method.
    *
    * @param warpStorage the {@code WarpStorage} whose writing methods should be executed asynchronous
-   * @param executor       the {@code Executor} that executes writing methods
+   * @param executor    the {@code Executor} that executes writing methods
    */
   public AsyncWritingWarpStorage(WarpStorage warpStorage, Executor executor) {
     this.warpStorage = warpStorage;

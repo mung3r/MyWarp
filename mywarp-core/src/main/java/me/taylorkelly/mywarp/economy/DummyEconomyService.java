@@ -17,24 +17,35 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.bukkit;
+package me.taylorkelly.mywarp.economy;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
+import me.taylorkelly.mywarp.LocalPlayer;
+import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+
+import java.math.BigDecimal;
 
 /**
- * An abstract listener implementation that bundles Listener registration.
+ * An EconomyService implementation that does absolutely nothing. Methods that require a return value return a positive
+ * one.
  */
-public abstract class AbstractListener implements Listener {
+public class DummyEconomyService implements EconomyService {
 
-  /**
-   * Registers this class as Listener.
-   *
-   * @param plugin the plugin that registers the listener
-   */
-  public void registerEvents(Plugin plugin) {
-    Bukkit.getPluginManager().registerEvents(this, plugin);
+  @Override
+  public boolean hasAtLeast(LocalPlayer player, FeeType fee) {
+    return true;
+  }
+
+  @Override
+  public boolean hasAtLeast(LocalPlayer player, BigDecimal amount) {
+    return true;
+  }
+
+  @Override
+  public void withdraw(LocalPlayer player, FeeType fee) {
+  }
+
+  @Override
+  public void withdraw(LocalPlayer player, BigDecimal amount) {
   }
 
 }

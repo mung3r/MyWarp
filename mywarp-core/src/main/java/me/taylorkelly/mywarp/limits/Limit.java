@@ -34,8 +34,8 @@ import java.util.Deque;
 import javax.annotation.Nullable;
 
 /**
- * Represents a limit. Implementations are expected to provide the limits for each {@link Type} and a way to resolve
- * these limits per world.
+ * A creation limit for warps. Implementations are expected to provide the limits for each {@link Type} and a way to
+ * resolve these limits per world. <p>Typically an implementation is provided by the platform running MyWarp.</p>
  */
 public interface Limit {
 
@@ -90,7 +90,7 @@ public interface Limit {
      *                  {@code null} if this Type has no parent.
      * @param condition the condition a warp must fulfill to be counted under this limit
      */
-    private Type(@Nullable Type parent, Predicate<Warp> condition) {
+    Type(@Nullable Type parent, Predicate<Warp> condition) {
       this.parent = parent;
       this.condition = condition;
     }
@@ -145,7 +145,7 @@ public interface Limit {
      *
      * @param player the player
      * @param world  the world
-     * @return true if the player can disobey any limit of this Type
+     * @return {@code true} if the player can disobey any limit of this Type
      */
     public boolean canDisobey(LocalPlayer player, LocalWorld world) {
       String perm = "mywarp.limit.disobey." + world.getName() + "." + lowerCaseName();

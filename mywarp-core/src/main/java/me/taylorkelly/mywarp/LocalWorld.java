@@ -24,7 +24,8 @@ import me.taylorkelly.mywarp.util.Vector3;
 import java.util.UUID;
 
 /**
- * Represents a world (dimension).
+ * A world or dimension currently existing on the server. <p>Typically an implementation is provided by the platform
+ * running MyWarp.</p>
  */
 public interface LocalWorld {
 
@@ -38,7 +39,7 @@ public interface LocalWorld {
   /**
    * Gets the unique ID of this world.
    *
-   * @return this world's unique ID
+   * @return this world's unique identifier
    */
   UUID getUniqueId();
 

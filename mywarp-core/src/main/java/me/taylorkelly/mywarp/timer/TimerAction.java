@@ -29,18 +29,18 @@ public abstract class TimerAction<T> implements Runnable {
   private final T timedSuject;
 
   /**
-   * Creates an instance.
+   * Creates an instance on the given subject.
    *
-   * @param timedSubject the instance the timer runs on
+   * @param timedSubject the subject the timer runs on
    */
   public TimerAction(T timedSubject) {
     this.timedSuject = timedSubject;
   }
 
   /**
-   * Gets the instance the timer runs on.
+   * Gets the subject the timer runs on.
    *
-   * @return the instance
+   * @return the subject
    */
   public T getTimedSuject() {
     return timedSuject;

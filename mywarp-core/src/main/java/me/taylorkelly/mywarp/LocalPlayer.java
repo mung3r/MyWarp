@@ -25,7 +25,7 @@ import me.taylorkelly.mywarp.util.profile.Profile;
 import java.util.UUID;
 
 /**
- * Represents a player.
+ * Represents a player. <p>Typically an implementation is provided by the platform running MyWarp.</p>
  */
 public interface LocalPlayer extends LocalEntity, Actor {
 
@@ -51,19 +51,6 @@ public interface LocalPlayer extends LocalEntity, Actor {
   Profile getProfile();
 
   /**
-   * Sets the compass target of this player.
-   *
-   * @param world    the world where the new position is in
-   * @param position the position of the new target
-   */
-  void setCompassTarget(LocalWorld world, Vector3 position);
-
-  /**
-   * Resets the compass target of this player.
-   */
-  void resetCompass();
-
-  /**
    * Returns whether this player belongs to the given group.
    *
    * @param groupId the group-identifier
@@ -77,5 +64,18 @@ public interface LocalPlayer extends LocalEntity, Actor {
    * @return the current health
    */
   double getHealth();
+
+  /**
+   * Sets the compass target of this player.
+   *
+   * @param world    the world where the new position is in
+   * @param position the position of the new target
+   */
+  void setCompassTarget(LocalWorld world, Vector3 position);
+
+  /**
+   * Resets the compass target of this player.
+   */
+  void resetCompass();
 
 }

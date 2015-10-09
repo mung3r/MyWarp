@@ -26,11 +26,10 @@ import org.jooq.SQLDialect;
 import org.jooq.tools.jdbc.JDBCUtils;
 
 /**
- * A configuration for a connection to a relational database.
- * <p>An instance is initialized with a connection URL. Further configuration methods may fail if the database
- * management system the URL connects to does not support such configurations.</p>
- * <p>Instances are not thread-safe. If a configuration is shared between multiple threads, modifying methods must not
- * be used after configuring the instance for the first time.</p>
+ * A configuration for a connection to a relational database. <p>An instance is initialized with a connection URL.
+ * Further configuration methods may fail if the database management system the URL connects to does not support such
+ * configurations.</p> <p>Instances are not thread-safe. If a configuration is shared between multiple threads,
+ * modifying methods must not be used after configuring the instance for the first time.</p>
  */
 public class ConnectionConfiguration {
 

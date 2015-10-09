@@ -159,7 +159,8 @@ public class Warp extends TableImpl<Record> {
    * The column <code>mywarp.warp.welcome_message</code>.
    */
   public final TableField<Record, String>
-      WELCOME_MESSAGE = createField("welcome_message", org.jooq.impl.SQLDataType.CLOB, this, "");
+      WELCOME_MESSAGE =
+      createField("welcome_message", org.jooq.impl.SQLDataType.CLOB, this, "");
 
   /**
    * Create a <code>mywarp.warp</code> table reference

@@ -25,7 +25,8 @@ import me.taylorkelly.mywarp.LocalWorld;
 import java.util.List;
 
 /**
- * Provides the actual {@link Limit}s that affect a user under certain conditions.
+ * Provides the actual limits that affect a user under certain conditions. <p>Typically an implementation is provided by
+ * the platform running MyWarp.</p>
  */
 public interface LimitProvider {
 

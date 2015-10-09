@@ -22,31 +22,9 @@ package me.taylorkelly.mywarp;
 import java.util.Locale;
 
 /**
- * Represents an actor, who can act actively on the server.
+ * Someone who can interact with MyWarp. <p>Typically an implementation is provided by the platform running MyWarp.</p>
  */
 public interface Actor {
-
-  /**
-   * Sends a message to this Actor.
-   *
-   * @param msg the message
-   */
-  void sendMessage(String msg);
-
-  /**
-   * Sends an error-message to this Actor.
-   *
-   * @param msg the error-message
-   */
-  void sendError(String msg);
-
-  /**
-   * Returns whether this Actor has the given permission.
-   *
-   * @param node the permission-node
-   * @return true if the Actor has the permission
-   */
-  boolean hasPermission(String node);
 
   /**
    * Gets the name of this Actor.
@@ -56,7 +34,29 @@ public interface Actor {
   String getName();
 
   /**
-   * Gets the Locale of this Actor.
+   * Returns whether this Actor has the given permission.
+   *
+   * @param node the permission-node
+   * @return {@code true} if the Actor has the permission
+   */
+  boolean hasPermission(String node);
+
+  /**
+   * Sends a message to this Actor.
+   *
+   * @param msg the message
+   */
+  void sendMessage(String msg);
+
+  /**
+   * Sends an error message to this Actor.
+   *
+   * @param msg the error-message
+   */
+  void sendError(String msg);
+
+  /**
+   * Gets the current Locale of this Actor.
    *
    * @return the Actor's Locale
    */

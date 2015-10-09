@@ -27,7 +27,7 @@ import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.teleport.TeleportManager.TeleportStatus;
+import me.taylorkelly.mywarp.teleport.TeleportService.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -39,8 +39,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Forwards all method calls to another WarpManager. Subclasses should override one or more methods to
- * modify the behavior of the backing WarpManager as desired per the <a href="http://en.wikipedia
+ * Forwards all method calls to another WarpManager. Subclasses should override one or more methods to modify the
+ * behavior of the backing WarpManager as desired per the <a href="http://en.wikipedia
  * .org/wiki/Decorator_pattern">decorator pattern</a>.
  */
 abstract class ForwardingWarpManager extends ForwardingObject implements WarpManager {
@@ -94,9 +94,9 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
   protected abstract WarpManager delegate();
 
   /**
-   * Forwards all method calls to another Warp. Subclasses should override one or more methods to
-   * modify the behavior of the backing Warp as desired per the <a href="http://en.wikipedia
-   * .org/wiki/Decorator_pattern">decorator pattern</a>.
+   * Forwards all method calls to another Warp. Subclasses should override one or more methods to modify the behavior of
+   * the backing Warp as desired per the <a href="http://en.wikipedia .org/wiki/Decorator_pattern">decorator
+   * pattern</a>.
    */
   protected abstract class ForwardingWarp extends ForwardingObject implements Warp {
 
@@ -248,11 +248,6 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     @Override
     public void setWelcomeMessage(String welcomeMessage) {
       delegate().setWelcomeMessage(welcomeMessage);
-    }
-
-    @Override
-    public String getParsedWelcomeMessage(LocalPlayer forWhom) {
-      return delegate().getParsedWelcomeMessage(forWhom);
     }
 
     @Override

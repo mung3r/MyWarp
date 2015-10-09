@@ -41,12 +41,4 @@ public interface Profile {
    * @return the name
    */
   Optional<String> getName();
-
-  /**
-   * Returns whether this profile belongs to the same player than the given unique ID.
-   *
-   * @param uniqueId the player's unique ID
-   * @return true if this profile belongs the the same player
-   */
-  boolean isProfileOf(UUID uniqueId);
 }

@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
+import com.google.common.primitives.Ints;
+
 import me.taylorkelly.mywarp.BlockType;
 import me.taylorkelly.mywarp.util.Vector3;
 
@@ -44,9 +46,9 @@ public class BukkitBlockType implements BlockType {
   }
 
   @Override
-  public boolean isSafeToStandIn() {
-    Material material = getBlockMaterial();
-    switch (material) {
+  public boolean canEntitySafelyStandWithin() {
+    Material blockMaterial = getBlockMaterial();
+    switch (blockMaterial) {
       case LAVA:
       case STATIONARY_LAVA:
       case FIRE:
@@ -54,20 +56,20 @@ public class BukkitBlockType implements BlockType {
       case WATER:
         return true;
       default:
-        return !material.isSolid();
+        return !blockMaterial.isSolid();
     }
   }
 
   @Override
-  public boolean isSafeToStandOn() {
-    Material material = getBlockMaterial();
-    switch (material) {
+  public boolean canEntitySafelyStandOn() {
+    Material blockMaterial = getBlockMaterial();
+    switch (blockMaterial) {
       case CACTUS:
         return false;
       case WATER:
         return true;
       default:
-        return material.isSolid();
+        return blockMaterial.isSolid();
     }
   }
 
@@ -113,7 +115,8 @@ public class BukkitBlockType implements BlockType {
    */
   private Material getBlockMaterial() {
     return world.getLoadedWorld()
-        .getBlockAt((int) position.getFloorX(), (int) position.getFloorY(), (int) position.getFloorZ()).getType();
+        .getBlockAt(Ints.checkedCast(position.getFloorX()), Ints.checkedCast(position.getFloorY()),
+                    Ints.checkedCast(position.getFloorZ())).getType();
   }
 
 }

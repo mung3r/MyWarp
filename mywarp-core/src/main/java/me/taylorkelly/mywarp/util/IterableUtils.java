@@ -39,7 +39,7 @@ public final class IterableUtils {
    * @param <T>      the type of entries
    * @param iterable the iterable to check
    * @param count    the number of entries the iterable should have at least
-   * @return true if the given Iterable has at least the given number of entries
+   * @return {@code true} if the given Iterable has at least the given number of entries
    */
   public static <T> boolean atLeast(Iterable<T> iterable, int count) {
     return Iterables.size(Iterables.limit(iterable, count)) == count;

@@ -32,9 +32,9 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Manages {@link me.taylorkelly.mywarp.limits.Limit}s that control how much warps a user can create.
+ * Manages and evaluates warp creation limits.
  */
-public interface LimitManager {
+public interface LimitService {
 
   /**
    * Evaluates whether the given creator exceeds limits on the given LocalWorld, testing against the given Limit.Type.
@@ -47,7 +47,7 @@ public interface LimitManager {
    *                        that includes the given one
    * @return an EvaluationResult representing the result of the evaluation
    */
-  LimitManager.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Limit.Type type,
+  LimitService.EvaluationResult evaluateLimit(LocalPlayer creator, LocalWorld world, Limit.Type type,
                                               boolean evaluateParents);
 
   /**
@@ -63,7 +63,7 @@ public interface LimitManager {
   /**
    * The result of a limit evaluation.
    *
-   * @see LimitManager#evaluateLimit(LocalPlayer, LocalWorld, Limit.Type, boolean)
+   * @see LimitService#evaluateLimit(LocalPlayer, LocalWorld, Limit.Type, boolean)
    */
   class EvaluationResult {
 

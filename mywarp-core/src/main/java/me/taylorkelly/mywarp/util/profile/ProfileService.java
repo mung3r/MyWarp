@@ -25,16 +25,16 @@ import com.google.common.collect.ImmutableList;
 import java.util.UUID;
 
 /**
- * Represents a Service that creates {@link Profile}s from unique IDs or player-names. <p>Implementations are expected
- * to be thread safe.</p>
+ * Creates or resolves {@link Profile}s from unique identifiers or player-names. Implementations are expected to be
+ * thread safe. <p>Typically an implementation is provided by the platform running MyWarp.</p>
  */
 public interface ProfileService {
 
   /**
-   * Gets the Profile of the given unique ID. If the service is unable to find a name matching the unique ID, the
-   * returned Profile will not have a name value and calls to {@link Profile#getName()} may fail.
+   * Gets the Profile of the given unique identifier. If the service is unable to find a name matching the identifier,
+   * the returned Profile might not have a name value and calls to {@link Profile#getName()} may fail.
    *
-   * @param uniqueId the unique ID
+   * @param uniqueId the unique identifier
    * @return the corresponding Profile
    */
   Profile getByUniqueId(UUID uniqueId);
@@ -57,7 +57,7 @@ public interface ProfileService {
    * return a name with a different case than the requested one. The returned one is than guaranteed to have the correct
    * case. </p> <p>Calling this method might result in a blocking call to a remote server to get the Profiles.</p>
    *
-   * @param names the names
+   * @param names an Iterable of names
    * @return a List with all existing Profiles
    */
   ImmutableList<Profile> getByName(Iterable<String> names);

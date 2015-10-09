@@ -18,8 +18,7 @@
         <property name="file" value="${checkstyleConfigDir}/suppressions.xml"/>
     </module>
 
-    <!-- Checks for Headers -->
-    <!-- See http://checkstyle.sf.net/config_header.html -->
+    <!-- Checks for Headers --><!-- See http://checkstyle.sf.net/config_header.html -->
     <module name="Header">
         <property name="headerFile" value="${checkstyleConfigDir}/header.txt"/>
         <property name="fileExtensions" value="java"/>
@@ -29,8 +28,7 @@
 
     <property name="severity" value="warning"/>
 
-    <!-- Checks for whitespace -->
-    <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+    <!-- Checks for whitespace --><!-- See http://checkstyle.sf.net/config_whitespace.html -->
     <module name="FileTabCharacter">
         <property name="eachLine" value="true"/>
     </module>
@@ -135,22 +133,21 @@
             <message key="ws.illegalFollow" value="GenericWhitespace ''{0}'' should followed by whitespace."/>
             <message key="ws.notPreceded" value="GenericWhitespace ''{0}'' is not preceded with whitespace."/>
         </module>
-<!--        <module name="Indentation">
-            <property name="basicOffset" value="2"/>
-            <property name="braceAdjustment" value="0"/>
-            <property name="caseIndent" value="2"/>
-            <property name="throwsIndent" value="4"/>
-            <property name="lineWrappingIndentation" value="4"/>
-            <property name="arrayInitIndent" value="2"/>
-        </module>-->
+        <!--        <module name="Indentation">
+                    <property name="basicOffset" value="2"/>
+                    <property name="braceAdjustment" value="0"/>
+                    <property name="caseIndent" value="2"/>
+                    <property name="throwsIndent" value="4"/>
+                    <property name="lineWrappingIndentation" value="4"/>
+                    <property name="arrayInitIndent" value="2"/>
+                </module>-->
         <module name="AbbreviationAsWordInName">
             <property name="ignoreFinal" value="false"/>
             <property name="allowedAbbreviationLength" value="1"/>
         </module>
         <module name="OverloadMethodsDeclarationOrder"/>
         <module name="VariableDeclarationUsageDistance"/>
-        <!-- As of Checkstyle 6.2 this results in false positives -->
-<!--        <module name="CustomImportOrder">
+        <!-- As of Checkstyle 6.2 this results in false positives --><!--        <module name="CustomImportOrder">
             <property name="thirdPartyPackageRegExp" value=".*"/>
             &lt;!&ndash; This rule only applies for projects within the com.google package &ndash;&gt;&lt;!&ndash;<property name="specialImportsRegExp" value="com.google"/>&ndash;&gt;
             <property name="sortImportsInGroupAlphabetically" value="true"/>

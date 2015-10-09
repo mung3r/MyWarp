@@ -193,7 +193,7 @@ public class StringPaginator<E> {
     /**
      * Gets the given page as String.
      *
-     * @param page   the page number
+     * @param page the page number
      * @return the given page as String
      * @throws NoResultsException   if there are no results that could be paginated
      * @throws UnknownPageException if there are results that could be paginated, but no page with the given number

@@ -26,7 +26,7 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.limits.Limit;
-import me.taylorkelly.mywarp.teleport.TeleportManager.TeleportStatus;
+import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -37,8 +37,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A named location with additional meta-data. Two Warps are equal are equal if, and only if their names are equal.
- * <p>To create a Warp use the {@link WarpBuilder}.</p>
+ * A named location with additional meta-data. Two Warps are equal are equal if and only if their names are equal. <p>To
+ * create a Warp use the {@link WarpBuilder}.</p>
  */
 public interface Warp extends Comparable<Warp> {
 
@@ -57,18 +57,17 @@ public interface Warp extends Comparable<Warp> {
    * @param entity the entity
    * @return the status of teleport
    */
-  TeleportStatus teleport(LocalEntity entity);
+  TeleportService.TeleportStatus teleport(LocalEntity entity);
 
   /**
    * Teleports the given player to this Warp and sends the applicable message.
    *
    * @param player the player
    * @return the status of the teleport
-   * @deprecated To be removed as its function can be implemented internally on top of {@link
-   * #teleport(LocalEntity)}
+   * @deprecated To be removed as its function can be implemented internally on top of {@link #teleport(LocalEntity)}
    */
   @Deprecated
-  TeleportStatus teleport(LocalPlayer player);
+  TeleportService.TeleportStatus teleport(LocalPlayer player);
 
   /**
    * Teleports the given player to this Warp, sends the applicable message and withdraws the applicable fee.
@@ -79,7 +78,7 @@ public interface Warp extends Comparable<Warp> {
    * @deprecated Might be removed to declutter economy and warp aspects
    */
   @Deprecated
-  TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee);
+  TeleportService.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee);
 
   /**
    * Returns whether the given player is the creator of this Warp.
@@ -253,10 +252,10 @@ public interface Warp extends Comparable<Warp> {
   int getVisits();
 
   /**
-   * Gets this Warp's welcome message. Use {@link #getParsedWelcomeMessage(LocalPlayer)} to get the welcome message
-   * without any variables.
+   * Gets this Warp's welcome message. The returned message may still contain warp variables that can be replaced using
+   * {@link me.taylorkelly.mywarp.util.WarpUtils#replaceTokens(String, Warp, LocalPlayer)}.
    *
-   * @return the raw, unparsed welcome message of this Warp
+   * @return the raw welcome message of this Warp
    */
   String getWelcomeMessage();
 
@@ -266,17 +265,6 @@ public interface Warp extends Comparable<Warp> {
    * @param welcomeMessage the new welcome-message
    */
   void setWelcomeMessage(String welcomeMessage);
-
-  /**
-   * Gets this Warp's welcome message with replaced variables. Use {@link #getWelcomeMessage()} to get the raw welcome
-   * message.
-   *
-   * @param forWhom the player for who this welcome message should be parsed
-   * @return the welcome message with parsed values
-   * @deprecated Might be removed in future restructuring
-   */
-  @Deprecated
-  String getParsedWelcomeMessage(LocalPlayer forWhom);
 
   /**
    * Sets the location of this Warp. A location consists of three parts: <ol> <li>the world where the location is</li>
@@ -289,7 +277,7 @@ public interface Warp extends Comparable<Warp> {
   void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation);
 
   /**
-   * Gets the average visits number per day, from the point this Warp was created until now.
+   * Gets the average number of visits per day, from the point this Warp was created until this method is called.
    *
    * @return the average number of visits per day
    */
@@ -297,7 +285,7 @@ public interface Warp extends Comparable<Warp> {
 
   /**
    * Gets this Warp's popularity score. The score is influenced by the number of visits a Warp received since it was
-   * created, while newer Warps receive a better score than older Warps.
+   * created: newer Warps receive a better score than older Warps.
    *
    * @return the popularity score of this Warp
    */
@@ -361,16 +349,14 @@ public interface Warp extends Comparable<Warp> {
   }
 
   /**
-   * A custom comparator that orders Warps by popularity: popular Warps come first, unpopular last.
+   * Orders Warps by popularity: popular Warps come first, unpopular last. <p>Warps with a higher popularity score are
+   * preferred over Warps with lower score. If the score is equal, newer Warps are preferred over older Warps. If both
+   * Warps were created at the same millisecond, the alphabetically first is preferred.</p>
    */
   class PopularityComparator implements Comparator<Warp> {
 
     @Override
     public int compare(Warp w1, Warp w2) {
-      // Warps with a higher popularity score are preferred over Warps
-      // with lower score. If the score is equal, newer Warps are
-      // preferred over older Warps. If both Warps were created at the
-      // same millisecond, the alphabetically first is preferred.
       return ComparisonChain.start().compare(w2.getPopularityScore(), w1.getPopularityScore())
           .compare(w2.getCreationDate().getTime(), w1.getCreationDate().getTime()).compare(w1.getName(), w2.getName())
           .result();

@@ -36,7 +36,7 @@ import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding.Sender
 import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name;
 import me.taylorkelly.mywarp.bukkit.util.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.limits.LimitService;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -127,9 +127,9 @@ public class ManagementCommands {
       throw new CommandException(MESSAGES.getString("create.name-is-cmd", name));
     }
 
-    LimitManager.EvaluationResult
+    LimitService.EvaluationResult
         result =
-        myWarp.getLimitManager().evaluateLimit(creator, world, type.getLimit(), true);
+        myWarp.getLimitService().evaluateLimit(creator, world, type.getLimit(), true);
     if (result.exceedsLimit()) {
       throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
     }

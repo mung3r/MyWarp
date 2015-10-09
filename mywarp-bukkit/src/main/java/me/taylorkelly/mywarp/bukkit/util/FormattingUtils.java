@@ -33,10 +33,8 @@ import java.util.Map;
 
 /**
  * Provides several static methods that allow basic formatting of strings send to players. Colors are supported, bold
- * and italic formatting not!
- * <p/>
- * The basic character widths this class relies on where extracted from old Minecraft source code. The algorithm and
- * supported characters in Minecraft have changed, but these changes are not covered!
+ * and italic formatting not! <p/> The basic character widths this class relies on where extracted from old Minecraft
+ * source code. The algorithm and supported characters in Minecraft have changed, but these changes are not covered!
  */
 public final class FormattingUtils {
 

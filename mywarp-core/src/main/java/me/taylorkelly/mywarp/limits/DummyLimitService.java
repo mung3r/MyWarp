@@ -35,23 +35,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A LimitManager implementation that does absolutely nothing. Limit evaluation will always result in a positive
- * response.
+ * A LimitService that does absolutely nothing: <ul> <li>Limit evaluation will always result in a positive
+ * response,</li> <li>Sorting warps per player and limit will return all warps created by a player mapped under a dummy
+ * limit.</li> </ul>Limit evaluation will always result in a positive response.
  */
-public class DummyLimitManager implements LimitManager {
+public class DummyLimitService implements LimitService {
 
   private final Game game;
-  private final WarpManager manager;
+  private final WarpManager warpManager;
 
   /**
-   * Construct an instance.
+   * Creates an instance.
    *
-   * @param game    the Game
-   * @param manager the WarpManager this LimitManager is active on
+   * @param game        the Game
+   * @param warpManager the WarpManager this LimitService is active on
    */
-  public DummyLimitManager(Game game, WarpManager manager) {
+  public DummyLimitService(Game game, WarpManager warpManager) {
     this.game = game;
-    this.manager = manager;
+    this.warpManager = warpManager;
   }
 
   @Override
@@ -81,7 +82,7 @@ public class DummyLimitManager implements LimitManager {
     };
 
     Map<Limit, List<Warp>> ret = new HashMap<Limit, List<Warp>>();
-    ret.put(dummyLimit, new ArrayList<Warp>(manager.filter(WarpUtils.isCreator(creator.getProfile()))));
+    ret.put(dummyLimit, new ArrayList<Warp>(warpManager.filter(WarpUtils.isCreator(creator.getProfile()))));
 
     return ret;
   }

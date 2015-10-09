@@ -74,7 +74,7 @@ public class UsageCommands {
   public void to(@Sender LocalPlayer player, @Name(Condition.USABLE) Warp warp) throws TimerRunningException {
     FeeType feeType = FeeType.WARP_TO;
 
-    if (!myWarp.getEconomyManager().hasAtLeast(player, feeType)) {
+    if (!myWarp.getEconomyService().hasAtLeast(player, feeType)) {
       return;
     }
 
@@ -85,11 +85,11 @@ public class UsageCommands {
 
       EvaluationResult cooldownResult = timerService.has(player.getProfile(), WarpCooldown.class);
       if (cooldownResult.isTimerRunning()) {
-        throw new TimerRunningException(cooldownResult.getDurationLeft().get());
+        throw new TimerRunningException(cooldownResult.getDurationLeft());
       }
       EvaluationResult warmupResult = timerService.has(player.getProfile(), WarpWarmup.class);
       if (warmupResult.isTimerRunning()) {
-        throw new TimerRunningException(warmupResult.getDurationLeft().get());
+        throw new TimerRunningException(warmupResult.getDurationLeft());
       }
       Duration duration = durationProvider.getDuration(player, WarpWarmup.class);
       timerService.start(player.getProfile(), duration, new WarpWarmup(myWarp, player, warp));

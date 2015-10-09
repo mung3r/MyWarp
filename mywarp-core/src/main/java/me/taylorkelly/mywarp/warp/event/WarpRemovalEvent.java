@@ -22,7 +22,7 @@ package me.taylorkelly.mywarp.warp.event;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**
- * Indicates that the given warp was removed.
+ * Indicates that the a warp was removed.
  */
 public class WarpRemovalEvent extends WarpEvent {
 

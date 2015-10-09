@@ -75,8 +75,8 @@ public class SingleConnectionDataService implements RelationalDataService {
   }
 
   /**
-   * Initiates an shutdown that closes the {@code ExecutorService} and the {@code DataSource}, blocking until either
-   * all remaining tasks are executed or 30 seconds have passed or the thread is interrupted.
+   * Initiates an shutdown that closes the {@code ExecutorService} and the {@code DataSource}, blocking until either all
+   * remaining tasks are executed or 30 seconds have passed or the thread is interrupted.
    */
   void shutdown() {
     executorService.shutdown();

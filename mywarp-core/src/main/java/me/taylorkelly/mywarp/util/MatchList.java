@@ -42,7 +42,7 @@ public class MatchList {
   private final String filter;
 
   /**
-   * Initializes a MatchList using the given filter to filter warp-names, operating upon the given warps.
+   * Creates an instance that uses the given {@code filer} to filter warp-names from the given warps.
    *
    * @param filter        the filter
    * @param matchingWarps an Iterable of matching warps this MatchList should operate on

@@ -26,15 +26,15 @@ import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.teleport.TeleportManager.TeleportStatus;
 import me.taylorkelly.mywarp.storage.WarpStorage;
+import me.taylorkelly.mywarp.teleport.TeleportService.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
- * Stores all warps managed by itusing a {@link WarpStorage}. Calls are all delegated to an
- * underling WarpManager as required by the decorator pattern, storage is implemented on top.
+ * Stores all warps managed by itusing a {@link WarpStorage}. Calls are all delegated to an underling WarpManager as
+ * required by the decorator pattern, storage is implemented on top.
  */
 public class StorageWarpManager extends ForwardingWarpManager {
 

@@ -43,7 +43,7 @@ import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name;
 import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.bukkit.util.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.limits.LimitService;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -66,21 +66,22 @@ public class InformativeCommands {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
-  private final LimitManager limitManager;
+  private final LimitService limitService;
   private final Settings settings;
   private final WarpManager warpManager;
   private final AuthorizationService authorizationService;
 
   /**
    * Creates an instance.
-   *  @param limitManager thr LimitManager the commands should operate on
-   * @param settings     the Settings
-   * @param warpManager  the WarpManager the commands should operate on
+   *
+   * @param limitService         the LimitService the commands should operate on
+   * @param settings             the Settings
+   * @param warpManager          the WarpManager the commands should operate on
    * @param authorizationService the AuthorizationService
    */
-  public InformativeCommands(LimitManager limitManager, Settings settings, WarpManager warpManager,
+  public InformativeCommands(LimitService limitService, Settings settings, WarpManager warpManager,
                              AuthorizationService authorizationService) {
-    this.limitManager = limitManager;
+    this.limitService = limitService;
     this.settings = settings;
     this.warpManager = warpManager;
     this.authorizationService = authorizationService;
@@ -107,7 +108,7 @@ public class InformativeCommands {
     } else if (!actor.hasPermission("mywarp.cmd.assets")) {
       throw new AuthorizationException();
     }
-    new AssetsPrinter(creator, limitManager, settings).print(actor);
+    new AssetsPrinter(creator, limitService, settings).print(actor);
 
   }
 

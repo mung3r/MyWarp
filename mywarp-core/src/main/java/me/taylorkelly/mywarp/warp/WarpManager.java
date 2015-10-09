@@ -27,7 +27,7 @@ import me.taylorkelly.mywarp.util.MatchList;
 import java.util.Collection;
 
 /**
- * Manages Warps and provides utility methods to get certain information based on the Warps managed by it.
+ * Manages Warps and provides utility methods to get information based on the Warps managed by it.
  */
 public interface WarpManager {
 
@@ -39,8 +39,8 @@ public interface WarpManager {
   void add(Warp warp);
 
   /**
-   * Populates this manager with the given Warps. Unlike {@link #add(Warp)} this method must only be used to
-   * <b>populate</b> the warp manager with already existing warps.
+   * Populates this manager with the given Warps. Unlike {@link #add(Warp)} this method must only be used to populate
+   * the warp manager with <i>already existing</i> warps.
    *
    * @param warps the Warps
    */
@@ -83,9 +83,9 @@ public interface WarpManager {
   Optional<Warp> get(String name);
 
   /**
-   * Gets all Warps on this manager that fulfill the given Predicate. The returned collection is a live view, changes
-   * to one affect the other. If a live view is not needed, it may be faster to create a copy of the Warps returned by
-   * this method.
+   * Gets all Warps on this manager that fulfill the given Predicate. The returned collection is a live view, changes to
+   * one affect the other. If a live view is not needed, it may be faster to create a copy of the Warps returned by this
+   * method.
    *
    * @param predicate the predicate
    * @return all Warps that fulfill the Predicate

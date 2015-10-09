@@ -57,12 +57,13 @@ public class WarpAcceptancePromptFactory {
 
   /**
    * Creates an instance.
-   *  @param plugin  the plugin instance
+   *
+   * @param plugin               the plugin instance
    * @param authorizationService the AuthorizationService
-   * @param adapter the adapter
+   * @param adapter              the adapter
    */
-  public WarpAcceptancePromptFactory(MyWarpPlugin plugin, AuthorizationService authorizationService, BukkitAdapter
-      adapter) {
+  public WarpAcceptancePromptFactory(MyWarpPlugin plugin, AuthorizationService authorizationService,
+                                     BukkitAdapter adapter) {
     this.authorizationService = authorizationService;
     this.factory =
         new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT).withFirstPrompt(new QuestionPrompt());

@@ -30,9 +30,9 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Provides localized messages using Java ResourceBundles. <p> When created, instances will uses the default resource
+ * Provides localized messages using Java ResourceBundles. <p>When created, instances will uses the default resource
  * bundle lookup as described in the {@link java.util.ResourceBundle} documentation. This process can be customized by
- * registering a custom {@link java.util.ResourceBundle.Control} via {@link #setControl(ResourceBundle.Control)}. </p>
+ * registering a custom {@link java.util.ResourceBundle.Control} via {@link #setControl(ResourceBundle.Control)}.</p>
  */
 public class DynamicMessages {
 

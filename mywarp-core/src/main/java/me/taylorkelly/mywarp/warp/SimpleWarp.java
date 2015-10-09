@@ -29,10 +29,11 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.teleport.TeleportManager;
+import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.Vector3;
+import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
@@ -47,12 +48,13 @@ import java.util.UUID;
 class SimpleWarp extends AbstractWarp {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
-  protected final MyWarp myWarp;
 
+  private final MyWarp myWarp;
   private final String name;
   private final Date creationDate;
   private final Set<Profile> invitedPlayers;
   private final Set<String> invitedGroups;
+
   private volatile Profile creator;
   private volatile Warp.Type type;
   private volatile UUID worldIdentifier;
@@ -62,8 +64,8 @@ class SimpleWarp extends AbstractWarp {
   private volatile String welcomeMessage;
 
   /**
-   * Creates a instance with the given values.
-   * <p>This method should never be called manually. Use a {@link WarpBuilder} instead.</p>
+   * Creates a instance with the given values. <p>This method should never be called manually. Use a {@link WarpBuilder}
+   * instead.</p>
    *
    * @param myWarp          the running MyWarp instance
    * @param name            the warp's name
@@ -208,10 +210,10 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public TeleportManager.TeleportStatus teleport(LocalEntity entity) {
-    TeleportManager.TeleportStatus
+  public TeleportService.TeleportStatus teleport(LocalEntity entity) {
+    TeleportService.TeleportStatus
         status =
-        myWarp.getTeleportManager().teleport(entity, getWorld(), getPosition(), getRotation());
+        myWarp.getTeleportService().teleport(entity, getWorld(), getPosition(), getRotation());
     if (status.isPositionModified()) {
       visits++;
     }
@@ -219,14 +221,14 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public TeleportManager.TeleportStatus teleport(LocalPlayer player) {
-    TeleportManager.TeleportStatus status = teleport((LocalEntity) player);
+  public TeleportService.TeleportStatus teleport(LocalPlayer player) {
+    TeleportService.TeleportStatus status = teleport((LocalEntity) player);
 
     switch (status) {
       case ORIGINAL:
         if (!getWelcomeMessage().isEmpty()) {
           // TODO color in aqua
-          player.sendMessage(getParsedWelcomeMessage(player));
+          player.sendMessage(WarpUtils.replaceTokens(getWelcomeMessage(), this, player));
         }
         break;
       case MODIFIED:
@@ -240,10 +242,10 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public TeleportManager.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
-    TeleportManager.TeleportStatus status = teleport(player);
+  public TeleportService.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
+    TeleportService.TeleportStatus status = teleport(player);
     if (myWarp.getSettings().isEconomyEnabled() && status.isPositionModified()) {
-      myWarp.getEconomyManager().withdraw(player, fee);
+      myWarp.getEconomyService().withdraw(player, fee);
     }
     return status;
   }

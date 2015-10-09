@@ -47,7 +47,7 @@ import me.taylorkelly.mywarp.bukkit.commands.UtilityCommands;
 import me.taylorkelly.mywarp.bukkit.conversation.WarpAcceptancePromptFactory;
 import me.taylorkelly.mywarp.bukkit.conversation.WelcomeEditorFactory;
 import me.taylorkelly.mywarp.bukkit.economy.BukkitFeeProvider;
-import me.taylorkelly.mywarp.bukkit.economy.VaultService;
+import me.taylorkelly.mywarp.bukkit.economy.VaultProvider;
 import me.taylorkelly.mywarp.bukkit.limits.BukkitLimitProvider;
 import me.taylorkelly.mywarp.bukkit.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
@@ -105,7 +105,7 @@ import javax.annotation.Nullable;
 /**
  * The MyWarp plugin instance when running on Bukkit.
  */
-public class MyWarpPlugin extends JavaPlugin implements Platform {
+public final class MyWarpPlugin extends JavaPlugin implements Platform {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
   private static final Logger log = MyWarpLogger.getLogger(MyWarpPlugin.class);
@@ -125,7 +125,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   private Dispatcher dispatcher;
 
   @Nullable
-  private VaultService economyService;
+  private VaultProvider economyService;
   @Nullable
   private BukkitTimerService timerService;
   @Nullable
@@ -199,7 +199,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     builder.addBinding(warpBinding);
     builder.addExceptionConverter(exceptionConverter);
 
-    builder.addInvokeListener(new EconomyInvokeHandler(myWarp.getEconomyManager()));
+    builder.addInvokeListener(new EconomyInvokeHandler(myWarp.getEconomyService()));
 
     UsageCommands usageCommands = new UsageCommands(myWarp);
 
@@ -212,10 +212,10 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
               .registerMethods(usageCommands)
               .group(new FallbackDispatcher(resourceProvider, fallback), "warp", "myWarp", "mw")
                 .describeAs("warp-to.description")
-                .registerMethods(new InformativeCommands(myWarp.getLimitManager(), settings, myWarp.getWarpManager(),
+                .registerMethods(new InformativeCommands(myWarp.getLimitService(), settings, myWarp.getWarpManager(),
                                                          myWarp.getAuthorizationService()))
                 .registerMethods(new ManagementCommands(myWarp, this, new WelcomeEditorFactory(this, adapter)))
-                .registerMethods(new SocialCommands(game, myWarp.getLimitManager(), profileService,
+                .registerMethods(new SocialCommands(game, myWarp.getLimitService(), profileService,
                                                     new WarpAcceptancePromptFactory(this, myWarp
                                                         .getAuthorizationService(), adapter)))
                 .registerMethods(new UtilityCommands(myWarp, this))
@@ -401,12 +401,12 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
   }
 
   @Override
-  public VaultService getEconomyService() {
+  public VaultProvider getEconomyService() {
     if (economyService == null) {
       try {
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (economyProvider != null) {
-          economyService = new VaultService(economyProvider, adapter);
+          economyService = new VaultProvider(economyProvider, adapter);
         } else {
           log.error("Failed to hook into Vault (EconomyProvider is null). Economy support will not be available.");
           throw new UnsupportedOperationException();

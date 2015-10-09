@@ -22,8 +22,7 @@ import javax.annotation.Generated;
 
 
 /**
- * A class modelling foreign key relationships between tables of the <code>mywarp</code>
- * schema
+ * A class modelling foreign key relationships between tables of the <code>mywarp</code> schema
  */
 @Generated(
     value = {"http://www.jooq.org", "jOOQ version:3.6.2"},
@@ -86,7 +85,8 @@ public class Keys {
     public static final UniqueKey<Record> KEY_GROUP_GROUP_NAME_UQ = createUniqueKey(Group.GROUP, Group.GROUP.NAME);
     public static final UniqueKey<Record> KEY_PLAYER_PRIMARY = createUniqueKey(Player.PLAYER, Player.PLAYER.PLAYER_ID);
     public static final UniqueKey<Record>
-        KEY_PLAYER_PLAYER_UUID_UQ = createUniqueKey(Player.PLAYER, Player.PLAYER.UUID);
+        KEY_PLAYER_PLAYER_UUID_UQ =
+        createUniqueKey(Player.PLAYER, Player.PLAYER.UUID);
     public static final UniqueKey<Record> KEY_WARP_PRIMARY = createUniqueKey(Warp.WARP, Warp.WARP.WARP_ID);
     public static final UniqueKey<Record> KEY_WARP_WARP_NAME_UQ = createUniqueKey(Warp.WARP, Warp.WARP.NAME);
     public static final UniqueKey<Record>
@@ -104,7 +104,8 @@ public class Keys {
   private static class ForeignKeys0 extends AbstractKeys {
 
     public static final ForeignKey<Record, Record>
-        WARP_PLAYER_ID_FK = createForeignKey(Keys.KEY_PLAYER_PRIMARY, Warp.WARP, Warp.WARP.PLAYER_ID);
+        WARP_PLAYER_ID_FK =
+        createForeignKey(Keys.KEY_PLAYER_PRIMARY, Warp.WARP, Warp.WARP.PLAYER_ID);
     public static final ForeignKey<Record, Record>
         WARP_WORLD_ID_FK =
         createForeignKey(Keys.KEY_WORLD_PRIMARY, Warp.WARP, Warp.WARP.WORLD_ID);

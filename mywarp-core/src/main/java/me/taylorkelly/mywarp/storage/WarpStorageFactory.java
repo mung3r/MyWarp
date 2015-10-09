@@ -51,9 +51,9 @@ public class WarpStorageFactory {
   }
 
   /**
-   * Creates a new {@code WarpStorage} to the given {@code DataSource}.
-   * <p>Use {@link #createInitialized(MyWarp, DataSource, ConnectionConfiguration)} to create an initialized {@code
-   * WarpStorage} that guarantees existence of MyWarp's table structure.</p>
+   * Creates a new {@code WarpStorage} to the given {@code DataSource}. <p>Use {@link #createInitialized(MyWarp,
+   * DataSource, ConnectionConfiguration)} to create an initialized {@code WarpStorage} that guarantees existence of
+   * MyWarp's table structure.</p>
    *
    * @param myWarp     the MyWarp instance
    * @param dataSource the DataSource
@@ -73,16 +73,15 @@ public class WarpStorageFactory {
 
   /**
    * Creates a new initialized {@code WarpStorage} to the given {@code DataSource}, attempting to create or update
-   * MyWarp's table structure if necessary.
-   * <p>Use {@link #create(MyWarp, DataSource, ConnectionConfiguration)} to create a {@code WarpStorage} that does
-   * not create or update the table structure.</p>
+   * MyWarp's table structure if necessary. <p>Use {@link #create(MyWarp, DataSource, ConnectionConfiguration)} to
+   * create a {@code WarpStorage} that does not create or update the table structure.</p>
    *
    * @param myWarp     the MyWarp instance
    * @param dataSource the DataSource
    * @param config     the config
    * @return the {@code WarpStorage}
-   * @throws StorageInitializationException if a database error occurs, the underling database management system is
-   *                                        not supported or initialization of MyWarp's table structure fails
+   * @throws StorageInitializationException if a database error occurs, the underling database management system is not
+   *                                        supported or initialization of MyWarp's table structure fails
    */
   public static WarpStorage createInitialized(MyWarp myWarp, DataSource dataSource, ConnectionConfiguration config)
       throws StorageInitializationException {

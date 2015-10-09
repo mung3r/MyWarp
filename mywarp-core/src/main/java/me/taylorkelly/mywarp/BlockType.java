@@ -20,31 +20,31 @@
 package me.taylorkelly.mywarp;
 
 /**
- * Represents a block.
+ * A block. <p>Typically an implementation is provided by the platform running MyWarp.</p>
  */
 public interface BlockType {
 
   /**
-   * Returns whether this particular block is safe to stand <b>in</b>, which means an entity could stand inside this
-   * particular block without taking damage from doing so.
+   * Returns whether a regular entity (without any status effects) can stand <i>within</i> this block without taking any
+   * damage from doing so.
    *
-   * @return true if this particular block is safe to stand in
+   * @return {@code true} if an entity can safely stand within this block
    */
-  boolean isSafeToStandIn();
+  boolean canEntitySafelyStandWithin();
 
   /**
-   * Returns whether this particular block is safe to stand <b>on</b>, which mean an entity could stand on this
-   * particular block without taking damage from doing so.
+   * Returns whether a regular entity (without any status effects) can stand <i>on</i> this block without taking any
+   * damage from doing so.
    *
-   * @return true if this particular block is safe to stand on
+   * @return {@code true} if an entity can safely stand on this block
    */
-  boolean isSafeToStandOn();
+  boolean canEntitySafelyStandOn();
 
   /**
    * Returns whether this particular Block is smaller than a normal (full) block.
    *
-   * @return true if this particular block is smaller than a normal block
-   * @deprecated This method exists only to support warps created in legacy versions.
+   * @return {@code true} if this particular block is smaller than a normal block
+   * @deprecated This method exists only to support warps created in legacy versions and may be removed at any time.
    */
   @Deprecated
   boolean isNotFullHeight();

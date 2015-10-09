@@ -20,7 +20,6 @@
 package me.taylorkelly.mywarp.warp;
 
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
 import java.util.concurrent.TimeUnit;
@@ -65,11 +64,6 @@ abstract class AbstractWarp implements Warp {
   @Override
   public int compareTo(Warp that) {
     return getName().compareTo(that.getName());
-  }
-
-  @Override
-  public String getParsedWelcomeMessage(LocalPlayer forWhom) {
-    return WarpUtils.replaceTokens(getWelcomeMessage(), this, forWhom);
   }
 
   @Override

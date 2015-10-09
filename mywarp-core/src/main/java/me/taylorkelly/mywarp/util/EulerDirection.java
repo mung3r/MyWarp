@@ -20,7 +20,7 @@
 package me.taylorkelly.mywarp.util;
 
 /**
- * Represents an immutable euler direction, made up of pitch, yaw and roll components.
+ * An immutable euler direction, made up of pitch, yaw and roll components.
  */
 public class EulerDirection {
 
@@ -29,7 +29,7 @@ public class EulerDirection {
   private final float roll;
 
   /**
-   * Creates an instance.
+   * Creates an instance with the given components.
    *
    * @param pitch the pitch component
    * @param yaw   the yaw component

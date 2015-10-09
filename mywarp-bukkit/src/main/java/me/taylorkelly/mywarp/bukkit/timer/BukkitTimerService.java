@@ -67,7 +67,7 @@ public class BukkitTimerService implements TimerService {
   public EvaluationResult has(Object timedSubject, Class<? extends TimerAction> clazz) {
     SelfRunningRunnable action = runningTimers.get(timedSubject, clazz);
     if (action != null) {
-      return new EvaluationResult(true, action.getRemainingTime());
+      return new EvaluationResult(action.getRemainingTime());
     }
     return EvaluationResult.NO_RUNNING_TIMER;
   }

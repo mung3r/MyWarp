@@ -29,27 +29,26 @@ import com.sk89q.intake.parametric.handler.InvokeHandler;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.economy.EconomyManager;
+import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 
 import java.lang.reflect.Method;
 
 /**
  * By registering this InvokeHandler at a {@link com.sk89q.intake.parametric.ParametricBuilder}, command methods created
- * by this builder will require a certain fee when used if the method is annotated with {@link
- * Billable}.
+ * by this builder will require a certain fee when used if the method is annotated with {@link Billable}.
  */
 public class EconomyInvokeHandler extends AbstractInvokeListener implements InvokeHandler {
 
-  private final EconomyManager economyManager;
+  private final EconomyService economyService;
 
   /**
    * Creates an instance.
    *
-   * @param economyManager the EconomyManager uses to handle economy tasks
+   * @param economyService the EconomyService uses to handle economy tasks
    */
-  public EconomyInvokeHandler(EconomyManager economyManager) {
-    this.economyManager = economyManager;
+  public EconomyInvokeHandler(EconomyService economyService) {
+    this.economyService = economyService;
   }
 
   @Override
@@ -75,7 +74,7 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
     }
 
     FeeType feeType = method.getAnnotation(Billable.class).value();
-    return economyManager.hasAtLeast((LocalPlayer) actor, feeType);
+    return economyService.hasAtLeast((LocalPlayer) actor, feeType);
   }
 
   @Override
@@ -90,7 +89,7 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
     }
 
     FeeType feeType = method.getAnnotation(Billable.class).value();
-    economyManager.withdraw((LocalPlayer) actor, feeType);
+    economyService.withdraw((LocalPlayer) actor, feeType);
   }
 
 }

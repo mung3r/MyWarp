@@ -27,8 +27,7 @@ import me.taylorkelly.mywarp.warp.Warp;
 import java.util.List;
 
 /**
- * A WarpStorage that forwards all its method calls to another WarpStorage. Subclasses should override one or
- * more
+ * A WarpStorage that forwards all its method calls to another WarpStorage. Subclasses should override one or more
  * methods to modify the behavior of the backing WarpStorage as desired per the <a
  * href="http://en.wikipedia.org/wiki/Decorator_pattern">decorator pattern</a>.
  */

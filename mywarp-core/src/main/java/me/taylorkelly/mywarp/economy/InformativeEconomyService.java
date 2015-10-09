@@ -29,26 +29,26 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import java.math.BigDecimal;
 
 /**
- * Informs users after a transaction about the result. <p>This implementation operates on a {@link FeeProvider}
- * that provides the amount of the fees and a {@link EconomyService} that provides a connection with the actual
+ * Informs users after a transaction about the result. <p>This implementation operates on a {@link FeeProvider} that
+ * provides the amount of the fees and a {@link EconomyProvider} that provides a connection with the actual
  * economy.</p>
  */
-public class InformativeEconomyManager implements EconomyManager {
+public class InformativeEconomyService implements EconomyService {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.Economy");
 
   private final Settings settings;
   private final FeeProvider provider;
-  private final EconomyService service;
+  private final EconomyProvider service;
 
   /**
    * Creates an instance.
    *
    * @param settings the {@code Settings} to use
    * @param provider the {@code FeeProvider} to use
-   * @param service  the {@code EconomyService} to use
+   * @param service  the {@code EconomyProvider} to use
    */
-  public InformativeEconomyManager(Settings settings, FeeProvider provider, EconomyService service) {
+  public InformativeEconomyService(Settings settings, FeeProvider provider, EconomyProvider service) {
     this.settings = settings;
     this.provider = provider;
     this.service = service;
@@ -58,7 +58,7 @@ public class InformativeEconomyManager implements EconomyManager {
    * Returns whether the given {@code player} can disobey fees.
    *
    * @param player the player
-   * @return true if the player can disobey fees
+   * @return {@code true} if the player can disobey fees
    */
   private boolean canDisobeyFees(LocalPlayer player) {
     return player.hasPermission("mywarp.economy.disobey");

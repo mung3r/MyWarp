@@ -41,8 +41,8 @@ import javax.sql.DataSource;
 
 /**
  * A {@link DataSource} implementation that uses a single {@link Connection}. {@code Connection}s returned by this the
- * {@code DataSource} are actually wrapper around the original {@code Connection} that forbid closing.
- * <p>Obviously this class is not threadsafe.</p>
+ * {@code DataSource} are actually wrapper around the original {@code Connection} that forbid closing. <p>Obviously this
+ * class is not threadsafe.</p>
  */
 public class SingleConnectionDataSource implements DataSource {
 
@@ -183,8 +183,7 @@ public class SingleConnectionDataSource implements DataSource {
   }
 
   /**
-   * Wrap the given {@code Connection} with a proxy that delegates every method call,
-   * but suppresses close calls.
+   * Wrap the given {@code Connection} with a proxy that delegates every method call, but suppresses close calls.
    *
    * @param target the {@code Connection} to wrap
    * @return the wrapped {@code Connection}

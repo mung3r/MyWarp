@@ -21,6 +21,7 @@ package me.taylorkelly.mywarp.bukkit;
 
 import com.google.common.collect.ImmutableSet;
 
+import me.taylorkelly.mywarp.bukkit.util.AbstractListener;
 import me.taylorkelly.mywarp.warp.WarpSignManager;
 
 import org.bukkit.Material;

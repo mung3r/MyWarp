@@ -23,7 +23,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.economy.EconomyManager;
+import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
@@ -43,7 +43,7 @@ public class WarpSignManager {
   private final TreeSet<String> identifiers;
   private final WarpManager warpManager;
   private final AuthorizationService authorizationService;
-  private final EconomyManager economyManager;
+  private final EconomyService economyService;
 
   /**
    * Creates an instance.
@@ -51,16 +51,16 @@ public class WarpSignManager {
    * @param identifiers          the identifiers to identify a valid warp sign
    * @param warpManager          the WarpManager this manager will act on
    * @param authorizationService the AuthorizationService used to resolve authorizations
-   * @param economyManager       the EconomyManager this manager will act on
+   * @param economyService       the EconomyService this manager will act on
    */
   public WarpSignManager(Iterable<String> identifiers, WarpManager warpManager,
-                         AuthorizationService authorizationService, EconomyManager economyManager) {
+                         AuthorizationService authorizationService, EconomyService economyService) {
     this.identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
     Iterables.addAll(this.identifiers, identifiers);
 
     this.warpManager = warpManager;
     this.authorizationService = authorizationService;
-    this.economyManager = economyManager;
+    this.economyService = economyService;
   }
 
   /**
@@ -88,7 +88,7 @@ public class WarpSignManager {
       return;
     }
 
-    if (!economyManager.hasAtLeast(player, FeeType.WARP_SIGN_USE)) {
+    if (!economyService.hasAtLeast(player, FeeType.WARP_SIGN_USE)) {
       return;
     }
 
@@ -124,10 +124,10 @@ public class WarpSignManager {
       return false;
     }
 
-    if (!economyManager.hasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
+    if (!economyService.hasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
       return false;
     }
-    economyManager.withdraw(player, FeeType.WARP_SIGN_CREATE);
+    economyService.withdraw(player, FeeType.WARP_SIGN_CREATE);
 
     // get the right spelling (case) out of the config
     String line = lines[IDENTIFIER_LINE];

@@ -26,7 +26,8 @@ import java.util.UUID;
 import java.util.concurrent.Executor;
 
 /**
- * Represents the running game. Methods in this interface provide access to the game as it is running.
+ * A connection with the logic of the running game. <p>Typically an implementation is provided by the platform running
+ * MyWarp.</p>
  */
 public interface Game {
 
@@ -49,17 +50,10 @@ public interface Game {
   /**
    * Gets an Optional containing the player of the given identifier, if such a player exists.
    *
-   * @param identifier the identifier of the player
+   * @param identifier the unique identifier of the player
    * @return an Optional containing the player
    */
   Optional<LocalPlayer> getPlayer(UUID identifier);
-
-  /**
-   * Gets an ImmutableSet with all worlds currently loaded on the server.
-   *
-   * @return an ImmutableSet with all loaded worlds
-   */
-  ImmutableSet<LocalWorld> getWorlds();
 
   /**
    * Gets an Optional containing the world of the given name, if such a world exists.
@@ -72,8 +66,15 @@ public interface Game {
   /**
    * Gets an Optional containing the world of the given unique identifier, if such a world exists.
    *
-   * @param uniqueId the unique Identifier of the world
+   * @param uniqueId the unique identifier of the world
    * @return an Optional containing the world
    */
   Optional<LocalWorld> getWorld(UUID uniqueId);
+
+  /**
+   * Gets an ImmutableSet with all worlds currently loaded on the server.
+   *
+   * @return an ImmutableSet with all loaded worlds
+   */
+  ImmutableSet<LocalWorld> getWorlds();
 }

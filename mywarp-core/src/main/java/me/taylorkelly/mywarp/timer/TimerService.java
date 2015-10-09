@@ -19,10 +19,12 @@
 
 package me.taylorkelly.mywarp.timer;
 
-import com.google.common.base.Optional;
+import static com.google.common.base.Preconditions.checkState;
+
+import javax.annotation.Nullable;
 
 /**
- * Represents a service that manages timers on objects.
+ * Manages timers on objects. <p>Typically an implementation is provided by the platform running MyWarp.</p>
  */
 public interface TimerService {
 
@@ -65,43 +67,45 @@ public interface TimerService {
      */
     public static final EvaluationResult NO_RUNNING_TIMER = new EvaluationResult();
     private final boolean timerRunning;
-    private final Optional<Duration> durationLeft;
+    @Nullable
+    private final Duration durationLeft;
 
     /**
      * Creates an instance that indicates that no timer is running.
      */
     private EvaluationResult() {
       this.timerRunning = false;
-      this.durationLeft = Optional.absent();
+      this.durationLeft = null;
     }
 
     /**
-     * Creates an instance. Use {@link #NO_RUNNING_TIMER} to get an instance that indicates that no timer is running.
+     * Creates an instance indicating that a timer is running. Use {@link #NO_RUNNING_TIMER} to get an instance that
+     * indicates that no timer is running.
      *
-     * @param timerRunning whether a timer is running
      * @param durationLeft the Duration left on the running Timer
      */
-    public EvaluationResult(boolean timerRunning, Duration durationLeft) {
-      this.timerRunning = timerRunning;
-      this.durationLeft = Optional.of(durationLeft);
+    public EvaluationResult(Duration durationLeft) {
+      this.timerRunning = true;
+      this.durationLeft = durationLeft;
     }
 
     /**
      * Returns whether a timer is running.
      *
-     * @return true if a timer is running
+     * @return {@code true} if a timer is running
      */
     public boolean isTimerRunning() {
       return timerRunning;
     }
 
     /**
-     * Gets an Optional containing the duration that is left on the running timer. {@link Optional#absent()} will be
-     * returned if, and only if no timer is running and {@link #isTimerRunning()} returns {@code true}.
+     * Gets the duration left on the running timer.
      *
-     * @return the Duration left
+     * @return the duration left
+     * @throws IllegalStateException if no timer is running and thus {@link #isTimerRunning()} returns {@code true}
      */
-    public Optional<Duration> getDurationLeft() {
+    public Duration getDurationLeft() {
+      checkState(timerRunning);
       return durationLeft;
     }
   }

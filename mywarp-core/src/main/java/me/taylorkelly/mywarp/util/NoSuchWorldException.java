@@ -20,7 +20,8 @@
 package me.taylorkelly.mywarp.util;
 
 /**
- * Thrown when an attempt is made to access a world that does not exist on the server when the attempt was made.
+ * Thrown when an attempt is made to access a world that does not exist on the server at the moment, the attempt was
+ * made.
  */
 public class NoSuchWorldException extends RuntimeException {
 
@@ -38,7 +39,7 @@ public class NoSuchWorldException extends RuntimeException {
   }
 
   /**
-   * Gets a readable representation of the world which does not exist. This can be a world's name or a world#s unique
+   * Gets a readable representation of the world which does not exist. This can be a world's name or a world's unique
    * identifier.
    *
    * @return the world's representation

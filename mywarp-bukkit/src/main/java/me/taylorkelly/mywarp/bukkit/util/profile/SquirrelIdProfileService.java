@@ -30,7 +30,7 @@ import com.sk89q.squirrelid.resolver.CacheForwardingService;
 import com.sk89q.squirrelid.resolver.CombinedProfileService;
 import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 
-import me.taylorkelly.mywarp.bukkit.AbstractListener;
+import me.taylorkelly.mywarp.bukkit.util.AbstractListener;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.profile.NameProvidingProfileService;
 import me.taylorkelly.mywarp.util.profile.Profile;

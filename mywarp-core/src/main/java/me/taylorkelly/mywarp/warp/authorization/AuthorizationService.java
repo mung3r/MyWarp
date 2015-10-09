@@ -27,12 +27,8 @@ import me.taylorkelly.mywarp.warp.Warp;
 
 /**
  * Resolves a user's authentication for a certain warp using a previously defined {@link AuthorizationStrategy}.
- * <p>There are three different non exclusive types of authorizations. A warp can be:
- * <ol>
- * <li>modifiable,</li>
- * <li>usable,</li>
- * <li>viewable.</li>
- * </ol></p>
+ * <p>There are three different non exclusive types of authorizations. A warp can be: <ol> <li>modifiable,</li>
+ * <li>usable,</li> <li>viewable.</li> </ol></p>
  */
 public class AuthorizationService {
 
@@ -48,9 +44,9 @@ public class AuthorizationService {
   }
 
   /**
-   * Returns whether the given {@code Warp} is modifiable by the given {@code Actor}.
-   * <p>If this method returns {@code true} it is guaranteed that {@link #isUsable(Warp, LocalEntity)} as well as
-   * {@link #isViewable(Warp, Actor)} also return {@code true}.</p>
+   * Returns whether the given {@code Warp} is modifiable by the given {@code Actor}. <p>If this method returns {@code
+   * true} it is guaranteed that {@link #isUsable(Warp, LocalEntity)} as well as {@link #isViewable(Warp, Actor)} also
+   * return {@code true}.</p>
    *
    * @param warp  the warp to check
    * @param actor the Actor to check
@@ -61,9 +57,8 @@ public class AuthorizationService {
   }
 
   /**
-   * Returns whether the given {@code Warp} is usable by the given {@code entity}.
-   * <p>If this method returns {@code true} it is guaranteed that {@link #isViewable(Warp, Actor)} also returns {@code
-   * true}.</p>
+   * Returns whether the given {@code Warp} is usable by the given {@code entity}. <p>If this method returns {@code
+   * true} it is guaranteed that {@link #isViewable(Warp, Actor)} also returns {@code true}.</p>
    *
    * @param warp   the warp to check
    * @param entity the entity to check

@@ -26,7 +26,7 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.util.FormattingUtils;
 import me.taylorkelly.mywarp.limits.Limit;
-import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.limits.LimitService;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -49,19 +49,19 @@ public class AssetsPrinter {
   private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final LocalPlayer creator;
-  private final LimitManager limitManager;
+  private final LimitService limitService;
   private final Settings settings;
 
   /**
    * Creates an instance.
    *
    * @param creator      the player whose assets should be displayed
-   * @param limitManager the limitManager that manages the limits that should be displayed
+   * @param limitService the limitService that manages the limits that should be displayed
    * @param settings     the Settings
    */
-  public AssetsPrinter(LocalPlayer creator, LimitManager limitManager, Settings settings) {
+  public AssetsPrinter(LocalPlayer creator, LimitService limitService, Settings settings) {
     this.creator = creator;
-    this.limitManager = limitManager;
+    this.limitService = limitService;
     this.settings = settings;
   }
 
@@ -76,7 +76,7 @@ public class AssetsPrinter {
     receiver.sendMessage(ChatColor.GOLD + FormattingUtils.center(heading, '-'));
 
     // display the limits
-    Map<Limit, List<Warp>> index = limitManager.getWarpsPerLimit(creator);
+    Map<Limit, List<Warp>> index = limitService.getWarpsPerLimit(creator);
     for (Entry<Limit, List<Warp>> entry : index.entrySet()) {
       printLimit(receiver, entry.getKey(), entry.getValue());
     }
@@ -115,9 +115,9 @@ public class AssetsPrinter {
     for (Limit.Type type : DISPLAYABLE_TYPES) {
       Collection<Warp> privateWarps = index.get(type);
 
-      limitStrings.add(ChatColor.GOLD + MESSAGES.getString("assets." + type.lowerCaseName(),
-                                                           warpLimitCount(privateWarps.size(), limit.getLimit(type)))
-                       + " " + ChatColor.WHITE + ChatColor.ITALIC + CommandUtils.joinWarps(privateWarps));
+      limitStrings.add(ChatColor.GOLD + MESSAGES
+          .getString("assets." + type.lowerCaseName(), warpLimitCount(privateWarps.size(), limit.getLimit(type))) + " "
+                       + ChatColor.WHITE + ChatColor.ITALIC + CommandUtils.joinWarps(privateWarps));
     }
 
     receiver.sendMessage(FormattingUtils.toList(limitStrings));

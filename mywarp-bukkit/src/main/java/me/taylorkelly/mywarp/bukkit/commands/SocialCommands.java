@@ -38,7 +38,7 @@ import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name;
 import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.bukkit.util.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.limits.LimitManager;
+import me.taylorkelly.mywarp.limits.LimitService;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -55,7 +55,7 @@ public class SocialCommands {
   private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final Game game;
-  private final LimitManager manager;
+  private final LimitService manager;
   private final ProfileService service;
   private final WarpAcceptancePromptFactory warpAcceptancePromptFactory;
 
@@ -64,7 +64,7 @@ public class SocialCommands {
    *
    * @param warpAcceptancePromptFactory the WarpAcceptancePromptFactory
    */
-  public SocialCommands(Game game, LimitManager manager, ProfileService service,
+  public SocialCommands(Game game, LimitService manager, ProfileService service,
                         WarpAcceptancePromptFactory warpAcceptancePromptFactory) {
     this.game = game;
     this.manager = manager;
@@ -100,7 +100,7 @@ public class SocialCommands {
       if (!receiverPlayer.isPresent()) {
         throw new NoSuchPlayerException(receiver);
       }
-      LimitManager.EvaluationResult
+      LimitService.EvaluationResult
           result =
           manager.evaluateLimit(receiverPlayer.get(), warp.getWorld(), warp.getType().getLimit(), true);
       if (result.exceedsLimit()) {
@@ -167,7 +167,7 @@ public class SocialCommands {
         throw new NoSuchPlayerException(creator);
       }
 
-      LimitManager.EvaluationResult
+      LimitService.EvaluationResult
           result =
           manager.evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PRIVATE.getLimit(), false);
 
@@ -217,7 +217,7 @@ public class SocialCommands {
         throw new NoSuchPlayerException(creator);
       }
 
-      LimitManager.EvaluationResult
+      LimitService.EvaluationResult
           result =
           manager.evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PUBLIC.getLimit(), false);
 

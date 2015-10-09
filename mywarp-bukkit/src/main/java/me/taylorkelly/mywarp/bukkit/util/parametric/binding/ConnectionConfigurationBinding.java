@@ -34,13 +34,8 @@ public class ConnectionConfigurationBinding extends BindingHelper {
 
   /**
    * Gets a {@code ConnectionConfiguration} from the given {@code context}. Values will be resolved in the following
-   * order, unsupported ones will be skipped:
-   * <ul>
-   * <li>Database URL,</li>
-   * <li>Schema,</li>
-   * <li>User,</li>
-   * <li>Password.</li>
-   * </ul>
+   * order, unsupported ones will be skipped: <ul> <li>Database URL,</li> <li>Schema,</li> <li>User,</li>
+   * <li>Password.</li> </ul>
    *
    * @param context the command's context
    * @return the {@code ConnectionConfiguration}

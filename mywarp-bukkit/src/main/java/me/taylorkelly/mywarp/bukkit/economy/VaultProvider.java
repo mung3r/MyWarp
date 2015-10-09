@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
-import me.taylorkelly.mywarp.economy.EconomyService;
+import me.taylorkelly.mywarp.economy.EconomyProvider;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 
 import net.milkbowl.vault.economy.Economy;
@@ -36,11 +36,11 @@ import org.slf4j.Logger;
 import java.math.BigDecimal;
 
 /**
- * An EconomyService that uses Vault to resolve requests.
+ * An EconomyProvider that uses Vault to resolve requests.
  */
-public class VaultService implements EconomyService {
+public class VaultProvider implements EconomyProvider {
 
-  private static final Logger log = MyWarpLogger.getLogger(VaultService.class);
+  private static final Logger log = MyWarpLogger.getLogger(VaultProvider.class);
 
   private final Economy economy;
   private final BukkitAdapter adapter;
@@ -51,7 +51,7 @@ public class VaultService implements EconomyService {
    * @param economyProvider the economy service provider from Vault
    * @param adapter         the adapter
    */
-  public VaultService(RegisteredServiceProvider<Economy> economyProvider, BukkitAdapter adapter) {
+  public VaultProvider(RegisteredServiceProvider<Economy> economyProvider, BukkitAdapter adapter) {
     this.economy = economyProvider.getProvider();
     this.adapter = adapter;
   }

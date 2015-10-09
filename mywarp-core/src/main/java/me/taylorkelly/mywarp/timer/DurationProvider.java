@@ -22,7 +22,8 @@ package me.taylorkelly.mywarp.timer;
 import me.taylorkelly.mywarp.LocalPlayer;
 
 /**
- * Provides the actual {@link Duration}s that affect a user under certain conditions.
+ * Provides the actual durations that affect a user under certain conditions. <p>Typically an implementation is provided
+ * by the platform running MyWarp.</p>
  */
 public interface DurationProvider {
 

@@ -54,17 +54,17 @@ public class WarpBuilder {
   private String welcomeMessage = MESSAGES.getString("default-welcome-message");
 
   /**
-   * Creates a {@code WarpBuilder} that builds {@code Warp}s using the given values.
+   * Creates an instance that builds Warp's using the given values.
    *
    * @param myWarp          the running MyWarp instance
-   * @param name            the {@code Warp}'s name
-   * @param creator         the {@code Warp}'s creator
-   * @param worldIdentifier the identifier of the world the {@code Warp} is located in
-   * @param position        the {@code Warp}'s position
-   * @param rotation        the {@code Warp}'s rotation
+   * @param name            the Warp's name
+   * @param creator         the Warp's creator
+   * @param worldIdentifier the identifier of the world the Warp is located in
+   * @param position        the Warp's position
+   * @param rotation        the Warp's rotation
    */
   public WarpBuilder(MyWarp myWarp, String name, Profile creator, UUID worldIdentifier, Vector3 position,
-                      EulerDirection rotation) {
+                     EulerDirection rotation) {
     this.invitedPlayers = new HashSet<Profile>();
     this.invitedGroups = new HashSet<String>();
 
@@ -77,7 +77,7 @@ public class WarpBuilder {
   }
 
   /**
-   * Sets the creation date of the {@code Warp}.
+   * Sets the creation date of the Warp.
    *
    * @param creationDate the creation date
    * @return this {@code WarpBuilder}
@@ -88,7 +88,7 @@ public class WarpBuilder {
   }
 
   /**
-   * Adds the player to the set of players invited to the {@code Warp}.
+   * Adds the player to the set of players invited to the Warp.
    *
    * @param player the player profiles
    * @return this {@code WarpBuilder}
@@ -99,7 +99,7 @@ public class WarpBuilder {
   }
 
   /**
-   * Adds each player to the set of players invited to the {@code Warp}.
+   * Adds each player to the set of players invited to the Warp.
    *
    * @param players the Iterable of player profiles
    * @return this {@code WarpBuilder}
@@ -110,7 +110,7 @@ public class WarpBuilder {
   }
 
   /**
-   * Adds the group to the set of groups invited to the {@code Warp}.
+   * Adds the group to the set of groups invited to the Warp.
    *
    * @param groupId the group identifier
    * @return this {@code WarpBuilder}
@@ -121,7 +121,7 @@ public class WarpBuilder {
   }
 
   /**
-   * Adds each group to the set of groups invited to the {@code Warp}.
+   * Adds each group to the set of groups invited to the Warp.
    *
    * @param groupIds the {@code Iterable} of group identifier
    * @return this {@code WarpBuilder}
@@ -132,7 +132,7 @@ public class WarpBuilder {
   }
 
   /**
-   * Sets the type of the {@code Warp}.
+   * Sets the type of the Warp.
    *
    * @param type the type
    * @return this {@code WarpBuilder}
@@ -143,7 +143,7 @@ public class WarpBuilder {
   }
 
   /**
-   * Sets the amount of visits of the {@code Warp}.
+   * Sets the amount of visits of the Warp.
    *
    * @param visits the amount of visits
    * @return this {@code WarpBuilder}
@@ -154,7 +154,7 @@ public class WarpBuilder {
   }
 
   /**
-   * Sets the welcome message of the {@code Warp}.
+   * Sets the welcome message of the Warp.
    *
    * @param welcomeMessage the welcome message
    * @return this {@code WarpBuilder}
@@ -165,9 +165,9 @@ public class WarpBuilder {
   }
 
   /**
-   * Builds the {@code Warp} based on the contents of the {@code WarpBuilder}.
+   * Builds the Warp based on the contents of the {@code WarpBuilder}.
    *
-   * @return the newly-created {@code Warp}
+   * @return the newly-created Warp
    */
   public Warp build() {
     return new SimpleWarp(myWarp, name, creationDate, invitedPlayers, invitedGroups, creator, type, worldIdentifier,

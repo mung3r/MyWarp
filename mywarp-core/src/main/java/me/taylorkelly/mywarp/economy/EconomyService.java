@@ -20,30 +20,50 @@
 package me.taylorkelly.mywarp.economy;
 
 import me.taylorkelly.mywarp.LocalPlayer;
+import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 
 import java.math.BigDecimal;
 
 /**
- * Provides raw access to an economy system.
+ * Provides managed access to an economy system. Implementations may call additional validation before, or call
+ * additional callback after a transactions is executed. <p>For a raw access use an {@link EconomyProvider}.</p>
  */
 public interface EconomyService {
 
   /**
-   * Returns whether the given {@code player} has at least the given {@code amount}.
+   * Returns whether the given {@code player} has at least the amount identified by the given {@code fee}.
    *
-   * @param player the player to check
-   * @param amount the amount to check
+   * @param player the player
+   * @param fee    the identifier of the actual fee
+   * @return {@code true} if the player has at least the given amount
+   */
+  boolean hasAtLeast(LocalPlayer player, FeeType fee);
+
+  /**
+   * Returns whether the given {@code player} has at least the given amount.
+   *
+   * @param player the player
+   * @param amount the amount
    * @return {@code true} if the player has at least the given amount
    * @throws IllegalArgumentException if the given {@code amount} is not greater than 0
    */
   boolean hasAtLeast(LocalPlayer player, BigDecimal amount);
 
   /**
-   * Withdraws the given {@code player} with the given {@code amount}.
+   * Withdraws the given {@code player} with the amount identified by the given {@code fee}.
    *
-   * @param player the player to check
-   * @param amount the amount to withdraw
+   * @param player the player
+   * @param fee    the identifier of the actual fee
+   */
+  void withdraw(LocalPlayer player, FeeType fee);
+
+  /**
+   * Withdraws the given {@code player} with the given amount.
+   *
+   * @param player the player
+   * @param amount the amount
    * @throws IllegalArgumentException if the given {@code amount} is not greater than 0
    */
   void withdraw(LocalPlayer player, BigDecimal amount);
+
 }
