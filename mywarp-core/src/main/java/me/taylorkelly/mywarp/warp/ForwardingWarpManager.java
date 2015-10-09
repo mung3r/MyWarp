@@ -23,7 +23,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ForwardingObject;
 
-import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
@@ -40,10 +39,9 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A WarpManager that forwards all its method calls to another Warp. Subclasses should override one or more methods to
- * modify
- * the behavior of the backing WarpManager as desired per the <a href="http://en.wikipedia.org/wiki/Decorator_pattern">
- * decorator pattern</a>.
+ * Forwards all method calls to another WarpManager. Subclasses should override one or more methods to
+ * modify the behavior of the backing WarpManager as desired per the <a href="http://en.wikipedia
+ * .org/wiki/Decorator_pattern">decorator pattern</a>.
  */
 abstract class ForwardingWarpManager extends ForwardingObject implements WarpManager {
 
@@ -96,31 +94,15 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
   protected abstract WarpManager delegate();
 
   /**
-   * A Warp that forwards all its method calls to another Warp. Subclasses should override one or more methods to
-   * modify
-   * the behavior of the backing Warp as desired per the <a href="http://en.wikipedia.org/wiki/Decorator_pattern">
-   * decorator pattern</a>.
+   * Forwards all method calls to another Warp. Subclasses should override one or more methods to
+   * modify the behavior of the backing Warp as desired per the <a href="http://en.wikipedia
+   * .org/wiki/Decorator_pattern">decorator pattern</a>.
    */
   protected abstract class ForwardingWarp extends ForwardingObject implements Warp {
 
     @Override
     public void asCompassTarget(LocalPlayer player) {
       delegate().asCompassTarget(player);
-    }
-
-    @Override
-    public boolean isViewable(Actor actor) {
-      return delegate().isViewable(actor);
-    }
-
-    @Override
-    public boolean isUsable(LocalEntity entity) {
-      return delegate().isUsable(entity);
-    }
-
-    @Override
-    public boolean isModifiable(Actor actor) {
-      return delegate().isModifiable(actor);
     }
 
     @Override

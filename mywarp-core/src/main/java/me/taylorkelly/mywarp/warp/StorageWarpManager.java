@@ -33,8 +33,8 @@ import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
- * A WarpManager that stores all warps on it to a {@link WarpStorage}. Calls are all delegated to an
- * underling WarpManager as required by the decorator pattern, storage is implemented on top of it.
+ * Stores all warps managed by itusing a {@link WarpStorage}. Calls are all delegated to an
+ * underling WarpManager as required by the decorator pattern, storage is implemented on top.
  */
 public class StorageWarpManager extends ForwardingWarpManager {
 

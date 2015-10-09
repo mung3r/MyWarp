@@ -30,13 +30,13 @@ import me.taylorkelly.mywarp.economy.InformativeEconomyManager;
 import me.taylorkelly.mywarp.limits.DummyLimitManager;
 import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.limits.SimpleLimitManager;
-import me.taylorkelly.mywarp.teleport.SafeTeleportManager;
-import me.taylorkelly.mywarp.teleport.TeleportManager;
 import me.taylorkelly.mywarp.storage.AsyncWritingWarpStorage;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.storage.StorageInitializationException;
 import me.taylorkelly.mywarp.storage.WarpStorage;
 import me.taylorkelly.mywarp.storage.WarpStorageFactory;
+import me.taylorkelly.mywarp.teleport.SafeTeleportManager;
+import me.taylorkelly.mywarp.teleport.TeleportManager;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
@@ -46,6 +46,10 @@ import me.taylorkelly.mywarp.warp.StorageWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.WarpSignManager;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
+import me.taylorkelly.mywarp.warp.authorization.PermissionAuthorizationStrategy;
+import me.taylorkelly.mywarp.warp.authorization.WarpPropertiesAuthorizationStrategy;
+import me.taylorkelly.mywarp.warp.authorization.WorldAccessAuthorizationStrategy;
 
 import org.slf4j.Logger;
 
@@ -66,6 +70,8 @@ public class MyWarp {
   private final WarpManager warpManager;
   private final WarpStorage warpStorage;
   private final EventBus eventBus;
+
+  private final AuthorizationService authorizationService;
 
   private EconomyManager economyManager;
   private LimitManager limitManager;
@@ -98,6 +104,12 @@ public class MyWarp {
 
     // setup the WarpManager
     warpManager = new EventfulWarpManager(new StorageWarpManager(new MemoryWarpManager(), warpStorage), eventBus);
+
+    authorizationService =
+        new AuthorizationService(
+            new WorldAccessAuthorizationStrategy(
+              new PermissionAuthorizationStrategy(
+                  new WarpPropertiesAuthorizationStrategy()), platform.getSettings()));
 
     DynamicMessages.setControl(platform.getResourceBundleControl());
 
@@ -132,7 +144,8 @@ public class MyWarp {
     }
 
     //TODO this might not be needed
-    warpSignManager = new WarpSignManager(getSettings().getWarpSignsIdentifiers(), economyManager, warpManager);
+    warpSignManager =
+        new WarpSignManager(getSettings().getWarpSignsIdentifiers(), warpManager, authorizationService, economyManager);
 
     log.info("Loading warps...");
     ListenableFuture<List<Warp>>
@@ -274,5 +287,14 @@ public class MyWarp {
    */
   public EventBus getEventBus() {
     return eventBus;
+  }
+
+  /**
+   * Gets the AuthorizationService instance of this MyWarp instance.
+   *
+   * @return the AuthorizationService
+   */
+  public AuthorizationService getAuthorizationService() {
+    return authorizationService;
   }
 }

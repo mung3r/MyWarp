@@ -83,7 +83,7 @@ public enum ReflectiveLocaleResolver {
       localeField.setAccessible(true);
     }
 
-    String rawLocale = null;
+    String rawLocale;
     try {
       rawLocale = (String) localeField.get(handleMethod.invoke(player));
     } catch (IllegalAccessException e) {

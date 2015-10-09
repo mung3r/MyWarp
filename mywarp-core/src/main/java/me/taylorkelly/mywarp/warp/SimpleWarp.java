@@ -24,17 +24,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 
-import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.teleport.TeleportManager.TeleportStatus;
+import me.taylorkelly.mywarp.teleport.TeleportManager;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.Vector3;
-import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
@@ -42,17 +40,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
- * A simple implementation of a Warp. Use a {@link WarpBuilder} to create instances.
+ * A simple implementation that natively stores its properties.
  */
-class SimpleWarp implements Warp {
+class SimpleWarp extends AbstractWarp {
 
-  private static final double GRAVITY_CONSTANT = 0.8;
   private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
+  protected final MyWarp myWarp;
 
-  private final MyWarp myWarp;
   private final String name;
   private final Date creationDate;
   private final Set<Profile> invitedPlayers;
@@ -104,130 +100,6 @@ class SimpleWarp implements Warp {
   }
 
   @Override
-  public void asCompassTarget(LocalPlayer player) {
-    player.setCompassTarget(getWorld(), position);
-  }
-
-  @Override
-  public boolean isViewable(Actor actor) {
-    if (actor.hasPermission("mywarp.override.view")) {
-      return true;
-    }
-    if (actor instanceof LocalEntity) {
-      return isUsable((LocalEntity) actor);
-    }
-    return false;
-  }
-
-  @Override
-  public boolean isUsable(LocalEntity entity) {
-    if (entity instanceof LocalPlayer) {
-      LocalPlayer player = (LocalPlayer) entity;
-      if (myWarp.getSettings().isControlWorldAccess()) {
-        if (!player.canAccessWorld(getWorld())) {
-          return false;
-
-        }
-      }
-      if (player.hasPermission("mywarp.override.use")) {
-        return true;
-      }
-      if (isCreator(player)) {
-        return true;
-      }
-      if (isPlayerInvited(player)) {
-        return true;
-      }
-      for (String groupId : invitedGroups) {
-        if (player.hasGroup(groupId)) {
-          return true;
-        }
-      }
-    }
-    return isType(Warp.Type.PUBLIC);
-  }
-
-  @Override
-  public boolean isModifiable(Actor actor) {
-    if (actor.hasPermission("mywarp.override.modify")) {
-      return true;
-    }
-    if (actor instanceof LocalPlayer && isCreator((LocalPlayer) actor)) {
-      return true;
-    }
-    return false;
-  }
-
-  @Override
-  public TeleportStatus teleport(LocalEntity entity) {
-    TeleportStatus status = myWarp.getTeleportManager().teleport(entity, getWorld(), position, rotation);
-    if (status.isPositionModified()) {
-      visits++;
-    }
-    return status;
-  }
-
-  @Override
-  public TeleportStatus teleport(LocalPlayer player) {
-    TeleportStatus status = teleport((LocalEntity) player);
-
-    switch (status) {
-      case ORIGINAL:
-        if (!welcomeMessage.isEmpty()) {
-          // TODO color in aqua
-          player.sendMessage(getParsedWelcomeMessage(player));
-        }
-        break;
-      case MODIFIED:
-        player.sendError(MESSAGES.getString("unsafe-loc.closest-location", getName()));
-        break;
-      case NONE:
-        player.sendError(MESSAGES.getString("unsafe-loc.no-teleport", getName()));
-        break;
-    }
-    return status;
-  }
-
-  @Override
-  public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
-    TeleportStatus status = teleport(player);
-    if (myWarp.getSettings().isEconomyEnabled() && status.isPositionModified()) {
-      myWarp.getEconomyManager().withdraw(player, fee);
-    }
-    return status;
-  }
-
-  @Override
-  public boolean isCreator(LocalPlayer player) {
-    return isCreator(player.getProfile());
-  }
-
-  @Override
-  public boolean isCreator(Profile profile) {
-    return creator.equals(profile);
-  }
-
-  @Override
-  public boolean isType(Warp.Type type) {
-    return this.type == type;
-  }
-
-  @Override
-  public boolean isPlayerInvited(LocalPlayer player) {
-    return isPlayerInvited(player.getProfile());
-  }
-
-  @Override
-  public boolean isPlayerInvited(Profile profile) {
-    return invitedPlayers.contains(profile);
-  }
-
-  @Override
-  public boolean isGroupInvited(String groupId) {
-    return invitedGroups.contains(groupId);
-  }
-
-  @Override
   public void inviteGroup(String groupId) {
     invitedGroups.add(groupId);
   }
@@ -246,11 +118,6 @@ class SimpleWarp implements Warp {
   @Override
   public void uninvitePlayer(Profile player) {
     invitedPlayers.remove(player);
-  }
-
-  @Override
-  public int compareTo(Warp that) {
-    return this.name.compareTo(that.getName());
   }
 
   @Override
@@ -310,65 +177,10 @@ class SimpleWarp implements Warp {
   }
 
   @Override
-  public String getParsedWelcomeMessage(LocalPlayer forWhom) {
-    return WarpUtils.replaceTokens(welcomeMessage, this, forWhom);
-  }
-
-  @Override
   public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
     this.worldIdentifier = world.getUniqueId();
     this.position = position;
     this.rotation = rotation;
-  }
-
-  @Override
-  public double getPopularityScore() {
-    // a basic implementation of the hacker news ranking algorithm detailed
-    // at http://amix.dk/blog/post/19574: Older warps receive lower scores
-    // due to the influence of the gravity constant.
-    double daysExisting = (System.currentTimeMillis() - creationDate.getTime()) / (1000 * 60 * 60 * 24L);
-    return visits / Math.pow(daysExisting, GRAVITY_CONSTANT);
-  }
-
-  @Override
-  public double getVisitsPerDay() {
-    // this method might not be 100% exact (considering leap seconds), but
-    // within the current Java API there are no alternatives
-    long daysSinceCreation = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - creationDate.getTime());
-    if (daysSinceCreation <= 0) {
-      return visits;
-    }
-    return visits / daysSinceCreation;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + (name == null ? 0 : name.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    SimpleWarp other = (SimpleWarp) obj;
-    if (name == null) {
-      if (other.name != null) {
-        return false;
-      }
-    } else if (!name.equals(other.name)) {
-      return false;
-    }
-    return true;
   }
 
   @Override
@@ -393,5 +205,46 @@ class SimpleWarp implements Warp {
   @Override
   public UUID getWorldIdentifier() {
     return worldIdentifier;
+  }
+
+  @Override
+  public TeleportManager.TeleportStatus teleport(LocalEntity entity) {
+    TeleportManager.TeleportStatus
+        status =
+        myWarp.getTeleportManager().teleport(entity, getWorld(), getPosition(), getRotation());
+    if (status.isPositionModified()) {
+      visits++;
+    }
+    return status;
+  }
+
+  @Override
+  public TeleportManager.TeleportStatus teleport(LocalPlayer player) {
+    TeleportManager.TeleportStatus status = teleport((LocalEntity) player);
+
+    switch (status) {
+      case ORIGINAL:
+        if (!getWelcomeMessage().isEmpty()) {
+          // TODO color in aqua
+          player.sendMessage(getParsedWelcomeMessage(player));
+        }
+        break;
+      case MODIFIED:
+        player.sendError(MESSAGES.getString("unsafe-loc.closest-location", getName()));
+        break;
+      case NONE:
+        player.sendError(MESSAGES.getString("unsafe-loc.no-teleport", getName()));
+        break;
+    }
+    return status;
+  }
+
+  @Override
+  public TeleportManager.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
+    TeleportManager.TeleportStatus status = teleport(player);
+    if (myWarp.getSettings().isEconomyEnabled() && status.isPositionModified()) {
+      myWarp.getEconomyManager().withdraw(player, fee);
+    }
+    return status;
   }
 }

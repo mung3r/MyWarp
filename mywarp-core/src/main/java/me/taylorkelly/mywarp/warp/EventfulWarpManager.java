@@ -40,12 +40,12 @@ import me.taylorkelly.mywarp.warp.event.WarpRemovalEvent;
 import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
 
 /**
- * A WarpManager that fires events for all warps it holds. Functional calls are all delegated to an
- * underling WarpManager as required by the decorator pattern and events are implemented on top of them.
+ * Fires events for all warps managed by it. Functional calls are all delegated to an
+ * underling WarpManager as required by the decorator pattern and events are implemented on top.
  * <p>Events are dispatched in the {@link EventBus} given when initializing this WarpManager.  Individual warps fire
- * {@link WarpEvent}s and
- * the manager itself fires {@link WarpAdditionEvent}s and {@link WarpRemovalEvent}s when Warps are added to or
- * removed from it. Handlers that want to listen to such events need to register themselves on the EventBus.</p>
+ * {@link WarpEvent}s and the manager itself fires {@link WarpAdditionEvent}s and {@link WarpRemovalEvent}s when Warps
+ * are added to or removed from it. Handlers that want to listen to such events need to register themselves on the
+ * EventBus.</p>
  */
 public class EventfulWarpManager extends ForwardingWarpManager {
 

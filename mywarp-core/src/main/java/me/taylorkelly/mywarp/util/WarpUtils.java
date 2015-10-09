@@ -21,8 +21,6 @@ package me.taylorkelly.mywarp.util;
 
 import com.google.common.base.Predicate;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -66,24 +64,6 @@ public final class WarpUtils {
   }
 
   /**
-   * Returns a predicate that evaluates to {@code true} if the warp being tested is modifiable by the given Actor.
-   *
-   * @param actor the command-sender
-   * @return a predicate that checks if the given warp is modifiable by the given Actor
-   * @see Warp#isModifiable(Actor)
-   */
-  public static Predicate<Warp> isModifiable(final Actor actor) {
-    return new Predicate<Warp>() {
-
-      @Override
-      public boolean apply(Warp warp) {
-        return warp.isModifiable(actor);
-      }
-
-    };
-  }
-
-  /**
    * Returns a predicate that evaluates to {@code true} if the warp being tested is of the given type.
    *
    * @param type the type
@@ -96,42 +76,6 @@ public final class WarpUtils {
       @Override
       public boolean apply(Warp warp) {
         return warp.isType(type);
-      }
-
-    };
-  }
-
-  /**
-   * Returns a predicate that evaluates to {@code true} if the warp being tested is usable by the given entity.
-   *
-   * @param entity the entity
-   * @return a predicate that checks if the given warp is usable by the given entity
-   * @see Warp#isUsable(LocalEntity)
-   */
-  public static Predicate<Warp> isUsable(final LocalEntity entity) {
-    return new Predicate<Warp>() {
-
-      @Override
-      public boolean apply(Warp warp) {
-        return warp.isUsable(entity);
-      }
-
-    };
-  }
-
-  /**
-   * Returns a predicate that evaluates to {@code true} if the warp being tested is viewable by the given Actor.
-   *
-   * @param actor the Actor
-   * @return a predicate that checks if the given warp is usable by the given Actor
-   * @see Warp#isViewable(Actor)
-   */
-  public static Predicate<Warp> isViewable(final Actor actor) {
-    return new Predicate<Warp>() {
-
-      @Override
-      public boolean apply(Warp warp) {
-        return warp.isViewable(actor);
       }
 
     };

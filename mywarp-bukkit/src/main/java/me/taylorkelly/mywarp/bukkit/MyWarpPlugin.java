@@ -186,7 +186,7 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
     ResourceProvider resourceProvider = new IntakeResourceProvider(control);
     ExceptionConverter exceptionConverter = new ExceptionConverter();
     PlayerBinding playerBinding = new PlayerBinding(game);
-    WarpBinding warpBinding = new WarpBinding(myWarp.getWarpManager());
+    WarpBinding warpBinding = new WarpBinding(myWarp.getWarpManager(), myWarp.getAuthorizationService());
 
     ParametricBuilder builder = new ParametricBuilder(resourceProvider);
     builder.setAuthorizer(new ActorAuthorizer());
@@ -212,10 +212,12 @@ public class MyWarpPlugin extends JavaPlugin implements Platform {
               .registerMethods(usageCommands)
               .group(new FallbackDispatcher(resourceProvider, fallback), "warp", "myWarp", "mw")
                 .describeAs("warp-to.description")
-                .registerMethods(new InformativeCommands(myWarp.getLimitManager(), settings, myWarp.getWarpManager()))
+                .registerMethods(new InformativeCommands(myWarp.getLimitManager(), settings, myWarp.getWarpManager(),
+                                                         myWarp.getAuthorizationService()))
                 .registerMethods(new ManagementCommands(myWarp, this, new WelcomeEditorFactory(this, adapter)))
                 .registerMethods(new SocialCommands(game, myWarp.getLimitManager(), profileService,
-                                                    new WarpAcceptancePromptFactory(this, adapter)))
+                                                    new WarpAcceptancePromptFactory(this, myWarp
+                                                        .getAuthorizationService(), adapter)))
                 .registerMethods(new UtilityCommands(myWarp, this))
                 .group("import", "migrate")
                   .describeAs("import.description")

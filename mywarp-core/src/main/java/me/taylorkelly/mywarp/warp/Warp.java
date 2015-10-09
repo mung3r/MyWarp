@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.warp;
 
 import com.google.common.collect.ComparisonChain;
 
-import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
@@ -38,8 +37,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Represents a Warp. Implementations must ensure that two Warps are equal if, and only if their names are equal. <p>
- * To create a Warp use the {@link WarpBuilder}.</p>
+ * A named location with additional meta-data. Two Warps are equal are equal if, and only if their names are equal.
+ * <p>To create a Warp use the {@link WarpBuilder}.</p>
  */
 public interface Warp extends Comparable<Warp> {
 
@@ -51,30 +50,6 @@ public interface Warp extends Comparable<Warp> {
    * @param player the player
    */
   void asCompassTarget(LocalPlayer player);
-
-  /**
-   * Returns whether this Warp is viewable by the given Actor.
-   *
-   * @param actor the Actor
-   * @return true if the Actor can view this Warp
-   */
-  boolean isViewable(Actor actor);
-
-  /**
-   * Returns whether this Warp is usable by the given entity.
-   *
-   * @param entity the entity
-   * @return true if the given entity can use this Warp
-   */
-  boolean isUsable(LocalEntity entity);
-
-  /**
-   * Returns whether this Warp is modifiable by the given Actor.
-   *
-   * @param actor the Actor
-   * @return true if the given Actor can modify this Warp
-   */
-  boolean isModifiable(Actor actor);
 
   /**
    * Teleports the given entity to this Warp.
@@ -89,7 +64,10 @@ public interface Warp extends Comparable<Warp> {
    *
    * @param player the player
    * @return the status of the teleport
+   * @deprecated To be removed as its function can be implemented internally on top of {@link
+   * #teleport(LocalEntity)}
    */
+  @Deprecated
   TeleportStatus teleport(LocalPlayer player);
 
   /**
@@ -98,7 +76,9 @@ public interface Warp extends Comparable<Warp> {
    * @param player the player
    * @param fee    the fee that identifies the amount
    * @return the status of this teleport
+   * @deprecated Might be removed to declutter economy and warp aspects
    */
+  @Deprecated
   TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee);
 
   /**
@@ -293,7 +273,9 @@ public interface Warp extends Comparable<Warp> {
    *
    * @param forWhom the player for who this welcome message should be parsed
    * @return the welcome message with parsed values
+   * @deprecated Might be removed in future restructuring
    */
+  @Deprecated
   String getParsedWelcomeMessage(LocalPlayer forWhom);
 
   /**

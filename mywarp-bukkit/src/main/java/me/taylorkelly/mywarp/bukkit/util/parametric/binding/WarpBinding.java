@@ -32,9 +32,9 @@ import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.util.MatchList;
-import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -46,14 +46,17 @@ import java.lang.annotation.RetentionPolicy;
 public class WarpBinding extends BindingHelper {
 
   private final WarpManager warpManager;
+  private final AuthorizationService authorizationService;
 
   /**
    * Creates an instance.
    *
-   * @param warpManager the WarpManager this Binding will bind warps from
+   * @param warpManager          the WarpManager this Binding will bind warps from
+   * @param authorizationService the AuthorizationService this Binding will use to resolve authorizations
    */
-  public WarpBinding(WarpManager warpManager) {
+  public WarpBinding(WarpManager warpManager, AuthorizationService authorizationService) {
     this.warpManager = warpManager;
+    this.authorizationService = authorizationService;
   }
 
   /**
@@ -78,13 +81,13 @@ public class WarpBinding extends BindingHelper {
     Predicate<Warp> predicate = null;
     switch (conditionValue) {
       case MODIFIABLE:
-        predicate = WarpUtils.isModifiable(actor);
+        predicate = authorizationService.isModifiable(actor);
         break;
       case USABLE:
-        predicate = WarpUtils.isUsable((LocalEntity) actor);
+        predicate = authorizationService.isUsable((LocalEntity) actor);
         break;
       case VIEWABLE:
-        predicate = WarpUtils.isViewable(actor);
+        predicate = authorizationService.isViewable(actor);
         break;
     }
 
@@ -128,19 +131,19 @@ public class WarpBinding extends BindingHelper {
       /**
        * The Warp is viewable.
        *
-       * @see Warp#isViewable(Actor)
+       * @see AuthorizationService#isViewable(Warp, Actor)
        */
       VIEWABLE(Actor.class),
       /**
        * The Warp is usable.
        *
-       * @see Warp#isUsable(LocalEntity)
+       * @see AuthorizationService#isUsable(Warp, LocalEntity)
        */
       USABLE(LocalEntity.class),
       /**
        * The Warp is modifiable.
        *
-       * @see Warp#isModifiable(Actor)
+       * @see AuthorizationService#isModifiable(Warp, Actor)
        */
       MODIFIABLE(Actor.class);
 
@@ -151,7 +154,7 @@ public class WarpBinding extends BindingHelper {
        *
        * @param clazz the class of the instance that corresponds with this Condition.
        */
-      private Condition(Class<?> clazz) {
+      Condition(Class<?> clazz) {
         this.clazz = clazz;
       }
     }

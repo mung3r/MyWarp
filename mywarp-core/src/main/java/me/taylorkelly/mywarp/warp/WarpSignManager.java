@@ -27,6 +27,7 @@ import me.taylorkelly.mywarp.economy.EconomyManager;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 
 import java.util.TreeSet;
 
@@ -39,26 +40,31 @@ public class WarpSignManager {
   public static final int WARPNAME_LINE = 2;
   private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.WarpSignManager");
 
-  private final EconomyManager economyManager;
   private final TreeSet<String> identifiers;
-  private final WarpManager manager;
+  private final WarpManager warpManager;
+  private final AuthorizationService authorizationService;
+  private final EconomyManager economyManager;
 
   /**
    * Creates an instance.
    *
-   * @param identifiers    the identifiers to identify a vail warp sign
-   * @param economyManager the EconomyManager this manager will act on
-   * @param manager        the WarpManager this manager will act on
+   * @param identifiers          the identifiers to identify a valid warp sign
+   * @param warpManager          the WarpManager this manager will act on
+   * @param authorizationService the AuthorizationService used to resolve authorizations
+   * @param economyManager       the EconomyManager this manager will act on
    */
-  public WarpSignManager(Iterable<String> identifiers, EconomyManager economyManager, WarpManager manager) {
-    this.economyManager = economyManager;
+  public WarpSignManager(Iterable<String> identifiers, WarpManager warpManager,
+                         AuthorizationService authorizationService, EconomyManager economyManager) {
     this.identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
     Iterables.addAll(this.identifiers, identifiers);
-    this.manager = manager;
+
+    this.warpManager = warpManager;
+    this.authorizationService = authorizationService;
+    this.economyManager = economyManager;
   }
 
   /**
-   * Warps the given player to the warp with the given name.
+   * Teleports the given player to the warp with the given name.
    *
    * @param warpName the name
    * @param player   the player who should be teleported
@@ -70,14 +76,14 @@ public class WarpSignManager {
       return;
     }
 
-    Optional<Warp> optional = manager.get(warpName);
+    Optional<Warp> optional = warpManager.get(warpName);
     if (!optional.isPresent()) {
       player.sendError(MESSAGES.getString("warp-non-existent", warpName));
       return;
     }
     final Warp warp = optional.get();
 
-    if (!warp.isUsable(player)) {
+    if (!authorizationService.isUsable(warp, player)) {
       player.sendError(MESSAGES.getString("use-warp-permission", warpName));
       return;
     }
@@ -105,7 +111,7 @@ public class WarpSignManager {
       return false;
     }
     String name = lines[WARPNAME_LINE];
-    Optional<Warp> optional = manager.get(name);
+    Optional<Warp> optional = warpManager.get(name);
 
     if (!optional.isPresent()) {
       player.sendError(MESSAGES.getString("warp-non-existent", name));
@@ -113,7 +119,7 @@ public class WarpSignManager {
     }
     Warp warp = optional.get();
 
-    if (!warp.isModifiable(player) && !player.hasPermission("mywarp.sign.create")) {
+    if (!authorizationService.isModifiable(warp, player) && !player.hasPermission("mywarp.sign.create")) {
       player.sendError(MESSAGES.getString("create-warp-permission", name));
       return false;
     }

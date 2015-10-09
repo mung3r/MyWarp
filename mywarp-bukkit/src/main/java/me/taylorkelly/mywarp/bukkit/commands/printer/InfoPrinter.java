@@ -28,6 +28,7 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.ChatColor;
@@ -46,14 +47,17 @@ public class InfoPrinter {
   private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
 
   private final Warp warp;
+  private final AuthorizationService authorizationService;
 
   /**
    * Creates an instance.
    *
-   * @param warp the Warp whose information should be printed
+   * @param warp                 the Warp whose information should be printed
+   * @param authorizationService the AuthorizationService used to resolve authorizations for the given warp
    */
-  public InfoPrinter(Warp warp) {
+  public InfoPrinter(Warp warp, AuthorizationService authorizationService) {
     this.warp = warp;
+    this.authorizationService = authorizationService;
   }
 
   /**
@@ -97,7 +101,7 @@ public class InfoPrinter {
     info.appendNewLine();
 
     // if the warp is modifiable, show information about invitations
-    if (warp.isModifiable(receiver)) {
+    if (authorizationService.isModifiable(warp, receiver)) {
 
       // invited players
       info.append(ChatColor.GRAY);

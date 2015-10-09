@@ -72,14 +72,6 @@ public interface LocalPlayer extends LocalEntity, Actor {
   boolean hasGroup(String groupId);
 
   /**
-   * Returns whether this player can access the given world.
-   *
-   * @param world the world
-   * @return true if this player can access the world
-   */
-  boolean canAccessWorld(LocalWorld world);
-
-  /**
    * Gets the current health of this player.
    *
    * @return the current health

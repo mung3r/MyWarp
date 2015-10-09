@@ -46,11 +46,11 @@ import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limits.LimitManager;
 import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.Vector3;
-import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -69,18 +69,21 @@ public class InformativeCommands {
   private final LimitManager limitManager;
   private final Settings settings;
   private final WarpManager warpManager;
+  private final AuthorizationService authorizationService;
 
   /**
    * Creates an instance.
-   *
-   * @param limitManager thr LimitManager the commands should operate on
+   *  @param limitManager thr LimitManager the commands should operate on
    * @param settings     the Settings
    * @param warpManager  the WarpManager the commands should operate on
+   * @param authorizationService the AuthorizationService
    */
-  public InformativeCommands(LimitManager limitManager, Settings settings, WarpManager warpManager) {
+  public InformativeCommands(LimitManager limitManager, Settings settings, WarpManager warpManager,
+                             AuthorizationService authorizationService) {
     this.limitManager = limitManager;
     this.settings = settings;
     this.warpManager = warpManager;
+    this.authorizationService = authorizationService;
   }
 
   /**
@@ -129,7 +132,7 @@ public class InformativeCommands {
 
     // build the listing predicate
     List<Predicate<Warp>> predicates = new ArrayList<Predicate<Warp>>();
-    predicates.add(WarpUtils.isViewable(actor));
+    predicates.add(authorizationService.isViewable(actor));
 
     if (creator != null) {
       predicates.add(new Predicate<Warp>() {
@@ -233,6 +236,6 @@ public class InformativeCommands {
   @Require("mywarp.cmd.info")
   @Billable(FeeType.INFO)
   public void info(Actor actor, @Name(Condition.VIEWABLE) Warp warp) {
-    new InfoPrinter(warp).print(actor);
+    new InfoPrinter(warp, authorizationService).print(actor);
   }
 }

@@ -19,7 +19,7 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import me.taylorkelly.mywarp.AbstractPlayer;
+import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.bukkit.util.parametric.ReflectiveLocaleResolver;
@@ -44,7 +44,7 @@ import java.util.UUID;
 /**
  * A reference to a Player in Bukkit.
  */
-public class BukkitPlayer extends AbstractPlayer {
+public class BukkitPlayer implements LocalPlayer {
 
   private static final Logger log = MyWarpLogger.getLogger(BukkitPlayer.class);
 

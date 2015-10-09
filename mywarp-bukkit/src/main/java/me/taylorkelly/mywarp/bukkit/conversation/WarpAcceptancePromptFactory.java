@@ -28,6 +28,7 @@ import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -50,16 +51,19 @@ public class WarpAcceptancePromptFactory {
 
   private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
 
+  private final AuthorizationService authorizationService;
   private final ConversationFactory factory;
   private final BukkitAdapter adapter;
 
   /**
    * Creates an instance.
-   *
-   * @param plugin  the plugin instance
+   *  @param plugin  the plugin instance
+   * @param authorizationService the AuthorizationService
    * @param adapter the adapter
    */
-  public WarpAcceptancePromptFactory(MyWarpPlugin plugin, BukkitAdapter adapter) {
+  public WarpAcceptancePromptFactory(MyWarpPlugin plugin, AuthorizationService authorizationService, BukkitAdapter
+      adapter) {
+    this.authorizationService = authorizationService;
     this.factory =
         new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT).withFirstPrompt(new QuestionPrompt());
     this.adapter = adapter;
@@ -153,7 +157,7 @@ public class WarpAcceptancePromptFactory {
       Warp warp = (Warp) context.getSessionData(Warp.class);
 
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
-      return new InfoPrinter(warp).getText(adapter.adapt((Player) context.getForWhom()));
+      return new InfoPrinter(warp, authorizationService).getText(adapter.adapt((Player) context.getForWhom()));
     }
   }
 
