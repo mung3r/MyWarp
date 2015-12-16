@@ -45,29 +45,12 @@ public interface Warp extends Comparable<Warp> {
   String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Warp";
 
   /**
-   * Sets this Warp as the player's compass target.
-   *
-   * @param player the player
-   */
-  void asCompassTarget(LocalPlayer player);
-
-  /**
    * Teleports the given entity to this Warp.
    *
    * @param entity the entity
    * @return the status of teleport
    */
   TeleportService.TeleportStatus teleport(LocalEntity entity);
-
-  /**
-   * Teleports the given player to this Warp and sends the applicable message.
-   *
-   * @param player the player
-   * @return the status of the teleport
-   * @deprecated To be removed as its function can be implemented internally on top of {@link #teleport(LocalEntity)}
-   */
-  @Deprecated
-  TeleportService.TeleportStatus teleport(LocalPlayer player);
 
   /**
    * Teleports the given player to this Warp, sends the applicable message and withdraws the applicable fee.
@@ -277,21 +260,6 @@ public interface Warp extends Comparable<Warp> {
   void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation);
 
   /**
-   * Gets the average number of visits per day, from the point this Warp was created until this method is called.
-   *
-   * @return the average number of visits per day
-   */
-  double getVisitsPerDay();
-
-  /**
-   * Gets this Warp's popularity score. The score is influenced by the number of visits a Warp received since it was
-   * created: newer Warps receive a better score than older Warps.
-   *
-   * @return the popularity score of this Warp
-   */
-  double getPopularityScore();
-
-  /**
    * The type of a Warp.
    */
   enum Type {
@@ -355,11 +323,27 @@ public interface Warp extends Comparable<Warp> {
    */
   class PopularityComparator implements Comparator<Warp> {
 
+    private static final double GRAVITY_CONSTANT = 0.8;
+
     @Override
     public int compare(Warp w1, Warp w2) {
-      return ComparisonChain.start().compare(w2.getPopularityScore(), w1.getPopularityScore())
+      return ComparisonChain.start().compare(popularityScore(w2), popularityScore(w1))
           .compare(w2.getCreationDate().getTime(), w1.getCreationDate().getTime()).compare(w1.getName(), w2.getName())
           .result();
+    }
+
+    /**
+     * Computes the popularity score of the given {@code warp}. The score depends on the number of visits of the Warp as
+     * well as the warp's age.
+     *
+     * @return the popularity score of this Warp
+     */
+    private double popularityScore(Warp warp) {
+      // a basic implementation of the hacker news ranking algorithm detailed
+      // at http://amix.dk/blog/post/19574: Older warps receive lower scores
+      // due to the influence of the gravity constant.
+      double daysExisting = (System.currentTimeMillis() - warp.getCreationDate().getTime()) / (1000 * 60 * 60 * 24L);
+      return warp.getVisits() / Math.pow(daysExisting, GRAVITY_CONSTANT);
     }
   }
 

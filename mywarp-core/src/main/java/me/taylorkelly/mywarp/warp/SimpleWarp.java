@@ -217,27 +217,26 @@ class SimpleWarp extends AbstractWarp {
     if (status.isPositionModified()) {
       visits++;
     }
-    return status;
-  }
 
-  @Override
-  public TeleportService.TeleportStatus teleport(LocalPlayer player) {
-    TeleportService.TeleportStatus status = teleport((LocalEntity) player);
-
-    switch (status) {
-      case ORIGINAL:
-        if (!getWelcomeMessage().isEmpty()) {
-          // TODO color in aqua
-          player.sendMessage(WarpUtils.replaceTokens(getWelcomeMessage(), this, player));
-        }
-        break;
-      case MODIFIED:
-        player.sendError(MESSAGES.getString("unsafe-loc.closest-location", getName()));
-        break;
-      case NONE:
-        player.sendError(MESSAGES.getString("unsafe-loc.no-teleport", getName()));
-        break;
+    //REVIEW use Actor?
+    if (entity instanceof LocalPlayer) {
+      LocalPlayer player = (LocalPlayer) entity;
+      switch (status) {
+        case ORIGINAL:
+          if (!getWelcomeMessage().isEmpty()) {
+            // TODO color in aqua
+            player.sendMessage(WarpUtils.replaceTokens(getWelcomeMessage(), this, player));
+          }
+          break;
+        case MODIFIED:
+          player.sendError(MESSAGES.getString("unsafe-loc.closest-location", getName()));
+          break;
+        case NONE:
+          player.sendError(MESSAGES.getString("unsafe-loc.no-teleport", getName()));
+          break;
+      }
     }
+
     return status;
   }
 

@@ -24,6 +24,7 @@ import com.google.common.collect.Ordering;
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.util.CommandUtils;
+import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -152,7 +153,7 @@ public class InfoPrinter {
     info.append(MESSAGES.getString("info.visits"));
     info.append(" ");
     info.append(ChatColor.WHITE);
-    info.append(MESSAGES.getString("info.visits.per-day", warp.getVisits(), warp.getVisitsPerDay()));
+    info.append(MESSAGES.getString("info.visits.per-day", warp.getVisits(), WarpUtils.visitsPerDay(warp)));
     return info.toString();
   }
 

@@ -22,14 +22,10 @@ package me.taylorkelly.mywarp.warp;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Implements methods that can be resolved using other existing methods.
  */
 abstract class AbstractWarp implements Warp {
-
-  private static final double GRAVITY_CONSTANT = 0.8;
 
   @Override
   public boolean isCreator(LocalPlayer player) {
@@ -94,31 +90,6 @@ abstract class AbstractWarp implements Warp {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public double getPopularityScore() {
-    // a basic implementation of the hacker news ranking algorithm detailed
-    // at http://amix.dk/blog/post/19574: Older warps receive lower scores
-    // due to the influence of the gravity constant.
-    double daysExisting = (System.currentTimeMillis() - getCreationDate().getTime()) / (1000 * 60 * 60 * 24L);
-    return getVisits() / Math.pow(daysExisting, GRAVITY_CONSTANT);
-  }
-
-  @Override
-  public double getVisitsPerDay() {
-    // this method might not be 100% exact (considering leap seconds), but
-    // within the current Java API there are no alternatives
-    long daysSinceCreation = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - getCreationDate().getTime());
-    if (daysSinceCreation <= 0) {
-      return getVisits();
-    }
-    return getVisits() / daysSinceCreation;
-  }
-
-  @Override
-  public void asCompassTarget(LocalPlayer player) {
-    player.setCompassTarget(getWorld(), getPosition());
   }
 
 }

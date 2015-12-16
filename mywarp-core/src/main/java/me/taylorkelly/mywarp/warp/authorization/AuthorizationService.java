@@ -57,29 +57,6 @@ public class AuthorizationService {
   }
 
   /**
-   * Returns whether the given {@code Warp} is usable by the given {@code entity}. <p>If this method returns {@code
-   * true} it is guaranteed that {@link #isViewable(Warp, Actor)} also returns {@code true}.</p>
-   *
-   * @param warp   the warp to check
-   * @param entity the entity to check
-   * @return {@code true} if the given entity can use this Warp
-   */
-  public boolean isUsable(Warp warp, LocalEntity entity) {
-    return strategy.isUsable(warp, entity);
-  }
-
-  /**
-   * Returns whether the given {@code Warp} is viewable by the given {@code Actor}.
-   *
-   * @param warp  the warp to check
-   * @param actor the Actor to check
-   * @return {@code true} if the Actor can view this Warp
-   */
-  public boolean isViewable(Warp warp, Actor actor) {
-    return strategy.isViewable(warp, actor);
-  }
-
-  /**
    * Returns a predicate that evaluates to {@code true} if the tested {@code Warp} is modifiable by the given Actor.
    *
    * @param actor the Actor
@@ -96,6 +73,18 @@ public class AuthorizationService {
   }
 
   /**
+   * Returns whether the given {@code Warp} is usable by the given {@code entity}. <p>If this method returns {@code
+   * true} it is guaranteed that {@link #isViewable(Warp, Actor)} also returns {@code true}.</p>
+   *
+   * @param warp   the warp to check
+   * @param entity the entity to check
+   * @return {@code true} if the given entity can use this Warp
+   */
+  public boolean isUsable(Warp warp, LocalEntity entity) {
+    return strategy.isUsable(warp, entity);
+  }
+
+  /**
    * Returns a predicate that evaluates to {@code true} if the tested {@code Warp} is usable by the given entity.
    *
    * @param entity the entity
@@ -109,6 +98,17 @@ public class AuthorizationService {
         return isUsable(input, entity);
       }
     };
+  }
+
+  /**
+   * Returns whether the given {@code Warp} is viewable by the given {@code Actor}.
+   *
+   * @param warp  the warp to check
+   * @param actor the Actor to check
+   * @return {@code true} if the Actor can view this Warp
+   */
+  public boolean isViewable(Warp warp, Actor actor) {
+    return strategy.isViewable(warp, actor);
   }
 
   /**

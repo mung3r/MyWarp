@@ -147,7 +147,7 @@ public class UtilityCommands {
   @Billable(FeeType.POINT)
   public void point(@Sender LocalPlayer player, @Optional @Name(Condition.USABLE) Warp warp) {
     if (warp != null) {
-      warp.asCompassTarget(player);
+      player.setCompassTarget(warp.getWorld(), warp.getPosition());
       player.sendMessage(ChatColor.AQUA + MESSAGES.getString("point.set", player, warp.getName()));
     } else {
       player.resetCompass();

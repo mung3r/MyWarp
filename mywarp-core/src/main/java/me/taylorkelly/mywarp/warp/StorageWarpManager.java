@@ -112,15 +112,6 @@ public class StorageWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public TeleportStatus teleport(LocalPlayer player) {
-      TeleportStatus ret = super.teleport(player);
-      if (ret.isPositionModified()) {
-        connection.updateVisits(warp);
-      }
-      return ret;
-    }
-
-    @Override
     public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
       TeleportStatus ret = super.teleport(player, fee);
       if (ret.isPositionModified()) {

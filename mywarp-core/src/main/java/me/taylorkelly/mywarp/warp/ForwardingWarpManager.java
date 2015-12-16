@@ -101,18 +101,8 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
   protected abstract class ForwardingWarp extends ForwardingObject implements Warp {
 
     @Override
-    public void asCompassTarget(LocalPlayer player) {
-      delegate().asCompassTarget(player);
-    }
-
-    @Override
     public TeleportStatus teleport(LocalEntity entity) {
       return delegate().teleport(entity);
-    }
-
-    @Override
-    public TeleportStatus teleport(LocalPlayer player) {
-      return delegate().teleport(player);
     }
 
     @Override
@@ -253,16 +243,6 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     @Override
     public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
       delegate().setLocation(world, position, rotation);
-    }
-
-    @Override
-    public double getVisitsPerDay() {
-      return delegate().getVisitsPerDay();
-    }
-
-    @Override
-    public double getPopularityScore() {
-      return delegate().getPopularityScore();
     }
 
     @Override

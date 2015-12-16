@@ -122,15 +122,6 @@ public class EventfulWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public TeleportStatus teleport(LocalPlayer player) {
-      TeleportStatus ret = super.teleport(player);
-      if (ret.isPositionModified()) {
-        eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
-      }
-      return ret;
-    }
-
-    @Override
     public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
       TeleportStatus ret = super.teleport(player, fee);
       if (ret.isPositionModified()) {

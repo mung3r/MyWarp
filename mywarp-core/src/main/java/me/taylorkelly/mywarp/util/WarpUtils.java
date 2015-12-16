@@ -27,6 +27,7 @@ import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +43,24 @@ public final class WarpUtils {
    * Block initialization of this class.
    */
   private WarpUtils() {
+  }
+
+  /**
+   * Gets the average number of visits per day, from the point the given {@code Warp} was created until this method is
+   * called.
+   *
+   * @return the average number of visits per day
+   */
+  public static double visitsPerDay(Warp warp) {
+    // this method might not be 100% exact (considering leap seconds), but
+    // within the current Java API there are no alternatives
+    long
+        daysSinceCreation =
+        TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - warp.getCreationDate().getTime());
+    if (daysSinceCreation <= 0) {
+      daysSinceCreation = 1;
+    }
+    return warp.getVisits() / daysSinceCreation;
   }
 
   /**
@@ -92,7 +111,7 @@ public final class WarpUtils {
    * @return the string with replaced tokens
    */
   public static String replaceTokens(String string, Warp warp) {
-    return replaceTokens(string, warpTokens(warp, new HashMap<String, String>()));
+    return replace(string, warpTokens(warp, new HashMap<String, String>()));
   }
 
   /**
@@ -108,7 +127,7 @@ public final class WarpUtils {
    * @return the string with replaced tokens
    */
   public static String replaceTokens(String string, Warp warp, LocalPlayer player) {
-    return replaceTokens(string, playerTokens(player, (warpTokens(warp, new HashMap<String, String>()))));
+    return replace(string, playerTokens(player, (warpTokens(warp, new HashMap<String, String>()))));
   }
 
   /**
@@ -147,7 +166,7 @@ public final class WarpUtils {
    * @param variables the {@code Map} that stores tokens and their replacements
    * @return a string with replaced tokens
    */
-  private static String replaceTokens(String template, Map<String, String> variables) {
+  private static String replace(String template, Map<String, String> variables) {
     Matcher matcher = TOKEN_PATTERN.matcher(template);
     StringBuffer buffer = new StringBuffer();
     while (matcher.find()) {
