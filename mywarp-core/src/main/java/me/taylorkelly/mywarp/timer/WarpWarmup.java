@@ -94,11 +94,11 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnMove(LocalPlayer player) {
-    if (myWarp.getSettings().isTimersWarmupAbortOnMove() || player
+    if (!myWarp.getSettings().isTimersWarmupAbortOnMove() || player
         .hasPermission("mywarp.timer.disobey.warmup-abort.move")) {
       return false;
     }
-    if (!(player.getPosition().distanceSquared(initialPosition) > (ALLOWED_DISTANCE * ALLOWED_DISTANCE))) {
+    if (player.getPosition().distanceSquared(initialPosition) <= Math.pow(ALLOWED_DISTANCE, 2)) {
       return false;
     }
     LocaleManager.setLocale(player.getLocale());
@@ -113,11 +113,11 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnDamage(LocalPlayer player) {
-    if (myWarp.getSettings().isTimersWarmupAbortOnDamage() || player
+    if (!myWarp.getSettings().isTimersWarmupAbortOnDamage() || player
         .hasPermission("mywarp.timer.disobey.warmup-abort.damage")) {
       return false;
     }
-    if (!(player.getHealth() < initialHealth)) {
+    if (player.getHealth() >= initialHealth) {
       return false;
     }
     LocaleManager.setLocale(player.getLocale());
