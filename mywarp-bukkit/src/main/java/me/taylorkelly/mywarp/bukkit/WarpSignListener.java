@@ -45,7 +45,7 @@ public class WarpSignListener extends AbstractListener {
       ImmutableSet.of(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
   private static final ImmutableSet<Material>
       SUPPORTED_PLATES =
-      ImmutableSet.of(Material.WOOD_PLATE, Material.STONE_PLATE);
+      ImmutableSet.of(Material.WOOD_PLATE, Material.STONE_PLATE, Material.GOLD_PLATE, Material.IRON_PLATE);
 
   private final BukkitAdapter adapter;
   private final WarpSignManager warpSignManager;
