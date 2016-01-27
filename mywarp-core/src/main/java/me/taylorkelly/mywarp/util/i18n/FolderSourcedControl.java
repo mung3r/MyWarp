@@ -21,21 +21,14 @@ package me.taylorkelly.mywarp.util.i18n;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.base.Charsets;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.List;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -45,11 +38,8 @@ import javax.annotation.Nullable;
 /**
  * Searches for {@link PropertyResourceBundle}s in a folder, before trying to resolve them from the classpath.
  */
-public class FolderSourcedControl extends ResourceBundle.Control {
+public class FolderSourcedControl extends EncodedControl {
 
-  private static final Charset DEFAULT_ENCODING = Charsets.UTF_8;
-
-  private final Charset encoding;
   private final File bundleFolder;
 
   /**
@@ -59,7 +49,8 @@ public class FolderSourcedControl extends ResourceBundle.Control {
    * @param folder the folder to load from
    */
   public FolderSourcedControl(File folder) {
-    this(DEFAULT_ENCODING, folder);
+    super();
+    this.bundleFolder = folder;
   }
 
   /**
@@ -70,13 +61,8 @@ public class FolderSourcedControl extends ResourceBundle.Control {
    * @param encoding the encoding to use
    */
   public FolderSourcedControl(Charset encoding, File folder) {
-    this.encoding = encoding;
+    super(encoding);
     this.bundleFolder = folder;
-  }
-
-  @Override
-  public List<String> getFormats(String baseName) {
-    return ResourceBundle.Control.FORMAT_PROPERTIES;
   }
 
   @Override
@@ -89,7 +75,7 @@ public class FolderSourcedControl extends ResourceBundle.Control {
     final String resourceName = toResourceName(bundleName, "properties");
 
     ResourceBundle bundle = null;
-    InputStream stream;
+    final InputStream stream;
 
     //this implementation mirrors Java's but initializes the ResourceBundle with a Reader and encoding
     try {
@@ -104,19 +90,8 @@ public class FolderSourcedControl extends ResourceBundle.Control {
               is = new FileInputStream(bundleFile);
             }
           }
-          if (is == null && reload) {
-            URL url = loader.getResource(resourceName);
-            if (url != null) {
-              URLConnection connection = url.openConnection();
-              if (connection != null) {
-                // Disable caches to get fresh data for reloading.
-                connection.setUseCaches(false);
-                is = connection.getInputStream();
-              }
-            }
-          }
           if (is == null) {
-            is = loader.getResourceAsStream(resourceName);
+            is = readResource(resourceName, loader, reload);
           }
           return is;
         }
@@ -126,12 +101,7 @@ public class FolderSourcedControl extends ResourceBundle.Control {
     }
 
     if (stream != null) {
-      Reader reader = new InputStreamReader(stream, encoding);
-      try {
-        bundle = new PropertyResourceBundle(reader);
-      } finally {
-        reader.close();
-      }
+      bundle = createBundle(stream);
     }
 
     return bundle;
