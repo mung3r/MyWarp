@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp;
 
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -153,5 +155,12 @@ public interface Settings {
    * @return {@code {@code true}} if users should be informed after a transaction
    */
   boolean isEconomyInformAfterTransaction();
+
+  /**
+   * Gets the {@code ConnectionConfiguration} of the underling database management system.
+   *
+   * @return the configuration
+   */
+  ConnectionConfiguration getRelationalStorageConfiguration();
 
 }

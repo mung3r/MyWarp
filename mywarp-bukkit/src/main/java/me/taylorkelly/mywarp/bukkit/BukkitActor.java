@@ -19,9 +19,10 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.AbstractActor;
+import me.taylorkelly.mywarp.bukkit.util.BukkitMessageInterpreter;
+import me.taylorkelly.mywarp.util.Message;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.Locale;
@@ -29,7 +30,7 @@ import java.util.Locale;
 /**
  * References a Bukkit {@link CommandSender}.
  */
-public class BukkitActor implements Actor {
+public class BukkitActor extends AbstractActor {
 
   private final CommandSender sender;
   private final Locale locale;
@@ -55,18 +56,13 @@ public class BukkitActor implements Actor {
   }
 
   @Override
-  public void sendMessage(String msg) {
-    getCommandSender().sendMessage(msg);
-  }
-
-  @Override
-  public void sendError(String msg) {
-    sendMessage(ChatColor.RED + msg);
-  }
-
-  @Override
   public boolean hasPermission(String node) {
     return sender.hasPermission(node);
+  }
+
+  @Override
+  public void sendMessage(Message msg) {
+    sender.sendMessage(BukkitMessageInterpreter.interpret(msg));
   }
 
   @Override

@@ -19,15 +19,13 @@
 
 package me.taylorkelly.mywarp.bukkit.conversation;
 
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
+import me.taylorkelly.mywarp.bukkit.BukkitPlayer;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
-import me.taylorkelly.mywarp.util.CommandUtils;
+import me.taylorkelly.mywarp.bukkit.util.BukkitMessageInterpreter;
+import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
-import org.apache.commons.lang.text.StrBuilder;
-import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.MessagePrompt;
@@ -47,36 +45,33 @@ public class WelcomeEditorFactory {
   private static final String REMOVE_SEQUENCE = "#none";
   private static final int TIMEOUT = 30;
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages msg = new DynamicMessages(MyWarpPlugin.CONVERSATIONS_RESOURCE_BUNDLE_NAME);
 
   private final ConversationFactory factory;
-  private final BukkitAdapter adapter;
 
   /**
    * Creates an instance.
    *
-   * @param plugin  the plugin instance
-   * @param adapter the adapter
+   * @param plugin the plugin instance
    */
-  public WelcomeEditorFactory(MyWarpPlugin plugin, BukkitAdapter adapter) {
+  public WelcomeEditorFactory(MyWarpPlugin plugin) {
     this.factory =
         new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT).withEscapeSequence(ESCAPE_SEQUENCE)
             .withFirstPrompt(new MessageInputPrompt());
-    this.adapter = adapter;
   }
 
   /**
    * Creates an welcome-editor for the given player to change the welcome-message of the given Warp.
    *
-   * @param player the LocalPlayer
-   * @param warp   the Warp
+   * @param forWhom the LocalPlayer
+   * @param warp    the Warp
    */
-  public void create(LocalPlayer player, Warp warp) {
+  public void create(BukkitPlayer forWhom, Warp warp) {
     Map<Object, Object> initialSessionData = new HashMap<Object, Object>();
-    initialSessionData.put(Locale.class, player.getLocale());
+    initialSessionData.put(Locale.class, forWhom.getLocale());
     initialSessionData.put(Warp.class, warp);
 
-    factory.withInitialSessionData(initialSessionData).buildConversation(adapter.adapt(player)).begin();
+    factory.withInitialSessionData(initialSessionData).buildConversation(forWhom.getLoadedPlayer()).begin();
   }
 
   /**
@@ -98,9 +93,14 @@ public class WelcomeEditorFactory {
     public String getPromptText(ConversationContext context) {
       Warp warp = (Warp) context.getSessionData(Warp.class);
       Locale locale = (Locale) context.getSessionData(Locale.class);
-      return ChatColor.AQUA + MESSAGES
-          .getString("welcome-message-conversation.enter-message", locale, warp.getName(), REMOVE_SEQUENCE,
-                     ESCAPE_SEQUENCE, TIMEOUT);
+
+      Message
+          message =
+          Message.builder().append(
+              msg.getString("welcome-message-conversation.enter-message", locale, warp.getName(), REMOVE_SEQUENCE,
+                            ESCAPE_SEQUENCE, TIMEOUT)).build();
+
+      return BukkitMessageInterpreter.interpret(message);
     }
   }
 
@@ -112,17 +112,26 @@ public class WelcomeEditorFactory {
     @Override
     public String getPromptText(ConversationContext context) {
       Warp warp = (Warp) context.getSessionData(Warp.class);
-      String message = (String) context.getSessionData(String.class);
-      warp.setWelcomeMessage(message);
+      String welcomeMessage = (String) context.getSessionData(String.class);
+      warp.setWelcomeMessage(welcomeMessage);
 
       Locale locale = (Locale) context.getSessionData(Locale.class);
 
-      if (message.isEmpty()) {
-        return MESSAGES.getString("welcome-message-conversation.removed-successful", locale, warp.getName());
+      Message message;
+
+      if (welcomeMessage.isEmpty()) {
+        message =
+            Message.builder()
+                .append(msg.getString("welcome-message-conversation.removed-successful", locale, warp.getName()))
+                .build();
+      } else {
+        message =
+            Message.builder()
+                .append(msg.getString("welcome-message-conversation.changed-successful", locale, warp.getName()))
+                .appendNewLine().append(Message.Style.INFO).append(welcomeMessage).build();
       }
-      return new StrBuilder().append(ChatColor.AQUA)
-          .append(MESSAGES.getString("welcome-message-conversation.changed-successful", locale, warp.getName()))
-          .appendNewLine().append(ChatColor.ITALIC).append(message).toString();
+
+      return BukkitMessageInterpreter.interpret(message);
     }
 
     @Override

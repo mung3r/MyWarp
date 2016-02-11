@@ -37,7 +37,7 @@ import java.util.UUID;
  */
 public class WarpBuilder {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages msg = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
   private final String name;
@@ -51,7 +51,7 @@ public class WarpBuilder {
   private Date creationDate = new Date();
   private Warp.Type type = Warp.Type.PUBLIC;
   private int visits = 0;
-  private String welcomeMessage = MESSAGES.getString("default-welcome-message");
+  private String welcomeMessage = msg.getString("default-welcome-message");
 
   /**
    * Creates an instance that builds Warp's using the given values.

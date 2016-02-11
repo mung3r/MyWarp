@@ -22,6 +22,7 @@ package me.taylorkelly.mywarp;
 import me.taylorkelly.mywarp.economy.EconomyProvider;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.limits.LimitProvider;
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.timer.DurationProvider;
 import me.taylorkelly.mywarp.timer.TimerService;
@@ -72,11 +73,12 @@ public interface Platform {
   Game getGame();
 
   /**
-   * Gets the {@link RelationalDataService} as implemented by this Platform.
+   * Creates a {@link RelationalDataService} as described by the given {@code config}.
    *
+   * @param configuration the configuration
    * @return the {@code RelationalDataService}
    */
-  RelationalDataService getDataService();
+  RelationalDataService createDataService(ConnectionConfiguration configuration);
 
   /**
    * Gets the {@link ProfileService} as implemented by this Platform.
@@ -89,7 +91,7 @@ public interface Platform {
    * Gets the {@link EconomyProvider} as implemented by this Platform.
    *
    * @return the {@code EconomyProvider}
-   * @throws {@code java.lang.UnsupportedOperationException} if the Platform has no support for an economy
+   * @throws java.lang.UnsupportedOperationException if the Platform has no support for an economy
    */
   EconomyProvider getEconomyService();
 

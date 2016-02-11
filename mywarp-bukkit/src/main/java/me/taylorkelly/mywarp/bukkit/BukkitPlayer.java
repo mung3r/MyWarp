@@ -19,18 +19,19 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
+import me.taylorkelly.mywarp.AbstractActor;
+import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.Settings;
-import me.taylorkelly.mywarp.bukkit.util.parametric.ReflectiveLocaleResolver;
-import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
+import me.taylorkelly.mywarp.bukkit.util.BukkitMessageInterpreter;
+import me.taylorkelly.mywarp.bukkit.util.ReflectiveLocaleResolver;
 import me.taylorkelly.mywarp.util.EulerDirection;
+import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
-import me.taylorkelly.mywarp.util.profile.ProfileService;
+import me.taylorkelly.mywarp.warp.Warp;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -44,32 +45,22 @@ import java.util.UUID;
 /**
  * A reference to a Player in Bukkit.
  */
-public class BukkitPlayer implements LocalPlayer {
+public class BukkitPlayer extends AbstractActor implements LocalPlayer {
 
   private static final Logger log = MyWarpLogger.getLogger(BukkitPlayer.class);
 
   private final Player player;
-  private final BukkitAdapter adapter;
-  private final GroupResolver groupResolver;
-  private final ProfileService profileService;
-  private final Settings settings;
+  private final MyWarpPlugin plugin;
 
   /**
    * Creates an instance that references the given Player.
    *
-   * @param player         the player
-   * @param adapter        the BukkitAdapter
-   * @param groupResolver  the groupResolver
-   * @param profileService the profileService
-   * @param settings       the Settings
+   * @param player the player
+   * @param plugin the plugin instance
    */
-  public BukkitPlayer(Player player, BukkitAdapter adapter, GroupResolver groupResolver, ProfileService profileService,
-                      Settings settings) {
+  public BukkitPlayer(Player player, MyWarpPlugin plugin) {
     this.player = player;
-    this.adapter = adapter;
-    this.groupResolver = groupResolver;
-    this.profileService = profileService;
-    this.settings = settings;
+    this.plugin = plugin;
   }
 
   /**
@@ -82,13 +73,18 @@ public class BukkitPlayer implements LocalPlayer {
   }
 
   @Override
-  public void sendMessage(String msg) {
-    player.sendMessage(msg);
+  public void initiateAcceptanceConversation(Actor initiator, Warp warp) {
+    plugin.getAcceptancePromptFactory().create(this, warp, initiator);
   }
 
   @Override
-  public void sendError(String msg) {
-    player.sendMessage(ChatColor.RED + msg);
+  public void initiateWelcomeChangeConversation(Warp warp) {
+    plugin.getWelcomeEditorFactory().create(this, warp);
+  }
+
+  @Override
+  public void sendMessage(Message msg) {
+    player.sendMessage(BukkitMessageInterpreter.interpret(msg));
   }
 
   @Override
@@ -103,18 +99,18 @@ public class BukkitPlayer implements LocalPlayer {
 
   @Override
   public boolean hasGroup(String groupId) {
-    return groupResolver.hasGroup(player, groupId);
+    return plugin.getGroupResolver().hasGroup(player, groupId);
   }
 
   @Override
   public Profile getProfile() {
-    return profileService.getByUniqueId(player.getUniqueId());
+    return plugin.getProfileService().getByUniqueId(player.getUniqueId());
   }
 
   @Override
   public Locale getLocale() {
-    Locale locale = settings.getLocalizationDefaultLocale();
-    if (settings.isLocalizationPerPlayer()) {
+    Locale locale = plugin.getSettings().getLocalizationDefaultLocale();
+    if (plugin.getSettings().isLocalizationPerPlayer()) {
       try {
         locale = ReflectiveLocaleResolver.INSTANCE.resolve(player);
       } catch (ReflectiveLocaleResolver.UnresolvableLocaleException e) {
@@ -141,13 +137,15 @@ public class BukkitPlayer implements LocalPlayer {
 
   @Override
   public void setCompassTarget(LocalWorld world, Vector3 position) {
-    Location bukkitLoc = new Location(adapter.adapt(world), position.getX(), position.getY(), position.getZ());
+    Location
+        bukkitLoc =
+        new Location(plugin.getAdapter().adapt(world), position.getX(), position.getY(), position.getZ());
     player.setCompassTarget(bukkitLoc);
   }
 
   @Override
   public LocalWorld getWorld() {
-    return adapter.adapt(player.getWorld());
+    return plugin.getAdapter().adapt(player.getWorld());
   }
 
   @Override
@@ -166,8 +164,8 @@ public class BukkitPlayer implements LocalPlayer {
   public void teleport(LocalWorld world, Vector3 position, EulerDirection rotation) {
     Location
         bukkitLoc =
-        new Location(adapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getYaw(),
-                     rotation.getPitch());
+        new Location(plugin.getAdapter().adapt(world), position.getX(), position.getY(), position.getZ(),
+                     rotation.getYaw(), rotation.getPitch());
     teleportRecursive(player, bukkitLoc, true);
   }
 

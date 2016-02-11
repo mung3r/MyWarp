@@ -20,7 +20,9 @@
 package me.taylorkelly.mywarp.bukkit;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
+import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
 import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
@@ -28,9 +30,13 @@ import me.taylorkelly.mywarp.util.MyWarpLogger;
 
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 /**
@@ -40,56 +46,65 @@ public class SingleConnectionDataService implements RelationalDataService {
 
   private static final Logger log = MyWarpLogger.getLogger(SingleConnectionDataService.class);
 
-  private final SingleConnectionDataSource dataSource;
   private final ConnectionConfiguration config;
-  private final ListeningExecutorService executorService;
+
+  @Nullable
+  private SingleConnectionDataSource dataSource;
+  @Nullable
+  private ListeningExecutorService executorService;
 
   /**
-   * Creates an instance that uses the given {@code dataSource}, the given {@code config} and the given {@code
-   * executorService}.
+   * Creates an instance that uses the given {@code config}.
    *
-   * @param dataSource      the data-source
-   * @param config          the config
-   * @param executorService the executor-service
+   * @param config the config
    */
-  public SingleConnectionDataService(SingleConnectionDataSource dataSource, ConnectionConfiguration config,
-                                     ListeningExecutorService executorService) {
-    this.dataSource = dataSource;
+  public SingleConnectionDataService(ConnectionConfiguration config) {
     this.config = config;
-    this.executorService = executorService;
   }
 
   @Override
-  public DataSource getDataSource() {
+  public DataSource getDataSource() throws SQLException {
+    if (dataSource == null) {
+      dataSource = DataSourceFactory.createSingleConnectionDataSource(config);
+    }
     return dataSource;
   }
 
   @Override
   public ListeningExecutorService getExecutorService() {
+    if (executorService == null) {
+      executorService = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
+    }
     return executorService;
-  }
-
-  @Override
-  public ConnectionConfiguration getConfiguration() {
-    return config;
   }
 
   /**
    * Initiates an shutdown that closes the {@code ExecutorService} and the {@code DataSource}, blocking until either all
    * remaining tasks are executed or 30 seconds have passed or the thread is interrupted.
    */
-  void shutdown() {
-    executorService.shutdown();
-    try {
-      if (!executorService.awaitTermination(30, TimeUnit.SECONDS)) {
-        List<Runnable> droppedTasks = executorService.shutdownNow();
-        log.warn("SQL executor did not terminate within 30 seconds and is terminated. {} tasks will not be "
-                 + "executed, recent changes may be missing in the database.", droppedTasks.size());
+  @Override
+  public void close() {
+    if (executorService != null) {
+      executorService.shutdown();
+
+      try {
+        if (!executorService.awaitTermination(30, TimeUnit.SECONDS)) {
+          List<Runnable> droppedTasks = executorService.shutdownNow();
+          log.warn("SQL executor did not terminate within 30 seconds and is terminated. {} tasks will not be "
+                   + "executed, recent changes may be missing in the database.", droppedTasks.size());
+        }
+      } catch (InterruptedException e) {
+        log.error("Failed to terminate SQL executor as the process was interrupted.", e);
       }
-    } catch (InterruptedException e) {
-      log.error("Failed to terminate SQL executor as the process was interrupted.", e);
     }
 
-    dataSource.close();
+    if (dataSource != null) {
+      try {
+        dataSource.close();
+      } catch (IOException e) {
+        log.warn("Failed to close data source", e);
+      }
+    }
+
   }
 }

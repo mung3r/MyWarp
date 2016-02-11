@@ -61,7 +61,7 @@ import javax.sql.DataSource;
 /**
  * A {@link WarpSource} for databases with a legacy scheme (pre 3.0). <p>The legacy database stores player and world
  * names as strings, instead of using unique IDs. Calling {@link #getWarps()} will convert both. Player names are
- * accuired by calling the configured {@link me.taylorkelly.mywarp.util.profile.ProfileService}, witch may result in a
+ * acquired by calling the configured {@link me.taylorkelly.mywarp.util.profile.ProfileService}, witch may result in a
  * blocking call.</p>
  */
 public class LegacyWarpSource implements WarpSource {

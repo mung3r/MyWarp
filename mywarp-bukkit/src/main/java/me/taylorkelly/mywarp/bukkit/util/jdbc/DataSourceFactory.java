@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.bukkit.util.jdbc;
 
 import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 
-import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -36,10 +35,8 @@ public class DataSourceFactory {
    *
    * @param config the config of the relational database
    * @return a new {@code SingleConnectionDataSource}
-   * @throws SQLException on a database error
    */
-  public static SingleConnectionDataSource createSingleConnectionDataSource(ConnectionConfiguration config)
-      throws SQLException {
+  public static SingleConnectionDataSource createSingleConnectionDataSource(ConnectionConfiguration config) {
     Properties properties = new Properties();
 
     boolean driverSupportsIsValid = true;

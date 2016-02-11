@@ -23,7 +23,7 @@ import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.util.CommandUtils;
+import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -33,7 +33,7 @@ import me.taylorkelly.mywarp.util.profile.Profile;
  */
 public class WarpCooldown extends TimerAction<Profile> {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
 
@@ -56,7 +56,7 @@ public class WarpCooldown extends TimerAction<Profile> {
       if (optionalPlayer.isPresent()) {
         LocalPlayer player = optionalPlayer.get();
         LocaleManager.setLocale(player.getLocale());
-        player.sendMessage(MESSAGES.getString("warp-to.cooldown.ended"));
+        player.sendMessage(msg.getString("warp-to.cooldown.ended"));
       }
     }
   }

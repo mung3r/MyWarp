@@ -297,6 +297,20 @@ public class BukkitSettings implements Settings {
     return config.getBoolean("economy.informAfterTransaction");
   }
 
+  @Override
+  public ConnectionConfiguration getRelationalStorageConfiguration() {
+    ConnectionConfiguration config = new ConnectionConfiguration(getStorageUrl());
+
+    if (config.supportsSchemas()) {
+      config.setSchema(getStorageSchema());
+    }
+    if (config.supportsAuthentication()) {
+      config.setUser(getStorageUser());
+      config.setPassword(getStoragePassword());
+    }
+    return config;
+  }
+
   /**
    * Gets the default FeeBundle.
    *
@@ -451,24 +465,6 @@ public class BukkitSettings implements Settings {
    */
   private String getStoragePassword() {
     return config.getString("storage.password");
-  }
-
-  /**
-   * Gets the {@code ConnectionConfiguration} of the database within that warps should be stored.
-   *
-   * @return the {@code ConnectionConfiguration}
-   */
-  public ConnectionConfiguration getStorageConfiguration() {
-    ConnectionConfiguration config = new ConnectionConfiguration(getStorageUrl());
-
-    if (config.supportsSchemas()) {
-      config.setSchema(getStorageSchema());
-    }
-    if (config.supportsAuthentication()) {
-      config.setUser(getStorageUser());
-      config.setPassword(getStoragePassword());
-    }
-    return config;
   }
 
 }

@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 public final class WarpUtils {
 
   public static final int MAX_NAME_LENGTH = 32;
-  private static final Pattern TOKEN_PATTERN = Pattern.compile("\\%(.+?)\\%");
+  private static final Pattern TOKEN_PATTERN = Pattern.compile("%(.+?)%");
 
   /**
    * Block initialization of this class.

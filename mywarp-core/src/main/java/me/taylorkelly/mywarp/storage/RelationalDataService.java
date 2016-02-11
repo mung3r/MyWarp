@@ -21,26 +21,22 @@ package me.taylorkelly.mywarp.storage;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 
+import java.io.Closeable;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 /**
  * A service that provides access to a relational database.
  */
-public interface RelationalDataService {
+public interface RelationalDataService extends Closeable {
 
   /**
    * Gets a {@code DataSource} that provides a connection to an SQL database.
    *
    * @return a {@code DataSource}
    */
-  DataSource getDataSource();
-
-  /**
-   * Gets the {@code ConnectionConfiguration} of the underling database management system.
-   *
-   * @return the configuration
-   */
-  ConnectionConfiguration getConfiguration();
+  DataSource getDataSource() throws SQLException;
 
   /**
    * Gets a {@code ListeningExecutorService} that should execute database calls.
@@ -49,4 +45,6 @@ public interface RelationalDataService {
    */
   ListeningExecutorService getExecutorService();
 
+  @Override
+  void close();
 }

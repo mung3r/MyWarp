@@ -23,6 +23,8 @@ import com.google.common.base.Objects;
 
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +46,7 @@ import javax.sql.DataSource;
  * {@code DataSource} are actually wrapper around the original {@code Connection} that forbid closing. <p>Obviously this
  * class is not threadsafe.</p>
  */
-public class SingleConnectionDataSource implements DataSource {
+public class SingleConnectionDataSource implements DataSource, Closeable {
 
   private static final org.slf4j.Logger log = MyWarpLogger.getLogger(SingleConnectionDataSource.class);
 
@@ -145,7 +147,16 @@ public class SingleConnectionDataSource implements DataSource {
    * @throws IllegalStateException if {@code url} is not set
    */
   private void initiate() throws SQLException {
-    close();
+
+    try {
+      close();
+    } catch (IOException e) {
+      if (e.getCause() instanceof SQLException) {
+        throw (SQLException) e.getCause();
+      } else {
+        throw new SQLException(e);
+      }
+    }
 
     log.debug("Connecting to {} with properties {},", url, properties);
     target = DriverManager.getConnection(url, properties);
@@ -172,12 +183,13 @@ public class SingleConnectionDataSource implements DataSource {
   /**
    * Closes the target {@code Connection}.
    */
-  public void close() {
+  @Override
+  public void close() throws IOException {
     if (target != null) {
       try {
         target.close();
       } catch (SQLException e) {
-        e.printStackTrace();
+        throw new IOException("Failed to close DataSource", e);
       }
     }
   }

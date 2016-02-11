@@ -21,6 +21,7 @@ package me.taylorkelly.mywarp;
 
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.UUID;
 
@@ -28,13 +29,6 @@ import java.util.UUID;
  * Represents a player. <p>Typically an implementation is provided by the platform running MyWarp.</p>
  */
 public interface LocalPlayer extends LocalEntity, Actor {
-
-  /**
-   * Gets the name of this player.
-   *
-   * @return this player's name
-   */
-  String getName();
 
   /**
    * Gets the unique ID of this player.
@@ -77,5 +71,20 @@ public interface LocalPlayer extends LocalEntity, Actor {
    * Resets the compass target of this player.
    */
   void resetCompass();
+
+  /**
+   * Initiates a conversation with this player to ask for acceptance of the given warp.
+   *
+   * @param initiator the Actor who initated the ownership change
+   * @param warp      the warp
+   */
+  void initiateAcceptanceConversation(Actor initiator, Warp warp);
+
+  /**
+   * Initiates a conversation with this player to change the welcome message of the given warp.
+   *
+   * @param warp the warp
+   */
+  void initiateWelcomeChangeConversation(Warp warp);
 
 }

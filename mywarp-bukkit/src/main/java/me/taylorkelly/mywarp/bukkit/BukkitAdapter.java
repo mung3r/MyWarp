@@ -94,7 +94,7 @@ public final class BukkitAdapter {
    * @return the LocalPlayer representing the given Player
    */
   public LocalPlayer adapt(Player player) {
-    return new BukkitPlayer(player, this, plugin.getGroupResolver(), plugin.getProfileService(), plugin.getSettings());
+    return new BukkitPlayer(player, plugin);
   }
 
 }

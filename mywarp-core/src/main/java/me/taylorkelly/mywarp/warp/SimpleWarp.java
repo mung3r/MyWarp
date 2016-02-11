@@ -47,7 +47,7 @@ import java.util.UUID;
  */
 class SimpleWarp extends AbstractWarp {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages msg = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
   private final String name;
@@ -224,15 +224,14 @@ class SimpleWarp extends AbstractWarp {
       switch (status) {
         case ORIGINAL:
           if (!getWelcomeMessage().isEmpty()) {
-            // TODO color in aqua
             player.sendMessage(WarpUtils.replaceTokens(getWelcomeMessage(), this, player));
           }
           break;
         case MODIFIED:
-          player.sendError(MESSAGES.getString("unsafe-loc.closest-location", getName()));
+          player.sendError(msg.getString("unsafe-loc.closest-location", getName()));
           break;
         case NONE:
-          player.sendError(MESSAGES.getString("unsafe-loc.no-teleport", getName()));
+          player.sendError(msg.getString("unsafe-loc.no-teleport", getName()));
           break;
       }
     }

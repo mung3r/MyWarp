@@ -25,6 +25,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.economy.DummyEconomyService;
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.InformativeEconomyService;
@@ -32,13 +33,14 @@ import me.taylorkelly.mywarp.limits.DummyLimitService;
 import me.taylorkelly.mywarp.limits.LimitService;
 import me.taylorkelly.mywarp.limits.SimpleLimitService;
 import me.taylorkelly.mywarp.storage.AsyncWritingWarpStorage;
+import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.storage.StorageInitializationException;
 import me.taylorkelly.mywarp.storage.WarpStorage;
 import me.taylorkelly.mywarp.storage.WarpStorageFactory;
 import me.taylorkelly.mywarp.teleport.CubicSafetyValidationStrategy;
-import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.teleport.PositionValidationStrategy;
+import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -48,7 +50,6 @@ import me.taylorkelly.mywarp.warp.MemoryWarpManager;
 import me.taylorkelly.mywarp.warp.StorageWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
-import me.taylorkelly.mywarp.warp.WarpSignManager;
 import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 import me.taylorkelly.mywarp.warp.authorization.PermissionAuthorizationStrategy;
 import me.taylorkelly.mywarp.warp.authorization.WarpPropertiesAuthorizationStrategy;
@@ -56,6 +57,7 @@ import me.taylorkelly.mywarp.warp.authorization.WorldAccessAuthorizationStrategy
 
 import org.slf4j.Logger;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -70,15 +72,16 @@ public final class MyWarp {
   private static final Logger log = MyWarpLogger.getLogger(MyWarp.class);
 
   private final Platform platform;
+  private final RelationalDataService dataService;
   private final WarpStorage warpStorage;
   private final WarpManager warpManager;
   private final EventBus eventBus;
   private final AuthorizationService authorizationService;
+  private final CommandHandler commandHandler;
 
   private TeleportService teleportService;
   private EconomyService economyService;
   private LimitService limitService;
-  private WarpSignManager warpSignManager;
 
   /**
    * Creates an instance of MyWarp, running on the given Platform.
@@ -91,13 +94,16 @@ public final class MyWarp {
 
     DynamicMessages.setControl(platform.getResourceBundleControl());
 
-    RelationalDataService dataService = platform.getDataService();
+    ConnectionConfiguration connectionConfiguration = platform.getSettings().getRelationalStorageConfiguration();
+    dataService = platform.createDataService(connectionConfiguration);
     try {
       warpStorage =
           new AsyncWritingWarpStorage(
-              WarpStorageFactory.createInitialized(this, dataService.getDataSource(), dataService.getConfiguration()),
+              WarpStorageFactory.createInitialized(this, dataService.getDataSource(), connectionConfiguration),
               dataService.getExecutorService());
 
+    } catch (SQLException e) {
+      throw new InitializationException("Failed to get a connection to the database.", e);
     } catch (StorageInitializationException e) {
       throw new InitializationException("Failed to get a connection to the database.", e);
     }
@@ -111,6 +117,12 @@ public final class MyWarp {
             new PermissionAuthorizationStrategy(new WarpPropertiesAuthorizationStrategy()), platform.getSettings()));
 
     setupPlugin();
+
+    commandHandler = new CommandHandler(this);
+  }
+
+  public CommandHandler getCommandHandler() {
+    return commandHandler;
   }
 
   /**
@@ -148,19 +160,13 @@ public final class MyWarp {
       economyService = new DummyEconomyService();
     }
 
-    //TODO this might not be needed
-    warpSignManager =
-        new WarpSignManager(getSettings().getWarpSignsIdentifiers(), warpManager, authorizationService, economyService);
-
     log.info("Loading warps...");
-    ListenableFuture<List<Warp>>
-        futureWarps =
-        platform.getDataService().getExecutorService().submit(new Callable<List<Warp>>() {
-          @Override
-          public List<Warp> call() throws Exception {
-            return warpStorage.getWarps();
-          }
-        });
+    ListenableFuture<List<Warp>> futureWarps = dataService.getExecutorService().submit(new Callable<List<Warp>>() {
+      @Override
+      public List<Warp> call() throws Exception {
+        return warpStorage.getWarps();
+      }
+    });
 
     Futures.addCallback(futureWarps, new FutureCallback<Collection<Warp>>() {
 
@@ -178,6 +184,7 @@ public final class MyWarp {
     }, platform.getGame().getExecutor());
 
   }
+
 
   /**
    * Reloads MyWarp.
@@ -283,14 +290,5 @@ public final class MyWarp {
    */
   public LimitService getLimitService() {
     return limitService;
-  }
-
-  /**
-   * Gets the WarpSignManager instance of this MyWarp instance.
-   *
-   * @return the WarpSignManager
-   */
-  public WarpSignManager getWarpSignManager() {
-    return warpSignManager;
   }
 }

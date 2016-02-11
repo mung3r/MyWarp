@@ -50,7 +50,7 @@ public class DynmapMarkers {
   private static final String ICON_ID = "mywarp_warp-32";
 
   private static final Logger log = MyWarpLogger.getLogger(DynmapMarkers.class);
-  private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.DynmapMarkers");
+  private static final DynamicMessages msg = new DynamicMessages("me.taylorkelly.mywarp.lang.DynmapMarkers");
 
   private final BukkitSettings settings;
 
@@ -158,7 +158,7 @@ public class DynmapMarkers {
    * @see WarpUtils#replaceTokens(String, Warp)
    */
   private String toLabelHtml(Warp warp) {
-    String rawLabel = MESSAGES.getString("marker", settings.getLocalizationDefaultLocale());
+    String rawLabel = msg.getString("marker", settings.getLocalizationDefaultLocale());
     return WarpUtils.replaceTokens(rawLabel, warp);
 
   }

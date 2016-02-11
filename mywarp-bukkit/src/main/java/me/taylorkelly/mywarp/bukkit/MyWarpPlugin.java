@@ -19,32 +19,12 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.sk89q.intake.CommandCallable;
-import com.sk89q.intake.CommandException;
-import com.sk89q.intake.InvalidUsageException;
-import com.sk89q.intake.InvocationCommandException;
-import com.sk89q.intake.context.CommandLocals;
-import com.sk89q.intake.dispatcher.Dispatcher;
-import com.sk89q.intake.fluent.CommandGraph;
-import com.sk89q.intake.parametric.ParametricBuilder;
-import com.sk89q.intake.util.auth.AuthorizationException;
-import com.sk89q.intake.util.i18n.ResourceProvider;
-
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.InitializationException;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.Platform;
-import me.taylorkelly.mywarp.bukkit.commands.ImportCommands;
-import me.taylorkelly.mywarp.bukkit.commands.InformativeCommands;
-import me.taylorkelly.mywarp.bukkit.commands.ManagementCommands;
-import me.taylorkelly.mywarp.bukkit.commands.SocialCommands;
-import me.taylorkelly.mywarp.bukkit.commands.UsageCommands;
-import me.taylorkelly.mywarp.bukkit.commands.UtilityCommands;
-import me.taylorkelly.mywarp.bukkit.conversation.WarpAcceptancePromptFactory;
+import me.taylorkelly.mywarp.bukkit.conversation.AcceptancePromptFactory;
 import me.taylorkelly.mywarp.bukkit.conversation.WelcomeEditorFactory;
 import me.taylorkelly.mywarp.bukkit.economy.BukkitFeeProvider;
 import me.taylorkelly.mywarp.bukkit.economy.VaultProvider;
@@ -52,29 +32,14 @@ import me.taylorkelly.mywarp.bukkit.limits.BukkitLimitProvider;
 import me.taylorkelly.mywarp.bukkit.markers.DynmapMarkers;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
 import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
-import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
-import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
-import me.taylorkelly.mywarp.bukkit.util.parametric.ActorAuthorizer;
-import me.taylorkelly.mywarp.bukkit.util.parametric.CommandResourceProvider;
-import me.taylorkelly.mywarp.bukkit.util.parametric.ExceptionConverter;
-import me.taylorkelly.mywarp.bukkit.util.parametric.FallbackDispatcher;
-import me.taylorkelly.mywarp.bukkit.util.parametric.IntakeResourceProvider;
-import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ActorBindung;
-import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ConnectionConfigurationBinding;
-import me.taylorkelly.mywarp.bukkit.util.parametric.binding.FileBinding;
-import me.taylorkelly.mywarp.bukkit.util.parametric.binding.PlayerBinding;
-import me.taylorkelly.mywarp.bukkit.util.parametric.binding.ProfileBinding;
-import me.taylorkelly.mywarp.bukkit.util.parametric.binding.WarpBinding;
-import me.taylorkelly.mywarp.bukkit.util.parametric.economy.EconomyInvokeHandler;
 import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistration;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolverManager;
 import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
+import me.taylorkelly.mywarp.sign.WarpSignManager;
 import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
-import me.taylorkelly.mywarp.util.CommandUtils;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
-import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.FolderSourcedControl;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 
@@ -95,10 +60,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapCommonAPI;
 import org.slf4j.Logger;
 
+import java.io.Closeable;
 import java.io.File;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import javax.annotation.Nullable;
 
@@ -107,11 +75,13 @@ import javax.annotation.Nullable;
  */
 public final class MyWarpPlugin extends JavaPlugin implements Platform {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages(CommandUtils.RESOURCE_BUNDLE_NAME);
+  public static final String CONVERSATIONS_RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Conversations";
+
   private static final Logger log = MyWarpLogger.getLogger(MyWarpPlugin.class);
 
   private final File bundleFolder = new File(getDataFolder(), "lang");
   private final ResourceBundle.Control control = new FolderSourcedControl(bundleFolder);
+  private final Set<Closeable> closeables = Collections.newSetFromMap(new WeakHashMap<Closeable, Boolean>());
 
   private SingleConnectionDataService dataService;
   private GroupResolverManager groupResolverManager;
@@ -119,10 +89,10 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
   private BukkitSettings settings;
   private BukkitAdapter adapter;
   private BukkitGame game;
+  private AcceptancePromptFactory acceptancePromptFactory;
+  private WelcomeEditorFactory welcomeEditorFactory;
 
   private MyWarp myWarp;
-
-  private Dispatcher dispatcher;
 
   @Nullable
   private VaultProvider economyService;
@@ -148,26 +118,10 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
     adapter = new BukkitAdapter(this);
 
     // setup the configurations
+    //TODO fail for SQLite driver 3.7.x...
     settings =
         new BukkitSettings(new File(getDataFolder(), "config.yml"),
                            YamlConfiguration.loadConfiguration(getTextResource("config.yml")), adapter);
-
-    // setup the DataService
-    ConnectionConfiguration config = settings.getStorageConfiguration();
-
-    //TODO fail for SQLite driver 3.7.x...
-
-    SingleConnectionDataSource dataSource;
-    try {
-      dataSource = DataSourceFactory.createSingleConnectionDataSource(config);
-    } catch (SQLException e) {
-      log.error("Failed to connect to the database. MyWarp will be disabled.", e);
-      Bukkit.getPluginManager().disablePlugin(this);
-      return;
-    }
-    ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor());
-
-    dataService = new SingleConnectionDataService(dataSource, config, executorService);
 
     // setup the Game
     game = new BukkitGame(new BukkitExecutor(this), adapter);
@@ -182,49 +136,8 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
       return;
     }
 
-    // command registration
-    ResourceProvider resourceProvider = new IntakeResourceProvider(control);
-    ExceptionConverter exceptionConverter = new ExceptionConverter();
-    PlayerBinding playerBinding = new PlayerBinding(game);
-    WarpBinding warpBinding = new WarpBinding(myWarp.getWarpManager(), myWarp.getAuthorizationService());
-
-    ParametricBuilder builder = new ParametricBuilder(resourceProvider);
-    builder.setAuthorizer(new ActorAuthorizer());
-    builder.setExternalResourceProvider(new CommandResourceProvider(control));
-    builder.addBinding(new ActorBindung());
-    builder.addBinding(new ConnectionConfigurationBinding());
-    builder.addBinding(new FileBinding(getDataFolder()));
-    builder.addBinding(playerBinding);
-    builder.addBinding(new ProfileBinding(profileService));
-    builder.addBinding(warpBinding);
-    builder.addExceptionConverter(exceptionConverter);
-
-    builder.addInvokeListener(new EconomyInvokeHandler(myWarp.getEconomyService()));
-
-    UsageCommands usageCommands = new UsageCommands(myWarp);
-
-    //XXX this should be covered by unit tests
-    CommandCallable fallback = Iterables.getOnlyElement(builder.build(usageCommands).values());
-
-    // @formatter:off
-    dispatcher = new CommandGraph(resourceProvider).builder(builder)
-            .commands()
-              .registerMethods(usageCommands)
-              .group(new FallbackDispatcher(resourceProvider, fallback), "warp", "myWarp", "mw")
-                .describeAs("warp-to.description")
-                .registerMethods(new InformativeCommands(myWarp.getLimitService(), settings, myWarp.getWarpManager(),
-                                                         myWarp.getAuthorizationService()))
-                .registerMethods(new ManagementCommands(myWarp, this, new WelcomeEditorFactory(this, adapter)))
-                .registerMethods(new SocialCommands(game, myWarp.getLimitService(), profileService,
-                                                    new WarpAcceptancePromptFactory(this, myWarp
-                                                        .getAuthorizationService(), adapter)))
-                .registerMethods(new UtilityCommands(myWarp, this))
-                .group("import", "migrate")
-                  .describeAs("import.description")
-                  .registerMethods(new ImportCommands(myWarp))
-              .graph()
-            .getDispatcher();
-    // @formatter:on
+    acceptancePromptFactory = new AcceptancePromptFactory(this, myWarp.getAuthorizationService());
+    welcomeEditorFactory = new WelcomeEditorFactory(this);
 
     setupPlugin();
   }
@@ -237,7 +150,9 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
     profileService.registerEvents(this);
 
     if (settings.isWarpSignsEnabled()) {
-      new WarpSignListener(adapter, myWarp.getWarpSignManager()).registerEvents(this);
+      new WarpSignListener(adapter, new WarpSignManager(settings.getWarpSignsIdentifiers(), myWarp.getWarpManager(),
+                                                        myWarp.getAuthorizationService(), myWarp.getEconomyService()))
+          .registerEvents(this);
     }
 
     if (settings.isDynmapEnabled()) {
@@ -262,23 +177,21 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
     HandlerList.unregisterAll(this);
     BukkitPermissionsRegistration.INSTANCE.unregisterAll();
 
-    if (dataService != null) {
-      dataService.shutdown();
+    for (Closeable closeable : closeables) {
+      try {
+        closeable.close();
+      } catch (IOException e) {
+        log.warn("Failed to close " + closeable.getClass().getCanonicalName(), e);
+      }
     }
   }
 
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-    // create the CommandLocals
-    CommandLocals locals = new CommandLocals();
     Actor actor = wrap(sender);
-    locals.put(Actor.class, actor);
 
     // set the locale for this command session
     LocaleManager.setLocale(actor.getLocale());
-
-    // No parent commands
-    String[] parentCommands = new String[0];
 
     // create the command string
     StrBuilder builder = new StrBuilder();
@@ -288,36 +201,7 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
       builder.append(argument);
     }
 
-    // call the command
-    try {
-      return dispatcher.call(builder.toString(), locals, parentCommands);
-    } catch (IllegalStateException e) {
-      log.error(String.format("The command '%s' could not be executed as the underling method could not be called.",
-                              cmd.toString()), e);
-      actor.sendError(MESSAGES.getString("exception.unknown"));
-    } catch (InvocationCommandException e) {
-      // An InvocationCommandException can only be thrown if a thrown
-      // Exception is not covered by our ExceptionConverter and is
-      // therefore unintended behavior.
-      actor.sendError(MESSAGES.getString("exception.unknown"));
-      log.error(String.format("The command '%s' could not be executed.", cmd), e);
-    } catch (InvalidUsageException e) {
-      StrBuilder error = new StrBuilder();
-      error.append(e.getSimpleUsageString("/"));
-      if (e.getMessage() != null) {
-        error.appendNewLine();
-        error.append(e.getMessage());
-      }
-      if (e.isFullHelpSuggested()) {
-        error.appendNewLine();
-        error.append(e.getCommand().getDescription().getHelp());
-      }
-      actor.sendError(error.toString());
-    } catch (CommandException e) {
-      actor.sendError(e.getMessage());
-    } catch (AuthorizationException e) {
-      actor.sendError(MESSAGES.getString("exception.insufficient-permission"));
-    }
+    myWarp.getCommandHandler().callCommand(builder.toString(), actor);
     return true;
   }
 
@@ -354,14 +238,14 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
     return groupResolverManager;
   }
 
-  /**
-   * gets the Dispatcher.
-   *
-   * @return the Dispatcher
-   */
-  public Dispatcher getDispatcher() {
-    return dispatcher;
+  public WelcomeEditorFactory getWelcomeEditorFactory() {
+    return welcomeEditorFactory;
   }
+
+  public AcceptancePromptFactory getAcceptancePromptFactory() {
+    return acceptancePromptFactory;
+  }
+
   // -- Platform methods
 
   @Override
@@ -386,8 +270,13 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
   }
 
   @Override
-  public RelationalDataService getDataService() {
-    return dataService;
+  public RelationalDataService createDataService(ConnectionConfiguration configuration) {
+    RelationalDataService ret = new SingleConnectionDataService(configuration);
+
+    //add weak reference so it can be closed on shutdown if not done by the caller
+    closeables.add(ret);
+
+    return ret;
   }
 
   @Override

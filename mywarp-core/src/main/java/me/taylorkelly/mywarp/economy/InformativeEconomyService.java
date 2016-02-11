@@ -35,7 +35,7 @@ import java.math.BigDecimal;
  */
 public class InformativeEconomyService implements EconomyService {
 
-  private static final DynamicMessages MESSAGES = new DynamicMessages("me.taylorkelly.mywarp.lang.Economy");
+  private static final DynamicMessages msg = new DynamicMessages("me.taylorkelly.mywarp.lang.Economy");
 
   private final Settings settings;
   private final FeeProvider provider;
@@ -82,7 +82,7 @@ public class InformativeEconomyService implements EconomyService {
     if (service.hasAtLeast(player, amount)) {
       return true;
     }
-    player.sendError(MESSAGES.getString("cannot-afford", amount));
+    player.sendError(msg.getString("cannot-afford", amount));
     return false;
   }
 
@@ -104,7 +104,7 @@ public class InformativeEconomyService implements EconomyService {
     service.withdraw(player, amount);
     if (settings.isEconomyInformAfterTransaction()) {
       // TODO color in aqua
-      player.sendMessage(MESSAGES.getString("transaction-complete", amount));
+      player.sendMessage(msg.getString("transaction-complete", amount));
     }
   }
 

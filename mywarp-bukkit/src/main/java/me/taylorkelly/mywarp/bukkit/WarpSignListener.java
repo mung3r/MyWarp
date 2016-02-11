@@ -22,7 +22,7 @@ package me.taylorkelly.mywarp.bukkit;
 import com.google.common.collect.ImmutableSet;
 
 import me.taylorkelly.mywarp.bukkit.util.AbstractListener;
-import me.taylorkelly.mywarp.warp.WarpSignManager;
+import me.taylorkelly.mywarp.sign.WarpSignManager;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,7 +36,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.Attachable;
 
 /**
- * Listens for events involving signs and feats them to a {@link me.taylorkelly.mywarp.warp.WarpSignManager};
+ * Listens for events involving signs and feats them to a {@link WarpSignManager}.
  */
 public class WarpSignListener extends AbstractListener {
 
