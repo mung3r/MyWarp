@@ -30,7 +30,7 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.event.WarpAdditionEvent;
-import me.taylorkelly.mywarp.warp.event.WarpRemovalEvent;
+import me.taylorkelly.mywarp.warp.event.WarpDeletionEvent;
 import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
 
 import org.dynmap.DynmapCommonAPI;
@@ -115,7 +115,7 @@ public class DynmapMarkers {
    * @param event the event
    */
   @Subscribe
-  public void onWarpRemoval(WarpRemovalEvent event) {
+  public void onWarpDeletion(WarpDeletionEvent event) {
     removeMarker(event.getWarp());
   }
 

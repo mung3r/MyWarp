@@ -32,19 +32,19 @@ import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.event.WarpAdditionEvent;
+import me.taylorkelly.mywarp.warp.event.WarpDeletionEvent;
 import me.taylorkelly.mywarp.warp.event.WarpEvent;
 import me.taylorkelly.mywarp.warp.event.WarpGroupInvitesEvent;
 import me.taylorkelly.mywarp.warp.event.WarpInvitesEvent;
 import me.taylorkelly.mywarp.warp.event.WarpPlayerInvitesEvent;
-import me.taylorkelly.mywarp.warp.event.WarpRemovalEvent;
 import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
 
 /**
  * Fires events for all warps managed by it. Functional calls are all delegated to an underling WarpManager as required
  * by the decorator pattern and events are implemented on top. <p>Events are dispatched in the {@link EventBus} given
  * when initializing this WarpManager.  Individual warps fire {@link WarpEvent}s and the manager itself fires {@link
- * WarpAdditionEvent}s and {@link WarpRemovalEvent}s when Warps are added to or removed from it. Handlers that want to
- * listen to such events need to register themselves on the EventBus.</p>
+ * WarpAdditionEvent}s and {@link me.taylorkelly.mywarp.warp.event.WarpDeletionEvent}s when Warps are added to or
+ * removed from it. Handlers that want to listen to such events need to register themselves on the EventBus.</p>
  */
 public class EventfulWarpManager extends ForwardingWarpManager {
 
@@ -88,7 +88,7 @@ public class EventfulWarpManager extends ForwardingWarpManager {
   @Override
   public void remove(Warp warp) {
     delegate().remove(warp);
-    eventBus.post(new WarpRemovalEvent(warp));
+    eventBus.post(new WarpDeletionEvent(warp));
   }
 
   /**

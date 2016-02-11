@@ -22,16 +22,16 @@ package me.taylorkelly.mywarp.warp.event;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**
- * Indicates that the a warp was removed.
+ * Indicates that the a warp was deleted.
  */
-public class WarpRemovalEvent extends WarpEvent {
+public class WarpDeletionEvent extends WarpEvent {
 
   /**
    * Constructs this event for the given Warp.
    *
    * @param warp the warp
    */
-  public WarpRemovalEvent(Warp warp) {
+  public WarpDeletionEvent(Warp warp) {
     super(warp);
   }
 
