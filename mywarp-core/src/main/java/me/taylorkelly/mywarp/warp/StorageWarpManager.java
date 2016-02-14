@@ -23,9 +23,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.storage.WarpStorage;
 import me.taylorkelly.mywarp.teleport.TeleportService.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
@@ -103,21 +101,12 @@ public class StorageWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public TeleportStatus teleport(LocalEntity entity) {
-      TeleportStatus ret = super.teleport(entity);
-      if (ret.isPositionModified()) {
-        connection.updateVisits(warp);
-      }
-      return ret;
-    }
+    public void visit(LocalEntity entity, TeleportStatus status) {
+      delegate().visit(entity, status);
 
-    @Override
-    public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
-      TeleportStatus ret = super.teleport(player, fee);
-      if (ret.isPositionModified()) {
+      if (status.isPositionModified()) {
         connection.updateVisits(warp);
       }
-      return ret;
     }
 
     @Override

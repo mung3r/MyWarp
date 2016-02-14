@@ -28,8 +28,9 @@ import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Platform;
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.LegacyWarpSource;
@@ -38,12 +39,10 @@ import me.taylorkelly.mywarp.storage.StorageInitializationException;
 import me.taylorkelly.mywarp.storage.WarpSource;
 import me.taylorkelly.mywarp.storage.WarpStorageFactory;
 import me.taylorkelly.mywarp.util.Message;
-import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
-
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -63,17 +62,24 @@ public class ImportCommands {
   private static final String IMPORT_PERMISSION = "mywarp.cmd.import";
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
-  private static final Logger log = MyWarpLogger.getLogger(ImportCommands.class);
-
-  private final MyWarp myWarp;
+  private final Platform platform;
+  private final ProfileService profileService;
+  private final WarpManager warpManager;
+  private final Game game;
 
   /**
    * Creates an instance.
    *
-   * @param myWarp the MyWarp instance
+   * @param warpManager    the Warpmanager used by commands
+   * @param platform       the Platform used by commands
+   * @param profileService the ProfileService used by commands
+   * @param game           the Game used by commands
    */
-  public ImportCommands(MyWarp myWarp) {
-    this.myWarp = myWarp;
+  public ImportCommands(WarpManager warpManager, Platform platform, ProfileService profileService, Game game) {
+    this.platform = platform;
+    this.profileService = profileService;
+    this.warpManager = warpManager;
+    this.game = game;
   }
 
   /**
@@ -86,9 +92,9 @@ public class ImportCommands {
   @Command(aliases = {"current", "curr"}, desc = "import.current.description", help = "import.current.help")
   @Require(IMPORT_PERMISSION)
   public void current(Actor actor, ConnectionConfiguration configuration) throws CommandException {
-    RelationalDataService dataService = myWarp.getPlatform().createDataService(configuration);
+    RelationalDataService dataService = platform.createDataService(configuration);
     try {
-      start(actor, dataService, WarpStorageFactory.create(myWarp, dataService.getDataSource(), configuration));
+      start(actor, dataService, WarpStorageFactory.create(dataService.getDataSource(), configuration, profileService));
     } catch (StorageInitializationException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     } catch (SQLException e) {
@@ -108,9 +114,10 @@ public class ImportCommands {
   public void pre3Sqlite(Actor actor, File database) throws CommandException {
     ConnectionConfiguration configuration = new ConnectionConfiguration("jdbc:sqlite:" + database.getAbsolutePath());
     try {
-      RelationalDataService dataService = myWarp.getPlatform().createDataService(configuration);
+      RelationalDataService dataService = platform.createDataService(configuration);
       start(actor, dataService,
-            new LegacyWarpSource(myWarp, dataService.getDataSource(), configuration, "warpTable", getWorldSnapshot()));
+            new LegacyWarpSource(dataService.getDataSource(), configuration, "warpTable", profileService,
+                                 getWorldSnapshot()));
     } catch (SQLException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     }
@@ -134,9 +141,9 @@ public class ImportCommands {
         config =
         new ConnectionConfiguration(dsn).setSchema(schema).setUser(user).setPassword(password);
     try {
-      RelationalDataService dataService = myWarp.getPlatform().createDataService(config);
+      RelationalDataService dataService = platform.createDataService(config);
       start(actor, dataService,
-            new LegacyWarpSource(myWarp, dataService.getDataSource(), config, tableName, getWorldSnapshot()));
+            new LegacyWarpSource(dataService.getDataSource(), config, tableName, profileService, getWorldSnapshot()));
     } catch (SQLException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     }
@@ -172,7 +179,6 @@ public class ImportCommands {
       @Override
       public void onSuccess(final List<Warp> warps) {
         Set<Warp> notImportedWarps = new HashSet<Warp>();
-        WarpManager warpManager = myWarp.getWarpManager();
 
         for (Warp warp : warps) {
           if (warpManager.contains(warp.getName())) {
@@ -199,7 +205,7 @@ public class ImportCommands {
         dataService.close();
       }
 
-    }, myWarp.getGame().getExecutor());
+    }, game.getExecutor());
   }
 
   /**
@@ -209,7 +215,7 @@ public class ImportCommands {
    */
   private Map<String, UUID> getWorldSnapshot() {
     Map<String, UUID> snapshot = new HashMap<String, UUID>();
-    for (LocalWorld world : myWarp.getGame().getWorlds()) {
+    for (LocalWorld world : game.getWorlds()) {
       snapshot.put(world.getName(), world.getUniqueId());
     }
     return snapshot;

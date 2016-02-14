@@ -17,34 +17,25 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.command.parametric;
+package me.taylorkelly.mywarp.teleport;
 
-import me.taylorkelly.mywarp.util.profile.Profile;
+import com.google.common.collect.ForwardingObject;
+
+import me.taylorkelly.mywarp.LocalEntity;
+import me.taylorkelly.mywarp.warp.Warp;
 
 /**
- * Indicates that an action exceeds a limit of somebody else than the initiator.
- *
- * @see ExceedsInitiatorLimitException for an Exception thrown when the limit of the initiator is exceeded
+ * Forwards all method calls to another TeleportService. Subclasses should override one or more methods to modify the
+ * behavior of the backing TeleportService as desired per the <a href="http://en.wikipedia
+ * .org/wiki/Decorator_pattern">decorator pattern</a>.
  */
-public class ExceedsLimitException extends Exception {
+abstract class ForwardingTeleportService extends ForwardingObject implements TeleportService {
 
-  private final Profile subject;
-
-  /**
-   * Constructs an instance.
-   *
-   * @param subject the subject whose limit are or would be exceeded
-   */
-  public ExceedsLimitException(Profile subject) {
-    this.subject = subject;
+  @Override
+  public TeleportStatus teleport(LocalEntity entity, Warp warp) {
+    return delegate().teleport(entity, warp);
   }
 
-  /**
-   * Gets the subject whose limit are or would be exceeded.
-   *
-   * @return the subject
-   */
-  public Profile getSubject() {
-    return subject;
-  }
+  @Override
+  protected abstract TeleportService delegate();
 }

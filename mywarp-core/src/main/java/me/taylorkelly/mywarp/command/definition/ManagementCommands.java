@@ -26,20 +26,20 @@ import com.sk89q.intake.Require;
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.command.parametric.ExceedsInitiatorLimitException;
 import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding.Sender;
 import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name;
 import me.taylorkelly.mywarp.command.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.limits.LimitService;
+import me.taylorkelly.mywarp.limit.LimitService;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
+import me.taylorkelly.mywarp.warp.WarpManager;
 
 /**
  * Bundles commands that manage Warps.
@@ -48,15 +48,21 @@ public class ManagementCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
-  private final MyWarp myWarp;
+  private final WarpManager warpManager;
+  private final CommandHandler commandHandler;
+  private final LimitService limitService;
 
   /**
    * Creates an instance.
    *
-   * @param myWarp the MyWarp instance
+   * @param warpManager    the WarpManager used by commands
+   * @param commandHandler the CommandHandler used by commands
+   * @param limitService   the LimitService used by commands
    */
-  public ManagementCommands(MyWarp myWarp) {
-    this.myWarp = myWarp;
+  public ManagementCommands(WarpManager warpManager, CommandHandler commandHandler, LimitService limitService) {
+    this.warpManager = warpManager;
+    this.commandHandler = commandHandler;
+    this.limitService = limitService;
   }
 
   /**
@@ -105,26 +111,23 @@ public class ManagementCommands {
    */
   private void addWarp(LocalPlayer creator, LocalWorld world, Vector3 position, EulerDirection rotation, Warp.Type type,
                        String name) throws CommandException, ExceedsInitiatorLimitException {
-    if (myWarp.getWarpManager().contains(name)) {
+    if (warpManager.contains(name)) {
       throw new CommandException(msg.getString("create.warp-exists", name));
     }
     if (name.length() > WarpUtils.MAX_NAME_LENGTH) {
       throw new CommandException(msg.getString("create.name-too-long", WarpUtils.MAX_NAME_LENGTH));
     }
-    if (myWarp.getCommandHandler().isSubCommand(name)) {
+    if (commandHandler.isSubCommand(name)) {
       throw new CommandException(msg.getString("create.name-is-cmd", name));
     }
 
-    LimitService.EvaluationResult
-        result =
-        myWarp.getLimitService().evaluateLimit(creator, world, type.getLimit(), true);
+    LimitService.EvaluationResult result = limitService.evaluateLimit(creator, world, type.getLimit(), true);
     if (result.exceedsLimit()) {
       throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
     }
 
-    myWarp.getWarpManager().add(
-        new WarpBuilder(myWarp, name, creator.getProfile(), world.getUniqueId(), position, rotation).setType(type)
-            .build());
+    warpManager.add(
+        new WarpBuilder(name, creator.getProfile(), world.getUniqueId(), position, rotation).setType(type).build());
   }
 
   /**
@@ -137,7 +140,7 @@ public class ManagementCommands {
   @Require("mywarp.cmd.delete")
   @Billable(FeeType.DELETE)
   public void delete(Actor actor, @Name(Name.Condition.MODIFIABLE) Warp warp) {
-    myWarp.getWarpManager().remove(warp);
+    warpManager.remove(warp);
     actor.sendMessage(msg.getString("delete.deleted-successful", warp.getName()));
   }
 

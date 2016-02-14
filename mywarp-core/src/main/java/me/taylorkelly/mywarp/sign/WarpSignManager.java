@@ -23,8 +23,11 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 import me.taylorkelly.mywarp.LocalPlayer;
+import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import me.taylorkelly.mywarp.teleport.EconomyTeleportService;
+import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -34,10 +37,8 @@ import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 import java.util.TreeSet;
 
 /**
- * Manages warp signs.
- *
- * <p>As of itself this class does nothing. It must be feat by a event system that tracks creation and usage of
- * signs.</p>
+ * Manages warp signs. <p/> <p>As of itself this class does nothing. It must be feat by a event system that tracks
+ * creation and usage of signs.</p>
  */
 public class WarpSignManager {
 
@@ -51,6 +52,17 @@ public class WarpSignManager {
   private final WarpManager warpManager;
   private final AuthorizationService authorizationService;
   private final EconomyService economyService;
+  private final TeleportService teleportService;
+
+  /**
+   * Creates an instance.
+   *
+   * @param identifiers the identifiers to identify a valid warp sign
+   */
+  public WarpSignManager(Iterable<String> identifiers, MyWarp mywarp) {
+    this(identifiers, mywarp.getWarpManager(), mywarp.getAuthorizationService(), mywarp.getEconomyService(),
+         mywarp.getTeleportService());
+  }
 
   /**
    * Creates an instance.
@@ -61,13 +73,15 @@ public class WarpSignManager {
    * @param economyService       the EconomyService this manager will act on
    */
   public WarpSignManager(Iterable<String> identifiers, WarpManager warpManager,
-                         AuthorizationService authorizationService, EconomyService economyService) {
-    this.identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+                         AuthorizationService authorizationService, EconomyService economyService,
+                         TeleportService teleportService) {
+    this.identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER); //REVIEW onReload?
     Iterables.addAll(this.identifiers, identifiers);
 
     this.warpManager = warpManager;
     this.authorizationService = authorizationService;
     this.economyService = economyService;
+    this.teleportService = new EconomyTeleportService(teleportService, economyService, FeeType.WARP_SIGN_USE);
   }
 
   /**
@@ -99,8 +113,7 @@ public class WarpSignManager {
       return;
     }
 
-    warp.teleport(player, FeeType.WARP_SIGN_USE);
-
+    teleportService.teleport(player, warp);
   }
 
   /**

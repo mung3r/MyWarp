@@ -31,6 +31,7 @@ import com.sk89q.intake.parametric.annotation.Switch;
 import com.sk89q.intake.util.auth.AuthorizationException;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.Settings;
@@ -43,7 +44,7 @@ import me.taylorkelly.mywarp.command.parametric.economy.Billable;
 import me.taylorkelly.mywarp.command.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.command.printer.InfoPrinter;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.limits.LimitService;
+import me.taylorkelly.mywarp.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -64,22 +65,24 @@ public class InformativeCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
-  private final LimitService limitService;
-  private final Settings settings;
   private final WarpManager warpManager;
+  private final LimitService limitService;
   private final AuthorizationService authorizationService;
+  private final Game game;
+  private final Settings settings;
 
   /**
    * Creates an instance.
    *
-   * @param limitService         the LimitService the commands should operate on
-   * @param settings             the Settings
-   * @param warpManager          the WarpManager the commands should operate on
-   * @param authorizationService the AuthorizationService
+   * @param warpManager          the WarpManager used by commands
+   * @param limitService         the LimitService used by commands
+   * @param authorizationService the AuthorizationService used by commands
+   * @param settings             the Settings used by commands
    */
-  public InformativeCommands(LimitService limitService, Settings settings, WarpManager warpManager,
-                             AuthorizationService authorizationService) {
+  public InformativeCommands(WarpManager warpManager, LimitService limitService,
+                             AuthorizationService authorizationService, Game game, Settings settings) {
     this.limitService = limitService;
+    this.game = game;
     this.settings = settings;
     this.warpManager = warpManager;
     this.authorizationService = authorizationService;
@@ -176,7 +179,7 @@ public class InformativeCommands {
       predicates.add(new Predicate<Warp>() {
         @Override
         public boolean apply(Warp input) {
-          return StringUtils.containsIgnoreCase(input.getWorld().getName(), world);
+          return StringUtils.containsIgnoreCase(input.getWorld(game).getName(), world);
         }
       });
     }
@@ -193,7 +196,7 @@ public class InformativeCommands {
         builder.append("'");
         builder.append(input);
         builder.append("' (");
-        builder.append(input.getWorld());
+        builder.append(input.getWorld(game));
         builder.append(") ");
         builder.append(msg.getString("list.by"));
         builder.append(" ");
@@ -222,6 +225,6 @@ public class InformativeCommands {
   @Require("mywarp.cmd.info")
   @Billable(FeeType.INFO)
   public void info(Actor actor, @Name(Condition.VIEWABLE) Warp warp) {
-    new InfoPrinter(warp, authorizationService).print(actor);
+    new InfoPrinter(warp, authorizationService, game).print(actor);
   }
 }

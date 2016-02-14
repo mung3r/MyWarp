@@ -91,7 +91,7 @@ public class BukkitFeeProvider implements FeeProvider {
      * Initializes this bundle.
      *
      * @param identifier        the unique identifier
-     * @param assetsFee         used when listing a player's warps with limits
+     * @param assetsFee         used when listing a player's warps with limit
      * @param createFee         used when creating a public warp
      * @param createPrivateFee  used when creating a private warp
      * @param deleteFee         used when a warp is deleted

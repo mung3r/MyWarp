@@ -103,7 +103,6 @@ public class InformativeEconomyService implements EconomyService {
     }
     service.withdraw(player, amount);
     if (settings.isEconomyInformAfterTransaction()) {
-      // TODO color in aqua
       player.sendMessage(msg.getString("transaction-complete", amount));
     }
   }

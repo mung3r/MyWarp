@@ -22,6 +22,7 @@ package me.taylorkelly.mywarp.command.printer;
 import com.google.common.collect.Ordering;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.util.Message;
@@ -45,6 +46,7 @@ public class InfoPrinter {
 
   private final Warp warp;
   private final AuthorizationService authorizationService;
+  private Game game;
 
   /**
    * Creates an instance.
@@ -52,9 +54,10 @@ public class InfoPrinter {
    * @param warp                 the Warp whose information should be printed
    * @param authorizationService the AuthorizationService used to resolve authorizations for the given warp
    */
-  public InfoPrinter(Warp warp, AuthorizationService authorizationService) {
+  public InfoPrinter(Warp warp, AuthorizationService authorizationService, Game game) {
     this.warp = warp;
     this.authorizationService = authorizationService;
+    this.game = game;
   }
 
   /**
@@ -81,7 +84,7 @@ public class InfoPrinter {
     info.append(" ");
     info.append(Message.Style.VALUE);
     Profile creator = warp.getCreator();
-    info.append(creator.getName().or(creator.getUniqueId().toString()));
+    info.append(creator);
     if (receiver instanceof LocalPlayer && warp.isCreator((LocalPlayer) receiver)) {
       info.append(" ");
       info.append(msg.getString("info.created-by-you"));
@@ -94,7 +97,7 @@ public class InfoPrinter {
     info.append(" ");
     info.append(Message.Style.VALUE);
     info.append(msg.getString("info.location.position", warp.getPosition().getFloorX(), warp.getPosition().getFloorY(),
-                              warp.getPosition().getFloorZ(), warp.getWorld().getName()));
+                              warp.getPosition().getFloorZ(), warp.getWorld(game).getName()));
 
     info.appendNewLine();
 

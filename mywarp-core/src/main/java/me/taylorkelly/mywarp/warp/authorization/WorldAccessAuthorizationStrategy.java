@@ -20,6 +20,7 @@
 package me.taylorkelly.mywarp.warp.authorization;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -31,6 +32,7 @@ import me.taylorkelly.mywarp.warp.Warp;
 public class WorldAccessAuthorizationStrategy extends ForwardingAuthorizationStrategy {
 
   private final AuthorizationStrategy delegate;
+  private final Game game;
   private final Settings settings;
 
   /**
@@ -38,10 +40,12 @@ public class WorldAccessAuthorizationStrategy extends ForwardingAuthorizationStr
    * question, further tests are delegated to the given {@code AuthorizationStrategy}.
    *
    * @param delegate the strategy to delegate further tests to
+   * @param game     the configured Game instance
    * @param settings the configured Settings instance
    */
-  public WorldAccessAuthorizationStrategy(AuthorizationStrategy delegate, Settings settings) {
+  public WorldAccessAuthorizationStrategy(AuthorizationStrategy delegate, Game game, Settings settings) {
     this.delegate = delegate;
+    this.game = game;
     this.settings = settings;
   }
 
@@ -74,6 +78,7 @@ public class WorldAccessAuthorizationStrategy extends ForwardingAuthorizationStr
    * @return {@code true} if the warp's world may not be accessed
    */
   private boolean cannotAccessWorld(Actor actor, Warp warp) {
-    return settings.isControlWorldAccess() && !actor.hasPermission("mywarp.world-access." + warp.getWorld().getName());
+    return settings.isControlWorldAccess() && !actor
+        .hasPermission("mywarp.world-access." + warp.getWorld(game).getName());
   }
 }

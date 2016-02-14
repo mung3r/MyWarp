@@ -20,6 +20,7 @@
 package me.taylorkelly.mywarp.bukkit.conversation;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.bukkit.BukkitPlayer;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.bukkit.util.BukkitMessageInterpreter;
@@ -53,6 +54,7 @@ public class AcceptancePromptFactory {
   private final AuthorizationService authorizationService;
   private final ConversationFactory factory;
   private final MyWarpPlugin plugin;
+  private final Game game;
 
   /**
    * Creates an instance.
@@ -60,9 +62,10 @@ public class AcceptancePromptFactory {
    * @param plugin               the plugin instance
    * @param authorizationService the AuthorizationService
    */
-  public AcceptancePromptFactory(MyWarpPlugin plugin, AuthorizationService authorizationService) {
+  public AcceptancePromptFactory(MyWarpPlugin plugin, AuthorizationService authorizationService, Game game) {
     this.plugin = plugin;
     this.authorizationService = authorizationService;
+    this.game = game;
     this.factory =
         new ConversationFactory(plugin).withModality(true).withTimeout(TIMEOUT).withFirstPrompt(new QuestionPrompt());
   }
@@ -158,7 +161,7 @@ public class AcceptancePromptFactory {
       Warp warp = (Warp) context.getSessionData(Warp.class);
 
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
-      return BukkitMessageInterpreter.interpret(new InfoPrinter(warp, authorizationService)
+      return BukkitMessageInterpreter.interpret(new InfoPrinter(warp, authorizationService, game)
                                                     .getText(plugin.getAdapter().adapt((Player) context.getForWhom())));
     }
   }

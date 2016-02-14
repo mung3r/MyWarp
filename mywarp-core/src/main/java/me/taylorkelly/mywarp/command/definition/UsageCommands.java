@@ -22,41 +22,45 @@ package me.taylorkelly.mywarp.command.definition;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.Require;
 
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.parametric.TimerRunningException;
 import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding.Sender;
 import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name;
 import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name.Condition;
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.timer.Duration;
+import me.taylorkelly.mywarp.economy.EconomyService;
+import me.taylorkelly.mywarp.economy.FeeProvider;
+import me.taylorkelly.mywarp.teleport.EconomyTeleportService;
+import me.taylorkelly.mywarp.teleport.TeleportService;
+import me.taylorkelly.mywarp.teleport.TimerTeleportService;
 import me.taylorkelly.mywarp.timer.DurationProvider;
 import me.taylorkelly.mywarp.timer.TimerService;
-import me.taylorkelly.mywarp.timer.TimerService.EvaluationResult;
-import me.taylorkelly.mywarp.timer.WarpCooldown;
-import me.taylorkelly.mywarp.timer.WarpWarmup;
-import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Bundles usage commands.
  */
 public class UsageCommands {
 
-  private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
-
-  private final MyWarp myWarp;
+  private final TeleportService teleportService;
 
   /**
    * Creates an instance.
    *
-   * @param myWarp the MyWarp instance
+   * @param teleportService  the TeleportService used by commands, implementing additional validation on top
+   * @param settings         the Settings used by commands
+   * @param economyService   the EconomyService used by commands
+   * @param timerService     the TimerService used by commands
+   * @param durationProvider the DurationProvider used by commands
+   * @param game             the Game instance used by commands
    */
-  public UsageCommands(MyWarp myWarp) {
-    this.myWarp = myWarp;
+  public UsageCommands(TeleportService teleportService, Settings settings, EconomyService economyService,
+                       TimerService timerService, DurationProvider durationProvider, Game game) {
+    this.teleportService =
+        new TimerTeleportService(
+            new EconomyTeleportService(teleportService, economyService, FeeProvider.FeeType.WARP_TO), settings, game,
+            timerService, durationProvider);
   }
 
   /**
@@ -70,32 +74,7 @@ public class UsageCommands {
   @Command(aliases = {"to"}, desc = "warp-to.description")
   @Require("mywarp.cmd.to")
   public void to(@Sender LocalPlayer player, @Name(Condition.USABLE) Warp warp) throws TimerRunningException {
-    FeeType feeType = FeeType.WARP_TO;
-
-    if (!myWarp.getEconomyService().hasAtLeast(player, feeType)) {
-      return;
-    }
-
-    // XXX This implementation is ugly and inflexible
-    if (myWarp.getSettings().isTimersEnabled() && !player.hasPermission("mywarp.timer.disobey")) {
-      TimerService timerService = myWarp.getPlatform().getTimerService();
-      DurationProvider durationProvider = myWarp.getPlatform().getDurationProvider();
-
-      EvaluationResult cooldownResult = timerService.has(player.getProfile(), WarpCooldown.class);
-      if (cooldownResult.isTimerRunning()) {
-        throw new TimerRunningException(cooldownResult.getDurationLeft());
-      }
-      EvaluationResult warmupResult = timerService.has(player.getProfile(), WarpWarmup.class);
-      if (warmupResult.isTimerRunning()) {
-        throw new TimerRunningException(warmupResult.getDurationLeft());
-      }
-      Duration duration = durationProvider.getDuration(player, WarpWarmup.class);
-      timerService.start(player.getProfile(), duration, new WarpWarmup(myWarp, player, warp));
-
-      player.sendMessage(msg.getString("warp-to.warmup.started", warp.getName(), duration.get(TimeUnit.SECONDS)));
-      return;
-    }
-    warp.teleport(player, feeType);
+    teleportService.teleport(player, warp);
   }
 
 }

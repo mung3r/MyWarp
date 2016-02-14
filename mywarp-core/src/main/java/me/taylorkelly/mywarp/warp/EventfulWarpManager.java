@@ -24,9 +24,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
 
 import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.teleport.TeleportService.TeleportStatus;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -113,21 +111,12 @@ public class EventfulWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public TeleportStatus teleport(LocalEntity entity) {
-      TeleportStatus ret = super.teleport(entity);
-      if (ret.isPositionModified()) {
-        eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
-      }
-      return ret;
-    }
+    public void visit(LocalEntity entity, TeleportStatus status) {
+      delegate().visit(entity, status);
 
-    @Override
-    public TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
-      TeleportStatus ret = super.teleport(player, fee);
-      if (ret.isPositionModified()) {
+      if (status.isPositionModified()) {
         eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
       }
-      return ret;
     }
 
     @Override

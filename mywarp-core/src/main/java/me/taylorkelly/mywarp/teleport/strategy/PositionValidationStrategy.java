@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.teleport;
+package me.taylorkelly.mywarp.teleport.strategy;
 
 import com.google.common.base.Optional;
 

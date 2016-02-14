@@ -17,11 +17,12 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.teleport;
+package me.taylorkelly.mywarp.teleport.strategy;
 
 import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.util.Vector3;
 
 /**
@@ -29,15 +30,15 @@ import me.taylorkelly.mywarp.util.Vector3;
  */
 public class CubicSafetyValidationStrategy implements PositionValidationStrategy {
 
-  private int tolerance;
+  private Settings settings;
 
   /**
-   * Creates an instance that searches for safe positions within the given {@code tolerance}.
+   * Creates an instance that searches for safe positions within a configured certain radius.
    *
-   * @param tolerance the tolerance to search alternative positions in
+   * @param settings the settings instance
    */
-  public CubicSafetyValidationStrategy(int tolerance) {
-    this.tolerance = tolerance;
+  public CubicSafetyValidationStrategy(Settings settings) {
+    this.settings = settings;
   }
 
   @Override
@@ -47,7 +48,7 @@ public class CubicSafetyValidationStrategy implements PositionValidationStrategy
     }
     Optional<Vector3> safePosition; // never modify the given location!
 
-    for (int i = 2; i <= tolerance; i++) {
+    for (int i = 2; i <= settings.getSafetySearchRadius(); i++) {
       safePosition = checkCubeSurface(world, originalPosition, i);
       if (safePosition.isPresent()) {
         return safePosition;

@@ -38,7 +38,7 @@ import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name;
 import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name.Condition;
 import me.taylorkelly.mywarp.command.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.limits.LimitService;
+import me.taylorkelly.mywarp.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
@@ -53,16 +53,20 @@ public class SocialCommands {
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final Game game;
-  private final LimitService manager;
-  private final ProfileService service;
+  private final LimitService limitService;
+  private final ProfileService profileService;
 
   /**
    * Creates an instance.
+   *
+   * @param limitService   the LimitService used by commands
+   * @param profileService the ProfileService used by commands
+   * @param game           the Game instance used by commands
    */
-  public SocialCommands(Game game, LimitService manager, ProfileService service) {
+  public SocialCommands(LimitService limitService, ProfileService profileService, Game game) {
     this.game = game;
-    this.manager = manager;
-    this.service = service;
+    this.limitService = limitService;
+    this.profileService = profileService;
   }
 
   /**
@@ -70,13 +74,13 @@ public class SocialCommands {
    *
    * @param actor        the Actor
    * @param giveDirectly whether the Warp should be given directly, without asking the owner for acceptance
-   * @param ignoreLimits whether the limits of the new owner should be ignored
+   * @param ignoreLimits whether the limit of the new owner should be ignored
    * @param receiver     the Profile of the player who should receive the Warp
    * @param warp         the Warp
    * @throws CommandException       if the warp is owned by the receiver
    * @throws AuthorizationException if the Actor does have enough permissions
    * @throws NoSuchPlayerException  if the receiver is offline and the flags to bypass this check where not given
-   * @throws ExceedsLimitException  if the limits of the receiver would be exceeded
+   * @throws ExceedsLimitException  if the limit of the receiver would be exceeded
    */
   @Command(aliases = {"give"}, desc = "give.description", help = "give.help")
   @Require("mywarp.cmd.give")
@@ -95,7 +99,7 @@ public class SocialCommands {
       }
       LimitService.EvaluationResult
           result =
-          manager.evaluateLimit(receiverPlayer.get(), warp.getWorld(), warp.getType().getLimit(), true);
+          limitService.evaluateLimit(receiverPlayer.get(), warp.getWorld(game), warp.getType().getLimit(), true);
       if (result.exceedsLimit()) {
         throw new ExceedsLimitException(receiver);
       }
@@ -131,7 +135,7 @@ public class SocialCommands {
    * Privatizes a Warp.
    *
    * @param actor        the Actor
-   * @param ignoreLimits whether the limits of the owner should be ignored
+   * @param ignoreLimits whether the limit of the owner should be ignored
    * @param warp         the warp
    * @throws CommandException               if the Warp is already private
    * @throws AuthorizationException         if {@code ignoreLimits} is {@code true}, but the given Actor does not have
@@ -160,7 +164,7 @@ public class SocialCommands {
 
       LimitService.EvaluationResult
           result =
-          manager.evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PRIVATE.getLimit(), false);
+          limitService.evaluateLimit(creatorPlayer.get(), warp.getWorld(game), Warp.Type.PRIVATE.getLimit(), false);
 
       if (result.exceedsLimit()) {
         if (actor instanceof LocalPlayer && creatorPlayer.get().equals(actor)) {
@@ -210,7 +214,7 @@ public class SocialCommands {
 
       LimitService.EvaluationResult
           result =
-          manager.evaluateLimit(creatorPlayer.get(), warp.getWorld(), Warp.Type.PUBLIC.getLimit(), false);
+          limitService.evaluateLimit(creatorPlayer.get(), warp.getWorld(game), Warp.Type.PUBLIC.getLimit(), false);
 
       if (result.exceedsLimit()) {
         if (actor instanceof LocalPlayer && creatorPlayer.get().equals(actor)) {
@@ -264,7 +268,7 @@ public class SocialCommands {
       return;
     }
     // invite player
-    Optional<Profile> optionalInvitee = service.getByName(inviteeIdentifier);
+    Optional<Profile> optionalInvitee = profileService.getByName(inviteeIdentifier);
     if (!optionalInvitee.isPresent()) {
       throw new NoSuchProfileException(inviteeIdentifier);
     }
@@ -333,7 +337,7 @@ public class SocialCommands {
       return;
     }
     // uninvite player
-    Optional<Profile> optionalUninvitee = service.getByName(uninviteeIdentifier);
+    Optional<Profile> optionalUninvitee = profileService.getByName(uninviteeIdentifier);
     if (!optionalUninvitee.isPresent()) {
       throw new NoSuchProfileException(uninviteeIdentifier);
     }

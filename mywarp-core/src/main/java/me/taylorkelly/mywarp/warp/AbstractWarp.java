@@ -19,7 +19,12 @@
 
 package me.taylorkelly.mywarp.warp;
 
+import com.google.common.base.Optional;
+
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
+import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
@@ -92,4 +97,12 @@ abstract class AbstractWarp implements Warp {
     return true;
   }
 
+  @Override
+  public LocalWorld getWorld(Game game) {
+    Optional<LocalWorld> world = game.getWorld(getWorldIdentifier());
+    if (!world.isPresent()) {
+      throw new NoSuchWorldException(getWorldIdentifier().toString());
+    }
+    return world.get();
+  }
 }

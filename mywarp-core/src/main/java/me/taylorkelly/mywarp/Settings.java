@@ -101,9 +101,9 @@ public interface Settings {
   List<String> getWarpSignsIdentifiers();
 
   /**
-   * Returns whether warp creation limits are enabled.
+   * Returns whether warp creation limit are enabled.
    *
-   * @return {@code true} if limits are enabled
+   * @return {@code true} if limit are enabled
    */
   boolean isLimitsEnabled();
 

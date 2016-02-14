@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.limits;
+package me.taylorkelly.mywarp.limit;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -30,12 +30,13 @@ import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 /**
- * A creation limit for warps. Implementations are expected to provide the limits for each {@link Type} and a way to
- * resolve these limits per world. <p>Typically an implementation is provided by the platform running MyWarp.</p>
+ * A creation limit for warps. Implementations are expected to provide the limit for each {@link Type} and a way to
+ * resolve these limit per world. <p>Typically an implementation is provided by the platform running MyWarp.</p>
  */
 public interface Limit {
 
@@ -57,13 +58,13 @@ public interface Limit {
   /**
    * Returns whether the given LocalWorld is affected by this Limit.
    *
-   * @param world the world to check
+   * @param worldIdentifer the world to check
    * @return true if the given world is affected
    */
-  boolean isAffectedWorld(LocalWorld world);
+  boolean isAffectedWorld(UUID worldIdentifer);
 
   /**
-   * The different types limits.
+   * The different types limit.
    */
   enum Type {
     /**

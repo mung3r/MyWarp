@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.limits;
+package me.taylorkelly.mywarp.limit;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
@@ -25,7 +25,7 @@ import me.taylorkelly.mywarp.LocalWorld;
 import java.util.List;
 
 /**
- * Provides the actual limits that affect a user under certain conditions. <p>Typically an implementation is provided by
+ * Provides the actual limit that affect a user under certain conditions. <p>Typically an implementation is provided by
  * the platform running MyWarp.</p>
  */
 public interface LimitProvider {

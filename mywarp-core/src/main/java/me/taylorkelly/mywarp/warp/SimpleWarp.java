@@ -22,16 +22,11 @@ package me.taylorkelly.mywarp.warp;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Optional;
-
+import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.EulerDirection;
-import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -49,7 +44,6 @@ class SimpleWarp extends AbstractWarp {
 
   private static final DynamicMessages msg = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
-  private final MyWarp myWarp;
   private final String name;
   private final Date creationDate;
   private final Set<Profile> invitedPlayers;
@@ -67,7 +61,6 @@ class SimpleWarp extends AbstractWarp {
    * Creates a instance with the given values. <p>This method should never be called manually. Use a {@link WarpBuilder}
    * instead.</p>
    *
-   * @param myWarp          the running MyWarp instance
    * @param name            the warp's name
    * @param creationDate    the warp's creation date
    * @param invitedPlayers  a Set of player profiles invited to this warp
@@ -82,10 +75,9 @@ class SimpleWarp extends AbstractWarp {
    * @throws NullPointerException     if one of the given values is {@code null}
    * @throws IllegalArgumentException if {@code invitedPlayers} or {@code invitedGroups} contains {@code null}
    */
-  SimpleWarp(MyWarp myWarp, String name, Date creationDate, Set<Profile> invitedPlayers, Set<String> invitedGroups,
-             Profile creator, Type type, UUID worldIdentifier, Vector3 position, EulerDirection rotation, int visits,
+  SimpleWarp(String name, Date creationDate, Set<Profile> invitedPlayers, Set<String> invitedGroups, Profile creator,
+             Type type, UUID worldIdentifier, Vector3 position, EulerDirection rotation, int visits,
              String welcomeMessage) {
-    this.myWarp = checkNotNull(myWarp);
     this.name = checkNotNull(name);
     this.creationDate = checkNotNull(creationDate);
     checkArgument(!checkNotNull(invitedPlayers).contains(null), "'invitedPlayers' must not contain null.");
@@ -99,6 +91,32 @@ class SimpleWarp extends AbstractWarp {
     this.rotation = checkNotNull(rotation);
     this.visits = checkNotNull(visits);
     this.welcomeMessage = checkNotNull(welcomeMessage);
+  }
+
+  @Override
+  public void visit(LocalEntity entity, TeleportService.TeleportStatus status) {
+    if (status.isPositionModified()) {
+      visits++;
+    }
+
+    // messages (if any)
+    if (entity instanceof Actor) {
+      Actor actor = (Actor) entity;
+      switch (status) {
+        case ORIGINAL:
+          String welcomeMsg = getWelcomeMessage();
+          if (!welcomeMsg.isEmpty()) {
+            actor.sendMessage(WarpUtils.replaceTokens(welcomeMsg, this, actor));
+          }
+          break;
+        case MODIFIED:
+          actor.sendError(msg.getString("unsafe-loc.closest-location", getName()));
+          break;
+        case NONE:
+          actor.sendError(msg.getString("unsafe-loc.no-teleport", getName()));
+          break;
+      }
+    }
   }
 
   @Override
@@ -186,15 +204,6 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public LocalWorld getWorld() {
-    Optional<LocalWorld> world = myWarp.getGame().getWorld(worldIdentifier);
-    if (!world.isPresent()) {
-      throw new NoSuchWorldException(worldIdentifier.toString());
-    }
-    return world.get();
-  }
-
-  @Override
   public Vector3 getPosition() {
     return position;
   }
@@ -207,44 +216,5 @@ class SimpleWarp extends AbstractWarp {
   @Override
   public UUID getWorldIdentifier() {
     return worldIdentifier;
-  }
-
-  @Override
-  public TeleportService.TeleportStatus teleport(LocalEntity entity) {
-    TeleportService.TeleportStatus
-        status =
-        myWarp.getTeleportService().teleport(entity, getWorld(), getPosition(), getRotation());
-    if (status.isPositionModified()) {
-      visits++;
-    }
-
-    //REVIEW use Actor?
-    if (entity instanceof LocalPlayer) {
-      LocalPlayer player = (LocalPlayer) entity;
-      switch (status) {
-        case ORIGINAL:
-          if (!getWelcomeMessage().isEmpty()) {
-            player.sendMessage(WarpUtils.replaceTokens(getWelcomeMessage(), this, player));
-          }
-          break;
-        case MODIFIED:
-          player.sendError(msg.getString("unsafe-loc.closest-location", getName()));
-          break;
-        case NONE:
-          player.sendError(msg.getString("unsafe-loc.no-teleport", getName()));
-          break;
-      }
-    }
-
-    return status;
-  }
-
-  @Override
-  public TeleportService.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee) {
-    TeleportService.TeleportStatus status = teleport(player);
-    if (myWarp.getSettings().isEconomyEnabled() && status.isPositionModified()) {
-      myWarp.getEconomyService().withdraw(player, fee);
-    }
-    return status;
   }
 }

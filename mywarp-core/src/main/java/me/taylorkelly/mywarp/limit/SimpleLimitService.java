@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.limits;
+package me.taylorkelly.mywarp.limit;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A simple implementation to manage and evaluate warp creation limits. <p> The SimpleLimitService operates on a {@link
- * LimitProvider} that provides the actual limits and a {@link WarpManager} that holds the warps the limits apply on.
+ * A simple implementation to manage and evaluate warp creation limit. <p> The SimpleLimitService operates on a {@link
+ * LimitProvider} that provides the actual limit and a {@link WarpManager} that holds the warps the limit apply on.
  * </p>
  */
 public class SimpleLimitService implements LimitService {
@@ -46,7 +46,7 @@ public class SimpleLimitService implements LimitService {
   private final WarpManager warpManager;
 
   /**
-   * Creates an instance that acts on the given {@code warpManager} using the limits provided by the given {@code
+   * Creates an instance that acts on the given {@code warpManager} using the limit provided by the given {@code
    * provider}.
    *
    * @param provider    the LimitProvider
@@ -107,10 +107,10 @@ public class SimpleLimitService implements LimitService {
       ret.put(limit, new ArrayList<Warp>());
     }
 
-    // sort warps to limits
+    // sort warps to limit
     for (Warp warp : warps) {
       for (Limit limit : ret.keySet()) {
-        if (limit.isAffectedWorld(warp.getWorld())) {
+        if (limit.isAffectedWorld(warp.getWorldIdentifier())) {
           ret.get(limit).add(warp);
         }
       }

@@ -24,18 +24,19 @@ import com.google.common.collect.ImmutableSet;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
 import me.taylorkelly.mywarp.bukkit.util.permissions.ValueBundle;
-import me.taylorkelly.mywarp.limits.Limit;
+import me.taylorkelly.mywarp.limit.Limit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 /**
- * A ValueBundle that bundles limits.
+ * A ValueBundle that bundles limit.
  */
 public class LimitBundle extends ValueBundle implements Limit {
 
@@ -103,8 +104,16 @@ public class LimitBundle extends ValueBundle implements Limit {
   }
 
   @Override
-  public boolean isAffectedWorld(LocalWorld world) {
-    return affectedWorlds == null || affectedWorlds.contains(world);
+  public boolean isAffectedWorld(UUID worldIdentifer) {
+    if (affectedWorlds == null) {
+      return true;
+    }
+    for (LocalWorld world : affectedWorlds) {
+      if (world.getUniqueId().equals(worldIdentifer)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

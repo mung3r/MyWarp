@@ -136,7 +136,7 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
       return;
     }
 
-    acceptancePromptFactory = new AcceptancePromptFactory(this, myWarp.getAuthorizationService());
+    acceptancePromptFactory = new AcceptancePromptFactory(this, myWarp.getAuthorizationService(), game);
     welcomeEditorFactory = new WelcomeEditorFactory(this);
 
     setupPlugin();
@@ -150,15 +150,14 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
     profileService.registerEvents(this);
 
     if (settings.isWarpSignsEnabled()) {
-      new WarpSignListener(adapter, new WarpSignManager(settings.getWarpSignsIdentifiers(), myWarp.getWarpManager(),
-                                                        myWarp.getAuthorizationService(), myWarp.getEconomyService()))
+      new WarpSignListener(adapter, new WarpSignManager(settings.getWarpSignsIdentifiers(), myWarp))
           .registerEvents(this);
     }
 
     if (settings.isDynmapEnabled()) {
       Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
       if (dynmap != null && dynmap.isEnabled()) {
-        new DynmapMarkers(this, (DynmapCommonAPI) dynmap, myWarp.getWarpManager(), myWarp.getEventBus());
+        new DynmapMarkers(this, (DynmapCommonAPI) dynmap, myWarp.getWarpManager(), myWarp.getEventBus(), game);
       } else {
         log.error("Failed to hook into Dynmap. Disabling Dynmap support.");
       }

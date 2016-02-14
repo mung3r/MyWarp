@@ -21,8 +21,10 @@ package me.taylorkelly.mywarp.timer;
 
 import com.google.common.base.Optional;
 
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
@@ -35,23 +37,35 @@ public class WarpCooldown extends TimerAction<Profile> {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
-  private final MyWarp myWarp;
+  private final Settings settings;
+  private final Game game;
 
   /**
-   * Craetes an instance for the given {@code player}.
+   * Creates an instance for the given {@code player}.
    *
-   * @param myWarp the MyWarp instance
    * @param player the player who is cooling down
    */
-  public WarpCooldown(MyWarp myWarp, LocalPlayer player) {
+  public WarpCooldown(LocalPlayer player, MyWarp mywarp) {
+    this(player, mywarp.getGame(), mywarp.getSettings());
+  }
+
+  /**
+   * Creates an instance for the given {@code player}.
+   *
+   * @param player   the player who is cooling down
+   * @param game     the active game
+   * @param settings the active settings
+   */
+  public WarpCooldown(LocalPlayer player, Game game, Settings settings) {
     super(player.getProfile());
-    this.myWarp = myWarp;
+    this.game = game;
+    this.settings = settings;
   }
 
   @Override
   public void run() {
-    if (myWarp.getSettings().isTimersCooldownNotifyOnFinish()) {
-      Optional<LocalPlayer> optionalPlayer = myWarp.getGame().getPlayer(getTimedSuject().getUniqueId());
+    if (settings.isTimersCooldownNotifyOnFinish()) {
+      Optional<LocalPlayer> optionalPlayer = game.getPlayer(getTimedSuject().getUniqueId());
 
       if (optionalPlayer.isPresent()) {
         LocalPlayer player = optionalPlayer.get();

@@ -17,13 +17,13 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.limits;
+package me.taylorkelly.mywarp.limit;
 
 import static com.google.common.base.Preconditions.checkState;
 
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.limits.Limit.Type;
+import me.taylorkelly.mywarp.limit.Limit.Type;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.List;
@@ -32,12 +32,12 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Manages and evaluates warp creation limits.
+ * Manages and evaluates warp creation limit.
  */
 public interface LimitService {
 
   /**
-   * Evaluates whether the given creator exceeds limits on the given LocalWorld, testing against the given Limit.Type.
+   * Evaluates whether the given creator exceeds limit on the given LocalWorld, testing against the given Limit.Type.
    *
    * @param creator         the creator
    * @param world           the LocalWorld
@@ -52,7 +52,7 @@ public interface LimitService {
 
   /**
    * Gets all warps created by the given LocalPlayer mapped under the applicable {@link Limit}. The map is guaranteed to
-   * include all limits that effect the given player. If no warp exists for a certain limit, {@code get(Limit)} will
+   * include all limit that effect the given player. If no warp exists for a certain limit, {@code get(Limit)} will
    * return an empty list.
    *
    * @param creator the creator
@@ -78,7 +78,7 @@ public interface LimitService {
     private final Integer limitMaximum;
 
     /**
-     * Creates an instance that indicates that all limits were meat.
+     * Creates an instance that indicates that all limit were meat.
      */
     private EvaluationResult() {
       this.exceedsLimit = false;
@@ -88,7 +88,7 @@ public interface LimitService {
 
     /**
      * Creates an instance indicating that a limit was exceeded. Use {@link #LIMIT_MEAT} to get an instance that
-     * indicates that all limits are meat.
+     * indicates that all limit are meat.
      *
      * @param exceededLimit the exceeded limit
      * @param limitMaximum  the maximum number of warps a user can create under the exceeded limit

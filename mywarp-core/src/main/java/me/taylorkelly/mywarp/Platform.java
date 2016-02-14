@@ -21,7 +21,7 @@ package me.taylorkelly.mywarp;
 
 import me.taylorkelly.mywarp.economy.EconomyProvider;
 import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.limits.LimitProvider;
+import me.taylorkelly.mywarp.limit.LimitProvider;
 import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.timer.DurationProvider;

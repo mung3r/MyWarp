@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.warp;
 
 import com.google.common.collect.Iterables;
 
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -39,7 +38,6 @@ public class WarpBuilder {
 
   private static final DynamicMessages msg = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
-  private final MyWarp myWarp;
   private final String name;
   private final Set<Profile> invitedPlayers;
   private final Set<String> invitedGroups;
@@ -56,19 +54,16 @@ public class WarpBuilder {
   /**
    * Creates an instance that builds Warp's using the given values.
    *
-   * @param myWarp          the running MyWarp instance
    * @param name            the Warp's name
    * @param creator         the Warp's creator
    * @param worldIdentifier the identifier of the world the Warp is located in
    * @param position        the Warp's position
    * @param rotation        the Warp's rotation
    */
-  public WarpBuilder(MyWarp myWarp, String name, Profile creator, UUID worldIdentifier, Vector3 position,
-                     EulerDirection rotation) {
+  public WarpBuilder(String name, Profile creator, UUID worldIdentifier, Vector3 position, EulerDirection rotation) {
     this.invitedPlayers = new HashSet<Profile>();
     this.invitedGroups = new HashSet<String>();
 
-    this.myWarp = myWarp;
     this.name = name;
     this.creator = creator;
     this.worldIdentifier = worldIdentifier;
@@ -165,12 +160,12 @@ public class WarpBuilder {
   }
 
   /**
-   * Builds the Warp based on the contents of the {@code WarpBuilder}.
+   * Builds the Warp based on the contents of this Builder.
    *
-   * @return the newly-created Warp
+   * @return the created Warp
    */
   public Warp build() {
-    return new SimpleWarp(myWarp, name, creationDate, invitedPlayers, invitedGroups, creator, type, worldIdentifier,
-                          position, rotation, visits, welcomeMessage);
+    return new SimpleWarp(name, creationDate, invitedPlayers, invitedGroups, creator, type, worldIdentifier, position,
+                          rotation, visits, welcomeMessage);
   }
 }

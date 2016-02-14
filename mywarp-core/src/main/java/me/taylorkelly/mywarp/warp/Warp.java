@@ -21,11 +21,12 @@ package me.taylorkelly.mywarp.warp;
 
 import com.google.common.collect.ComparisonChain;
 
+import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.limits.Limit;
+import me.taylorkelly.mywarp.limit.Limit;
 import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -37,31 +38,23 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A named location with additional meta-data. Two Warps are equal are equal if and only if their names are equal. <p>To
- * create a Warp use the {@link WarpBuilder}.</p>
+ * A named location with additional meta-data. Two Warps are equal are equal if and only if their names are equal.
+ * <p>Use a {@link WarpBuilder} to create instances.</p>
  */
 public interface Warp extends Comparable<Warp> {
 
   String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Warp";
 
   /**
-   * Teleports the given entity to this Warp.
+   * Indicates that an Entity has attempted to visit this Warp with the result of the given {@code status}.
+   * <p/>
+   * This method is typically called by an {@link TeleportService} after it has handled the teleport. Consequentially,
+   * to teleport an Entity to a warp, {@link TeleportService#teleport(LocalEntity, Warp)} should be used.
    *
-   * @param entity the entity
-   * @return the status of teleport
+   * @param entity the entity that attempted the teleport
+   * @param status the resulting status of the teleport attempt
    */
-  TeleportService.TeleportStatus teleport(LocalEntity entity);
-
-  /**
-   * Teleports the given player to this Warp, sends the applicable message and withdraws the applicable fee.
-   *
-   * @param player the player
-   * @param fee    the fee that identifies the amount
-   * @return the status of this teleport
-   * @deprecated Might be removed to declutter economy and warp aspects
-   */
-  @Deprecated
-  TeleportService.TeleportStatus teleport(LocalPlayer player, FeeProvider.FeeType fee);
+  void visit(LocalEntity entity, TeleportService.TeleportStatus status);
 
   /**
    * Returns whether the given player is the creator of this Warp.
@@ -183,7 +176,7 @@ public interface Warp extends Comparable<Warp> {
    *
    * @return the world
    */
-  LocalWorld getWorld();
+  LocalWorld getWorld(Game game);
 
   /**
    * Gets the unique identifier of the world this warp is positioned in.
@@ -236,7 +229,7 @@ public interface Warp extends Comparable<Warp> {
 
   /**
    * Gets this Warp's welcome message. The returned message may still contain warp variables that can be replaced using
-   * {@link me.taylorkelly.mywarp.util.WarpUtils#replaceTokens(String, Warp, LocalPlayer)}.
+   * {@link me.taylorkelly.mywarp.util.WarpUtils#replaceTokens(String, Warp, Actor)}.
    *
    * @return the raw welcome message of this Warp
    */
@@ -266,34 +259,11 @@ public interface Warp extends Comparable<Warp> {
     /**
      * A private Warp.
      */
-    PRIVATE('c'),
+    PRIVATE,
     /**
      * A public Warp.
      */
-    PUBLIC('a');
-
-    /**
-     * This types colorCharacter-representation used when displaying Warp-names of this type.
-     */
-    private final char colorCharacter;
-
-    /**
-     * Initializes this type.
-     *
-     * @param colorCharacter the color character
-     */
-    Type(char colorCharacter) {
-      this.colorCharacter = colorCharacter;
-    }
-
-    /**
-     * Gets this type's color character.
-     *
-     * @return the colorCharacter
-     */
-    public char getColorCharacter() {
-      return colorCharacter;
-    }
+    PUBLIC;
 
     /**
      * Gets the limit that corresponds with this type.

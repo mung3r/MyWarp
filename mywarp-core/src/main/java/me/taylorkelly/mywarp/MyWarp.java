@@ -19,7 +19,6 @@
 
 package me.taylorkelly.mywarp;
 
-import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -29,20 +28,22 @@ import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.economy.DummyEconomyService;
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.InformativeEconomyService;
-import me.taylorkelly.mywarp.limits.DummyLimitService;
-import me.taylorkelly.mywarp.limits.LimitService;
-import me.taylorkelly.mywarp.limits.SimpleLimitService;
+import me.taylorkelly.mywarp.limit.DummyLimitService;
+import me.taylorkelly.mywarp.limit.LimitService;
+import me.taylorkelly.mywarp.limit.SimpleLimitService;
 import me.taylorkelly.mywarp.storage.AsyncWritingWarpStorage;
 import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.storage.StorageInitializationException;
 import me.taylorkelly.mywarp.storage.WarpStorage;
 import me.taylorkelly.mywarp.storage.WarpStorageFactory;
-import me.taylorkelly.mywarp.teleport.CubicSafetyValidationStrategy;
-import me.taylorkelly.mywarp.teleport.PositionValidationStrategy;
+import me.taylorkelly.mywarp.teleport.StrategyTeleportService;
 import me.taylorkelly.mywarp.teleport.TeleportService;
+import me.taylorkelly.mywarp.teleport.strategy.ChainedValidationStrategy;
+import me.taylorkelly.mywarp.teleport.strategy.CubicSafetyValidationStrategy;
+import me.taylorkelly.mywarp.teleport.strategy.LegacyPositionCorrectionStrategy;
+import me.taylorkelly.mywarp.teleport.strategy.PositionValidationStrategy;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.EventfulWarpManager;
@@ -58,6 +59,7 @@ import me.taylorkelly.mywarp.warp.authorization.WorldAccessAuthorizationStrategy
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -94,13 +96,14 @@ public final class MyWarp {
 
     DynamicMessages.setControl(platform.getResourceBundleControl());
 
-    ConnectionConfiguration connectionConfiguration = platform.getSettings().getRelationalStorageConfiguration();
+    ConnectionConfiguration connectionConfiguration = getSettings().getRelationalStorageConfiguration();
     dataService = platform.createDataService(connectionConfiguration);
     try {
       warpStorage =
-          new AsyncWritingWarpStorage(
-              WarpStorageFactory.createInitialized(this, dataService.getDataSource(), connectionConfiguration),
-              dataService.getExecutorService());
+          new AsyncWritingWarpStorage(WarpStorageFactory
+                                          .createInitialized(dataService.getDataSource(), connectionConfiguration,
+                                                             platform.getProfileService()),
+                                      dataService.getExecutorService());
 
     } catch (SQLException e) {
       throw new InitializationException("Failed to get a connection to the database.", e);
@@ -114,32 +117,26 @@ public final class MyWarp {
 
     authorizationService =
         new AuthorizationService(new WorldAccessAuthorizationStrategy(
-            new PermissionAuthorizationStrategy(new WarpPropertiesAuthorizationStrategy()), platform.getSettings()));
+            new PermissionAuthorizationStrategy(new WarpPropertiesAuthorizationStrategy()), getGame(), getSettings()));
+
+    //setup the teleportService
+    List<PositionValidationStrategy> validationStrategies = new ArrayList<PositionValidationStrategy>();
+    validationStrategies.add(new LegacyPositionCorrectionStrategy());
+
+    if (getSettings().isSafetyEnabled()) {
+      validationStrategies.add(new CubicSafetyValidationStrategy(getSettings()));
+    }
+    teleportService = new StrategyTeleportService(new ChainedValidationStrategy(validationStrategies), getGame());
 
     setupPlugin();
 
     commandHandler = new CommandHandler(this);
   }
 
-  public CommandHandler getCommandHandler() {
-    return commandHandler;
-  }
-
   /**
    * Sets up the plugin.
    */
   private void setupPlugin() {
-    //setup the teleportService
-    PositionValidationStrategy positionValidationStrategy = new PositionValidationStrategy() {
-      @Override
-      public Optional<Vector3> getValidPosition(Vector3 originalPosition, LocalWorld world) {
-        return Optional.of(originalPosition);
-      }
-    };
-    if (getSettings().isSafetyEnabled()) {
-      positionValidationStrategy = new CubicSafetyValidationStrategy(getSettings().getSafetySearchRadius());
-    }
-    teleportService = new TeleportService(positionValidationStrategy);
 
     // setup the limitService
     if (getSettings().isLimitsEnabled()) {
@@ -185,7 +182,6 @@ public final class MyWarp {
 
   }
 
-
   /**
    * Reloads MyWarp.
    */
@@ -204,6 +200,7 @@ public final class MyWarp {
    *
    * @return the Platform
    */
+  //REVIEW remove?
   public Platform getPlatform() {
     return platform;
   }
@@ -236,6 +233,15 @@ public final class MyWarp {
   }
 
   /**
+   * Gets the CommandHanlder that manages all of MyWarp's commands.
+   *
+   * @return the CommandHandler
+   */
+  public CommandHandler getCommandHandler() {
+    return commandHandler;
+  }
+
+  /**
    * Gets the WarpManager of this MyWarp instance.
    *
    * @return the WarpManager
@@ -263,18 +269,10 @@ public final class MyWarp {
   }
 
   /**
-   * Gets the TeleportService.
-   *
-   * @return the TeleportService
-   */
-  public TeleportService getTeleportService() {
-    return teleportService;
-  }
-
-  /**
-   * Gets the EconomyService. Calling this method will always return valid EconomyService implementation, if economy
-   * support is disabled on the configuration file, the returned EconomyService will handle this internally and fail
-   * quietly.
+   * Gets the EconomyService.
+   * <p/>
+   * Calling this method will always return valid EconomyService implementation, if economy support is disabled on the
+   * configuration file, the returned EconomyService will handle this internally and fail quietly.
    *
    * @return the EconomyService
    */
@@ -283,12 +281,26 @@ public final class MyWarp {
   }
 
   /**
-   * Gets the LimitService. Calling this method will always return valid LimitService implementation, if limit support
-   * is disabled on the configuration file, the returned LimitService will handle this internally and fail quietly.
+   * Gets the LimitService.
+   * <p/>
+   * Calling this method will always return valid LimitService implementation, if limit support is disabled on the
+   * configuration file, the returned LimitService will handle this internally and fail quietly.
    *
    * @return the LimitService
    */
   public LimitService getLimitService() {
     return limitService;
+  }
+
+  /**
+   * Gets the basic TeleportService.
+   * <p/>
+   * Calling this method will return a basic TeleportSaervice implementation that should be used to build further
+   * validation on top.
+   *
+   * @return the TeleportService
+   */
+  public TeleportService getTeleportService() {
+    return teleportService;
   }
 }

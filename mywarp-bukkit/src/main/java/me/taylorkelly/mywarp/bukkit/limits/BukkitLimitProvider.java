@@ -27,8 +27,8 @@ import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
 import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistration;
 import me.taylorkelly.mywarp.bukkit.util.permissions.ValueBundle;
-import me.taylorkelly.mywarp.limits.Limit;
-import me.taylorkelly.mywarp.limits.LimitProvider;
+import me.taylorkelly.mywarp.limit.Limit;
+import me.taylorkelly.mywarp.limit.LimitProvider;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -91,7 +91,7 @@ public class BukkitLimitProvider implements LimitProvider {
       if (!player.hasPermission(bundle.getPermission())) {
         continue;
       }
-      if (!bundle.isAffectedWorld(world)) {
+      if (!bundle.isAffectedWorld(world.getUniqueId())) {
         continue;
       }
       return bundle;

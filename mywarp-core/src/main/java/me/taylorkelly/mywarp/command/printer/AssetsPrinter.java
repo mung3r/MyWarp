@@ -25,8 +25,8 @@ import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.CommandHandler;
-import me.taylorkelly.mywarp.limits.Limit;
-import me.taylorkelly.mywarp.limits.LimitService;
+import me.taylorkelly.mywarp.limit.Limit;
+import me.taylorkelly.mywarp.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Prints a certain player's assets, showing active limits and Warps sorted to the corresponding limit.
+ * Prints a certain player's assets, showing active limit and Warps sorted to the corresponding limit.
  */
 public class AssetsPrinter {
 
@@ -53,7 +53,7 @@ public class AssetsPrinter {
    * Creates an instance.
    *
    * @param creator      the player whose assets should be displayed
-   * @param limitService the limitService that manages the limits that should be displayed
+   * @param limitService the limitService that manages the limit that should be displayed
    * @param settings     the Settings
    */
   public AssetsPrinter(LocalPlayer creator, LimitService limitService, Settings settings) {
@@ -72,7 +72,7 @@ public class AssetsPrinter {
     String heading = " " + msg.getString("assets.heading", creator.getName()) + " ";
     receiver.sendMessage(Message.builder().append(Message.Style.HEADLINE_1).append(heading).build());
 
-    // display the limits
+    // display the limit
     Map<Limit, List<Warp>> index = limitService.getWarpsPerLimit(creator);
     for (Entry<Limit, List<Warp>> entry : index.entrySet()) {
       printLimit(receiver, entry.getKey(), entry.getValue());
@@ -115,7 +115,7 @@ public class AssetsPrinter {
 
     receiver.sendMessage(totalMsg.build());
 
-    // ... all other limits
+    // ... all other limit
     for (Limit.Type type : DISPLAYABLE_TYPES) {
       Collection<Warp> typeWarps = index.get(type);
 

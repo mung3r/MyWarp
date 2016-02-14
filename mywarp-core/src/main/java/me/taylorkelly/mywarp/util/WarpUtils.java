@@ -21,7 +21,7 @@ package me.taylorkelly.mywarp.util;
 
 import com.google.common.base.Predicate;
 
-import me.taylorkelly.mywarp.LocalPlayer;
+import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -116,29 +116,29 @@ public final class WarpUtils {
 
   /**
    * Replaces all tokens in the given {@code string} with the values applicable for the given {@code warp} and the given
-   * {@code player}. <p>The following tokens are available: <table> <tr> <th>Token</th> <th>Replacement</th> </tr> <tr>
+   * {@code actor}. <p>The following tokens are available: <table> <tr> <th>Token</th> <th>Replacement</th> </tr> <tr>
    * <td>%creator%</td> <td>warp's creator</td> </tr> <tr> <td>%loc%</td> <td>warp's location</td> </tr> <tr>
    * <td>%visits%</td> <td>the warp's visits</td> </tr> <tr> <td>%warp%</td> <td>the warp's name</td> </tr> <tr>
-   * <td>%player%</td> <td>the player's name</td> </tr> </table> </p>
+   * <td>%actor%</td> <td>the actor's name</td> </tr> </table> </p>
    *
    * @param string the string that contains the tokens
    * @param warp   the {@code Warp} whose values should be used as replacement
-   * @param player the {@code LocalPlayer} whose values should be used as replacement
+   * @param actor the {@code Actor} whose values should be used as replacement
    * @return the string with replaced tokens
    */
-  public static String replaceTokens(String string, Warp warp, LocalPlayer player) {
-    return replace(string, playerTokens(player, (warpTokens(warp, new HashMap<String, String>()))));
+  public static String replaceTokens(String string, Warp warp, Actor actor) {
+    return replace(string, actorTokens(actor, (warpTokens(warp, new HashMap<String, String>()))));
   }
 
   /**
-   * Adds all tokens that involve a player to the given map, using the given {@code player} to create replacements.
+   * Adds all tokens that involve an Actor to the given map, using the given {@code actor} to create replacements.
    *
-   * @param player    the player whose values should be used as replacement
+   * @param actor     the Actor whose values should be used as replacement
    * @param variables the {@code Map} tokens and variables are added to
    * @return the{@code Map} with added tokens and variables
    */
-  private static Map<String, String> playerTokens(LocalPlayer player, Map<String, String> variables) {
-    variables.put("player", player.getName());
+  private static Map<String, String> actorTokens(Actor actor, Map<String, String> variables) {
+    variables.put("player", actor.getName());
     return variables;
   }
 

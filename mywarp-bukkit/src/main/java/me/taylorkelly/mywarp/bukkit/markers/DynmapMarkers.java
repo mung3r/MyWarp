@@ -22,6 +22,7 @@ package me.taylorkelly.mywarp.bukkit.markers;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.bukkit.BukkitSettings;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
@@ -53,19 +54,22 @@ public class DynmapMarkers {
   private static final DynamicMessages msg = new DynamicMessages("me.taylorkelly.mywarp.lang.DynmapMarkers");
 
   private final BukkitSettings settings;
+  private final Game game;
 
   private MarkerIcon markerIcon;
   private MarkerSet markerSet;
 
   /**
    * Initializes this instance with the given Dynmap plugin.
-   *
-   * @param plugin       the running plugin instance
+   *  @param plugin       the running plugin instance
    * @param dynmapPlugin the running Dynmap instance to use
    * @param manager      the WarpManager whose warps are shown on Dynmap
    * @param eventBus     the EventBus that fires the events that initiate marker changes
+   * @param game
    */
-  public DynmapMarkers(MyWarpPlugin plugin, DynmapCommonAPI dynmapPlugin, WarpManager manager, EventBus eventBus) {
+  public DynmapMarkers(MyWarpPlugin plugin, DynmapCommonAPI dynmapPlugin, WarpManager manager, EventBus eventBus,
+                       Game game) {
+    this.game = game;
     this.settings = plugin.getSettings();
 
     MarkerAPI markerApi = dynmapPlugin.getMarkerAPI();
@@ -182,9 +186,9 @@ public class DynmapMarkers {
     if (!warp.isType(Warp.Type.PUBLIC)) {
       return;
     }
-    markerSet
-        .createMarker(toMarkerId(warp), toLabelHtml(warp), true, warp.getWorld().getName(), warp.getPosition().getX(),
-                      warp.getPosition().getY(), warp.getPosition().getZ(), markerIcon, false);
+    markerSet.createMarker(toMarkerId(warp), toLabelHtml(warp), true, warp.getWorld(game).getName(),
+                           warp.getPosition().getX(), warp.getPosition().getY(), warp.getPosition().getZ(), markerIcon,
+                           false);
   }
 
   /**
@@ -225,7 +229,7 @@ public class DynmapMarkers {
     }
     Marker marker = markerSet.findMarker(toMarkerId(warp));
     if (marker != null) {
-      marker.setLocation(warp.getWorld().getName(), warp.getPosition().getX(), warp.getPosition().getY(),
+      marker.setLocation(warp.getWorld(game).getName(), warp.getPosition().getX(), warp.getPosition().getY(),
                          warp.getPosition().getZ());
     }
   }

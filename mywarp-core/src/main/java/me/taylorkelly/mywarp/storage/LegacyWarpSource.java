@@ -30,11 +30,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
 
@@ -72,24 +72,27 @@ public class LegacyWarpSource implements WarpSource {
       ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.SQLITE);
 
   private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
-  private final MyWarp myWarp;
   private final ImmutableMap<String, UUID> worldsSnapshot;
   private final Configuration configuration;
   private final Name tableName;
+  private final ProfileService profileService;
 
   /**
-   * Creates an instance.
+   * Creates an instance from the given DataSource with the given configuration.
    *
-   * @param myWarp         the MyWarp instance
-   * @param worldsSnapshot a mapping of world names to uniqueIds
+   * @param dataSource     the DataSource that connects to the database to use
+   * @param config         the configuration to use for connection
+   * @param tableName      the name of the MySQL table to use
+   * @param profileService the ProfileService to create Profiles on import
+   * @param worldsSnapshot a snapshot of existing worlds used to convert the positions of imported warps
    */
-  public LegacyWarpSource(MyWarp myWarp, DataSource dataSource, ConnectionConfiguration config, String tableName,
-                          Map<String, UUID> worldsSnapshot) {
+  public LegacyWarpSource(DataSource dataSource, ConnectionConfiguration config, String tableName,
+                          ProfileService profileService, Map<String, UUID> worldsSnapshot) {
     checkArgument(SUPPORTED_DIALECTS.contains(config.getDialect()));
 
     this.configuration = new DefaultConfiguration().set(config.getDialect()).set(new Settings()).set(dataSource);
     this.tableName = config.supportsSchemas() ? name(config.getSchema(), tableName) : name(tableName);
-    this.myWarp = myWarp;
+    this.profileService = profileService;
     this.worldsSnapshot = ImmutableMap.copyOf(worldsSnapshot);
   }
 
@@ -123,7 +126,7 @@ public class LegacyWarpSource implements WarpSource {
     }
     log.info("Looking up unique IDs for {} unique players.", playerNames.size());
 
-    List<Profile> profiles = myWarp.getProfileService().getByName(playerNames);
+    List<Profile> profiles = profileService.getByName(playerNames);
     log.info("{} unique IDs found.", profiles.size());
 
     // the legacy database may contain player-names with a wrong case, so the lookup must be case insensitive
@@ -168,7 +171,7 @@ public class LegacyWarpSource implements WarpSource {
         continue;
       }
 
-      WarpBuilder builder = new WarpBuilder(myWarp, warpName, creator, worldId, position, rotation);
+      WarpBuilder builder = new WarpBuilder(warpName, creator, worldId, position, rotation);
 
       // optional values
       builder.setType(type);

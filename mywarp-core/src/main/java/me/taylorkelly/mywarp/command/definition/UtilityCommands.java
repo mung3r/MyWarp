@@ -27,6 +27,7 @@ import com.sk89q.intake.Require;
 import com.sk89q.intake.parametric.annotation.Optional;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.command.CommandHandler;
@@ -35,6 +36,7 @@ import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding.Sender;
 import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name;
 import me.taylorkelly.mywarp.command.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -48,14 +50,23 @@ public class UtilityCommands {
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final MyWarp myWarp;
+  private final CommandHandler commandHandler;
+  private final TeleportService teleportService;
+  private final Game game;
 
   /**
    * Creates an instance.
    *
-   * @param myWarp the MyWarp instance
+   * @param myWarp          the MyWarp instance used in commands
+   * @param commandHandler  the CommandHandler instance used in commands
+   * @param teleportService the TeleportService to be used as base in commands
+   * @param game            the Game instance used in commands
    */
-  public UtilityCommands(MyWarp myWarp) {
+  public UtilityCommands(MyWarp myWarp, CommandHandler commandHandler, TeleportService teleportService, Game game) {
     this.myWarp = myWarp;
+    this.commandHandler = commandHandler;
+    this.teleportService = teleportService;
+    this.game = game;
   }
 
   /**
@@ -68,7 +79,7 @@ public class UtilityCommands {
   @Require("mywarp.cmd.help")
   @Billable(FeeType.HELP)
   public void help(Actor actor, @Optional("1") int page) {
-    Set<String> usableCommands = myWarp.getCommandHandler().getUsableCommands(actor);
+    Set<String> usableCommands = commandHandler.getUsableCommands(actor);
 
     StringPaginator.of(msg.getString("help.heading"), usableCommands).withNote(msg.getString("help.note")).paginate()
         .display(actor, page);
@@ -85,7 +96,7 @@ public class UtilityCommands {
   @Billable(FeeType.POINT)
   public void point(@Sender LocalPlayer player, @Optional @Name(USABLE) Warp warp) {
     if (warp != null) {
-      player.setCompassTarget(warp.getWorld(), warp.getPosition());
+      player.setCompassTarget(warp.getWorld(game), warp.getPosition());
       player.sendMessage(msg.getString("point.set", warp.getName()));
     } else {
       player.resetCompass();
@@ -104,7 +115,7 @@ public class UtilityCommands {
   @Require("mywarp.cmd.player")
   @Billable(FeeType.WARP_PLAYER)
   public void player(Actor actor, LocalPlayer teleportee, @Name(VIEWABLE) Warp warp) {
-    if (warp.teleport(teleportee).isPositionModified()) {
+    if (teleportService.teleport(teleportee, warp).isPositionModified()) {
       actor.sendMessage(msg.getString("warp-player.teleport-successful", teleportee.getName(), warp.getName()));
     } else {
       actor.sendError(msg.getString("warp-player.teleport-failed", teleportee.getName(), warp.getName()));

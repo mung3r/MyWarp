@@ -17,14 +17,14 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.limits;
+package me.taylorkelly.mywarp.limit;
 
 import com.google.common.collect.ImmutableSet;
 
 import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.limits.Limit.Type;
+import me.taylorkelly.mywarp.limit.Limit.Type;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * A LimitService that does absolutely nothing: <ul> <li>Limit evaluation will always result in a positive
@@ -75,7 +76,7 @@ public class DummyLimitService implements LimitService {
       }
 
       @Override
-      public boolean isAffectedWorld(LocalWorld world) {
+      public boolean isAffectedWorld(UUID worldIdentifer) {
         return true;
       }
 

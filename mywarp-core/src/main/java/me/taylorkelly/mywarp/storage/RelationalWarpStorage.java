@@ -32,11 +32,11 @@ import static org.jooq.impl.DSL.val;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.storage.generated.tables.Player;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.Warp.Type;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
@@ -66,18 +66,18 @@ import java.util.UUID;
  */
 class RelationalWarpStorage implements WarpStorage {
 
-  private final MyWarp myWarp;
   private final Configuration configuration;
+  private ProfileService profileService;
 
   /**
    * Creates an instance that uses the given {@code Configuration}.
    *
-   * @param myWarp        the MyWarp instance
-   * @param configuration the Configuration
+   * @param configuration  the Configuration
+   * @param profileService the ProfileService used to resolve stored profiles
    */
-  RelationalWarpStorage(MyWarp myWarp, Configuration configuration) {
-    this.myWarp = myWarp;
+  RelationalWarpStorage(Configuration configuration, ProfileService profileService) {
     this.configuration = configuration;
+    this.profileService = profileService;
   }
 
   /**
@@ -243,14 +243,14 @@ class RelationalWarpStorage implements WarpStorage {
     for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String,
         UUID, String>> r : groupedResults
         .values()) {
-      Profile creator = myWarp.getProfileService().getByUniqueId(r.getValue(0, creatorTable.UUID));
+      Profile creator = profileService.getByUniqueId(r.getValue(0, creatorTable.UUID));
 
       Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
       EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.PITCH), r.getValue(0, WARP.YAW), 0);
 
       WarpBuilder
           builder =
-          new WarpBuilder(myWarp, r.getValue(0, WARP.NAME), creator, r.getValue(0, WORLD.UUID), position, rotation);
+          new WarpBuilder(r.getValue(0, WARP.NAME), creator, r.getValue(0, WORLD.UUID), position, rotation);
 
       // optional values
       builder.setType(r.getValue(0, WARP.TYPE));
@@ -266,7 +266,7 @@ class RelationalWarpStorage implements WarpStorage {
 
       for (UUID inviteeUniqueId : r.getValues(PLAYER.UUID)) {
         if (inviteeUniqueId != null) {
-          Profile inviteeProfile = myWarp.getProfileService().getByUniqueId(inviteeUniqueId);
+          Profile inviteeProfile = profileService.getByUniqueId(inviteeUniqueId);
           builder.addInvitedPlayer(inviteeProfile);
         }
       }
@@ -486,7 +486,7 @@ class RelationalWarpStorage implements WarpStorage {
   private <R extends Record, T> Insert<R> insertOrIgnore(Configuration configuration, Table<R> table,
                                                          TableField<R, T> uniqueField, T value) {
     // @formatter:off
-    //TODO use onDuplicateKeyIgnore() in JOOQ 3.7
+    //XXX use onDuplicateKeyIgnore() in JOOQ 3.7
     return create(configuration)
         .insertInto(table)
         .columns(uniqueField)

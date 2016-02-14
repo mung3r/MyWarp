@@ -22,8 +22,8 @@ package me.taylorkelly.mywarp.storage;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.storage.generated.Tables;
+import me.taylorkelly.mywarp.util.profile.ProfileService;
 
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
@@ -51,47 +51,47 @@ public class WarpStorageFactory {
   }
 
   /**
-   * Creates a new {@code WarpStorage} to the given {@code DataSource}. <p>Use {@link #createInitialized(MyWarp,
-   * DataSource, ConnectionConfiguration)} to create an initialized {@code WarpStorage} that guarantees existence of
+   * Creates a new {@code WarpStorage} to the given {@code DataSource}. <p>Use {@link #createInitialized(DataSource,
+   * ConnectionConfiguration, ProfileService)} to create an initialized {@code WarpStorage} that guarantees existence of
    * MyWarp's table structure.</p>
    *
-   * @param myWarp     the MyWarp instance
-   * @param dataSource the DataSource
-   * @param config     the config
+   * @param dataSource     the DataSource
+   * @param config         the config
+   * @param profileService the ProfileService used by the created {@code WarpStorage} to resolve stored profiles
    * @return the {@code WarpStorage}
    * @throws StorageInitializationException if a database error occurs or the underling database management system is
    *                                        not supported
    */
-  public static WarpStorage create(MyWarp myWarp, DataSource dataSource, ConnectionConfiguration config)
+  public static WarpStorage create(DataSource dataSource, ConnectionConfiguration config, ProfileService profileService)
       throws StorageInitializationException {
     SQLDialect dialect = config.getDialect();
     if (!SUPPORTED_DIALECTS.contains(dialect)) {
       throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
     }
-    return createRelationalWarpStorage(myWarp, config.getDialect(), createSettings(config), dataSource);
+    return createRelationalWarpStorage(config.getDialect(), createSettings(config), dataSource, profileService);
   }
 
   /**
    * Creates a new initialized {@code WarpStorage} to the given {@code DataSource}, attempting to create or update
-   * MyWarp's table structure if necessary. <p>Use {@link #create(MyWarp, DataSource, ConnectionConfiguration)} to
-   * create a {@code WarpStorage} that does not create or update the table structure.</p>
+   * MyWarp's table structure if necessary. <p>Use {@link #create(DataSource, ConnectionConfiguration, ProfileService)}
+   * to create a {@code WarpStorage} that does not create or update the table structure.</p>
    *
-   * @param myWarp     the MyWarp instance
-   * @param dataSource the DataSource
-   * @param config     the config
+   * @param dataSource     the DataSource
+   * @param config         the config
+   * @param profileService the ProfileService used by the created {@code WarpStorage} to resolve stored profiles
    * @return the {@code WarpStorage}
    * @throws StorageInitializationException if a database error occurs, the underling database management system is not
    *                                        supported or initialization of MyWarp's table structure fails
    */
-  public static WarpStorage createInitialized(MyWarp myWarp, DataSource dataSource, ConnectionConfiguration config)
-      throws StorageInitializationException {
+  public static WarpStorage createInitialized(DataSource dataSource, ConnectionConfiguration config,
+                                              ProfileService profileService) throws StorageInitializationException {
     SQLDialect dialect = config.getDialect();
     if (!SUPPORTED_DIALECTS.contains(dialect)) {
       throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
     }
 
     Flyway flyway = new Flyway();
-    flyway.setClassLoader(myWarp.getClass().getClassLoader());
+    flyway.setClassLoader(config.getClass().getClassLoader());
     flyway.setDataSource(dataSource);
     flyway.setLocations(getMigrationLocation(dialect));
 
@@ -108,19 +108,20 @@ public class WarpStorageFactory {
       throw new StorageInitializationException("Failed to execute migration process.", e);
     }
 
-    return createRelationalWarpStorage(myWarp, dialect, createSettings(config), dataSource);
+    return createRelationalWarpStorage(dialect, createSettings(config), dataSource, profileService);
   }
 
   /**
    * Creates a new {@code RelationalWarpStorage} using the given parameters.
    *
-   * @param myWarp     the MyWarp instance
    * @param dataSource the DataSource
    * @return a new {@code RelationalWarpStorage}
    */
-  private static RelationalWarpStorage createRelationalWarpStorage(MyWarp myWarp, SQLDialect dialect, Settings settings,
-                                                                   DataSource dataSource) {
-    return new RelationalWarpStorage(myWarp, new DefaultConfiguration().set(dialect).set(settings).set(dataSource));
+  private static RelationalWarpStorage createRelationalWarpStorage(SQLDialect dialect, Settings settings,
+                                                                   DataSource dataSource,
+                                                                   ProfileService profileService) {
+    return new RelationalWarpStorage(new DefaultConfiguration().set(dialect).set(settings).set(dataSource),
+                                     profileService);
   }
 
   /**

@@ -33,8 +33,10 @@ import com.sk89q.intake.util.auth.AuthorizationException;
 import com.sk89q.intake.util.i18n.ResourceProvider;
 
 import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.Platform;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.definition.ImportCommands;
 import me.taylorkelly.mywarp.command.definition.InformativeCommands;
 import me.taylorkelly.mywarp.command.definition.ManagementCommands;
@@ -53,8 +55,16 @@ import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding;
 import me.taylorkelly.mywarp.command.parametric.binding.ProfileBinding;
 import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding;
 import me.taylorkelly.mywarp.command.parametric.economy.EconomyInvokeHandler;
+import me.taylorkelly.mywarp.economy.EconomyService;
+import me.taylorkelly.mywarp.limit.LimitService;
+import me.taylorkelly.mywarp.teleport.TeleportService;
+import me.taylorkelly.mywarp.timer.DurationProvider;
+import me.taylorkelly.mywarp.timer.TimerService;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.util.profile.ProfileService;
+import me.taylorkelly.mywarp.warp.WarpManager;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.slf4j.Logger;
@@ -77,18 +87,33 @@ public class CommandHandler {
 
   /**
    * Creates an instance. Commands will hook into the given MyWarp instance.
-   *
-   * @param myWarp the MyWarp instance
    */
   public CommandHandler(MyWarp myWarp) {
+    this(myWarp, myWarp.getPlatform());
+  }
 
-    Platform platform = myWarp.getPlatform();
+  /**
+   * Creates an instance. Commands will hook into the given MyWarp instance.
+   */
+  protected CommandHandler(MyWarp myWarp, Platform platform) {
+    this(myWarp, platform, myWarp.getWarpManager(), myWarp.getAuthorizationService(), platform.getDurationProvider(),
+         myWarp.getEconomyService(), myWarp.getLimitService(), platform.getProfileService(),
+         myWarp.getTeleportService(), platform.getTimerService(), myWarp.getGame(), myWarp.getSettings());
+  }
+
+  /**
+   * Creates an instance. Commands will hook into the given MyWarp instance.
+   */
+  protected CommandHandler(MyWarp myWarp, Platform platform, WarpManager warpManager,
+                           AuthorizationService authorizationService, DurationProvider durationProvider,
+                           EconomyService economyService, LimitService limitService, ProfileService profileService,
+                           TeleportService teleportService, TimerService timerService, Game game, Settings settings) {
 
     // command registration
     ResourceProvider resourceProvider = new IntakeResourceProvider(platform.getResourceBundleControl());
     ExceptionConverter exceptionConverter = new ExceptionConverter();
-    PlayerBinding playerBinding = new PlayerBinding(platform.getGame());
-    WarpBinding warpBinding = new WarpBinding(myWarp.getWarpManager(), myWarp.getAuthorizationService());
+    PlayerBinding playerBinding = new PlayerBinding(game);
+    WarpBinding warpBinding = new WarpBinding(warpManager, authorizationService);
 
     ParametricBuilder builder = new ParametricBuilder(resourceProvider);
     builder.setAuthorizer(new ActorAuthorizer());
@@ -97,13 +122,15 @@ public class CommandHandler {
     builder.addBinding(new ConnectionConfigurationBinding());
     builder.addBinding(new FileBinding(platform.getDataFolder()));
     builder.addBinding(playerBinding);
-    builder.addBinding(new ProfileBinding(platform.getProfileService()));
+    builder.addBinding(new ProfileBinding(profileService));
     builder.addBinding(warpBinding);
     builder.addExceptionConverter(exceptionConverter);
 
-    builder.addInvokeListener(new EconomyInvokeHandler(myWarp.getEconomyService()));
+    builder.addInvokeListener(new EconomyInvokeHandler(economyService));
 
-    UsageCommands usageCommands = new UsageCommands(myWarp);
+    UsageCommands
+        usageCommands =
+        new UsageCommands(teleportService, settings, economyService, timerService, durationProvider, game);
 
     //XXX this should be covered by unit tests
     CommandCallable fallback = Iterables.getOnlyElement(builder.build(usageCommands).values());
@@ -114,17 +141,13 @@ public class CommandHandler {
               .registerMethods(usageCommands)
               .group(new FallbackDispatcher(resourceProvider, fallback), "warp", "myWarp", "mw")
                 .describeAs("warp-to.description")
-                .registerMethods(new InformativeCommands(myWarp.getLimitService(), platform.getSettings(),
-                                                         myWarp.getWarpManager(),
-                                                         myWarp.getAuthorizationService()))
-                .registerMethods(new ManagementCommands(myWarp))
-                .registerMethods(new SocialCommands(platform.getGame(),
-                                                    myWarp.getLimitService(),
-                                                    platform.getProfileService()))
-                .registerMethods(new UtilityCommands(myWarp))
+                .registerMethods(new InformativeCommands(warpManager,limitService, authorizationService,game, settings))
+                .registerMethods(new ManagementCommands(warpManager, this, limitService ))
+                .registerMethods(new SocialCommands(limitService, profileService ,game))
+                .registerMethods(new UtilityCommands(myWarp, this, teleportService, game))
                 .group("import", "migrate")
                   .describeAs("import.description")
-                  .registerMethods(new ImportCommands(myWarp))
+                  .registerMethods(new ImportCommands(warpManager, platform, profileService,  game))
               .graph()
             .getDispatcher();
     // @formatter:on
@@ -230,7 +253,7 @@ public class CommandHandler {
    * Adds a all commands from the given CommandMapping to the given Collection, transforming them into Strings that
    * include the full command string as the user would enter it. Commands that are not usable under the given
    * CommandLocals are excluded and the given prefix is added before all commands. <p>This algorithm actually calls
-   * every Command, it is <b> not</b> lazy.</p>
+   * every Command, it is <b>not</b> lazy.</p>
    *
    * @param entries the Collection the Commands are added to
    * @param locals  the CommandLocals

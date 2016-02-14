@@ -21,10 +21,11 @@ package me.taylorkelly.mywarp.timer;
 
 import com.google.common.base.Optional;
 
+import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
+import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.CommandHandler;
-import me.taylorkelly.mywarp.economy.FeeProvider;
+import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
@@ -40,49 +41,54 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
-  private final MyWarp myWarp;
   private final Warp warp;
   private final Vector3 initialPosition;
   private final double initialHealth;
+  private final Settings settings;
+  private final Game game;
+  private final TeleportService teleportService;
+  private DurationProvider durationProvider;
+  private TimerService timerService;
 
   /**
    * Creates an instance for the given {@code player} and {@code warp}.
    *
-   * @param myWarp the MyWarp instance
-   * @param player the player who is cooling down
-   * @param warp   the warp that the player wants to use
+   * @param player           the player who is cooling down
+   * @param warp             the warp that the player wants to use
+   * @param timerService     the timer service used to schedule the cooldown (if any)
+   * @param durationProvider the duration provider that provides duration for the cooldown (if any)
    */
-  public WarpWarmup(MyWarp myWarp, LocalPlayer player, Warp warp) {
+  public WarpWarmup(LocalPlayer player, Warp warp, Settings settings, Game game, TeleportService teleportService,
+                    TimerService timerService, DurationProvider durationProvider) {
     super(player.getProfile());
-    this.myWarp = myWarp;
     this.warp = warp;
+    this.settings = settings;
+    this.game = game;
+    this.teleportService = teleportService;
+    this.timerService = timerService;
+    this.durationProvider = durationProvider;
     this.initialPosition = player.getPosition();
     this.initialHealth = player.getHealth();
   }
 
   @Override
   public void run() {
-    Optional<LocalPlayer> optionalPlayer = myWarp.getGame().getPlayer(getTimedSuject().getUniqueId());
+    Optional<LocalPlayer> optionalPlayer = game.getPlayer(getTimedSuject().getUniqueId());
     if (!optionalPlayer.isPresent()) {
       return;
     }
     LocalPlayer player = optionalPlayer.get();
     LocaleManager.setLocale(player.getLocale());
 
-    if (myWarp.getSettings().isEconomyEnabled()) {
-      if (myWarp.getEconomyService().hasAtLeast(player, FeeProvider.FeeType.WARP_TO)) {
-        return;
-      }
+    if (teleportService.teleport(player, warp).isPositionModified()) {
+      Duration duration = durationProvider.getDuration(player, WarpCooldown.class);
+      timerService.start(player.getProfile(), duration, new WarpCooldown(player, game, settings));
     }
-
-    warp.teleport(player, FeeProvider.FeeType.WARP_TO);
-    Duration duration = myWarp.getPlatform().getDurationProvider().getDuration(player, WarpCooldown.class);
-    myWarp.getPlatform().getTimerService().start(player.getProfile(), duration, new WarpCooldown(myWarp, player));
   }
 
   @Override
   public boolean abort() {
-    Optional<LocalPlayer> player = myWarp.getGame().getPlayer(getTimedSuject().getUniqueId());
+    Optional<LocalPlayer> player = game.getPlayer(getTimedSuject().getUniqueId());
     // player is not online, but might re-login so the timer continues
     return player.isPresent() && (abortOnMove(player.get()) || abortOnDamage(player.get()));
   }
@@ -94,8 +100,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnMove(LocalPlayer player) {
-    if (!myWarp.getSettings().isTimersWarmupAbortOnMove() || player
-        .hasPermission("mywarp.timer.disobey.warmup-abort.move")) {
+    if (!settings.isTimersWarmupAbortOnMove() || player.hasPermission("mywarp.timer.disobey.warmup-abort.move")) {
       return false;
     }
     if (player.getPosition().distanceSquared(initialPosition) <= Math.pow(ALLOWED_DISTANCE, 2)) {
@@ -113,8 +118,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    * @return true if the warmup should be aborted
    */
   private boolean abortOnDamage(LocalPlayer player) {
-    if (!myWarp.getSettings().isTimersWarmupAbortOnDamage() || player
-        .hasPermission("mywarp.timer.disobey.warmup-abort.damage")) {
+    if (!settings.isTimersWarmupAbortOnDamage() || player.hasPermission("mywarp.timer.disobey.warmup-abort.damage")) {
       return false;
     }
     if (player.getHealth() >= initialHealth) {

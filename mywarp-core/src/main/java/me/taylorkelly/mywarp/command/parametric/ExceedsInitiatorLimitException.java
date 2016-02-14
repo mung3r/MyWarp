@@ -19,8 +19,8 @@
 
 package me.taylorkelly.mywarp.command.parametric;
 
-import me.taylorkelly.mywarp.limits.Limit;
-import me.taylorkelly.mywarp.limits.Limit.Type;
+import me.taylorkelly.mywarp.limit.Limit;
+import me.taylorkelly.mywarp.limit.Limit.Type;
 
 /**
  * Indicates that an action exceeds or would exceed the limit of the initiator himself.
