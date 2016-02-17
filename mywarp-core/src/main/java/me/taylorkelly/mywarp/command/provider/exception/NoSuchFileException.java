@@ -17,22 +17,26 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.command.parametric.economy;
+package me.taylorkelly.mywarp.command.provider.exception;
 
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.io.File;
 
 /**
- * Annotates a method that withdraws a certain fee from callers once executed successfully.
+ * Thrown when the given input does not match an existing {@link File}.
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Billable {
+public class NoSuchFileException extends NonMatchingInputException {
 
-  /**
-   * The FeeType referencing the fee.
-   */
-  FeeType value();
+  private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
+  public NoSuchFileException(File nonExisting) {
+    super(nonExisting.getAbsolutePath());
+  }
+
+  @Override
+  public String getLocalizedMessage() {
+    return msg.getString("exception.file-not-found", getInput());
+  }
 }

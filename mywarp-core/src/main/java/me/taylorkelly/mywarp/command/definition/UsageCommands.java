@@ -19,16 +19,17 @@
 
 package me.taylorkelly.mywarp.command.definition;
 
+import static me.taylorkelly.mywarp.command.annotation.Name.Condition.USABLE;
+
 import com.sk89q.intake.Command;
+import com.sk89q.intake.Default;
 import com.sk89q.intake.Require;
 
 import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.Settings;
-import me.taylorkelly.mywarp.command.parametric.TimerRunningException;
-import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding.Sender;
-import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name;
-import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name.Condition;
+import me.taylorkelly.mywarp.command.annotation.Name;
+import me.taylorkelly.mywarp.command.annotation.Sender;
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.FeeProvider;
 import me.taylorkelly.mywarp.teleport.EconomyTeleportService;
@@ -42,6 +43,8 @@ import me.taylorkelly.mywarp.warp.Warp;
  * Bundles usage commands.
  */
 public class UsageCommands {
+
+  private static final String CMD_TO_PERMISSION = "mywarp.cmd.to";
 
   private final TeleportService teleportService;
 
@@ -68,13 +71,33 @@ public class UsageCommands {
    *
    * @param player the LocalPlayer
    * @param warp   the Warp
-   * @throws TimerRunningException if timers are enabled and a timer is already running for the player using this
-   *                               command
    */
   @Command(aliases = {"to"}, desc = "warp-to.description")
-  @Require("mywarp.cmd.to")
-  public void to(@Sender LocalPlayer player, @Name(Condition.USABLE) Warp warp) throws TimerRunningException {
+  @Require(CMD_TO_PERMISSION)
+  public void to(@Sender LocalPlayer player, @Name(USABLE) Warp warp) {
     teleportService.teleport(player, warp);
   }
 
+  /**
+   * The default usage command.
+   * <p/>
+   * This class contains a single method to be used as a default method for a sub-command.
+   *
+   * @see Default
+   */
+  public class DefaultUsageCommand {
+
+    /**
+     * Teleports a player to a Warp.
+     *
+     * @param player the LocalPlayer
+     * @param warp   the Warp
+     */
+    @Command(aliases = {"to"}, desc = "warp-to.description")
+    @Default(defaultOnly = true)
+    @Require(UsageCommands.CMD_TO_PERMISSION)
+    public void to(@Sender LocalPlayer player, @Name(USABLE) Warp warp) {
+      UsageCommands.this.to(player, warp);
+    }
+  }
 }

@@ -137,14 +137,14 @@ public class AssetsPrinter {
    *
    * @param builder       the builder
    * @param warpCount     the warp-count
-   * @param limitMaxiumum the limit-maximum
+   * @param limitMaximum the limit-maximum
    * @return builder with appended contents
    */
-  private Message.Builder warpLimitCount(Message.Builder builder, int warpCount, int limitMaxiumum) {
+  private Message.Builder warpLimitCount(Message.Builder builder, int warpCount, int limitMaximum) {
     builder.append("(");
     builder.append(warpCount);
     if (settings.isLimitsEnabled()) {
-      builder.append('/').append(limitMaxiumum);
+      builder.append('/').append(limitMaximum);
     }
     builder.append(")");
     return builder;

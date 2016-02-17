@@ -17,36 +17,23 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.command.parametric;
+package me.taylorkelly.mywarp.command;
 
 import com.sk89q.intake.util.i18n.ResourceProvider;
 
-import me.taylorkelly.mywarp.util.i18n.LocaleManager;
-
-import java.util.ResourceBundle;
+import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 /**
- * Provides internal resources to Intake.
+ * Provides resources to commands.
  *
  * @see me.taylorkelly.mywarp.util.i18n.DynamicMessages
  */
-public class IntakeResourceProvider implements ResourceProvider {
+class CommandResourceProvider implements ResourceProvider {
 
-  private static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Intake";
-
-  private final ResourceBundle.Control control;
-
-  /**
-   * Creates an instance using the given ResourceBundle.Control to control the ResourceBundle loading.
-   *
-   * @param control the ResourceBundle.Control
-   */
-  public IntakeResourceProvider(ResourceBundle.Control control) {
-    this.control = control;
-  }
+  private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   @Override
-  public ResourceBundle getBundle() {
-    return ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, LocaleManager.getLocale(), control);
+  public String getString(String key) {
+    return msg.getString(key);
   }
 }

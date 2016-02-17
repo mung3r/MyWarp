@@ -64,6 +64,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -202,6 +203,24 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
 
     myWarp.getCommandHandler().callCommand(builder.toString(), actor);
     return true;
+  }
+
+  @Override
+  public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    Actor actor = wrap(sender);
+
+    // set the locale for this command session
+    LocaleManager.setLocale(actor.getLocale());
+
+    // create the command string
+    StrBuilder builder = new StrBuilder();
+    builder.append(alias);
+    for (String argument : args) {
+      builder.appendSeparator(' ');
+      builder.append(argument);
+    }
+
+    return myWarp.getCommandHandler().getSuggestions(builder.toString(), actor);
   }
 
   // -- custom methods

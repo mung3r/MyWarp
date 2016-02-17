@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.command.definition;
 
+import static me.taylorkelly.mywarp.command.annotation.Name.Condition.VIEWABLE;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -36,13 +38,12 @@ import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.command.annotation.Billable;
+import me.taylorkelly.mywarp.command.annotation.Name;
 import me.taylorkelly.mywarp.command.paginator.StringPaginator;
-import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding.IllegalCommandSenderException;
-import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name;
-import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name.Condition;
-import me.taylorkelly.mywarp.command.parametric.economy.Billable;
 import me.taylorkelly.mywarp.command.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.command.printer.InfoPrinter;
+import me.taylorkelly.mywarp.command.provider.exception.IllegalCommandSenderException;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
@@ -109,8 +110,8 @@ public class InformativeCommands {
     } else if (!actor.hasPermission("mywarp.cmd.assets")) {
       throw new AuthorizationException();
     }
-    new AssetsPrinter(creator, limitService, settings).print(actor);
 
+    new AssetsPrinter(creator, limitService, settings).print(actor);
   }
 
   /**
@@ -224,7 +225,7 @@ public class InformativeCommands {
   @Command(aliases = {"info", "stats"}, desc = "info.description", help = "info.help")
   @Require("mywarp.cmd.info")
   @Billable(FeeType.INFO)
-  public void info(Actor actor, @Name(Condition.VIEWABLE) Warp warp) {
+  public void info(Actor actor, @Name(VIEWABLE) Warp warp) {
     new InfoPrinter(warp, authorizationService, game).print(actor);
   }
 }

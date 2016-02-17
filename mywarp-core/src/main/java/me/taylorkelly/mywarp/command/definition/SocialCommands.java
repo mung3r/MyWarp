@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.command.definition;
 
+import static me.taylorkelly.mywarp.command.annotation.Name.Condition.MODIFIABLE;
+
 import com.google.common.base.Optional;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
@@ -30,13 +32,12 @@ import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.command.CommandHandler;
-import me.taylorkelly.mywarp.command.parametric.ExceedsInitiatorLimitException;
-import me.taylorkelly.mywarp.command.parametric.ExceedsLimitException;
-import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding.NoSuchPlayerException;
-import me.taylorkelly.mywarp.command.parametric.binding.ProfileBinding.NoSuchProfileException;
-import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name;
-import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name.Condition;
-import me.taylorkelly.mywarp.command.parametric.economy.Billable;
+import me.taylorkelly.mywarp.command.ExceedsInitiatorLimitException;
+import me.taylorkelly.mywarp.command.ExceedsLimitException;
+import me.taylorkelly.mywarp.command.annotation.Billable;
+import me.taylorkelly.mywarp.command.annotation.Name;
+import me.taylorkelly.mywarp.command.provider.exception.NoSuchPlayerException;
+import me.taylorkelly.mywarp.command.provider.exception.NoSuchProfileException;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
@@ -86,7 +87,7 @@ public class SocialCommands {
   @Require("mywarp.cmd.give")
   @Billable(FeeType.GIVE)
   public void give(Actor actor, @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits, Profile receiver,
-                   @Name(Condition.MODIFIABLE) Warp warp)
+                   @Name(MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException, ExceedsLimitException {
     if (warp.isCreator(receiver)) {
       throw new CommandException("give.is-owner");
@@ -149,7 +150,7 @@ public class SocialCommands {
   @Command(aliases = {"private"}, desc = "private.description", help = "private.help")
   @Require("mywarp.cmd.private")
   @Billable(FeeType.PRIVATE)
-  public void privatize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(Condition.MODIFIABLE) Warp warp)
+  public void privatize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException, ExceedsInitiatorLimitException,
              ExceedsLimitException {
     if (warp.isType(Warp.Type.PRIVATE)) {
@@ -199,7 +200,7 @@ public class SocialCommands {
   @Command(aliases = {"public"}, desc = "public.description", help = "public.help")
   @Require("mywarp.cmd.public")
   @Billable(FeeType.PUBLIC)
-  public void publicize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(Condition.MODIFIABLE) Warp warp)
+  public void publicize(Actor actor, @Switch('f') boolean ignoreLimits, @Name(MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchPlayerException, ExceedsInitiatorLimitException,
              ExceedsLimitException {
     if (warp.isType(Warp.Type.PUBLIC)) {
@@ -247,7 +248,7 @@ public class SocialCommands {
   @Require("mywarp.cmd.invite")
   @Billable(FeeType.INVITE)
   public void invite(Actor actor, @Switch('g') boolean groupInvite, String inviteeIdentifier,
-                     @Name(Condition.MODIFIABLE) Warp warp)
+                     @Name(MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.cmd.invite.group")) {
@@ -316,7 +317,7 @@ public class SocialCommands {
   @Require("mywarp.cmd.uninvite")
   @Billable(FeeType.UNINVITE)
   public void uninvite(Actor actor, @Switch('g') boolean groupInvite, String uninviteeIdentifier,
-                       @Name(Condition.MODIFIABLE) Warp warp)
+                       @Name(MODIFIABLE) Warp warp)
       throws CommandException, AuthorizationException, NoSuchProfileException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.cmd.uninvite.group")) {

@@ -17,19 +17,24 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.command.parametric;
+package me.taylorkelly.mywarp.command;
+
+import com.sk89q.intake.CommandException;
 
 import me.taylorkelly.mywarp.limit.Limit;
 import me.taylorkelly.mywarp.limit.Limit.Type;
+import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+
+import org.apache.commons.lang.text.StrBuilder;
 
 /**
  * Indicates that an action exceeds or would exceed the limit of the initiator himself.
  *
  * @see ExceedsLimitException for an Exception thrown when the limit is unknown by the initiator
  */
-public class ExceedsInitiatorLimitException extends Exception {
+public class ExceedsInitiatorLimitException extends CommandException {
 
-  private static final long serialVersionUID = 1167613312996698929L;
+  private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final Limit.Type exceededLimit;
   private final int limitMaximum;
@@ -63,4 +68,23 @@ public class ExceedsInitiatorLimitException extends Exception {
     return limitMaximum;
   }
 
+  @Override
+  public String getLocalizedMessage() {
+    StrBuilder builder = new StrBuilder();
+
+    switch (exceededLimit) {
+      case TOTAL:
+        builder.append(msg.getString("exception.exceeds-initiator-limit.total", limitMaximum));
+        break;
+      case PRIVATE:
+        builder.append(msg.getString("exception.exceeds-initiator-limit.private", limitMaximum));
+        break;
+      case PUBLIC:
+        builder.append(msg.getString("exception.exceeds-initiator-limit.public", limitMaximum));
+        break;
+    }
+    builder.appendNewLine();
+    builder.append(msg.getString("exception.exceeds-initiator-limit.delete-warps"));
+    return builder.toString();
+  }
 }

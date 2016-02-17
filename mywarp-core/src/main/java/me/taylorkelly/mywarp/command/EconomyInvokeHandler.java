@@ -17,28 +17,31 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.command.parametric.economy;
+package me.taylorkelly.mywarp.command;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import com.sk89q.intake.CommandException;
-import com.sk89q.intake.context.CommandContext;
-import com.sk89q.intake.context.CommandLocals;
-import com.sk89q.intake.parametric.ParameterData;
-import com.sk89q.intake.parametric.ParameterException;
+import com.sk89q.intake.argument.ArgumentException;
+import com.sk89q.intake.argument.CommandArgs;
+import com.sk89q.intake.parametric.ArgumentParser;
 import com.sk89q.intake.parametric.handler.AbstractInvokeListener;
 import com.sk89q.intake.parametric.handler.InvokeHandler;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.LocalPlayer;
+import me.taylorkelly.mywarp.command.annotation.Billable;
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import me.taylorkelly.mywarp.util.IterableUtils;
 
-import java.lang.reflect.Method;
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
- * By registering this InvokeHandler at a {@link com.sk89q.intake.parametric.ParametricBuilder}, command methods created
- * by this builder will require a certain fee when used if the method is annotated with {@link Billable}.
+ * Makes commands require a certain fee if annotated with with {@link Billable}.
  */
-public class EconomyInvokeHandler extends AbstractInvokeListener implements InvokeHandler {
+class EconomyInvokeHandler extends AbstractInvokeListener implements InvokeHandler {
 
   private final EconomyService economyService;
 
@@ -57,39 +60,42 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
   }
 
   @Override
-  public boolean preProcess(Object object, Method method, ParameterData[] parameters, CommandContext context,
-                            CommandLocals locals) throws CommandException, ParameterException {
+  public boolean preProcess(List<? extends Annotation> annotations, ArgumentParser parser, CommandArgs commandArgs)
+      throws CommandException, ArgumentException {
     return true;
   }
 
   @Override
-  public boolean preInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
-                           CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
-    if (!method.isAnnotationPresent(Billable.class)) {
+  public boolean preInvoke(List<? extends Annotation> annotations, ArgumentParser parser, Object[] args,
+                           CommandArgs commandArgs) throws CommandException, ArgumentException {
+    Optional<Billable> billable = IterableUtils.getFirst(Iterables.filter(annotations, Billable.class));
+    if (!billable.isPresent()) {
       return true;
     }
-    Actor actor = locals.get(Actor.class);
+
+    Actor actor = commandArgs.getNamespace().get(Actor.class);
     if (actor == null || !(actor instanceof LocalPlayer)) {
       return true;
     }
 
-    FeeType feeType = method.getAnnotation(Billable.class).value();
+    FeeType feeType = billable.get().value();
     return economyService.hasAtLeast((LocalPlayer) actor, feeType);
   }
 
   @Override
-  public void postInvoke(Object object, Method method, ParameterData[] parameters, Object[] args,
-                         CommandContext context, CommandLocals locals) throws CommandException, ParameterException {
-    if (!method.isAnnotationPresent(Billable.class)) {
+  public void postInvoke(List<? extends Annotation> annotations, ArgumentParser parser, Object[] args,
+                         CommandArgs commandArgs) throws CommandException, ArgumentException {
+    Optional<Billable> billable = IterableUtils.getFirst(Iterables.filter(annotations, Billable.class));
+    if (!billable.isPresent()) {
       return;
     }
-    Actor actor = locals.get(Actor.class);
+
+    Actor actor = commandArgs.getNamespace().get(Actor.class);
     if (actor == null || !(actor instanceof LocalPlayer)) {
       return;
     }
 
-    FeeType feeType = method.getAnnotation(Billable.class).value();
+    FeeType feeType = billable.get().value();
     economyService.withdraw((LocalPlayer) actor, feeType);
   }
-
 }

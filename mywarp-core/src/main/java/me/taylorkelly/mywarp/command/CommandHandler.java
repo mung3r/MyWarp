@@ -19,18 +19,21 @@
 
 package me.taylorkelly.mywarp.command;
 
-import com.google.common.collect.Iterables;
 import com.sk89q.intake.CommandCallable;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.CommandMapping;
+import com.sk89q.intake.Intake;
 import com.sk89q.intake.InvalidUsageException;
 import com.sk89q.intake.InvocationCommandException;
-import com.sk89q.intake.context.CommandLocals;
+import com.sk89q.intake.argument.Namespace;
 import com.sk89q.intake.dispatcher.Dispatcher;
+import com.sk89q.intake.dispatcher.NoSubcommandsException;
+import com.sk89q.intake.dispatcher.SubcommandRequiredException;
 import com.sk89q.intake.fluent.CommandGraph;
+import com.sk89q.intake.parametric.Injector;
 import com.sk89q.intake.parametric.ParametricBuilder;
+import com.sk89q.intake.parametric.provider.PrimitivesModule;
 import com.sk89q.intake.util.auth.AuthorizationException;
-import com.sk89q.intake.util.i18n.ResourceProvider;
 
 import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.Game;
@@ -43,23 +46,14 @@ import me.taylorkelly.mywarp.command.definition.ManagementCommands;
 import me.taylorkelly.mywarp.command.definition.SocialCommands;
 import me.taylorkelly.mywarp.command.definition.UsageCommands;
 import me.taylorkelly.mywarp.command.definition.UtilityCommands;
-import me.taylorkelly.mywarp.command.parametric.ActorAuthorizer;
-import me.taylorkelly.mywarp.command.parametric.CommandResourceProvider;
-import me.taylorkelly.mywarp.command.parametric.ExceptionConverter;
-import me.taylorkelly.mywarp.command.parametric.FallbackDispatcher;
-import me.taylorkelly.mywarp.command.parametric.IntakeResourceProvider;
-import me.taylorkelly.mywarp.command.parametric.binding.ActorBindung;
-import me.taylorkelly.mywarp.command.parametric.binding.ConnectionConfigurationBinding;
-import me.taylorkelly.mywarp.command.parametric.binding.FileBinding;
-import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding;
-import me.taylorkelly.mywarp.command.parametric.binding.ProfileBinding;
-import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding;
-import me.taylorkelly.mywarp.command.parametric.economy.EconomyInvokeHandler;
+import me.taylorkelly.mywarp.command.provider.BaseModule;
+import me.taylorkelly.mywarp.command.provider.magic.ProvidedModule;
 import me.taylorkelly.mywarp.economy.EconomyService;
 import me.taylorkelly.mywarp.limit.LimitService;
 import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.timer.DurationProvider;
 import me.taylorkelly.mywarp.timer.TimerService;
+import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.ProfileService;
@@ -69,7 +63,10 @@ import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
 import org.apache.commons.lang.text.StrBuilder;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -79,6 +76,7 @@ import java.util.TreeSet;
 public class CommandHandler {
 
   public static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Commands";
+  private static final char CMD_PREFIX = '/';
 
   private static final DynamicMessages msg = new DynamicMessages(RESOURCE_BUNDLE_NAME);
   private static final Logger log = MyWarpLogger.getLogger(CommandHandler.class);
@@ -95,7 +93,7 @@ public class CommandHandler {
   /**
    * Creates an instance. Commands will hook into the given MyWarp instance.
    */
-  protected CommandHandler(MyWarp myWarp, Platform platform) {
+  private CommandHandler(MyWarp myWarp, Platform platform) {
     this(myWarp, platform, myWarp.getWarpManager(), myWarp.getAuthorizationService(), platform.getDurationProvider(),
          myWarp.getEconomyService(), myWarp.getLimitService(), platform.getProfileService(),
          myWarp.getTeleportService(), platform.getTimerService(), myWarp.getGame(), myWarp.getSettings());
@@ -104,53 +102,58 @@ public class CommandHandler {
   /**
    * Creates an instance. Commands will hook into the given MyWarp instance.
    */
-  protected CommandHandler(MyWarp myWarp, Platform platform, WarpManager warpManager,
-                           AuthorizationService authorizationService, DurationProvider durationProvider,
-                           EconomyService economyService, LimitService limitService, ProfileService profileService,
-                           TeleportService teleportService, TimerService timerService, Game game, Settings settings) {
+  private CommandHandler(MyWarp myWarp, Platform platform, WarpManager warpManager,
+                         AuthorizationService authorizationService, DurationProvider durationProvider,
+                         EconomyService economyService, LimitService limitService, ProfileService profileService,
+                         TeleportService teleportService, TimerService timerService, Game game, Settings settings) {
 
-    // command registration
-    ResourceProvider resourceProvider = new IntakeResourceProvider(platform.getResourceBundleControl());
-    ExceptionConverter exceptionConverter = new ExceptionConverter();
-    PlayerBinding playerBinding = new PlayerBinding(game);
-    WarpBinding warpBinding = new WarpBinding(warpManager, authorizationService);
+    // create injector and register modules
+    Injector injector = Intake.createInjector();
+    injector.install(new PrimitivesModule());
+    injector.install(new ProvidedModule());
+    injector.install(
+        new BaseModule(warpManager, authorizationService, profileService, game, this, platform.getDataFolder()));
 
-    ParametricBuilder builder = new ParametricBuilder(resourceProvider);
+    //create the builder
+    ParametricBuilder builder = new ParametricBuilder(injector);
     builder.setAuthorizer(new ActorAuthorizer());
-    builder.setExternalResourceProvider(new CommandResourceProvider(platform.getResourceBundleControl()));
-    builder.addBinding(new ActorBindung());
-    builder.addBinding(new ConnectionConfigurationBinding());
-    builder.addBinding(new FileBinding(platform.getDataFolder()));
-    builder.addBinding(playerBinding);
-    builder.addBinding(new ProfileBinding(profileService));
-    builder.addBinding(warpBinding);
-    builder.addExceptionConverter(exceptionConverter);
-
+    builder.setResourceProvider(new CommandResourceProvider());
+    builder.addExceptionConverter(new ExceptionConverter());
     builder.addInvokeListener(new EconomyInvokeHandler(economyService));
 
-    UsageCommands
-        usageCommands =
+    //create some command instances to be used below
+    UsageCommands usageCmd =
         new UsageCommands(teleportService, settings, economyService, timerService, durationProvider, game);
+    UsageCommands.DefaultUsageCommand defaultUsageCmd = usageCmd.new DefaultUsageCommand();
 
-    //XXX this should be covered by unit tests
-    CommandCallable fallback = Iterables.getOnlyElement(builder.build(usageCommands).values());
+    //register commands
+    dispatcher =
+        new CommandGraph().builder(builder).commands().registerMethods(usageCmd).group("warp", "mywarp", "mw")
+            .registerMethods(defaultUsageCmd)
+            .registerMethods(new InformativeCommands(warpManager, limitService, authorizationService, game, settings))
+            .registerMethods(new ManagementCommands(warpManager, limitService))
+            .registerMethods(new SocialCommands(limitService, profileService, game))
+            .registerMethods(new UtilityCommands(myWarp, this, teleportService, game)).group("import", "migrate")
+            .registerMethods(new ImportCommands(warpManager, platform, profileService, game)).graph().getDispatcher();
+  }
 
-    // @formatter:off
-    dispatcher = new CommandGraph(resourceProvider).builder(builder)
-            .commands()
-              .registerMethods(usageCommands)
-              .group(new FallbackDispatcher(resourceProvider, fallback), "warp", "myWarp", "mw")
-                .describeAs("warp-to.description")
-                .registerMethods(new InformativeCommands(warpManager,limitService, authorizationService,game, settings))
-                .registerMethods(new ManagementCommands(warpManager, this, limitService ))
-                .registerMethods(new SocialCommands(limitService, profileService ,game))
-                .registerMethods(new UtilityCommands(myWarp, this, teleportService, game))
-                .group("import", "migrate")
-                  .describeAs("import.description")
-                  .registerMethods(new ImportCommands(warpManager, platform, profileService,  game))
-              .graph()
-            .getDispatcher();
-    // @formatter:on
+  /**
+   * Gets a list of suggestions based on the given {@code arguments}.
+   * <p/>
+   * Most appropriate suggestions will come first, less appropriate after. If no suggestions are appropiate, an empty
+   * list will be returned.
+   *
+   * @param arguments the arguments already given by the user
+   * @param caller    the command caller
+   * @return a list of suggestions
+   */
+  public List<String> getSuggestions(String arguments, Actor caller) {
+    try {
+      return dispatcher.getSuggestions(arguments, createNamespace(caller));
+    } catch (CommandException e) {
+      caller.sendMessage(e.getLocalizedMessage());
+    }
+    return Collections.emptyList();
   }
 
   /**
@@ -160,44 +163,56 @@ public class CommandHandler {
    * @param caller  the calling Actor
    */
   public void callCommand(String command, Actor caller) {
-    // create the CommandLocals
-    CommandLocals locals = new CommandLocals();
-    locals.put(Actor.class, caller);
-
     //call the command
     try {
-      dispatcher.call(command, locals, new String[0]);
+      dispatcher.call(command, createNamespace(caller), new ArrayList<String>());
 
       //handle errors
-    } catch (IllegalStateException e) {
-      log.error(
-          String.format("The command '%s' could not be executed as the underling method could not be called.", command),
-          e);
-      caller.sendError(msg.getString("exception.unknown"));
     } catch (InvocationCommandException e) {
       // An InvocationCommandException can only be thrown if a thrown
       // Exception is not covered by our ExceptionConverter and is
       // therefore unintended behavior.
       caller.sendError(msg.getString("exception.unknown"));
       log.error(String.format("The command '%s' could not be executed.", command), e);
+
+    } catch (SubcommandRequiredException e) {
+      Message.Builder error = createUsageString(e);
+
+      error.appendNewLine();
+      error.append(msg.getString("exception.subcommand.choose"));
+
+      caller.sendMessage(error.build());
+    } catch (NoSubcommandsException e) {
+      Message.Builder error = createUsageString(e);
+
+      error.appendNewLine();
+      error.append(msg.getString("exception.subcommand.none"));
+
+      caller.sendMessage(error.build());
     } catch (InvalidUsageException e) {
-      StrBuilder error = new StrBuilder();
-      error.append(e.getSimpleUsageString("/"));
-      if (e.getMessage() != null) {
+      Message.Builder error = createUsageString(e);
+
+      String errorMsg = e.getLocalizedMessage();
+      if (errorMsg != null && !errorMsg.isEmpty()) {
         error.appendNewLine();
-        error.append(e.getMessage());
+        error.append(e.getLocalizedMessage());
       }
       if (e.isFullHelpSuggested()) {
         error.appendNewLine();
+        error.append(Message.Style.INFO);
         error.append(e.getCommand().getDescription().getHelp());
       }
-      caller.sendError(error.toString());
+
+      caller.sendMessage(error.build());
+
     } catch (CommandException e) {
-      caller.sendError(e.getMessage());
+      caller.sendError(e.getLocalizedMessage());
+
     } catch (AuthorizationException e) {
       caller.sendError(msg.getString("exception.insufficient-permission"));
     }
   }
+
 
   /**
    * Returns whether the given String is a sub command of the {@code warp} command.
@@ -207,7 +222,7 @@ public class CommandHandler {
    */
   public boolean isSubCommand(String str) {
     //XXX this should probably be covered by unit tests
-    CommandMapping mapping = dispatcher.get("warp");
+    CommandMapping mapping = dispatcher.get("mywarp");
     if (mapping == null || !(mapping.getCallable() instanceof Dispatcher)) {
       return false;
     }
@@ -217,7 +232,7 @@ public class CommandHandler {
 
   /**
    * Gets a Set with all commands usable for the given Actor. <p>The commands are represented as Strings. Each command
-   * is prefixed with {@code /}, aliases are seperated by {@code |}.</p>
+   * is prefixed with {@code /}, aliases are separated by {@code |}.</p>
    *
    * @param forWhom the Actor for whom the returned commands should be usable
    * @return all usable commands as strings
@@ -225,9 +240,7 @@ public class CommandHandler {
   public Set<String> getUsableCommands(Actor forWhom) {
     Set<String> usableCommands = new TreeSet<String>();
 
-    CommandLocals locals = new CommandLocals();
-    locals.put(Actor.class, forWhom);
-    flattenCommands(usableCommands, locals, "", dispatcher);
+    flattenCommands(usableCommands, createNamespace(forWhom), "", dispatcher);
 
     return usableCommands;
   }
@@ -239,13 +252,13 @@ public class CommandHandler {
    * <b> not</b> lazy.</p>
    *
    * @param entries    the Collection the Commands are added to
-   * @param locals     the CommandLocals
+   * @param namespace  the Namespace
    * @param prefix     the prefix
    * @param dispatcher the Dispatcher to add
    */
-  private void flattenCommands(Collection<String> entries, CommandLocals locals, String prefix, Dispatcher dispatcher) {
+  private void flattenCommands(Collection<String> entries, Namespace namespace, String prefix, Dispatcher dispatcher) {
     for (CommandMapping rootCommand : dispatcher.getCommands()) {
-      flattenCommands(entries, locals, prefix, rootCommand);
+      flattenCommands(entries, namespace, prefix, rootCommand);
     }
   }
 
@@ -255,23 +268,22 @@ public class CommandHandler {
    * CommandLocals are excluded and the given prefix is added before all commands. <p>This algorithm actually calls
    * every Command, it is <b>not</b> lazy.</p>
    *
-   * @param entries the Collection the Commands are added to
-   * @param locals  the CommandLocals
-   * @param prefix  the prefix
-   * @param current the CommandMapping to add
+   * @param entries   the Collection the Commands are added to
+   * @param namespace the Namespace
+   * @param prefix    the prefix
+   * @param current   the CommandMapping to add
    */
-  private void flattenCommands(Collection<String> entries, CommandLocals locals, String prefix,
-                               CommandMapping current) {
+  private void flattenCommands(Collection<String> entries, Namespace namespace, String prefix, CommandMapping current) {
     CommandCallable currentCallable = current.getCallable();
-    if (!currentCallable.testPermission(locals)) {
+    if (!currentCallable.testPermission(namespace)) {
       return;
     }
-    StrBuilder builder = new StrBuilder().append(prefix).append(prefix.isEmpty() ? '/' : ' ');
+    StrBuilder builder = new StrBuilder().append(prefix).append(prefix.isEmpty() ? CMD_PREFIX : ' ');
 
     //subcommands
     if (currentCallable instanceof Dispatcher) {
       builder.append(current.getPrimaryAlias());
-      flattenCommands(entries, locals, builder.toString(), (Dispatcher) currentCallable);
+      flattenCommands(entries, namespace, builder.toString(), (Dispatcher) currentCallable);
     } else {
       // the end
       builder.appendWithSeparators(current.getAllAliases(), "|");
@@ -279,6 +291,33 @@ public class CommandHandler {
       builder.append(current.getDescription().getUsage());
       entries.add(builder.toString());
     }
+  }
 
+  /**
+   * Creates a new Namespace instance and adds the given Actor to it.
+   *
+   * @param forWhom the Actor
+   * @return the new Namespace
+   */
+  private Namespace createNamespace(Actor forWhom) {
+    Namespace namespace = new Namespace();
+    namespace.put(Actor.class, forWhom);
+    return namespace;
+  }
+
+  /**
+   * Returns a Message.Builder that contains the command's usage information taken from the given Exception.
+   *
+   * @param e the InvalidUsageException
+   * @return the populated Message.Builder
+   */
+  private Message.Builder createUsageString(InvalidUsageException e) {
+    Message.Builder ret = Message.builder();
+    ret.append(Message.Style.ERROR);
+    ret.append(CMD_PREFIX);
+    ret.appendWithSeparators(e.getAliasStack(), " ");
+    ret.append(" ");
+    ret.append(e.getCommand().getDescription().getUsage());
+    return ret;
   }
 }

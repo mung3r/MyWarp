@@ -17,26 +17,22 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.command.parametric;
+package me.taylorkelly.mywarp.command.annotation;
 
-import com.sk89q.intake.context.CommandLocals;
-import com.sk89q.intake.util.auth.Authorizer;
+import com.sk89q.intake.parametric.annotation.Classifier;
 
-import me.taylorkelly.mywarp.Actor;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * An Authorizer for {@link Actor}s.
+ * Indicates that the required parameter is in fact the sender of the command and should be acquired from the command's
+ * {@link com.sk89q.intake.argument.Namespace}.
  */
-public class ActorAuthorizer implements Authorizer {
-
-  @Override
-  public boolean testPermission(CommandLocals locals, String permission) {
-    Actor actor = locals.get(Actor.class);
-    if (actor == null) {
-      throw new IllegalArgumentException(
-          "No Actor available. Either this command was not used by one or he is missing from the CommandLocales.");
-    }
-    return actor.hasPermission(permission);
-  }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+@Classifier
+public @interface Sender {
 
 }

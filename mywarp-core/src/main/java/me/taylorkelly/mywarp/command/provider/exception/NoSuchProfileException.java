@@ -17,34 +17,32 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.command.parametric;
+package me.taylorkelly.mywarp.command.provider.exception;
 
+import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
- * Indicates that an action exceeds a limit of somebody else than the initiator.
- *
- * @see ExceedsInitiatorLimitException for an Exception thrown when the limit of the initiator is exceeded
+ * Thrown when a given input does not match a known {@link Profile}.
+ * <p/>
+ * Typically this is caused by a malformed query or unavailable UUID servers.
  */
-public class ExceedsLimitException extends Exception {
+public class NoSuchProfileException extends NonMatchingInputException {
 
-  private final Profile subject;
+  private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   /**
-   * Constructs an instance.
+   * Creates an instance.
    *
-   * @param subject the subject whose limit are or would be exceeded
+   * @param input the input
    */
-  public ExceedsLimitException(Profile subject) {
-    this.subject = subject;
+  public NoSuchProfileException(String input) {
+    super(input);
   }
 
-  /**
-   * Gets the subject whose limit are or would be exceeded.
-   *
-   * @return the subject
-   */
-  public Profile getSubject() {
-    return subject;
+  @Override
+  public String getLocalizedMessage() {
+    return msg.getString("exception.no-such-profile", getInput());
   }
 }

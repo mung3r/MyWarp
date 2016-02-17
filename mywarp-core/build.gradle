@@ -11,7 +11,7 @@ dependencies {
     // Bukkit only bundles 10.0.1
     compile 'com.google.guava:guava:10.0.1'
     compile 'org.slf4j:slf4j-api:1.7.10'
-    compile 'de.minehattan:intake:3.1.2-SNAPSHOT'
+    compile 'de.minehattan.intake:intake:4.2-SNAPSHOT'
 }
 
 /*

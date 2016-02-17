@@ -17,35 +17,23 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.command.parametric;
+package me.taylorkelly.mywarp.command.annotation;
 
-import me.taylorkelly.mywarp.timer.Duration;
+import com.sk89q.intake.parametric.annotation.Classifier;
+
+import me.taylorkelly.mywarp.warp.Warp;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Thrown when a Timer is already running.
+ * Indicates that a String value should be used as a name for a {@link Warp} instance.
  */
-public class TimerRunningException extends Exception {
-
-  private static final long serialVersionUID = -1170656232204925816L;
-
-  private final Duration durationLeft;
-
-  /**
-   * Constructs an instance.
-   *
-   * @param durationLeft the duration until the running timer is done
-   */
-  public TimerRunningException(Duration durationLeft) {
-    this.durationLeft = durationLeft;
-  }
-
-  /**
-   * Gets the Duration that is left until running Timer is done.
-   *
-   * @return the Duration left
-   */
-  public Duration getDurationLeft() {
-    return durationLeft;
-  }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+@Classifier
+public @interface WarpName {
 
 }

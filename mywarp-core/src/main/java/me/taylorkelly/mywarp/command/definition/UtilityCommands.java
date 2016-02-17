@@ -19,8 +19,8 @@
 
 package me.taylorkelly.mywarp.command.definition;
 
-import static me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name.Condition.USABLE;
-import static me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name.Condition.VIEWABLE;
+import static me.taylorkelly.mywarp.command.annotation.Name.Condition.USABLE;
+import static me.taylorkelly.mywarp.command.annotation.Name.Condition.VIEWABLE;
 
 import com.sk89q.intake.Command;
 import com.sk89q.intake.Require;
@@ -31,10 +31,10 @@ import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.command.annotation.Billable;
+import me.taylorkelly.mywarp.command.annotation.Name;
+import me.taylorkelly.mywarp.command.annotation.Sender;
 import me.taylorkelly.mywarp.command.paginator.StringPaginator;
-import me.taylorkelly.mywarp.command.parametric.binding.PlayerBinding.Sender;
-import me.taylorkelly.mywarp.command.parametric.binding.WarpBinding.Name;
-import me.taylorkelly.mywarp.command.parametric.economy.Billable;
 import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
 import me.taylorkelly.mywarp.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
