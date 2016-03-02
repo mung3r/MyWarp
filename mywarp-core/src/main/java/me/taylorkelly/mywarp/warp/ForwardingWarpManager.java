@@ -29,7 +29,6 @@ import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.EulerDirection;
-import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
@@ -84,11 +83,6 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
   @Override
   public Collection<Warp> filter(Predicate<Warp> predicate) {
     return delegate().filter(predicate);
-  }
-
-  @Override
-  public MatchList getMatchingWarps(String filter, Predicate<Warp> predicate) {
-    return delegate().getMatchingWarps(filter, predicate);
   }
 
   @Override

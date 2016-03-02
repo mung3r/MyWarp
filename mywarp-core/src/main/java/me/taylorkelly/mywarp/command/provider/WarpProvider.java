@@ -98,7 +98,7 @@ class WarpProvider implements Provider<Warp> {
     //query WarpManager
     String query = arguments.next();
 
-    MatchList matches = warpManager.getMatchingWarps(query, predicate);
+    MatchList matches = new MatchList(query, warpManager.filter(predicate));
     Optional<Warp> exactMatch = matches.getExactMatch();
 
     if (!exactMatch.isPresent()) {

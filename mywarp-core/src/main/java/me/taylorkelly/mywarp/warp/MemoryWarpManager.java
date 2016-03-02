@@ -23,8 +23,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
-import me.taylorkelly.mywarp.util.MatchList;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,10 +74,5 @@ public class MemoryWarpManager implements WarpManager {
   @Override
   public Collection<Warp> filter(Predicate<Warp> predicate) {
     return Collections2.filter(warpMap.values(), predicate);
-  }
-
-  @Override
-  public MatchList getMatchingWarps(String filter, Predicate<Warp> predicate) {
-    return new MatchList(filter, filter(predicate));
   }
 }

@@ -22,8 +22,6 @@ package me.taylorkelly.mywarp.warp;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
-import me.taylorkelly.mywarp.util.MatchList;
-
 import java.util.Collection;
 
 /**
@@ -91,14 +89,5 @@ public interface WarpManager {
    * @return all Warps that fulfill the Predicate
    */
   Collection<Warp> filter(Predicate<Warp> predicate);
-
-  /**
-   * Gets a MatchList containing Warps fulfilling the given predicate.
-   *
-   * @param filter    the filter
-   * @param predicate the predicate
-   * @return a MatchList containing the Warps
-   */
-  MatchList getMatchingWarps(String filter, Predicate<Warp> predicate);
 
 }
