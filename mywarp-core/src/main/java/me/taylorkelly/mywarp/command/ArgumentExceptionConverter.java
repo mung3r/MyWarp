@@ -34,10 +34,10 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 /**
  * Converts all {@link ArgumentParseException}s into localized {@link InvalidUsageException}s.
- * <p/>
- * This class is useless when registered with a {@link com.sk89q.intake.parametric.ParametricBuilder} directly. Instead,
- * another {@code ExceptionConverter} that converts {@link ArgumentParseException}s should be registered with the {@code
- * ParametricBuilder} which in turn calls this class.
+ *
+ * <p>This class is useless when registered with a {@link com.sk89q.intake.parametric.ParametricBuilder} directly.
+ * Instead, another {@code ExceptionConverter} that converts {@link ArgumentParseException}s should be registered with
+ * the {@code ParametricBuilder} which in turn calls this class.</p>
  */
 public class ArgumentExceptionConverter extends ExceptionConverterHelper {
 

@@ -23,6 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
 
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,14 +34,14 @@ import javax.annotation.Nullable;
 
 /**
  * An immutable chat message.
- * <p/>
- * A message consists of a list of non-null objects. To form a human readable message, these must be interpreted by the
- * client. While there is no guarantee about the type of objects inside the message, the following ones should be
- * expected: <ul> <li>{@link me.taylorkelly.mywarp.warp.Warp}</li> <li>{@link me.taylorkelly.mywarp.LocalPlayer}</li>
- * <li>{@link me.taylorkelly.mywarp.util.profile.Profile}</li> <li>{@link me.taylorkelly.mywarp.LocalWorld}</li>
- * <li>{@link Style}</li> <li>{@link CharSequence}</li> <li>{@link Number}</li> </ul>
- * <p/>
- * Use a {@link Builder} to create instances.
+ *
+ * <p>A message consists of a list of non-null objects. To form a human readable message, these must be interpreted by
+ * the client. While there is no guarantee about the type of objects inside the message, the following ones should be
+ * expected: <ul> <li>{@link me.taylorkelly.mywarp.warp.Warp}</li> <li>{@link LocalPlayer}</li> <li>{@link
+ * me.taylorkelly.mywarp.platform.profile.Profile}</li> <li>{@link LocalWorld}</li> <li>{@link Style}</li> <li>{@link
+ * CharSequence}</li> <li>{@link Number}</li> </ul> </p>
+ *
+ * <p>Use a {@link Builder} to create instances.</p>
  */
 public class Message {
 
@@ -53,11 +56,6 @@ public class Message {
 
   private final ImmutableList<Object> elements;
 
-  /**
-   * Creats an instance from the given List of elements.
-   *
-   * @param elements the elements
-   */
   private Message(List<Object> elements) {
     this.elements = ImmutableList.copyOf(elements);
   }
@@ -101,8 +99,8 @@ public class Message {
 
     /**
      * Appends the given {@code object}.
-     * <p/>
-     * {@code null} is accepted and will append a String equal to "{@code null}".
+     *
+     * <p>{@code null} is accepted and will append a String equal to "{@code null}".</p>
      *
      * @param object the object
      * @return this Builder
@@ -117,9 +115,9 @@ public class Message {
 
     /**
      * Appends the elements of the given Message and keeps its styling.
-     * <p/>
-     * The appended message may ignore the currently set styling of this Builder and the style of elements appended
-     * afterwards may be entirely different.
+     *
+     * <p>The appended message may ignore the currently set styling of this Builder and the style of elements appended
+     * afterwards may be entirely different.</p>
      *
      * @param message the message
      * @return this Builder
@@ -133,8 +131,8 @@ public class Message {
 
     /**
      * Appends the elements of the given Message and adjusts its styling to match the active one on this Builder.
-     * <p/>
-     * All styles configured for the given message will be entirely ignored.
+     *
+     * <p>All styles configured for the given message will be entirely ignored.</p>
      *
      * @param message the message
      * @return this Builder
@@ -217,17 +215,22 @@ public class Message {
      */
     ERROR,
     /**
-     * Indicates an additional information: non emphasised, grey text. <p>An additional information is a message that
-     * contains information the user might not have asked for, but that are still important for him.</p>
+     * Indicates an additional information: non emphasised, grey text.
+     *
+     * <p>An additional information is a message that contains information the user might not have asked for, but that
+     * are still important for him.</p>
      */
     INFO,
     /**
-     * Indicates a headline on the first level: bold, gold text. <p>Similar to {@code <h1>} in HTML.</p>
+     * Indicates a headline on the first level: bold, gold text.
+     *
+     * <p>Similar to {@code <h1>} in HTML.</p>
      */
     HEADLINE_1,
     /**
-     * Indicates a headline on the second level: non emphasised, white text. <p>Similar to {@code <h2>} in HTML, should
-     * only be used if {@link #HEADLINE_1} has already been applied.</p>
+     * Indicates a headline on the second level: non emphasised, white text.
+     *
+     * <p>Similar to {@code <h2>} in HTML, should only be used if {@link #HEADLINE_1} has already been applied.</p>
      */
     HEADLINE_2,
     /**

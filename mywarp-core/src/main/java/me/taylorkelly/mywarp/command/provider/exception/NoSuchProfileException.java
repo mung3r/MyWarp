@@ -20,8 +20,8 @@
 package me.taylorkelly.mywarp.command.provider.exception;
 
 import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
  * Thrown when a given input does not match a known {@link Profile}.

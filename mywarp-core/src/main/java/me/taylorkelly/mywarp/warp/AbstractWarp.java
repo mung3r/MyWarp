@@ -21,11 +21,11 @@ package me.taylorkelly.mywarp.warp;
 
 import com.google.common.base.Optional;
 
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
-import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
  * Implements methods that can be resolved using other existing methods.

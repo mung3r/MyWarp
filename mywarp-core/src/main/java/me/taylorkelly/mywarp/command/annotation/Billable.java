@@ -19,7 +19,7 @@
 
 package me.taylorkelly.mywarp.command.annotation;
 
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import me.taylorkelly.mywarp.service.economy.FeeType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,7 +31,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Billable {
 
   /**
-   * The FeeType referencing the fee.
+   * @return the FeeType referencing the required fee
    */
   FeeType value();
 

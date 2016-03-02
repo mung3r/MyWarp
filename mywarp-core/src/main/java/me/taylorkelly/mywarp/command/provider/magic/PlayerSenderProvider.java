@@ -25,9 +25,9 @@ import com.sk89q.intake.argument.Namespace;
 import com.sk89q.intake.parametric.Provider;
 import com.sk89q.intake.parametric.ProvisionException;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.command.provider.exception.IllegalCommandSenderException;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

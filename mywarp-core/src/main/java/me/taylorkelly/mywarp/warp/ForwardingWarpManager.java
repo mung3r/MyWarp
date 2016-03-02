@@ -23,15 +23,16 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ForwardingObject;
 
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.teleport.TeleportService.TeleportStatus;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.util.Vector3;
-import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
 
 import java.util.Collection;
 import java.util.Date;
@@ -101,8 +102,8 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
   protected abstract class ForwardingWarp extends ForwardingObject implements Warp {
 
     @Override
-    public void visit(LocalEntity entity, TeleportStatus status) {
-      delegate().visit(entity, status);
+    public TeleportStatus visit(LocalEntity entity, Game game, TeleportHandler handler) {
+      return delegate().visit(entity, game, handler);
     }
 
     @Override

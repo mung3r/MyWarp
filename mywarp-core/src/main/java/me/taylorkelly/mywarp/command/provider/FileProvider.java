@@ -40,12 +40,7 @@ class FileProvider implements Provider<File> {
 
   private final File base;
 
-  /**
-   * Creates an instances. Provides files will be resolved from the given {@code base}.
-   *
-   * @param base the base file
-   */
-  public FileProvider(File base) {
+  FileProvider(File base) {
     this.base = base;
   }
 

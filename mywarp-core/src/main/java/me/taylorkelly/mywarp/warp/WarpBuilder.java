@@ -21,10 +21,10 @@ package me.taylorkelly.mywarp.warp;
 
 import com.google.common.collect.Iterables;
 
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.util.profile.Profile;
 
 import java.util.Date;
 import java.util.HashSet;

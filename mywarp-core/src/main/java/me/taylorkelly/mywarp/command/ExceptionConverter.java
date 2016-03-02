@@ -37,8 +37,8 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 /**
  * Converts specific Exceptions into human readable {@link CommandException}s.
- * <p/>
- * External exceptions, such as those  native to Intake, are also localised.
+ *
+ * <p>External exceptions, such as those  native to Intake, are also localised.</p>
  */
 public class ExceptionConverter extends ExceptionConverterHelper {
 
@@ -83,7 +83,8 @@ public class ExceptionConverter extends ExceptionConverterHelper {
    *
    * @param e       the ArgumentException
    * @param context the context {@code e} was thrown in
-   * @throws InvalidUsageException the converted exception
+   * @throws CommandException           the converted exception
+   * @throws InvocationCommandException if there is a problem with command invocation
    */
   @ExceptionMatch
   public void convert(ArgumentException e, ExceptionContext context)

@@ -35,10 +35,13 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 /**
- * Resolves the Locale of {@link Player}s using the Locale of the player's client. <p>The resolver uses reflection to
- * load Minecraft's player-object through CraftBukkit's {@code getHandle()} method, and then accesses it's {@code
- * locale} field. The process may fail if future Minecraft or CraftBukkit change this structure. It is recommended to
- * supply a fallback for such cases.</p> <p>This class is not threadsafe.</p>
+ * Resolves the Locale of {@link Player}s using the Locale of the player's client.
+ *
+ * <p>The resolver uses reflection to load Minecraft's player-object through CraftBukkit's {@code getHandle()} method,
+ * and then accesses it's {@code locale} field. The process may fail if future Minecraft or CraftBukkit change this
+ * structure. It is recommended to supply a fallback for such cases.</p>
+ *
+ * <p>This class is not threadsafe.</p>
  */
 public enum ReflectiveLocaleResolver {
 
@@ -105,7 +108,7 @@ public enum ReflectiveLocaleResolver {
   /**
    * Indicates that a Locale cannot be resolved.
    */
-  public static class UnresolvableLocaleException extends Exception {
+  public class UnresolvableLocaleException extends Exception {
 
     /**
      * Constructs an instance.

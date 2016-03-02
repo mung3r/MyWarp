@@ -22,7 +22,7 @@ package me.taylorkelly.mywarp.command.paginator;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
@@ -55,12 +55,6 @@ public class StringPaginator<E> {
   private List<String> notes = new ArrayList<String>();
   private int entriesPerPage = 9;
 
-  /**
-   * Creates an instance.
-   *
-   * @param header   the header that will be displayed on top with page informations
-   * @param elements the elements to paginate
-   */
   private StringPaginator(String header, List<? extends E> elements) {
     this.header = header;
     this.elements = elements;
@@ -154,11 +148,6 @@ public class StringPaginator<E> {
     private final List<String> notes;
     private final List<List<Message>> pages;
 
-    /**
-     * Creates an instance.
-     *
-     * @param paginator the paginator
-     */
     private PaginatedResults(StringPaginator<E> paginator) {
       this.header = paginator.header;
       this.notes = paginator.notes;

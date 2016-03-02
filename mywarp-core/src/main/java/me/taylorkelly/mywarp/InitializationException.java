@@ -24,40 +24,19 @@ package me.taylorkelly.mywarp;
  */
 public class InitializationException extends Exception {
 
-  private static final long serialVersionUID = -2033822282111044971L;
-
-  /**
-   * Constructs this exception.
-   */
-  public InitializationException() {
+  InitializationException() {
     super();
   }
 
-  /**
-   * Constructs this exception with the given message.
-   *
-   * @param message the message
-   */
-  public InitializationException(String message) {
+  InitializationException(String message) {
     super(message);
   }
 
-  /**
-   * Constructs this exception with the given message and the given cause.
-   *
-   * @param message the message
-   * @param cause   the cause of this exception
-   */
-  public InitializationException(String message, Throwable cause) {
+  InitializationException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  /**
-   * Constructs this exception with the given cause.
-   *
-   * @param cause the cause
-   */
-  public InitializationException(Throwable cause) {
+  InitializationException(Throwable cause) {
     super(cause);
   }
 }

@@ -25,18 +25,10 @@ import com.sk89q.intake.Command;
 import com.sk89q.intake.Default;
 import com.sk89q.intake.Require;
 
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.annotation.Name;
 import me.taylorkelly.mywarp.command.annotation.Sender;
-import me.taylorkelly.mywarp.economy.EconomyService;
-import me.taylorkelly.mywarp.economy.FeeProvider;
-import me.taylorkelly.mywarp.teleport.EconomyTeleportService;
-import me.taylorkelly.mywarp.teleport.TeleportService;
-import me.taylorkelly.mywarp.teleport.TimerTeleportService;
-import me.taylorkelly.mywarp.timer.DurationProvider;
-import me.taylorkelly.mywarp.timer.TimerService;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.service.teleport.TeleportService;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**
@@ -52,26 +44,11 @@ public class UsageCommands {
    * Creates an instance.
    *
    * @param teleportService  the TeleportService used by commands, implementing additional validation on top
-   * @param settings         the Settings used by commands
-   * @param economyService   the EconomyService used by commands
-   * @param timerService     the TimerService used by commands
-   * @param durationProvider the DurationProvider used by commands
-   * @param game             the Game instance used by commands
    */
-  public UsageCommands(TeleportService teleportService, Settings settings, EconomyService economyService,
-                       TimerService timerService, DurationProvider durationProvider, Game game) {
-    this.teleportService =
-        new TimerTeleportService(
-            new EconomyTeleportService(teleportService, economyService, FeeProvider.FeeType.WARP_TO), settings, game,
-            timerService, durationProvider);
+  public UsageCommands(TeleportService teleportService) {
+    this.teleportService = teleportService;
   }
 
-  /**
-   * Teleports a player to a Warp.
-   *
-   * @param player the LocalPlayer
-   * @param warp   the Warp
-   */
   @Command(aliases = {"to"}, desc = "warp-to.description")
   @Require(CMD_TO_PERMISSION)
   public void to(@Sender LocalPlayer player, @Name(USABLE) Warp warp) {
@@ -80,19 +57,13 @@ public class UsageCommands {
 
   /**
    * The default usage command.
-   * <p/>
-   * This class contains a single method to be used as a default method for a sub-command.
+   *
+   * <p>This class contains a single method to be used as a default method for a sub-command.</p>
    *
    * @see Default
    */
   public class DefaultUsageCommand {
 
-    /**
-     * Teleports a player to a Warp.
-     *
-     * @param player the LocalPlayer
-     * @param warp   the Warp
-     */
     @Command(aliases = {"to"}, desc = "warp-to.description")
     @Default(defaultOnly = true)
     @Require(UsageCommands.CMD_TO_PERMISSION)

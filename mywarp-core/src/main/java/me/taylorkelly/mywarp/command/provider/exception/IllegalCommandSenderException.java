@@ -21,8 +21,8 @@ package me.taylorkelly.mywarp.command.provider.exception;
 
 import com.sk89q.intake.parametric.ProvisionException;
 
-import me.taylorkelly.mywarp.Actor;
 import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 /**

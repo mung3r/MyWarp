@@ -43,8 +43,9 @@ import javax.sql.DataSource;
 
 /**
  * A {@link DataSource} implementation that uses a single {@link Connection}. {@code Connection}s returned by this the
- * {@code DataSource} are actually wrapper around the original {@code Connection} that forbid closing. <p>Obviously this
- * class is not threadsafe.</p>
+ * {@code DataSource} are actually wrapper around the original {@code Connection} that forbid closing.
+ *
+ * <p>Obviously this class is not threadsafe.</p>
  */
 public class SingleConnectionDataSource implements DataSource, Closeable {
 
@@ -120,8 +121,14 @@ public class SingleConnectionDataSource implements DataSource, Closeable {
     throw new UnsupportedOperationException("setLogWriter");
   }
 
+  /**
+   * This method was added to {@link javax.sql.CommonDataSource} in Java7 and is implemented for compatibility. Calling
+   * it immediately and always throws a {@link SQLFeatureNotSupportedException}.
+   *
+   * @return nothing
+   * @throws SQLFeatureNotSupportedException always
+   */
   public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-    //method was added to CommonDataSource in Java7
     throw new SQLFeatureNotSupportedException();
   }
 

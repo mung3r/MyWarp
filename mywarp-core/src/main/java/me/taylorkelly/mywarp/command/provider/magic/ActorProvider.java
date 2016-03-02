@@ -27,7 +27,7 @@ import com.sk89q.intake.argument.Namespace;
 import com.sk89q.intake.parametric.Provider;
 import com.sk89q.intake.parametric.ProvisionException;
 
-import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.platform.Actor;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

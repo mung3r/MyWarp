@@ -21,8 +21,8 @@ package me.taylorkelly.mywarp.util;
 
 import com.google.common.base.Predicate;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.HashMap;
@@ -49,6 +49,7 @@ public final class WarpUtils {
    * Gets the average number of visits per day, from the point the given {@code Warp} was created until this method is
    * called.
    *
+   * @param warp the warp
    * @return the average number of visits per day
    */
   public static double visitsPerDay(Warp warp) {
@@ -101,10 +102,12 @@ public final class WarpUtils {
   }
 
   /**
-   * Replaces all tokens in the given {@code string} with the values applicable for the given {@code warp}. <p>The
-   * following tokens are available: <table> <tr> <th>Token</th> <th>Replacement</th> </tr> <tr> <td>%creator%</td>
-   * <td>warp's creator</td> </tr> <tr> <td>%loc%</td> <td>warp's location</td> </tr> <tr> <td>%visits%</td> <td>the
-   * warp's visits</td> </tr> <tr> <td>%warp%</td> <td>the warp's name</td> </tr> </table> </p>
+   * Replaces all tokens in the given {@code string} with the values applicable for the given {@code warp}.
+   *
+   * <p>The following tokens are available: <table> <tr> <th>Token</th> <th>Replacement</th> </tr> <tr>
+   * <td>%creator%</td> <td>warp's creator</td> </tr> <tr> <td>%loc%</td> <td>warp's location</td> </tr> <tr>
+   * <td>%visits%</td> <td>the warp's visits</td> </tr> <tr> <td>%warp%</td> <td>the warp's name</td> </tr> </table>
+   * </p>
    *
    * @param string the string that contains the tokens
    * @param warp   the {@code Warp} whose values should be used as replacement
@@ -116,14 +119,16 @@ public final class WarpUtils {
 
   /**
    * Replaces all tokens in the given {@code string} with the values applicable for the given {@code warp} and the given
-   * {@code actor}. <p>The following tokens are available: <table> <tr> <th>Token</th> <th>Replacement</th> </tr> <tr>
+   * {@code actor}.
+   *
+   * <p>The following tokens are available: <table> <tr> <th>Token</th> <th>Replacement</th> </tr> <tr>
    * <td>%creator%</td> <td>warp's creator</td> </tr> <tr> <td>%loc%</td> <td>warp's location</td> </tr> <tr>
    * <td>%visits%</td> <td>the warp's visits</td> </tr> <tr> <td>%warp%</td> <td>the warp's name</td> </tr> <tr>
    * <td>%actor%</td> <td>the actor's name</td> </tr> </table> </p>
    *
    * @param string the string that contains the tokens
    * @param warp   the {@code Warp} whose values should be used as replacement
-   * @param actor the {@code Actor} whose values should be used as replacement
+   * @param actor  the {@code Actor} whose values should be used as replacement
    * @return the string with replaced tokens
    */
   public static String replaceTokens(String string, Warp warp, Actor actor) {
@@ -160,7 +165,9 @@ public final class WarpUtils {
 
   /**
    * Replaces tokens found in the given {@code template} with the strings mapped under the token in the given {@code
-   * Map}. <p>Tokens are strings enclosed by {@code %}.</p>
+   * Map}.
+   *
+   * <p>Tokens are strings enclosed by {@code %}.</p>
    *
    * @param template  the template String
    * @param variables the {@code Map} that stores tokens and their replacements

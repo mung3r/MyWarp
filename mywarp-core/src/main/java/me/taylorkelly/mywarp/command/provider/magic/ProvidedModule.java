@@ -21,9 +21,9 @@ package me.taylorkelly.mywarp.command.provider.magic;
 
 import com.sk89q.intake.parametric.AbstractModule;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.command.annotation.Sender;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
 
 /**
  * Provides 'magic' bindings, not taken from the arguments given by the user.

@@ -27,9 +27,6 @@ import com.google.common.collect.Iterables;
  */
 public final class IterableUtils {
 
-  /**
-   * Block initialization of this class.
-   */
   private IterableUtils() {
   }
 
@@ -46,7 +43,7 @@ public final class IterableUtils {
   }
 
   /**
-   * Returns an Optional containing the first element in iterable or {@code Optional.absend()} if the iterable is
+   * Returns an Optional containing the first element in iterable or {@code Optional.absent()} if the iterable is
    * empty.
    *
    * @param <T>      the type of entries

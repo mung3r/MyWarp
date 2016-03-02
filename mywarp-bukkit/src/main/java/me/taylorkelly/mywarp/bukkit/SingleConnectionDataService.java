@@ -24,9 +24,9 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import me.taylorkelly.mywarp.bukkit.util.jdbc.DataSourceFactory;
 import me.taylorkelly.mywarp.bukkit.util.jdbc.SingleConnectionDataSource;
-import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
-import me.taylorkelly.mywarp.storage.RelationalDataService;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
+import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
+import me.taylorkelly.mywarp.warp.storage.RelationalDataService;
 
 import org.slf4j.Logger;
 
@@ -58,7 +58,7 @@ public class SingleConnectionDataService implements RelationalDataService {
    *
    * @param config the config
    */
-  public SingleConnectionDataService(ConnectionConfiguration config) {
+  SingleConnectionDataService(ConnectionConfiguration config) {
     this.config = config;
   }
 

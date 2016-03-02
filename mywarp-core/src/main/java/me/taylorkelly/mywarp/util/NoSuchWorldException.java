@@ -25,8 +25,6 @@ package me.taylorkelly.mywarp.util;
  */
 public class NoSuchWorldException extends RuntimeException {
 
-  private static final long serialVersionUID = 6540699388762912185L;
-
   private final String worldRepresentation;
 
   /**

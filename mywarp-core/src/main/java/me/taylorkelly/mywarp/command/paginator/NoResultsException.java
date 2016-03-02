@@ -24,40 +24,19 @@ package me.taylorkelly.mywarp.command.paginator;
  */
 public class NoResultsException extends Exception {
 
-  private static final long serialVersionUID = -4899053306704291554L;
-
-  /**
-   * Constructs this exception.
-   */
-  public NoResultsException() {
+  NoResultsException() {
     super();
   }
 
-  /**
-   * Constructs this exception with the given message.
-   *
-   * @param message the message
-   */
-  public NoResultsException(String message) {
+  NoResultsException(String message) {
     super(message);
   }
 
-  /**
-   * Constructs this exception with the given message and the given cause.
-   *
-   * @param message the message
-   * @param cause   the cause of this exception
-   */
-  public NoResultsException(String message, Throwable cause) {
+  NoResultsException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  /**
-   * Constructs this exception with the given cause.
-   *
-   * @param cause the cause
-   */
-  public NoResultsException(Throwable cause) {
+  NoResultsException(Throwable cause) {
     super(cause);
   }
 }

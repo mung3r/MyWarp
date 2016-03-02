@@ -21,7 +21,7 @@ package me.taylorkelly.mywarp.bukkit;
 
 import com.google.common.primitives.Ints;
 
-import me.taylorkelly.mywarp.BlockType;
+import me.taylorkelly.mywarp.platform.BlockType;
 import me.taylorkelly.mywarp.util.Vector3;
 
 import org.bukkit.Material;
@@ -40,7 +40,7 @@ public class BukkitBlockType implements BlockType {
    * @param world    the world of the block
    * @param position the position of the block
    */
-  public BukkitBlockType(BukkitWorld world, Vector3 position) {
+  BukkitBlockType(BukkitWorld world, Vector3 position) {
     this.world = world;
     this.position = position;
   }
@@ -108,11 +108,6 @@ public class BukkitBlockType implements BlockType {
     }
   }
 
-  /**
-   * Gets the block's Material.
-   *
-   * @return the Material of this block
-   */
   private Material getBlockMaterial() {
     return world.getLoadedWorld()
         .getBlockAt(Ints.checkedCast(position.getFloorX()), Ints.checkedCast(position.getFloorY()),

@@ -22,50 +22,53 @@ package me.taylorkelly.mywarp.warp;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.storage.WarpStorage;
-import me.taylorkelly.mywarp.teleport.TeleportService.TeleportStatus;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
-import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
+import me.taylorkelly.mywarp.warp.storage.WarpStorage;
 
 /**
- * Stores all warps managed by itusing a {@link WarpStorage}. Calls are all delegated to an underling WarpManager as
- * required by the decorator pattern, storage is implemented on top.
+ * Stores all warps managed in a {@link WarpStorage}. Calls are all delegated to an underling WarpManager as required by
+ * the decorator pattern, storage is implemented on top.
  */
 public class StorageWarpManager extends ForwardingWarpManager {
 
-  private final WarpManager warpManager;
-  private final WarpStorage connection;
+  private final WarpManager delegate;
+  private final WarpStorage storage;
 
   /**
-   * Creates an instance that works on top the given WarpManager.
+   * Creates an instance that stores warps in the given {@code storage}. Further management is delegated to the given
+   * WarpManager.
    *
-   * @param warpManager the WarpManager
-   * @param connection  the WarpStorage
+   * @param delegate the WarpManager to delegate calls to
+   * @param storage  the WarpStorage that stores Warps managed by this manager
    */
-  public StorageWarpManager(WarpManager warpManager, WarpStorage connection) {
-    this.warpManager = warpManager;
-    this.connection = connection;
+  public StorageWarpManager(WarpManager delegate, WarpStorage storage) {
+    this.delegate = delegate;
+    this.storage = storage;
   }
 
   @Override
   protected WarpManager delegate() {
-    return warpManager;
+    return delegate;
   }
 
   @Override
   public void add(Warp warp) {
     warp = new PersistentWarp(warp);
     delegate().add(warp);
-    connection.addWarp(warp);
+    storage.addWarp(warp);
   }
 
   @Override
   public void remove(Warp warp) {
     delegate().remove(warp);
-    connection.removeWarp(warp);
+    storage.removeWarp(warp);
   }
 
   @Override
@@ -84,83 +87,79 @@ public class StorageWarpManager extends ForwardingWarpManager {
    */
   private class PersistentWarp extends ForwardingWarp {
 
-    private final Warp warp;
+    private final Warp delegate;
 
-    /**
-     * Creates an instance that works on top of the given warp.
-     *
-     * @param warp the warp
-     */
-    private PersistentWarp(Warp warp) {
-      this.warp = warp;
+    private PersistentWarp(Warp delegate) {
+      this.delegate = delegate;
     }
 
     @Override
     protected Warp delegate() {
-      return warp;
+      return delegate;
     }
 
     @Override
-    public void visit(LocalEntity entity, TeleportStatus status) {
-      delegate().visit(entity, status);
+    public TeleportStatus visit(LocalEntity entity, Game game, TeleportHandler handler) {
+      TeleportStatus status = delegate().visit(entity, game, handler);
 
       if (status.isPositionModified()) {
-        connection.updateVisits(warp);
+        storage.updateVisits(delegate());
       }
+      return status;
     }
 
     @Override
     public void inviteGroup(String groupId) {
       super.inviteGroup(groupId);
-      connection.inviteGroup(warp, groupId);
+      storage.inviteGroup(delegate(), groupId);
 
     }
 
     @Override
     public void invitePlayer(Profile player) {
       super.invitePlayer(player);
-      connection.invitePlayer(warp, player);
+      storage.invitePlayer(delegate(), player);
 
     }
 
     @Override
     public void uninviteGroup(String groupId) {
       super.uninviteGroup(groupId);
-      connection.uninviteGroup(warp, groupId);
+      storage.uninviteGroup(delegate(), groupId);
 
     }
 
     @Override
     public void uninvitePlayer(Profile player) {
       super.uninvitePlayer(player);
-      connection.uninvitePlayer(warp, player);
+      storage.uninvitePlayer(delegate(), player);
 
     }
 
     @Override
     public void setCreator(Profile creator) {
       super.setCreator(creator);
-      connection.updateCreator(warp);
+      storage.updateCreator(delegate());
 
     }
 
     @Override
     public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
       super.setLocation(world, position, rotation);
-      connection.updateLocation(warp);
+      storage.updateLocation(delegate());
 
     }
 
     @Override
     public void setType(Type type) {
       super.setType(type);
-      connection.updateType(warp);
+      storage.updateType(delegate());
     }
 
     @Override
     public void setWelcomeMessage(String welcomeMessage) {
       super.setWelcomeMessage(welcomeMessage);
-      connection.updateWelcomeMessage(warp);
+      storage.updateWelcomeMessage(delegate());
     }
   }
 }

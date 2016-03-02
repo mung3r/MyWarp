@@ -21,17 +21,17 @@ package me.taylorkelly.mywarp.command.printer;
 
 import com.google.common.collect.Ordering;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
-import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
-import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
 import java.text.DateFormat;
 import java.util.List;
@@ -45,18 +45,19 @@ public class InfoPrinter {
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final Warp warp;
-  private final AuthorizationService authorizationService;
+  private final AuthorizationResolver authorizationResolver;
   private Game game;
 
   /**
    * Creates an instance.
    *
-   * @param warp                 the Warp whose information should be printed
-   * @param authorizationService the AuthorizationService used to resolve authorizations for the given warp
+   * @param warp                  the Warp whose information should be printed
+   * @param authorizationResolver the AuthorizationResolver used to resolve authorizations for the given warp
+   * @param game                  the running game instance that holds the warp's world
    */
-  public InfoPrinter(Warp warp, AuthorizationService authorizationService, Game game) {
+  public InfoPrinter(Warp warp, AuthorizationResolver authorizationResolver, Game game) {
     this.warp = warp;
-    this.authorizationService = authorizationService;
+    this.authorizationResolver = authorizationResolver;
     this.game = game;
   }
 
@@ -102,7 +103,7 @@ public class InfoPrinter {
     info.appendNewLine();
 
     // if the warp is modifiable, show information about invitations
-    if (authorizationService.isModifiable(warp, receiver)) {
+    if (authorizationResolver.isModifiable(warp, receiver)) {
 
       // invited players
       info.append(Message.Style.KEY);

@@ -25,9 +25,9 @@ import com.sk89q.intake.argument.CommandArgs;
 import com.sk89q.intake.parametric.Provider;
 import com.sk89q.intake.parametric.ProvisionException;
 
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.command.provider.exception.NoSuchPlayerException;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -42,12 +42,7 @@ class PlayerProvider implements Provider<LocalPlayer> {
 
   private final Game game;
 
-  /**
-   * Creates an instance. Provided players will be resolved from the given {@code game}.
-   *
-   * @param game the game
-   */
-  public PlayerProvider(Game game) {
+  PlayerProvider(Game game) {
     this.game = game;
   }
 

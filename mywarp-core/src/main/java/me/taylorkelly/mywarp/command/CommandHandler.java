@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp.command;
 
+import com.google.common.base.Optional;
 import com.sk89q.intake.CommandCallable;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.CommandMapping;
@@ -35,11 +36,7 @@ import com.sk89q.intake.parametric.ParametricBuilder;
 import com.sk89q.intake.parametric.provider.PrimitivesModule;
 import com.sk89q.intake.util.auth.AuthorizationException;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.Game;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.Platform;
-import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.definition.ImportCommands;
 import me.taylorkelly.mywarp.command.definition.InformativeCommands;
 import me.taylorkelly.mywarp.command.definition.ManagementCommands;
@@ -48,17 +45,26 @@ import me.taylorkelly.mywarp.command.definition.UsageCommands;
 import me.taylorkelly.mywarp.command.definition.UtilityCommands;
 import me.taylorkelly.mywarp.command.provider.BaseModule;
 import me.taylorkelly.mywarp.command.provider.magic.ProvidedModule;
-import me.taylorkelly.mywarp.economy.EconomyService;
-import me.taylorkelly.mywarp.limit.LimitService;
-import me.taylorkelly.mywarp.teleport.TeleportService;
-import me.taylorkelly.mywarp.timer.DurationProvider;
-import me.taylorkelly.mywarp.timer.TimerService;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.Platform;
+import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
+import me.taylorkelly.mywarp.platform.capability.LimitCapability;
+import me.taylorkelly.mywarp.platform.capability.TimerCapability;
+import me.taylorkelly.mywarp.platform.profile.ProfileCache;
+import me.taylorkelly.mywarp.service.economy.EconomyService;
+import me.taylorkelly.mywarp.service.economy.FeeType;
+import me.taylorkelly.mywarp.service.limit.LimitService;
+import me.taylorkelly.mywarp.service.teleport.EconomyTeleportService;
+import me.taylorkelly.mywarp.service.teleport.HandlerTeleportService;
+import me.taylorkelly.mywarp.service.teleport.TeleportService;
+import me.taylorkelly.mywarp.service.teleport.TimerTeleportService;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.util.profile.ProfileService;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.warp.WarpManager;
-import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.slf4j.Logger;
@@ -84,63 +90,91 @@ public class CommandHandler {
   private final Dispatcher dispatcher;
 
   /**
-   * Creates an instance. Commands will hook into the given MyWarp instance.
+   * Creates an instance.
+   *
+   * @param myWarp   the MyWarp instance commands will hook into
+   * @param platform the platform commands will hook into
    */
-  public CommandHandler(MyWarp myWarp) {
-    this(myWarp, myWarp.getPlatform());
+  public CommandHandler(MyWarp myWarp, Platform platform) {
+    this(myWarp, platform, myWarp.getWarpManager(), myWarp.getAuthorizationResolver(), platform.getProfileCache(),
+         platform.getGame(), myWarp.getTeleportHandler());
   }
 
   /**
-   * Creates an instance. Commands will hook into the given MyWarp instance.
-   */
-  private CommandHandler(MyWarp myWarp, Platform platform) {
-    this(myWarp, platform, myWarp.getWarpManager(), myWarp.getAuthorizationService(), platform.getDurationProvider(),
-         myWarp.getEconomyService(), myWarp.getLimitService(), platform.getProfileService(),
-         myWarp.getTeleportService(), platform.getTimerService(), myWarp.getGame(), myWarp.getSettings());
-  }
-
-  /**
-   * Creates an instance. Commands will hook into the given MyWarp instance.
+   * Creates an instance.
+   *
+   * @param myWarp                the MyWarp instance commands will use
+   * @param platform              the Platform commands will use
+   * @param warpManager           the WarpManager commands will use
+   * @param authorizationResolver the AuthorizationResolver commands will use
+   * @param profileCache          the ProfileCache commands will use
+   * @param game                  the Game commands will use
+   * @param teleportHandler       the TeleportHandler commands will use
    */
   private CommandHandler(MyWarp myWarp, Platform platform, WarpManager warpManager,
-                         AuthorizationService authorizationService, DurationProvider durationProvider,
-                         EconomyService economyService, LimitService limitService, ProfileService profileService,
-                         TeleportService teleportService, TimerService timerService, Game game, Settings settings) {
+                         AuthorizationResolver authorizationResolver, ProfileCache profileCache, Game game,
+                         TeleportHandler teleportHandler) {
 
     // create injector and register modules
     Injector injector = Intake.createInjector();
     injector.install(new PrimitivesModule());
     injector.install(new ProvidedModule());
     injector.install(
-        new BaseModule(warpManager, authorizationService, profileService, game, this, platform.getDataFolder()));
+        new BaseModule(warpManager, authorizationResolver, profileCache, game, this, platform.getDataFolder()));
 
     //create the builder
     ParametricBuilder builder = new ParametricBuilder(injector);
     builder.setAuthorizer(new ActorAuthorizer());
     builder.setResourceProvider(new CommandResourceProvider());
     builder.addExceptionConverter(new ExceptionConverter());
-    builder.addInvokeListener(new EconomyInvokeHandler(economyService));
 
-    //create some command instances to be used below
-    UsageCommands usageCmd =
-        new UsageCommands(teleportService, settings, economyService, timerService, durationProvider, game);
+    //economy support (optional)
+    Optional<EconomyCapability> economyOptional = platform.getCapability(EconomyCapability.class);
+    if (economyOptional.isPresent()) {
+      builder.addInvokeListener(new EconomyInvokeHandler(new EconomyService(economyOptional.get())));
+    }
+
+    //create services...
+
+    //...basic TeleportService used by '/warp player <player> <warp>'
+    TeleportService basic = new HandlerTeleportService(teleportHandler, game);
+
+    //...usage service used by '/warp <warp>'
+    TeleportService usageService = basic;
+    if (economyOptional.isPresent()) {
+      usageService = new EconomyTeleportService(basic, new EconomyService(economyOptional.get()), FeeType.WARP_TO);
+    }
+    Optional<TimerCapability> timerOptional = platform.getCapability(TimerCapability.class);
+    if (timerOptional.isPresent()) {
+      usageService = new TimerTeleportService(usageService, game, timerOptional.get());
+    }
+
+    //...limit service
+    Optional<LimitService> limitService = Optional.absent();
+    Optional<LimitCapability> limitOptional = platform.getCapability(LimitCapability.class);
+    if (limitOptional.isPresent()) {
+      limitService = Optional.of(new LimitService(limitOptional.get(), warpManager));
+    }
+
+    //create some command instances (used below)
+    UsageCommands usageCmd = new UsageCommands(usageService);
     UsageCommands.DefaultUsageCommand defaultUsageCmd = usageCmd.new DefaultUsageCommand();
 
     //register commands
     dispatcher =
         new CommandGraph().builder(builder).commands().registerMethods(usageCmd).group("warp", "mywarp", "mw")
             .registerMethods(defaultUsageCmd)
-            .registerMethods(new InformativeCommands(warpManager, limitService, authorizationService, game, settings))
+            .registerMethods(new InformativeCommands(warpManager, limitService, authorizationResolver, game))
             .registerMethods(new ManagementCommands(warpManager, limitService))
-            .registerMethods(new SocialCommands(limitService, profileService, game))
-            .registerMethods(new UtilityCommands(myWarp, this, teleportService, game)).group("import", "migrate")
-            .registerMethods(new ImportCommands(warpManager, platform, profileService, game)).graph().getDispatcher();
+            .registerMethods(new SocialCommands(game, profileCache, limitService))
+            .registerMethods(new UtilityCommands(myWarp, this, basic, game)).group("import", "migrate")
+            .registerMethods(new ImportCommands(warpManager, platform, profileCache, game)).graph().getDispatcher();
   }
 
   /**
    * Gets a list of suggestions based on the given {@code arguments}.
    * <p/>
-   * Most appropriate suggestions will come first, less appropriate after. If no suggestions are appropiate, an empty
+   * More appropriate suggestions will come first, less appropriate after. If no suggestions are appropriate, an empty
    * list will be returned.
    *
    * @param arguments the arguments already given by the user

@@ -19,10 +19,10 @@
 
 package me.taylorkelly.mywarp.bukkit.util;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.Message;
-import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import org.bukkit.ChatColor;
@@ -57,27 +57,28 @@ public class BukkitMessageInterpreter {
    * @param elements the objects to interpret
    * @return a StringBuilder containing the string representations
    */
-  private StringBuilder interpret(Iterable<Object> elements) {
+  private BukkitMessageInterpreter interpret(Iterable<Object> elements) {
     for (Object element : elements) {
       interpret(element);
     }
-    return builder;
+    return this;
   }
 
   /**
    * Interprets the given object and returns a human readable string.
    *
    * @param element the object to interpret
-   * @return a StringBuilder containing the string representation
    */
-  private StringBuilder interpret(Object element) {
+  private BukkitMessageInterpreter interpret(Object element) {
     if (element instanceof Message.Style) {
       Message.Style style = (Message.Style) element;
 
       lastStyle = style;
-      return builder.append(resolveStyle(style));
-    } // Warp
+      builder.append(resolveStyle(style));
+      return this;
+    }
 
+    // Warp
     if (element instanceof Warp) {
       Warp warp = (Warp) element;
       switch (warp.getType()) {
@@ -90,12 +91,14 @@ public class BukkitMessageInterpreter {
       }
 
       builder.append(warp.getName());
-      return builder.append(resolveStyle(lastStyle));
+      builder.append(resolveStyle(lastStyle));
+      return this;
     }
 
     // LocalWorld
     if (element instanceof LocalWorld) {
-      return builder.append(((LocalWorld) element).getName());
+      builder.append(((LocalWorld) element).getName());
+      return this;
     }
 
     // Actor
@@ -103,7 +106,8 @@ public class BukkitMessageInterpreter {
       builder.append(ChatColor.ITALIC);
       builder.append(((Actor) element).getName());
 
-      return builder.append(resolveStyle(lastStyle));
+      builder.append(resolveStyle(lastStyle));
+      return this;
     }
 
     // Profile
@@ -113,20 +117,21 @@ public class BukkitMessageInterpreter {
       builder.append(ChatColor.ITALIC);
       builder.append(profile.getName().or(profile.getUniqueId().toString()));
 
-      return builder.append(resolveStyle(lastStyle));
+      builder.append(resolveStyle(lastStyle));
+      return this;
     }
 
     //default
-    return builder.append(element);
+    builder.append(element);
+    return this;
   }
 
-  /**
-   * Resolves the given style into Bukkit {@link ChatColor}s.
-   *
-   * @param style the style
-   * @return a string with the appropriate ChatColor representations
-   */
-  private static String resolveStyle(Message.Style style) {
+  @Override
+  public String toString() {
+    return builder.toString();
+  }
+
+  private String resolveStyle(Message.Style style) {
     // Bukkit's ChatColors directly represent Minecraft's formatting codes and their behavior: colors always reset
     // formatting to normal! To use a formatting with a color, the formatting must be given after the color.
     switch (style) {

@@ -32,11 +32,6 @@ import com.sk89q.intake.parametric.annotation.Range;
 import com.sk89q.intake.parametric.annotation.Switch;
 import com.sk89q.intake.util.auth.AuthorizationException;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.Settings;
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.command.annotation.Billable;
 import me.taylorkelly.mywarp.command.annotation.Name;
@@ -44,14 +39,18 @@ import me.taylorkelly.mywarp.command.paginator.StringPaginator;
 import me.taylorkelly.mywarp.command.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.command.printer.InfoPrinter;
 import me.taylorkelly.mywarp.command.provider.exception.IllegalCommandSenderException;
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.limit.LimitService;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.service.economy.FeeType;
+import me.taylorkelly.mywarp.service.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
-import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -66,36 +65,27 @@ public class InformativeCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
+  private final AuthorizationResolver authorizationResolver;
   private final WarpManager warpManager;
-  private final LimitService limitService;
-  private final AuthorizationService authorizationService;
   private final Game game;
-  private final Settings settings;
+  private final com.google.common.base.Optional<LimitService> limitService;
 
   /**
    * Creates an instance.
    *
-   * @param warpManager          the WarpManager used by commands
-   * @param limitService         the LimitService used by commands
-   * @param authorizationService the AuthorizationService used by commands
-   * @param settings             the Settings used by commands
+   * @param warpManager           the WarpManager used by commands
+   * @param limitService          the LimitService used by commands
+   * @param authorizationResolver the AuthorizationResolver used by commands
+   * @param game                  the Game used by commands
    */
-  public InformativeCommands(WarpManager warpManager, LimitService limitService,
-                             AuthorizationService authorizationService, Game game, Settings settings) {
-    this.limitService = limitService;
-    this.game = game;
-    this.settings = settings;
+  public InformativeCommands(WarpManager warpManager, com.google.common.base.Optional<LimitService> limitService,
+                             AuthorizationResolver authorizationResolver, Game game) {
+    this.authorizationResolver = authorizationResolver;
     this.warpManager = warpManager;
-    this.authorizationService = authorizationService;
+    this.game = game;
+    this.limitService = limitService;
   }
 
-  /**
-   * Displays a player's assets.
-   *
-   * @param actor   the Actor
-   * @param creator the LocalPlayer
-   * @throws IllegalCommandSenderException if no {@code creator} is given and the given Actor is not a player
-   */
   @Command(aliases = {"assets", "limits"}, desc = "assets.description", help = "assets.help")
   @Require("mywarp.cmd.assets.self")
   @Billable(FeeType.ASSETS)
@@ -111,20 +101,9 @@ public class InformativeCommands {
       throw new AuthorizationException();
     }
 
-    new AssetsPrinter(creator, limitService, settings).print(actor);
+    new AssetsPrinter(creator, limitService, game, warpManager).print(actor);
   }
 
-  /**
-   * Lists viewable Warps.
-   *
-   * @param actor   the Actor
-   * @param page    the page to display
-   * @param creator the optional creator
-   * @param name    the optional name
-   * @param radius  the optional radius
-   * @param world   the optional world
-   * @throws IllegalCommandSenderException if the {@code r} flag is used by an Actor that is not an Entity
-   */
   @Command(aliases = {"list", "alist"}, desc = "list.description", help = "list.help")
   @Require("mywarp.cmd.list")
   @Billable(FeeType.LIST)
@@ -135,7 +114,7 @@ public class InformativeCommands {
 
     // build the listing predicate
     List<Predicate<Warp>> predicates = new ArrayList<Predicate<Warp>>();
-    predicates.add(authorizationService.isViewable(actor));
+    predicates.add(authorizationResolver.isViewable(actor));
 
     if (creator != null) {
       predicates.add(new Predicate<Warp>() {
@@ -216,16 +195,10 @@ public class InformativeCommands {
     StringPaginator.of(msg.getString("list.heading"), warps).withMapping(mapping).paginate().display(actor, page);
   }
 
-  /**
-   * Displays information about a Warp.
-   *
-   * @param actor the Actor
-   * @param warp  the Warp
-   */
   @Command(aliases = {"info", "stats"}, desc = "info.description", help = "info.help")
   @Require("mywarp.cmd.info")
   @Billable(FeeType.INFO)
   public void info(Actor actor, @Name(VIEWABLE) Warp warp) {
-    new InfoPrinter(warp, authorizationService, game).print(actor);
+    new InfoPrinter(warp, authorizationResolver, game).print(actor);
   }
 }

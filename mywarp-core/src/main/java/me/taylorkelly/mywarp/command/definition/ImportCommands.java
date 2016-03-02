@@ -27,22 +27,22 @@ import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.Platform;
 import me.taylorkelly.mywarp.command.CommandHandler;
-import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
-import me.taylorkelly.mywarp.storage.LegacyWarpSource;
-import me.taylorkelly.mywarp.storage.RelationalDataService;
-import me.taylorkelly.mywarp.storage.StorageInitializationException;
-import me.taylorkelly.mywarp.storage.WarpSource;
-import me.taylorkelly.mywarp.storage.WarpStorageFactory;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.Platform;
+import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.util.profile.ProfileService;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
+import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
+import me.taylorkelly.mywarp.warp.storage.LegacyWarpSource;
+import me.taylorkelly.mywarp.warp.storage.RelationalDataService;
+import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
+import me.taylorkelly.mywarp.warp.storage.WarpSource;
+import me.taylorkelly.mywarp.warp.storage.WarpStorageFactory;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -63,7 +63,7 @@ public class ImportCommands {
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final Platform platform;
-  private final ProfileService profileService;
+  private final ProfileCache profileCache;
   private final WarpManager warpManager;
   private final Game game;
 
@@ -72,29 +72,22 @@ public class ImportCommands {
    *
    * @param warpManager    the Warpmanager used by commands
    * @param platform       the Platform used by commands
-   * @param profileService the ProfileService used by commands
+   * @param profileCache the ProfileCache used by commands
    * @param game           the Game used by commands
    */
-  public ImportCommands(WarpManager warpManager, Platform platform, ProfileService profileService, Game game) {
+  public ImportCommands(WarpManager warpManager, Platform platform, ProfileCache profileCache, Game game) {
     this.platform = platform;
-    this.profileService = profileService;
+    this.profileCache = profileCache;
     this.warpManager = warpManager;
     this.game = game;
   }
 
-  /**
-   * Imports Warps from a relational database with an up-to-date table structure.
-   *
-   * @param actor         the Actor
-   * @param configuration the config of the relational database
-   * @throws CommandException if the import fails
-   */
   @Command(aliases = {"current", "curr"}, desc = "import.current.description", help = "import.current.help")
   @Require(IMPORT_PERMISSION)
   public void current(Actor actor, ConnectionConfiguration configuration) throws CommandException {
     RelationalDataService dataService = platform.createDataService(configuration);
     try {
-      start(actor, dataService, WarpStorageFactory.create(dataService.getDataSource(), configuration, profileService));
+      start(actor, dataService, WarpStorageFactory.create(dataService.getDataSource(), configuration, profileCache));
     } catch (StorageInitializationException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     } catch (SQLException e) {
@@ -102,13 +95,6 @@ public class ImportCommands {
     }
   }
 
-  /**
-   * Imports Warps from an SQLite database with an old (pre 3.0) scheme.
-   *
-   * @param actor    the Actor
-   * @param database the database file
-   * @throws CommandException if the import fails
-   */
   @Command(aliases = {"pre3-sqlite"}, desc = "import.pre3-sqlite.description", help = "import.pre3-sqlite.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Sqlite(Actor actor, File database) throws CommandException {
@@ -116,23 +102,13 @@ public class ImportCommands {
     try {
       RelationalDataService dataService = platform.createDataService(configuration);
       start(actor, dataService,
-            new LegacyWarpSource(dataService.getDataSource(), configuration, "warpTable", profileService,
+            new LegacyWarpSource(dataService.getDataSource(), configuration, "warpTable", profileCache,
                                  getWorldSnapshot()));
     } catch (SQLException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     }
   }
 
-  /**
-   * Imports Warps from an MySQL database with an old (pre 3.0) scheme.
-   *
-   * @param actor     the Actor
-   * @param dsn       the dsn of the database
-   * @param user      the MySQL user to use
-   * @param password  the user's password
-   * @param tableName the name of the table that contains the data
-   * @throws CommandException if the import fails
-   */
   @Command(aliases = {"pre3-mysql"}, desc = "import.pre3-mysql.description", help = "import.pre3-mysql.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Mysql(Actor actor, String dsn, String schema, String user, String password, String tableName)
@@ -143,7 +119,7 @@ public class ImportCommands {
     try {
       RelationalDataService dataService = platform.createDataService(config);
       start(actor, dataService,
-            new LegacyWarpSource(dataService.getDataSource(), config, tableName, profileService, getWorldSnapshot()));
+            new LegacyWarpSource(dataService.getDataSource(), config, tableName, profileCache, getWorldSnapshot()));
     } catch (SQLException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     }

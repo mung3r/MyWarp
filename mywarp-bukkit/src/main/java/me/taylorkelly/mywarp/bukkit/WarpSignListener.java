@@ -47,17 +47,16 @@ public class WarpSignListener extends AbstractListener {
       SUPPORTED_PLATES =
       ImmutableSet.of(Material.WOOD_PLATE, Material.STONE_PLATE, Material.GOLD_PLATE, Material.IRON_PLATE);
 
-  private final BukkitAdapter adapter;
+  private final MyWarpPlugin plugin;
   private final WarpSignManager warpSignManager;
 
   /**
    * Initializes this listener.
    *
-   * @param adapter         the adapter
    * @param warpSignManager the warpSignManager that will be feat by this listener
    */
-  public WarpSignListener(BukkitAdapter adapter, WarpSignManager warpSignManager) {
-    this.adapter = adapter;
+  WarpSignListener(MyWarpPlugin plugin, WarpSignManager warpSignManager) {
+    this.plugin = plugin;
     this.warpSignManager = warpSignManager;
   }
 
@@ -70,7 +69,7 @@ public class WarpSignListener extends AbstractListener {
   public void onSignChange(SignChangeEvent event) {
     String[] lines = event.getLines();
     if (warpSignManager.isWarpSign(lines)) {
-      if (warpSignManager.validateWarpSign(lines, adapter.adapt(event.getPlayer()))) {
+      if (warpSignManager.validateWarpSign(lines, plugin.wrap(event.getPlayer()))) {
         for (int i = 0; i < lines.length; i++) {
           event.setLine(i, lines[i]);
         }
@@ -97,7 +96,7 @@ public class WarpSignListener extends AbstractListener {
         Sign sign = (Sign) block.getState();
 
         if (warpSignManager.isWarpSign(sign.getLines())) {
-          warpSignManager.warpFromSign(sign.getLine(WarpSignManager.WARPNAME_LINE), adapter.adapt(event.getPlayer()));
+          warpSignManager.warpFromSign(sign.getLine(WarpSignManager.WARPNAME_LINE), plugin.wrap(event.getPlayer()));
           event.setCancelled(true);
         }
 
@@ -117,7 +116,7 @@ public class WarpSignListener extends AbstractListener {
           return;
         }
 
-        warpSignManager.warpFromSign(signBut.getLine(WarpSignManager.WARPNAME_LINE), adapter.adapt(event.getPlayer()));
+        warpSignManager.warpFromSign(signBut.getLine(WarpSignManager.WARPNAME_LINE), plugin.wrap(event.getPlayer()));
       }
       // a player stepped on something
     } else if (event.getAction().equals(Action.PHYSICAL)) {
@@ -132,8 +131,7 @@ public class WarpSignListener extends AbstractListener {
         if (!warpSignManager.isWarpSign(signBelow.getLines())) {
           return;
         }
-        warpSignManager
-            .warpFromSign(signBelow.getLine(WarpSignManager.WARPNAME_LINE), adapter.adapt(event.getPlayer()));
+        warpSignManager.warpFromSign(signBelow.getLine(WarpSignManager.WARPNAME_LINE), plugin.wrap(event.getPlayer()));
       }
     }
   }

@@ -22,23 +22,30 @@ package me.taylorkelly.mywarp.sign;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.economy.EconomyService;
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.teleport.EconomyTeleportService;
-import me.taylorkelly.mywarp.teleport.TeleportService;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
+import me.taylorkelly.mywarp.service.economy.EconomyService;
+import me.taylorkelly.mywarp.service.economy.FeeType;
+import me.taylorkelly.mywarp.service.teleport.EconomyTeleportService;
+import me.taylorkelly.mywarp.service.teleport.HandlerTeleportService;
+import me.taylorkelly.mywarp.service.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
-import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
 import java.util.TreeSet;
 
+import javax.annotation.Nullable;
+
 /**
- * Manages warp signs. <p/> <p>As of itself this class does nothing. It must be feat by a event system that tracks
- * creation and usage of signs.</p>
+ * Manages warp signs.
+ *
+ * <p>As of itself this class does nothing. It must be feat by a event system that tracks creation and clinking on
+ * signs.</p>
  */
 public class WarpSignManager {
 
@@ -48,40 +55,48 @@ public class WarpSignManager {
 
   private static final DynamicMessages msg = new DynamicMessages("me.taylorkelly.mywarp.lang.WarpSignManager");
 
-  private final TreeSet<String> identifiers;
+  private final TreeSet<String> identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+  private final AuthorizationResolver authorizationResolver;
   private final WarpManager warpManager;
-  private final AuthorizationService authorizationService;
-  private final EconomyService economyService;
   private final TeleportService teleportService;
 
-  /**
-   * Creates an instance.
-   *
-   * @param identifiers the identifiers to identify a valid warp sign
-   */
-  public WarpSignManager(Iterable<String> identifiers, MyWarp mywarp) {
-    this(identifiers, mywarp.getWarpManager(), mywarp.getAuthorizationService(), mywarp.getEconomyService(),
-         mywarp.getTeleportService());
-  }
+  @Nullable
+  private final EconomyService economyService;
 
   /**
    * Creates an instance.
    *
-   * @param identifiers          the identifiers to identify a valid warp sign
-   * @param warpManager          the WarpManager this manager will act on
-   * @param authorizationService the AuthorizationService used to resolve authorizations
-   * @param economyService       the EconomyService this manager will act on
+   * @param identifiers           the identifiers to identify a valid warp sign
+   * @param warpManager           the WarpManager this manager will act on
+   * @param authorizationResolver the AuthorizationResolver used to resolve authorizations
+   * @param game                  the game within which this instance acts
+   * @param handler               the TeleportHandler that handles teleports
+   * @param economyCapability     an Optional with the platform's capability to provide economical functionality
    */
   public WarpSignManager(Iterable<String> identifiers, WarpManager warpManager,
-                         AuthorizationService authorizationService, EconomyService economyService,
-                         TeleportService teleportService) {
-    this.identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER); //REVIEW onReload?
+                         AuthorizationResolver authorizationResolver, Game game, TeleportHandler handler,
+                         Optional<EconomyCapability> economyCapability) {
     Iterables.addAll(this.identifiers, identifiers);
 
     this.warpManager = warpManager;
-    this.authorizationService = authorizationService;
-    this.economyService = economyService;
-    this.teleportService = new EconomyTeleportService(teleportService, economyService, FeeType.WARP_SIGN_USE);
+    this.authorizationResolver = authorizationResolver;
+
+    if (economyCapability.isPresent()) {
+      this.economyService = new EconomyService(economyCapability.get());
+    } else {
+      this.economyService = null;
+    }
+    this.teleportService = createTeleportService(game, handler, economyCapability);
+  }
+
+  private TeleportService createTeleportService(Game game, TeleportHandler handler,
+                                                Optional<EconomyCapability> economyCapability) {
+    TeleportService ret = new HandlerTeleportService(handler, game);
+
+    if (economyCapability.isPresent()) {
+      ret = new EconomyTeleportService(ret, new EconomyService(economyCapability.get()), FeeType.WARP_SIGN_USE);
+    }
+    return ret;
   }
 
   /**
@@ -104,12 +119,8 @@ public class WarpSignManager {
     }
     final Warp warp = optional.get();
 
-    if (!authorizationService.isUsable(warp, player)) {
+    if (!authorizationResolver.isUsable(warp, player)) {
       player.sendError(msg.getString("use-warp-permission", warpName));
-      return;
-    }
-
-    if (!economyService.hasAtLeast(player, FeeType.WARP_SIGN_USE)) {
       return;
     }
 
@@ -133,21 +144,26 @@ public class WarpSignManager {
     String name = lines[WARPNAME_LINE];
     Optional<Warp> optional = warpManager.get(name);
 
+    //validate warp existence
     if (!optional.isPresent()) {
       player.sendError(msg.getString("warp-non-existent", name));
       return false;
     }
     Warp warp = optional.get();
 
-    if (!authorizationService.isModifiable(warp, player) && !player.hasPermission("mywarp.sign.create")) {
+    //validate authorization
+    if (!authorizationResolver.isModifiable(warp, player) && !player.hasPermission("mywarp.sign.create")) {
       player.sendError(msg.getString("create-warp-permission", name));
       return false;
     }
 
-    if (!economyService.hasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
-      return false;
+    //validate economy
+    if (economyService != null) {
+      if (!economyService.hasAtLeast(player, FeeType.WARP_SIGN_CREATE)) {
+        return false;
+      }
+      economyService.withdraw(player, FeeType.WARP_SIGN_CREATE);
     }
-    economyService.withdraw(player, FeeType.WARP_SIGN_CREATE);
 
     // get the right spelling (case) out of the config
     String line = lines[IDENTIFIER_LINE];

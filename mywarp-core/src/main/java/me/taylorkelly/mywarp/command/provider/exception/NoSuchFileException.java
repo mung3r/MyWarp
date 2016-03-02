@@ -31,6 +31,11 @@ public class NoSuchFileException extends NonMatchingInputException {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
+  /**
+   * Creates an instance for the given File.
+   *
+   * @param nonExisting the non existing file
+   */
   public NoSuchFileException(File nonExisting) {
     super(nonExisting.getAbsolutePath());
   }

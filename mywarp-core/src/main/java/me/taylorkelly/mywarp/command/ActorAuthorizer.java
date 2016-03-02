@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.sk89q.intake.argument.Namespace;
 import com.sk89q.intake.util.auth.Authorizer;
 
-import me.taylorkelly.mywarp.Actor;
+import me.taylorkelly.mywarp.platform.Actor;
 
 /**
  * Resolves authorization for Actors using {@link Actor#hasPermission(String)}.

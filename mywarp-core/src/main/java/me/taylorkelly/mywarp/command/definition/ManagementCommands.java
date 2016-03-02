@@ -21,20 +21,21 @@ package me.taylorkelly.mywarp.command.definition;
 
 import static me.taylorkelly.mywarp.command.annotation.Name.Condition.MODIFIABLE;
 
+import com.google.common.base.Optional;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.command.ExceedsInitiatorLimitException;
 import me.taylorkelly.mywarp.command.annotation.Billable;
 import me.taylorkelly.mywarp.command.annotation.Name;
 import me.taylorkelly.mywarp.command.annotation.Sender;
 import me.taylorkelly.mywarp.command.annotation.WarpName;
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.limit.LimitService;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.service.economy.FeeType;
+import me.taylorkelly.mywarp.service.limit.LimitService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
@@ -48,7 +49,7 @@ public class ManagementCommands {
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final WarpManager warpManager;
-  private final LimitService limitService;
+  private final Optional<LimitService> limitService;
 
   /**
    * Creates an instance.
@@ -56,41 +57,23 @@ public class ManagementCommands {
    * @param warpManager  the WarpManager used by commands
    * @param limitService the LimitService used by commands
    */
-  public ManagementCommands(WarpManager warpManager, LimitService limitService) {
+  public ManagementCommands(WarpManager warpManager, Optional<LimitService> limitService) {
     this.warpManager = warpManager;
     this.limitService = limitService;
   }
 
-  /**
-   * Creates a private Warp with the given name.
-   *
-   * @param player the LocalPlayer
-   * @param name   the name
-   * @throws CommandException               if the Warp could not be created
-   * @throws ExceedsInitiatorLimitException if a Limit would be exceeded by creating the warp
-   */
   @Command(aliases = {"pcreate", "pset"}, desc = "create.private.description", help = "create.private.help")
   @Require("mywarp.cmd.create-private")
   @Billable(FeeType.CREATE_PRIVATE)
-  public void pcreate(@Sender LocalPlayer player, @WarpName String name)
-      throws CommandException, ExceedsInitiatorLimitException {
+  public void pcreate(@Sender LocalPlayer player, @WarpName String name) throws CommandException {
     addWarp(player, Warp.Type.PRIVATE, name);
     player.sendMessage(msg.getString("create.private.created-successful", name));
   }
 
-  /**
-   * Creates a public Warp with the given name.
-   *
-   * @param player the LocalPlayer
-   * @param name   the name
-   * @throws CommandException               if the Warp could not be created
-   * @throws ExceedsInitiatorLimitException if a Limit would be exceeded by creating the warp
-   */
   @Command(aliases = {"create", "set"}, desc = "create.public.description", help = "create.public.help")
   @Require("mywarp.cmd.create-public")
   @Billable(FeeType.CREATE)
-  public void create(@Sender LocalPlayer player, @WarpName String name)
-      throws CommandException, ExceedsInitiatorLimitException {
+  public void create(@Sender LocalPlayer player, @WarpName String name) throws CommandException {
     addWarp(player, Warp.Type.PUBLIC, name);
     player.sendMessage(msg.getString("create.public.created-successful", name));
   }
@@ -101,28 +84,23 @@ public class ManagementCommands {
    * @param creator the LocalPlayer creating the Warp
    * @param type    the warp's Warp.Type
    * @param name    the warp's name
-   * @throws CommandException               if the Warp cannot be created
-   * @throws ExceedsInitiatorLimitException if a Limit would be exceeded by creating the warp
+   * @throws CommandException if the Warp cannot be created
    */
-  private void addWarp(LocalPlayer creator, Warp.Type type, String name)
-      throws CommandException, ExceedsInitiatorLimitException {
-    LimitService.EvaluationResult
-        result =
-        limitService.evaluateLimit(creator, creator.getWorld(), type.getLimit(), true);
-    if (result.exceedsLimit()) {
-      throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
+  private void addWarp(LocalPlayer creator, Warp.Type type, String name) throws CommandException {
+
+    if (limitService.isPresent()) {
+      LimitService.EvaluationResult
+          result =
+          limitService.get().evaluateLimit(creator, creator.getWorld(), type.getLimit(), true);
+      if (result.exceedsLimit()) {
+        throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
+      }
     }
 
     warpManager.add(new WarpBuilder(name, creator.getProfile(), creator.getWorld().getUniqueId(), creator.getPosition(),
                                     creator.getRotation()).setType(type).build());
   }
 
-  /**
-   * Deletes a Warp.
-   *
-   * @param actor the Actor
-   * @param warp  the Warp
-   */
   @Command(aliases = {"delete", "remove"}, desc = "delete.description", help = "delete.help")
   @Require("mywarp.cmd.delete")
   @Billable(FeeType.DELETE)
@@ -131,12 +109,6 @@ public class ManagementCommands {
     actor.sendMessage(msg.getString("delete.deleted-successful", warp.getName()));
   }
 
-  /**
-   * Update the location of a Warp.
-   *
-   * @param player the LocalPlayer
-   * @param warp   the Warp
-   */
   @Command(aliases = {"update"}, desc = "update.description", help = "update.help")
   @Require("mywarp.cmd.update")
   @Billable(FeeType.UPDATE)
@@ -145,12 +117,6 @@ public class ManagementCommands {
     player.sendMessage(msg.getString("update.update-successful", warp.getName()));
   }
 
-  /**
-   * Edits the welcome-message of a Warp.
-   *
-   * @param player the BukkitPlayer
-   * @param warp   the Warp
-   */
   @Command(aliases = {"welcome"}, desc = "welcome.description", help = "welcome.help")
   @Require("mywarp.cmd.welcome")
   @Billable(FeeType.WELCOME)

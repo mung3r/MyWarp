@@ -47,14 +47,7 @@ class WarpNameProvider implements Provider<String> {
   private WarpManager warpManager;
   private CommandHandler commandHandler;
 
-  /**
-   * Creates an instance. Provides Strings will be validated against the given {@code warpManager} and the given {@code
-   * CommandHandler}.
-   *
-   * @param warpManager    the WarpManager
-   * @param commandHandler the CommandHandler
-   */
-  public WarpNameProvider(WarpManager warpManager, CommandHandler commandHandler) {
+  WarpNameProvider(WarpManager warpManager, CommandHandler commandHandler) {
     this.warpManager = warpManager;
     this.commandHandler = commandHandler;
   }

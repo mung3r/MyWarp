@@ -19,15 +19,17 @@
 
 package me.taylorkelly.mywarp.command;
 
+import com.sk89q.intake.CommandException;
+
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.util.profile.Profile;
 
 /**
  * Indicates that an action exceeds a limit of somebody else than the initiator.
  *
  * @see ExceedsInitiatorLimitException for an Exception thrown when the limit of the initiator is exceeded
  */
-public class ExceedsLimitException extends Exception {
+public class ExceedsLimitException extends CommandException {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 

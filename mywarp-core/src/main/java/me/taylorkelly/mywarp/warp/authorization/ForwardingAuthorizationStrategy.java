@@ -21,8 +21,8 @@ package me.taylorkelly.mywarp.warp.authorization;
 
 import com.google.common.collect.ForwardingObject;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalEntity;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**

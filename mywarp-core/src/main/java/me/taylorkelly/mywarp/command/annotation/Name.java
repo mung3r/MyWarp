@@ -19,10 +19,10 @@
 
 package me.taylorkelly.mywarp.command.annotation;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalEntity;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.warp.Warp;
-import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -37,44 +37,45 @@ import java.lang.annotation.Target;
 public @interface Name {
 
   /**
-   * The condition the parsed warp must meat.
+   * @return the condition the parsed warp must met
    */
   Condition value();
 
   /**
-   * The condition a warp must meat.
+   * The condition a warp must met.
    */
   enum Condition {
     /**
      * The Warp is viewable.
      *
-     * @see AuthorizationService#isViewable(Warp, Actor)
+     * @see AuthorizationResolver#isViewable(Warp, Actor)
      */
     VIEWABLE(Actor.class),
     /**
      * The Warp is usable.
      *
-     * @see AuthorizationService#isUsable(Warp, LocalEntity)
+     * @see AuthorizationResolver#isUsable(Warp, LocalEntity)
      */
     USABLE(LocalEntity.class),
     /**
      * The Warp is modifiable.
      *
-     * @see AuthorizationService#isModifiable(Warp, Actor)
+     * @see AuthorizationResolver#isModifiable(Warp, Actor)
      */
     MODIFIABLE(Actor.class);
 
     private final Class<?> userClass;
 
-    /**
-     * Creates an instance.
-     *
-     * @param userClass the class of the instance that corresponds with this Condition.
-     */
     Condition(Class<?> userClass) {
       this.userClass = userClass;
     }
 
+    /**
+     * To check if a user can potentially have this condition, the user to check must be an instance of the class
+     * returned by this method.
+     *
+     * @return the class a user must be an instance of so that this condition can potentially apply
+     */
     public Class<?> getUserClass() {
       return userClass;
     }

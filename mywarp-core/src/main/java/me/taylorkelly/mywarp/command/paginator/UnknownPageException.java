@@ -24,49 +24,23 @@ package me.taylorkelly.mywarp.command.paginator;
  */
 public class UnknownPageException extends Exception {
 
-  private static final long serialVersionUID = 2658425917194218460L;
-
   private final int highestPage;
 
-  /**
-   * Constructs this exception.
-   *
-   * @param highestPage the number of the highest existing page
-   */
-  public UnknownPageException(int highestPage) {
+  UnknownPageException(int highestPage) {
     this.highestPage = highestPage;
   }
 
-  /**
-   * Constructs this exception with the given message.
-   *
-   * @param message     the message
-   * @param highestPage the number of the highest existing page
-   */
-  public UnknownPageException(String message, int highestPage) {
+  UnknownPageException(String message, int highestPage) {
     super(message);
     this.highestPage = highestPage;
   }
 
-  /**
-   * Constructs this exception with the given message and the given cause.
-   *
-   * @param message     the message
-   * @param cause       the cause of this exception
-   * @param highestPage the number of the highest existing page
-   */
-  public UnknownPageException(String message, Throwable cause, int highestPage) {
+  UnknownPageException(String message, Throwable cause, int highestPage) {
     super(message, cause);
     this.highestPage = highestPage;
   }
 
-  /**
-   * Constructs this exception with the given cause.
-   *
-   * @param cause       the cause
-   * @param highestPage the number of the highest existing page
-   */
-  public UnknownPageException(Throwable cause, int highestPage) {
+  UnknownPageException(Throwable cause, int highestPage) {
     super(cause);
     this.highestPage = highestPage;
   }

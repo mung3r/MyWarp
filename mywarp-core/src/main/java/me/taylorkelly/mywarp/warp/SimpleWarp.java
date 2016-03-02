@@ -22,15 +22,16 @@ package me.taylorkelly.mywarp.warp;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.teleport.TeleportService;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 
 import java.util.Collections;
 import java.util.Date;
@@ -58,8 +59,7 @@ class SimpleWarp extends AbstractWarp {
   private volatile String welcomeMessage;
 
   /**
-   * Creates a instance with the given values. <p>This method should never be called manually. Use a {@link WarpBuilder}
-   * instead.</p>
+   * Creates a instance with the given values.
    *
    * @param name            the warp's name
    * @param creationDate    the warp's creation date
@@ -94,7 +94,10 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public void visit(LocalEntity entity, TeleportService.TeleportStatus status) {
+  public TeleportHandler.TeleportStatus visit(LocalEntity entity, Game game, TeleportHandler handler) {
+    TeleportHandler.TeleportStatus status = handler.teleport(entity, getWorld(game), getPosition(), getRotation());
+
+    //visit counter
     if (status.isPositionModified()) {
       visits++;
     }
@@ -117,6 +120,7 @@ class SimpleWarp extends AbstractWarp {
           break;
       }
     }
+    return status;
   }
 
   @Override
@@ -216,5 +220,22 @@ class SimpleWarp extends AbstractWarp {
   @Override
   public UUID getWorldIdentifier() {
     return worldIdentifier;
+  }
+
+  @Override
+  public String toString() {
+    return "SimpleWarp{" +
+           "name='" + name + '\'' +
+           ", creationDate=" + creationDate +
+           ", invitedPlayers=" + invitedPlayers +
+           ", invitedGroups=" + invitedGroups +
+           ", creator=" + creator +
+           ", type=" + type +
+           ", worldIdentifier=" + worldIdentifier +
+           ", position=" + position +
+           ", rotation=" + rotation +
+           ", visits=" + visits +
+           ", welcomeMessage='" + welcomeMessage + '\'' +
+           '}';
   }
 }

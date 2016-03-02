@@ -19,14 +19,14 @@
 
 package me.taylorkelly.mywarp.warp.authorization;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalEntity;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**
- * Defines a strategy to resolve a user's authentication for a certain Warp.
+ * A strategy to resolve a user's authentication for a certain Warp.
  *
- * @see AuthorizationService
+ * @see AuthorizationResolver
  */
 public interface AuthorizationStrategy {
 

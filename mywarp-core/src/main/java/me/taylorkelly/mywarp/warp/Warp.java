@@ -21,16 +21,16 @@ package me.taylorkelly.mywarp.warp;
 
 import com.google.common.collect.ComparisonChain;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.limit.Limit;
-import me.taylorkelly.mywarp.teleport.TeleportService;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.profile.Profile;
+import me.taylorkelly.mywarp.service.limit.Limit;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
-import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -38,7 +38,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * A named location with additional meta-data. Two Warps are equal are equal if and only if their names are equal.
+ * A named location with additional meta-data. Two Warps are equal if and only if their names are equal.
+ *
  * <p>Use a {@link WarpBuilder} to create instances.</p>
  */
 public interface Warp extends Comparable<Warp> {
@@ -46,15 +47,14 @@ public interface Warp extends Comparable<Warp> {
   String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Warp";
 
   /**
-   * Indicates that an Entity has attempted to visit this Warp with the result of the given {@code status}.
-   * <p/>
-   * This method is typically called by an {@link TeleportService} after it has handled the teleport. Consequentially,
-   * to teleport an Entity to a warp, {@link TeleportService#teleport(LocalEntity, Warp)} should be used.
+   * Teleports the given {@code entity} to this Warp with the given TeleportHandler.
    *
-   * @param entity the entity that attempted the teleport
-   * @param status the resulting status of the teleport attempt
+   * @param entity  the entity that attempted the teleport
+   * @param game    the game within which the teleport occurs
+   * @param handler the TeleportHandler that handles the teleport
+   * @return the status of the teleport
    */
-  void visit(LocalEntity entity, TeleportService.TeleportStatus status);
+  TeleportHandler.TeleportStatus visit(LocalEntity entity, Game game, TeleportHandler handler);
 
   /**
    * Returns whether the given player is the creator of this Warp.
@@ -174,6 +174,7 @@ public interface Warp extends Comparable<Warp> {
   /**
    * Gets the world this warp is positioned in.
    *
+   * @param game the running Game that holds the world
    * @return the world
    */
   LocalWorld getWorld(Game game);
@@ -228,8 +229,10 @@ public interface Warp extends Comparable<Warp> {
   int getVisits();
 
   /**
-   * Gets this Warp's welcome message. The returned message may still contain warp variables that can be replaced using
-   * {@link me.taylorkelly.mywarp.util.WarpUtils#replaceTokens(String, Warp, Actor)}.
+   * Gets this Warp's welcome message.
+   *
+   * <p>The returned message may still contain warp variables that can be replaced using {@link
+   * me.taylorkelly.mywarp.util.WarpUtils#replaceTokens(String, Warp, Actor)}.</p>
    *
    * @return the raw welcome message of this Warp
    */
@@ -243,8 +246,7 @@ public interface Warp extends Comparable<Warp> {
   void setWelcomeMessage(String welcomeMessage);
 
   /**
-   * Sets the location of this Warp. A location consists of three parts: <ol> <li>the world where the location is</li>
-   * <li>the position in the world</li> <li>the rotation of the position</li> </ol>
+   * Sets the location of this Warp.
    *
    * @param world    the world
    * @param position the position
@@ -287,9 +289,11 @@ public interface Warp extends Comparable<Warp> {
   }
 
   /**
-   * Orders Warps by popularity: popular Warps come first, unpopular last. <p>Warps with a higher popularity score are
-   * preferred over Warps with lower score. If the score is equal, newer Warps are preferred over older Warps. If both
-   * Warps were created at the same millisecond, the alphabetically first is preferred.</p>
+   * Orders Warps by popularity: popular Warps come first, unpopular last.
+   *
+   * <p>Warps with a higher popularity score are preferred over Warps with lower score. If the score is equal, newer
+   * Warps are preferred over older Warps. If both Warps were created at the same millisecond, the alphabetically first
+   * is preferred.</p>
    */
   class PopularityComparator implements Comparator<Warp> {
 

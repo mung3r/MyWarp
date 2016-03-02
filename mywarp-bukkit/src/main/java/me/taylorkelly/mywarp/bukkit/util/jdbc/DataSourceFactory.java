@@ -19,7 +19,7 @@
 
 package me.taylorkelly.mywarp.bukkit.util.jdbc;
 
-import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
+import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
 
 import java.util.Properties;
 
@@ -28,7 +28,10 @@ import javax.sql.DataSource;
 /**
  * Creates pre-configured {@link DataSource}s to supported databases.
  */
-public class DataSourceFactory {
+public final class DataSourceFactory {
+
+  private DataSourceFactory() {
+  }
 
   /**
    * Creates a new {@code SingleConnectionDataSource} with the given {@code config}.
@@ -51,7 +54,7 @@ public class DataSourceFactory {
         Class.forName("org.h2.Driver");
       } catch (ClassNotFoundException e) {
         //REVIEW throw SQLException?
-        throw new IllegalStateException("H2 driver class not found.");
+        throw new IllegalStateException("H2 driver class not found.", e);
       }
       properties.setProperty("user", config.getUser());
       properties.setProperty("password", config.getPassword());

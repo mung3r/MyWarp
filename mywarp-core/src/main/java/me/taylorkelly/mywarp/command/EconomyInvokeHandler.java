@@ -28,11 +28,11 @@ import com.sk89q.intake.parametric.ArgumentParser;
 import com.sk89q.intake.parametric.handler.AbstractInvokeListener;
 import com.sk89q.intake.parametric.handler.InvokeHandler;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.command.annotation.Billable;
-import me.taylorkelly.mywarp.economy.EconomyService;
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.service.economy.EconomyService;
+import me.taylorkelly.mywarp.service.economy.FeeType;
 import me.taylorkelly.mywarp.util.IterableUtils;
 
 import java.lang.annotation.Annotation;

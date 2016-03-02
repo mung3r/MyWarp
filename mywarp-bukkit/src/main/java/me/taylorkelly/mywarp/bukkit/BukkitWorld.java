@@ -19,8 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import me.taylorkelly.mywarp.BlockType;
-import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.platform.BlockType;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.Vector3;
 
@@ -41,7 +41,7 @@ public class BukkitWorld implements LocalWorld {
    *
    * @param world the World.
    */
-  public BukkitWorld(World world) {
+  BukkitWorld(World world) {
     this.worldIdentifier = world.getUID();
   }
 

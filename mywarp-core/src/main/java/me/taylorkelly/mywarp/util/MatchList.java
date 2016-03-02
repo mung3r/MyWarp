@@ -32,9 +32,10 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Provides delegated access to a given Collection of warps via name filtering. Once created the matching is 'static' as
- * matching warps are internally stored in the instance. If changes need to be reflected, a new instance needs to be
- * created.
+ * Provides delegated access to a given Collection of warps via name filtering.
+ *
+ * <p>Once created the matching is 'static' as matching warps are internally stored in the instance. If changes need to
+ * be reflected, a new instance needs to be created.</p>
  */
 public class MatchList {
 
@@ -60,10 +61,12 @@ public class MatchList {
   }
 
   /**
-   * Gets an Optional that contains an exact match (if such a Warp exists). A Warp is an exact match if it fulfills one
-   * of the following conditions, starting from the top: <ol> <li>the only Warp whose name contains case-insensitively
-   * this MatchList's filer,</li> <li>the only Warp whose name is case insensitively equal to this MatchList's filter,
-   * <li>the only Warp whose name is equal to this MatchList's filter.</li> </ol>
+   * Gets an Optional that contains an exact match (if such a Warp exists).
+   *
+   * <p>A Warp is an exact match if it fulfills one of the following conditions, starting from the top: <ol> <li>the
+   * only Warp whose name contains case-insensitively this MatchList's filer,</li> <li>the only Warp whose name is case
+   * insensitively equal to this MatchList's filter, <li>the only Warp whose name is equal to this MatchList's
+   * filter.</li> </ol></p>
    *
    * @return a exactly matching Warp
    */

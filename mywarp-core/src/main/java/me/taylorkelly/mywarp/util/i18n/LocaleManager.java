@@ -26,7 +26,7 @@ import java.util.Locale;
  */
 public class LocaleManager {
 
-  private static final ThreadLocal<Locale> ACTIVE_LOCALE = new ThreadLocal<Locale>() {
+  private static final ThreadLocal<Locale> activeLocal = new ThreadLocal<Locale>() {
 
     @Override
     protected Locale initialValue() {
@@ -34,9 +34,6 @@ public class LocaleManager {
     }
   };
 
-  /**
-   * Block initialization of this class.
-   */
   private LocaleManager() {
   }
 
@@ -46,7 +43,7 @@ public class LocaleManager {
    * @return the Locale
    */
   public static Locale getLocale() {
-    return ACTIVE_LOCALE.get();
+    return activeLocal.get();
   }
 
   /**
@@ -55,6 +52,6 @@ public class LocaleManager {
    * @param locale the Locale
    */
   public static void setLocale(Locale locale) {
-    ACTIVE_LOCALE.set(locale);
+    activeLocal.set(locale);
   }
 }

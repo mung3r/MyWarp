@@ -19,7 +19,7 @@
 
 package me.taylorkelly.mywarp.warp.event;
 
-import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**

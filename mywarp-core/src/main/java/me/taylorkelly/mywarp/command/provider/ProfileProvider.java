@@ -26,8 +26,8 @@ import com.sk89q.intake.parametric.Provider;
 import com.sk89q.intake.parametric.ProvisionException;
 
 import me.taylorkelly.mywarp.command.provider.exception.NoSuchProfileException;
-import me.taylorkelly.mywarp.util.profile.Profile;
-import me.taylorkelly.mywarp.util.profile.ProfileService;
+import me.taylorkelly.mywarp.platform.profile.Profile;
+import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -40,15 +40,10 @@ import javax.annotation.Nullable;
  */
 class ProfileProvider implements Provider<Profile> {
 
-  private final ProfileService profileService;
+  private final ProfileCache profileCache;
 
-  /**
-   * Creates an instance. Provided profiles will be resolved from the given {@code profileService}.
-   *
-   * @param profileService the ProfileService
-   */
-  public ProfileProvider(ProfileService profileService) {
-    this.profileService = profileService;
+  ProfileProvider(ProfileCache profileCache) {
+    this.profileCache = profileCache;
   }
 
   @Override
@@ -62,7 +57,7 @@ class ProfileProvider implements Provider<Profile> {
       throws ArgumentException, ProvisionException {
     String query = arguments.next();
 
-    Optional<Profile> optional = profileService.getByName(query);
+    Optional<Profile> optional = profileCache.getByName(query);
 
     if (!optional.isPresent()) {
       throw new NoSuchProfileException(query);

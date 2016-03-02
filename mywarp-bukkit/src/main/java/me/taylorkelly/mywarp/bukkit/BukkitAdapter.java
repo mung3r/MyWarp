@@ -19,8 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -28,19 +28,13 @@ import org.bukkit.entity.Player;
 
 /**
  * Adapts between equivalent local and Bukkit objects.
+ *
+ * <p>Operations of this class are always stateless. Conversions that depend on a state are available in {@link
+ * MyWarpPlugin}.</p>
  */
 public final class BukkitAdapter {
 
-  private final MyWarpPlugin plugin;
-
-
-  /**
-   * Creates an instance.
-   *
-   * @param plugin the plugin instance
-   */
-  public BukkitAdapter(MyWarpPlugin plugin) {
-    this.plugin = plugin;
+  private BukkitAdapter() {
   }
 
   /**
@@ -49,7 +43,7 @@ public final class BukkitAdapter {
    * @param world the LocalWorld
    * @return the World representing the given LocalWorld
    */
-  public World adapt(LocalWorld world) {
+  public static World adapt(LocalWorld world) {
     if (world instanceof BukkitWorld) {
       return ((BukkitWorld) world).getLoadedWorld();
     }
@@ -66,7 +60,7 @@ public final class BukkitAdapter {
    * @param world the World
    * @return the LocalWorld representing the given World
    */
-  public LocalWorld adapt(World world) {
+  public static LocalWorld adapt(World world) {
     return new BukkitWorld(world);
   }
 
@@ -76,25 +70,15 @@ public final class BukkitAdapter {
    * @param player the LocalPlayer
    * @return the Player representing the given LocalPlayer
    */
-  public Player adapt(LocalPlayer player) {
+  public static Player adapt(LocalPlayer player) {
     if (player instanceof BukkitPlayer) {
-      return ((BukkitPlayer) player).getLoadedPlayer();
+      return ((BukkitPlayer) player).getWrapped();
     }
-    Player loadedPlayer = Bukkit.getPlayer(player.getProfile().getUniqueId());
+    Player loadedPlayer = Bukkit.getPlayer(player.getUniqueId());
     if (loadedPlayer == null) {
       throw new IllegalArgumentException("Cannot find a loaded player for " + player + "in Bukkit.");
     }
     return loadedPlayer;
-  }
-
-  /**
-   * Adapts between a Player and a LocalPlayer.
-   *
-   * @param player the Player
-   * @return the LocalPlayer representing the given Player
-   */
-  public LocalPlayer adapt(Player player) {
-    return new BukkitPlayer(player, plugin);
   }
 
 }

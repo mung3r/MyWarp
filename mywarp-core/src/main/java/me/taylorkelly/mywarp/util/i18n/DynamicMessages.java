@@ -30,9 +30,11 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Provides localized messages using Java ResourceBundles. <p>When created, instances will load MyWarp's built-in
- * resource bundles. This process can be customized for all existing instances by registering a custom {@link
- * java.util.ResourceBundle.Control} via {@link #setControl(ResourceBundle.Control)}.</p>
+ * Provides localized messages using Java ResourceBundles.
+ *
+ * <p>When created, instances will load MyWarp's built-in resource bundles. This process can be customized for all
+ * existing instances by registering a custom {@link java.util.ResourceBundle.Control} via {@link
+ * #setControl(ResourceBundle.Control)}.</p>
  */
 public class DynamicMessages {
 
@@ -68,7 +70,9 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a localized string. <p>If no localization exits, {@code $&#123;key&#125;} will be returned.</p>
+   * Gets a localized string.
+   *
+   * <p>If no localization exits, {@code $&#123;key&#125;} will be returned.</p>
    *
    * @param key the key
    * @return the localized string
@@ -78,7 +82,9 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a localized string. <p>If no localization exits, {@code $&#123;key&#125;} will be returned.</p>
+   * Gets a localized string.
+   *
+   * <p>If no localization exits, {@code $&#123;key&#125;} will be returned.</p>
    *
    * @param key    the key
    * @param locale the Locale
@@ -95,8 +101,9 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a localized and formatted string. <p> If no localization exits, {@code $&#123;key&#125;:args} will be
-   * returned. </p>
+   * Gets a localized and formatted string.
+   *
+   * <p> If no localization exits, {@code $&#123;key&#125;:args} will be returned. </p>
    *
    * @param key  the key
    * @param args the arguments
@@ -108,8 +115,9 @@ public class DynamicMessages {
   }
 
   /**
-   * Gets a localized and formatted string. <p> If no localization exits, {@code $&#123;key&#125;:args} will be
-   * returned.</p>
+   * Gets a localized and formatted string.
+   *
+   * <p> If no localization exits, {@code $&#123;key&#125;:args} will be returned.</p>
    *
    * @param key    the key
    * @param locale the Locale

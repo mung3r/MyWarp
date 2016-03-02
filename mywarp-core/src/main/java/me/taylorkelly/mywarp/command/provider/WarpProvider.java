@@ -28,15 +28,15 @@ import com.sk89q.intake.argument.Namespace;
 import com.sk89q.intake.parametric.Provider;
 import com.sk89q.intake.parametric.ProvisionException;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalEntity;
 import me.taylorkelly.mywarp.command.annotation.Name;
 import me.taylorkelly.mywarp.command.provider.exception.NoSuchWarpException;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.util.IterableUtils;
 import me.taylorkelly.mywarp.util.MatchList;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
-import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -49,18 +49,11 @@ import javax.annotation.Nullable;
  */
 class WarpProvider implements Provider<Warp> {
 
-  private final AuthorizationService authorizationService;
+  private final AuthorizationResolver authorizationResolver;
   private WarpManager warpManager;
 
-  /**
-   * Creates an instance. Provides Warps will be resolved from the given {@code warpManager}, using the given {@code
-   * authorizationService}.
-   *
-   * @param authorizationService the AuthorizationService
-   * @param warpManager          the WarpManager
-   */
-  public WarpProvider(AuthorizationService authorizationService, WarpManager warpManager) {
-    this.authorizationService = authorizationService;
+  WarpProvider(AuthorizationResolver authorizationResolver, WarpManager warpManager) {
+    this.authorizationResolver = authorizationResolver;
     this.warpManager = warpManager;
   }
 
@@ -92,13 +85,13 @@ class WarpProvider implements Provider<Warp> {
     Predicate<Warp> predicate = null;
     switch (conditionValue) {
       case MODIFIABLE:
-        predicate = authorizationService.isModifiable(actor);
+        predicate = authorizationResolver.isModifiable(actor);
         break;
       case USABLE:
-        predicate = authorizationService.isUsable((LocalEntity) actor);
+        predicate = authorizationResolver.isUsable((LocalEntity) actor);
         break;
       case VIEWABLE:
-        predicate = authorizationService.isViewable(actor);
+        predicate = authorizationResolver.isViewable(actor);
         break;
     }
 

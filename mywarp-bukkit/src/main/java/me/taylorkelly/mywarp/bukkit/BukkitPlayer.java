@@ -19,17 +19,19 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import me.taylorkelly.mywarp.AbstractActor;
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.bukkit.util.BukkitMessageInterpreter;
 import me.taylorkelly.mywarp.bukkit.util.ReflectiveLocaleResolver;
+import me.taylorkelly.mywarp.bukkit.util.conversation.AcceptancePromptFactory;
+import me.taylorkelly.mywarp.bukkit.util.conversation.WelcomeEditorFactory;
+import me.taylorkelly.mywarp.bukkit.util.permission.group.GroupResolver;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.Settings;
+import me.taylorkelly.mywarp.platform.profile.Profile;
+import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.util.EulerDirection;
-import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.Vector3;
-import me.taylorkelly.mywarp.util.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import org.bukkit.Effect;
@@ -45,118 +47,108 @@ import java.util.UUID;
 /**
  * A reference to a Player in Bukkit.
  */
-public class BukkitPlayer extends AbstractActor implements LocalPlayer {
+public class BukkitPlayer extends BukkitActor implements LocalPlayer {
 
   private static final Logger log = MyWarpLogger.getLogger(BukkitPlayer.class);
 
-  private final Player player;
-  private final MyWarpPlugin plugin;
+  private final AcceptancePromptFactory acceptancePromptFactory;
+  private final WelcomeEditorFactory welcomeEditorFactory;
+  private final GroupResolver groupResolver;
+  private final ProfileCache profileCache;
 
   /**
-   * Creates an instance that references the given Player.
+   * Creates an instance that references the given {@code player}.
    *
-   * @param player the player
-   * @param plugin the plugin instance
+   * @param player                  the player
+   * @param acceptancePromptFactory the factory to create warp acceptance conversations
+   * @param welcomeEditorFactory    the factory to create welcome message editor conversations
+   * @param groupResolver           the group resolver
+   * @param profileCache            the configured profile cache
+   * @param settings                the configured settings
    */
-  public BukkitPlayer(Player player, MyWarpPlugin plugin) {
-    this.player = player;
-    this.plugin = plugin;
-  }
-
-  /**
-   * Gets the Player referenced by this BukkitPlayer.
-   *
-   * @return the loaded Player
-   */
-  public Player getLoadedPlayer() {
-    return player;
+  BukkitPlayer(Player player, AcceptancePromptFactory acceptancePromptFactory,
+               WelcomeEditorFactory welcomeEditorFactory, GroupResolver groupResolver, ProfileCache profileCache,
+               Settings settings) {
+    super(player, settings);
+    this.acceptancePromptFactory = acceptancePromptFactory;
+    this.welcomeEditorFactory = welcomeEditorFactory;
+    this.groupResolver = groupResolver;
+    this.profileCache = profileCache;
   }
 
   @Override
-  public void initiateAcceptanceConversation(Actor initiator, Warp warp) {
-    plugin.getAcceptancePromptFactory().create(this, warp, initiator);
+  public Player getWrapped() {
+    return (Player) super.getWrapped();
   }
 
   @Override
-  public void initiateWelcomeChangeConversation(Warp warp) {
-    plugin.getWelcomeEditorFactory().create(this, warp);
-  }
-
-  @Override
-  public void sendMessage(Message msg) {
-    player.sendMessage(BukkitMessageInterpreter.interpret(msg));
-  }
-
-  @Override
-  public boolean hasPermission(String node) {
-    return player.hasPermission(node);
-  }
-
-  @Override
-  public String getName() {
-    return player.getName();
-  }
-
-  @Override
-  public boolean hasGroup(String groupId) {
-    return plugin.getGroupResolver().hasGroup(player, groupId);
+  public UUID getUniqueId() {
+    return getWrapped().getUniqueId();
   }
 
   @Override
   public Profile getProfile() {
-    return plugin.getProfileService().getByUniqueId(player.getUniqueId());
+    return profileCache.getByUniqueId(getWrapped().getUniqueId());
   }
 
   @Override
   public Locale getLocale() {
-    Locale locale = plugin.getSettings().getLocalizationDefaultLocale();
-    if (plugin.getSettings().isLocalizationPerPlayer()) {
+    Locale locale = super.getLocale();
+    if (settings.isLocalizationPerPlayer()) {
       try {
-        locale = ReflectiveLocaleResolver.INSTANCE.resolve(player);
+        locale = ReflectiveLocaleResolver.INSTANCE.resolve(getWrapped());
       } catch (ReflectiveLocaleResolver.UnresolvableLocaleException e) {
-        log.warn(String.format("Failed to resolve the Locale for %s, defaulting to %s.", player.getName(), locale), e);
+        log.warn(String.format("Failed to resolve the Locale for %s, defaulting to %s.", getName(), locale), e);
       }
     }
     return locale;
   }
 
   @Override
-  public void resetCompass() {
-    player.setCompassTarget(player.getWorld().getSpawnLocation());
+  public void initiateAcceptanceConversation(Actor initiator, Warp warp) {
+    acceptancePromptFactory.create(this, warp, initiator);
   }
 
   @Override
-  public UUID getUniqueId() {
-    return player.getUniqueId();
+  public void initiateWelcomeChangeConversation(Warp warp) {
+    welcomeEditorFactory.create(this, warp);
+  }
+
+  @Override
+  public boolean hasGroup(String groupId) {
+    return groupResolver.hasGroup(getWrapped(), groupId);
   }
 
   @Override
   public double getHealth() {
-    return player.getHealth();
+    return getWrapped().getHealth();
   }
 
   @Override
   public void setCompassTarget(LocalWorld world, Vector3 position) {
-    Location
-        bukkitLoc =
-        new Location(plugin.getAdapter().adapt(world), position.getX(), position.getY(), position.getZ());
-    player.setCompassTarget(bukkitLoc);
+    Location bukkitLoc = new Location(BukkitAdapter.adapt(world), position.getX(), position.getY(), position.getZ());
+    getWrapped().setCompassTarget(bukkitLoc);
+  }
+
+  @Override
+  public void resetCompass() {
+    getWrapped().setCompassTarget(getWrapped().getWorld().getSpawnLocation());
   }
 
   @Override
   public LocalWorld getWorld() {
-    return plugin.getAdapter().adapt(player.getWorld());
+    return BukkitAdapter.adapt(getWrapped().getWorld());
   }
 
   @Override
   public Vector3 getPosition() {
-    Location bukkitLoc = player.getLocation();
+    Location bukkitLoc = getWrapped().getLocation();
     return new Vector3(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ());
   }
 
   @Override
   public EulerDirection getRotation() {
-    Location bukkitLoc = player.getLocation();
+    Location bukkitLoc = getWrapped().getLocation();
     return new EulerDirection(bukkitLoc.getPitch(), bukkitLoc.getYaw(), 0);
   }
 
@@ -164,9 +156,9 @@ public class BukkitPlayer extends AbstractActor implements LocalPlayer {
   public void teleport(LocalWorld world, Vector3 position, EulerDirection rotation) {
     Location
         bukkitLoc =
-        new Location(plugin.getAdapter().adapt(world), position.getX(), position.getY(), position.getZ(),
-                     rotation.getYaw(), rotation.getPitch());
-    teleportRecursive(player, bukkitLoc, true);
+        new Location(BukkitAdapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getYaw(),
+                     rotation.getPitch());
+    teleportRecursive(getWrapped(), bukkitLoc, true);
   }
 
   /**
@@ -207,25 +199,5 @@ public class BukkitPlayer extends AbstractActor implements LocalPlayer {
       teleportRecursive(vehicle, bukkitLoc, teleportTamedHorses);
       vehicle.setPassenger(teleportee);
     }
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    BukkitPlayer that = (BukkitPlayer) o;
-
-    return player.equals(that.player);
-
-  }
-
-  @Override
-  public int hashCode() {
-    return player.hashCode();
   }
 }

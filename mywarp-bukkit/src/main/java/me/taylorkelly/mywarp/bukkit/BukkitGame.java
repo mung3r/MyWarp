@@ -22,9 +22,9 @@ package me.taylorkelly.mywarp.bukkit;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalPlayer;
-import me.taylorkelly.mywarp.LocalWorld;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -39,17 +39,16 @@ import java.util.concurrent.Executor;
 public class BukkitGame implements Game {
 
   private final BukkitExecutor executor;
-  private final BukkitAdapter adapter;
+  private final MyWarpPlugin plugin;
 
   /**
    * Creates the instance.
    *
    * @param executor the executor for Bukkit
-   * @param adapter  the adapter for Bukkit
    */
-  public BukkitGame(BukkitExecutor executor, BukkitAdapter adapter) {
+  BukkitGame(MyWarpPlugin plugin, BukkitExecutor executor) {
+    this.plugin = plugin;
     this.executor = executor;
-    this.adapter = adapter;
   }
 
   @Override
@@ -61,7 +60,7 @@ public class BukkitGame implements Game {
   public Optional<LocalWorld> getWorld(String worldName) {
     World world = Bukkit.getWorld(worldName);
     if (world != null) {
-      return Optional.of(adapter.adapt(world));
+      return Optional.of(BukkitAdapter.adapt(world));
     }
     return Optional.absent();
   }
@@ -70,7 +69,7 @@ public class BukkitGame implements Game {
   public Optional<LocalWorld> getWorld(UUID uniqueId) {
     World world = Bukkit.getWorld(uniqueId);
     if (world != null) {
-      return Optional.of(adapter.adapt(world));
+      return Optional.of(BukkitAdapter.adapt(world));
     }
     return Optional.absent();
   }
@@ -79,7 +78,7 @@ public class BukkitGame implements Game {
   public Optional<LocalPlayer> getPlayer(String name) {
     @SuppressWarnings("deprecation") Player player = Bukkit.getPlayer(name);
     if (player != null) {
-      return Optional.of(adapter.adapt(player));
+      return Optional.of(plugin.wrap(player));
     }
     return Optional.absent();
   }
@@ -88,7 +87,7 @@ public class BukkitGame implements Game {
   public Optional<LocalPlayer> getPlayer(UUID identifier) {
     Player player = Bukkit.getPlayer(identifier);
     if (player != null) {
-      return Optional.of(adapter.adapt(player));
+      return Optional.of(plugin.wrap(player));
     }
     return Optional.absent();
   }
@@ -98,7 +97,7 @@ public class BukkitGame implements Game {
     ImmutableSet.Builder<LocalWorld> builder = ImmutableSet.builder();
 
     for (World world : Bukkit.getWorlds()) {
-      builder.add(adapter.adapt(world));
+      builder.add(BukkitAdapter.adapt(world));
     }
     return builder.build();
   }

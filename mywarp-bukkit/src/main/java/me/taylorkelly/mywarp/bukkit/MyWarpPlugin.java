@@ -19,31 +19,30 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.Game;
+import static com.google.common.base.Preconditions.checkState;
+
+import com.google.common.base.Predicates;
+import com.google.common.eventbus.Subscribe;
+
 import me.taylorkelly.mywarp.InitializationException;
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.Platform;
-import me.taylorkelly.mywarp.bukkit.conversation.AcceptancePromptFactory;
-import me.taylorkelly.mywarp.bukkit.conversation.WelcomeEditorFactory;
-import me.taylorkelly.mywarp.bukkit.economy.BukkitFeeProvider;
-import me.taylorkelly.mywarp.bukkit.economy.VaultProvider;
-import me.taylorkelly.mywarp.bukkit.limits.BukkitLimitProvider;
-import me.taylorkelly.mywarp.bukkit.markers.DynmapMarkers;
-import me.taylorkelly.mywarp.bukkit.timer.BukkitDurationProvider;
-import me.taylorkelly.mywarp.bukkit.timer.BukkitTimerService;
-import me.taylorkelly.mywarp.bukkit.util.permissions.BukkitPermissionsRegistration;
-import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolver;
-import me.taylorkelly.mywarp.bukkit.util.permissions.group.GroupResolverManager;
-import me.taylorkelly.mywarp.bukkit.util.profile.SquirrelIdProfileService;
-import me.taylorkelly.mywarp.sign.WarpSignManager;
-import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
-import me.taylorkelly.mywarp.storage.RelationalDataService;
+import me.taylorkelly.mywarp.bukkit.settings.BukkitSettings;
+import me.taylorkelly.mywarp.bukkit.util.conversation.AcceptancePromptFactory;
+import me.taylorkelly.mywarp.bukkit.util.conversation.WelcomeEditorFactory;
+import me.taylorkelly.mywarp.bukkit.util.permission.BukkitPermissionsRegistration;
+import me.taylorkelly.mywarp.bukkit.util.permission.group.GroupResolver;
+import me.taylorkelly.mywarp.bukkit.util.permission.group.GroupResolverFactory;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.event.PostInitializationEvent;
+import me.taylorkelly.mywarp.platform.event.ReloadEvent;
+import me.taylorkelly.mywarp.platform.event.WarpsLoadedEvent;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
+import me.taylorkelly.mywarp.util.WarpUtils;
+import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.FolderSourcedControl;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
-
-import net.milkbowl.vault.economy.Economy;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.Bukkit;
@@ -51,11 +50,11 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapCommonAPI;
 import org.slf4j.Logger;
@@ -72,64 +71,39 @@ import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
- * The MyWarp plugin instance when running on Bukkit.
+ * The MyWarp plugin singleton when running on Bukkit.
+ *
+ * <p>This class is loaded by Bukkit when the plugin is initialized.</p>
  */
-public final class MyWarpPlugin extends JavaPlugin implements Platform {
+public final class MyWarpPlugin extends JavaPlugin {
 
-  public static final String CONVERSATIONS_RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Conversations";
+  public static final String CONVERSATION_RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Conversations";
+  public static final int CONVERSATION_TIMEOUT = 30;
 
   private static final Logger log = MyWarpLogger.getLogger(MyWarpPlugin.class);
 
-  private final File bundleFolder = new File(getDataFolder(), "lang");
-  private final ResourceBundle.Control control = new FolderSourcedControl(bundleFolder);
+  private final ResourceBundle.Control control = new FolderSourcedControl(new File(getDataFolder(), "lang"));
   private final Set<Closeable> closeables = Collections.newSetFromMap(new WeakHashMap<Closeable, Boolean>());
 
-  private SingleConnectionDataService dataService;
-  private GroupResolverManager groupResolverManager;
-  private SquirrelIdProfileService profileService;
-  private BukkitSettings settings;
-  private BukkitAdapter adapter;
-  private BukkitGame game;
+  private BukkitPlatform platform;
+  private MyWarp myWarp;
+  private GroupResolver groupResolver;
   private AcceptancePromptFactory acceptancePromptFactory;
   private WelcomeEditorFactory welcomeEditorFactory;
 
-  private MyWarp myWarp;
-
   @Nullable
-  private VaultProvider economyService;
-  @Nullable
-  private BukkitTimerService timerService;
-  @Nullable
-  private BukkitFeeProvider feeProvider;
-  @Nullable
-  private BukkitLimitProvider limitProvider;
-  @Nullable
-  private BukkitDurationProvider durationProvider;
-
-  // -- JavaPlugin methods
+  private DynmapMarker marker;
 
   @Override
   public void onEnable() {
 
-    // create the data-folder
-    getDataFolder().mkdirs();
+    // initialize platform
+    DynamicMessages.setControl(control);
+    platform = new BukkitPlatform(this, YamlConfiguration.loadConfiguration(this.getTextResource("config.yml")));
 
-    profileService = new SquirrelIdProfileService(new File(getDataFolder(), "profiles.db"));
-    groupResolverManager = new GroupResolverManager();
-    adapter = new BukkitAdapter(this);
-
-    // setup the configurations
-    //TODO fail for SQLite driver 3.7.x...
-    settings =
-        new BukkitSettings(new File(getDataFolder(), "config.yml"),
-                           YamlConfiguration.loadConfiguration(getTextResource("config.yml")), adapter);
-
-    // setup the Game
-    game = new BukkitGame(new BukkitExecutor(this), adapter);
-
-    // try to setup the core
+    // setup the core
     try {
-      myWarp = new MyWarp(this);
+      myWarp = new MyWarp(platform);
     } catch (InitializationException e) {
       log.error("A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be disabled.",
                 e);
@@ -137,31 +111,69 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
       return;
     }
 
-    acceptancePromptFactory = new AcceptancePromptFactory(this, myWarp.getAuthorizationService(), game);
-    welcomeEditorFactory = new WelcomeEditorFactory(this);
+    // register internal event listener
+    myWarp.getEventBus().register(this);
 
-    setupPlugin();
+    // further platform-specific objects
+    groupResolver = GroupResolverFactory.createResolver();
+    acceptancePromptFactory =
+        new AcceptancePromptFactory(createConversationFactory(), myWarp.getAuthorizationResolver(), platform.getGame(),
+                                    this);
+    welcomeEditorFactory = new WelcomeEditorFactory(createConversationFactory());
+  }
+
+  @Override
+  public void onDisable() {
+    unregisterPermsAndListeners();
+
+    //close any registered Closables
+    for (Closeable closeable : closeables) {
+      try {
+        closeable.close();
+      } catch (IOException e) {
+        log.warn("Failed to close " + closeable.getClass().getCanonicalName(), e);
+      }
+    }
   }
 
   /**
-   * Sets up the plugin. Calling this method will setup all functions that depend on configurations and are, by design,
-   * optional.
+   * Called when MyWarp's core is reloaded.
+   *
+   * @param event the event
+   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
+   * privatized when support for legacy Guava versions is removed.
    */
-  private void setupPlugin() {
-    profileService.registerEvents(this);
-
-    if (settings.isWarpSignsEnabled()) {
-      new WarpSignListener(adapter, new WarpSignManager(settings.getWarpSignsIdentifiers(), myWarp))
-          .registerEvents(this);
+  @Deprecated
+  @Subscribe
+  public void onCoreReload(ReloadEvent event) {
+    // cleanup old stuff
+    unregisterPermsAndListeners();
+    platform.resetCapabilities();
+    if (marker != null) {
+      marker.clear();
     }
 
-    if (settings.isDynmapEnabled()) {
-      Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
-      if (dynmap != null && dynmap.isEnabled()) {
-        new DynmapMarkers(this, (DynmapCommonAPI) dynmap, myWarp.getWarpManager(), myWarp.getEventBus(), game);
-      } else {
-        log.error("Failed to hook into Dynmap. Disabling Dynmap support.");
-      }
+    // load new stuff
+    getSettings().reload();
+  }
+
+  /**
+   * Called after MyWarp's core is initialized.
+   *
+   * @param event the event
+   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
+   * privatized when support for legacy Guava versions is removed.
+   */
+  @Deprecated
+  @Subscribe
+  public void onCoreInitialized(PostInitializationEvent event) {
+
+    //register profile service listener
+    getProfileCache().registerEvents(this);
+
+    //register warp sign listener
+    if (getSettings().isWarpSignsEnabled()) {
+      new WarpSignListener(this, myWarp.createWarpSignHandler()).registerEvents(this);
     }
 
     // register world access permissions
@@ -172,16 +184,26 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
     }
   }
 
-  @Override
-  public void onDisable() {
-    HandlerList.unregisterAll(this);
-    BukkitPermissionsRegistration.INSTANCE.unregisterAll();
-
-    for (Closeable closeable : closeables) {
-      try {
-        closeable.close();
-      } catch (IOException e) {
-        log.warn("Failed to close " + closeable.getClass().getCanonicalName(), e);
+  /**
+   * Called after MyWarp's core has successfully loaded Warps from database.
+   *
+   * @param event the event
+   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
+   * privatized when support for legacy Guava versions is removed.
+   */
+  @Deprecated
+  @Subscribe
+  public void onWarpsLoadedEvent(WarpsLoadedEvent event) {
+    if (getSettings().isDynmapEnabled()) {
+      Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
+      if (dynmap != null && dynmap.isEnabled() && dynmap instanceof DynmapCommonAPI) {
+        marker =
+            new DynmapMarker((DynmapCommonAPI) dynmap, this, getSettings(), WarpUtils.isType(Warp.Type.PUBLIC),
+                             platform.getGame());
+        marker.addMarker(myWarp.getWarpManager().filter(Predicates.<Warp>alwaysTrue()));
+        myWarp.getEventBus().register(marker);
+      } else {
+        log.error("Failed to hook into Dynmap. Disabling Dynmap support.");
       }
     }
   }
@@ -200,7 +222,6 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
       builder.appendSeparator(' ');
       builder.append(argument);
     }
-
     myWarp.getCommandHandler().callCommand(builder.toString(), actor);
     return true;
   }
@@ -219,149 +240,102 @@ public final class MyWarpPlugin extends JavaPlugin implements Platform {
       builder.appendSeparator(' ');
       builder.append(argument);
     }
-
     return myWarp.getCommandHandler().getSuggestions(builder.toString(), actor);
   }
 
-  // -- custom methods
-
   /**
-   * Wraps a CommandSender to an Actor.
+   * Creates a new Actor instance by wrapping the given Bukkit {@code commandSender}.
    *
-   * @param sender the CommandSender
-   * @return the Actor representing the given CommandSender
+   * @param commandSender the CommandSender to wrap
+   * @return a new Actor referencing the {@code commandSender}
    */
-  public Actor wrap(CommandSender sender) {
-    if (sender instanceof Player) {
-      return adapter.adapt((Player) sender);
+  public Actor wrap(CommandSender commandSender) {
+    if (commandSender instanceof Player) {
+      return wrap((Player) commandSender);
     }
-    return new BukkitActor(sender, settings.getLocalizationDefaultLocale());
+    return new BukkitActor(commandSender, getSettings());
   }
 
   /**
-   * Gets the adapter.
+   * Creates a new LocalPlayer instance by wrapping the given Bukkit {@code player}.
    *
-   * @return the adapter
+   * @param player the Player to wrap
+   * @return a new LocalPlayer referencing the {@code player}
    */
-  public BukkitAdapter getAdapter() {
-    return adapter;
+  public LocalPlayer wrap(Player player) {
+    return new BukkitPlayer(player, getAcceptancePromptFactory(), getWelcomeEditorFactory(), getGroupResolver(),
+                            getProfileCache(), getSettings());
   }
 
   /**
-   * Gets the GroupResolver.
+   * Gets the GroupResolver that resolve's a player's group.
    *
-   * @return the GroupResolver
+   * @return the configured GroupResolver
    */
-  public GroupResolver getGroupResolver() {
-    return groupResolverManager;
+  protected GroupResolver getGroupResolver() {
+    checkState(groupResolver != null, "'groupResolver' is not yet initialized");
+    return groupResolver;
   }
 
-  public WelcomeEditorFactory getWelcomeEditorFactory() {
+  /**
+   * Gets the conversation factory for welcome editor conversations.
+   *
+   * @return the configured welcome editor factory
+   */
+  protected WelcomeEditorFactory getWelcomeEditorFactory() {
+    checkState(welcomeEditorFactory != null, "'welcomeEditorFactory' is not yet initialized");
     return welcomeEditorFactory;
   }
 
-  public AcceptancePromptFactory getAcceptancePromptFactory() {
+  /**
+   * Gets the conversation factory for warp acceptance conversations.
+   *
+   * @return the configured acceptance prompt factory
+   */
+  protected AcceptancePromptFactory getAcceptancePromptFactory() {
+    checkState(acceptancePromptFactory != null, "'acceptancePromptFactory' is not yet initialized");
     return acceptancePromptFactory;
   }
 
-  // -- Platform methods
+  /**
+   * Gets the BukkitSettings instance that provides access to MyWarp's settings.
+   *
+   * @return the configured settings
+   */
+  protected BukkitSettings getSettings() {
+    checkState(platform != null, "'platform' is not yet initialized");
+    return platform.getSettings();
+  }
 
-  @Override
-  public void reload() {
-    // cleanup old stuff
+  /**
+   * Gets the ProfileCache that stored Profiles for known players.
+   *
+   * @return the configured ProfileCache
+   */
+  protected SquirrelIdProfileCache getProfileCache() {
+    checkState(platform != null, "'platform' is not yet initialized");
+    return platform.getProfileCache();
+  }
+
+  /**
+   * Registers the given {@code closable} for closure when the plugin is disabled.
+   *
+   * <p>Registered Closables will be stored within a {@link java.lang.ref.WeakReference}. If MyWarp is disabled by
+   * Bukkit and the reference is still valid, {@link Closeable#close()} is invoked.</p>
+   *
+   * @param closeable the Closable to register
+   */
+  protected void registerClosable(Closeable closeable) {
+    closeables.add(closeable);
+  }
+
+  private ConversationFactory createConversationFactory() {
+    return new ConversationFactory(this).withModality(true).withTimeout(CONVERSATION_TIMEOUT);
+  }
+
+  private void unregisterPermsAndListeners() {
     HandlerList.unregisterAll(this);
     BukkitPermissionsRegistration.INSTANCE.unregisterAll();
-
-    // load new stuff
-    settings.reload();
-    setupPlugin();
-  }
-
-  @Override
-  public ResourceBundle.Control getResourceBundleControl() {
-    return control;
-  }
-
-  @Override
-  public Game getGame() {
-    return game;
-  }
-
-  @Override
-  public RelationalDataService createDataService(ConnectionConfiguration configuration) {
-    RelationalDataService ret = new SingleConnectionDataService(configuration);
-
-    //add weak reference so it can be closed on shutdown if not done by the caller
-    closeables.add(ret);
-
-    return ret;
-  }
-
-  @Override
-  public BukkitSettings getSettings() {
-    return settings;
-  }
-
-  @Override
-  public SquirrelIdProfileService getProfileService() {
-    return profileService;
-  }
-
-  @Override
-  public VaultProvider getEconomyService() {
-    if (economyService == null) {
-      try {
-        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServicesManager().getRegistration(Economy.class);
-        if (economyProvider != null) {
-          economyService = new VaultProvider(economyProvider, adapter);
-        } else {
-          log.error("Failed to hook into Vault (EconomyProvider is null). Economy support will not be available.");
-          throw new UnsupportedOperationException();
-        }
-      } catch (NoClassDefFoundError e) {
-        log.error(
-            "Failed to hook into Vault (EconomyProviderClass not available). Economy support will not be available.");
-        throw new UnsupportedOperationException();
-      }
-    }
-
-    return economyService;
-  }
-
-  @Override
-  public BukkitTimerService getTimerService() {
-    if (timerService == null) {
-      timerService = new BukkitTimerService(this);
-    }
-    return timerService;
-  }
-
-  @Override
-  public BukkitFeeProvider getFeeProvider() {
-    if (feeProvider == null) {
-      feeProvider =
-          new BukkitFeeProvider(settings.getEconomyConfiguredFeeBundles(), settings.getEconomyDefaultFeeBundle());
-    }
-    return feeProvider;
-  }
-
-  @Override
-  public BukkitLimitProvider getLimitProvider() {
-    if (limitProvider == null) {
-      limitProvider =
-          new BukkitLimitProvider(settings.getLimitsConfiguredLimitBundles(), settings.getLimitsDefaultLimitBundle());
-    }
-    return limitProvider;
-  }
-
-  @Override
-  public BukkitDurationProvider getDurationProvider() {
-    if (durationProvider == null) {
-      durationProvider =
-          new BukkitDurationProvider(settings.getTimersConfiguredDurationBundles(),
-                                     settings.getTimersDefaultDurationBundle());
-    }
-    return durationProvider;
   }
 
 }

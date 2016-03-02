@@ -35,7 +35,7 @@ public class BukkitExecutor implements Executor {
    *
    * @param plugin the running plugin instance
    */
-  public BukkitExecutor(MyWarpPlugin plugin) {
+  BukkitExecutor(MyWarpPlugin plugin) {
     this.plugin = plugin;
   }
 

@@ -23,12 +23,14 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
 
-import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalWorld;
-import me.taylorkelly.mywarp.teleport.TeleportService.TeleportStatus;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
-import me.taylorkelly.mywarp.util.profile.Profile;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
 import me.taylorkelly.mywarp.warp.event.WarpAdditionEvent;
 import me.taylorkelly.mywarp.warp.event.WarpDeletionEvent;
 import me.taylorkelly.mywarp.warp.event.WarpEvent;
@@ -39,30 +41,33 @@ import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
 
 /**
  * Fires events for all warps managed by it. Functional calls are all delegated to an underling WarpManager as required
- * by the decorator pattern and events are implemented on top. <p>Events are dispatched in the {@link EventBus} given
- * when initializing this WarpManager.  Individual warps fire {@link WarpEvent}s and the manager itself fires {@link
- * WarpAdditionEvent}s and {@link me.taylorkelly.mywarp.warp.event.WarpDeletionEvent}s when Warps are added to or
- * removed from it. Handlers that want to listen to such events need to register themselves on the EventBus.</p>
+ * by the decorator pattern, events are implemented on top.
+ *
+ * <p>Events are dispatched in the {@link EventBus} given when initializing this WarpManager. Individual warps fire
+ * {@link WarpEvent}s and the manager itself fires {@link WarpAdditionEvent}s and {@link
+ * me.taylorkelly.mywarp.warp.event.WarpDeletionEvent}s when Warps are added to or removed from it. Handlers that want
+ * to listen to such events need to register themselves on the EventBus.</p>
  */
 public class EventfulWarpManager extends ForwardingWarpManager {
 
-  private final WarpManager warpManager;
+  private final WarpManager delegate;
   private final EventBus eventBus;
 
   /**
-   * Creates an instance working on top of the given WarpManager.
+   * Creates an instance that posts events on the given {@code eventBus}. Further management is delegated to the given
+   * WarpManager.
    *
-   * @param warpManager the WarpManager
-   * @param eventBus    the EventBus
+   * @param delegate the WarpManager to delegate calls to
+   * @param eventBus the EventBus on which this manager will post events
    */
-  public EventfulWarpManager(WarpManager warpManager, EventBus eventBus) {
-    this.warpManager = warpManager;
+  public EventfulWarpManager(WarpManager delegate, EventBus eventBus) {
+    this.delegate = delegate;
     this.eventBus = eventBus;
   }
 
   @Override
   protected WarpManager delegate() {
-    return warpManager;
+    return delegate;
   }
 
   @Override
@@ -94,29 +99,25 @@ public class EventfulWarpManager extends ForwardingWarpManager {
    */
   private class EventfulWarp extends ForwardingWarp {
 
-    private final Warp warp;
+    private final Warp delegate;
 
-    /**
-     * Creates the instance that forwards calls to the given Warp.
-     *
-     * @param warp the Warp
-     */
-    private EventfulWarp(Warp warp) {
-      this.warp = warp;
+    private EventfulWarp(Warp delegate) {
+      this.delegate = delegate;
     }
 
     @Override
     protected Warp delegate() {
-      return warp;
+      return delegate;
     }
 
     @Override
-    public void visit(LocalEntity entity, TeleportStatus status) {
-      delegate().visit(entity, status);
+    public TeleportStatus visit(LocalEntity entity, Game game, TeleportHandler handler) {
+      TeleportStatus status = delegate().visit(entity, game, handler);
 
       if (status.isPositionModified()) {
         eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
       }
+      return status;
     }
 
     @Override
@@ -172,6 +173,5 @@ public class EventfulWarpManager extends ForwardingWarpManager {
       super.setWelcomeMessage(welcomeMessage);
       eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.WELCOME_MESSAGE));
     }
-
   }
 }

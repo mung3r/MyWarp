@@ -19,8 +19,9 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import me.taylorkelly.mywarp.AbstractActor;
 import me.taylorkelly.mywarp.bukkit.util.BukkitMessageInterpreter;
+import me.taylorkelly.mywarp.platform.AbstractActor;
+import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.util.Message;
 
 import org.bukkit.command.CommandSender;
@@ -32,18 +33,19 @@ import java.util.Locale;
  */
 public class BukkitActor extends AbstractActor {
 
+  protected final Settings settings;
+
   private final CommandSender sender;
-  private final Locale locale;
 
   /**
-   * Initializes this BukkitActor.
+   * Creates an instance referencing the given {@code sender}.
    *
-   * @param sender the Bukkit CommandSender
-   * @param locale the Locale of the CommandSender
+   * @param sender   the Bukkit CommandSender
+   * @param settings the configured settings
    */
-  public BukkitActor(CommandSender sender, Locale locale) {
+  BukkitActor(CommandSender sender, Settings settings) {
     this.sender = sender;
-    this.locale = locale;
+    this.settings = settings;
   }
 
   /**
@@ -51,18 +53,8 @@ public class BukkitActor extends AbstractActor {
    *
    * @return the CommandSender
    */
-  public CommandSender getCommandSender() {
+  public CommandSender getWrapped() {
     return sender;
-  }
-
-  @Override
-  public boolean hasPermission(String node) {
-    return sender.hasPermission(node);
-  }
-
-  @Override
-  public void sendMessage(Message msg) {
-    sender.sendMessage(BukkitMessageInterpreter.interpret(msg));
   }
 
   @Override
@@ -72,7 +64,43 @@ public class BukkitActor extends AbstractActor {
 
   @Override
   public Locale getLocale() {
-    return locale;
+    return settings.getLocalizationDefaultLocale();
   }
 
+  @Override
+  public void sendMessage(Message msg) {
+    sender.sendMessage(BukkitMessageInterpreter.interpret(msg));
+  }
+
+  @Override
+  public boolean hasPermission(String node) {
+    return sender.hasPermission(node);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    BukkitActor that = (BukkitActor) o;
+
+    return sender.equals(that.sender);
+
+  }
+
+  @Override
+  public int hashCode() {
+    return sender.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "BukkitActor{" +
+           "sender=" + sender +
+           '}';
+  }
 }

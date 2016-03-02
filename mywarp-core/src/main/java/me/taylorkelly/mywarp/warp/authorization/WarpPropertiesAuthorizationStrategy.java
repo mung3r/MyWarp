@@ -19,9 +19,9 @@
 
 package me.taylorkelly.mywarp.warp.authorization;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.LocalPlayer;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**

@@ -21,8 +21,8 @@ package me.taylorkelly.mywarp.command;
 
 import com.sk89q.intake.CommandException;
 
-import me.taylorkelly.mywarp.limit.Limit;
-import me.taylorkelly.mywarp.limit.Limit.Type;
+import me.taylorkelly.mywarp.service.limit.Limit;
+import me.taylorkelly.mywarp.service.limit.Limit.Type;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 import org.apache.commons.lang.text.StrBuilder;

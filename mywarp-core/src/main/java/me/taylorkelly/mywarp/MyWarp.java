@@ -25,36 +25,37 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import me.taylorkelly.mywarp.command.CommandHandler;
-import me.taylorkelly.mywarp.economy.DummyEconomyService;
-import me.taylorkelly.mywarp.economy.EconomyService;
-import me.taylorkelly.mywarp.economy.InformativeEconomyService;
-import me.taylorkelly.mywarp.limit.DummyLimitService;
-import me.taylorkelly.mywarp.limit.LimitService;
-import me.taylorkelly.mywarp.limit.SimpleLimitService;
-import me.taylorkelly.mywarp.storage.AsyncWritingWarpStorage;
-import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
-import me.taylorkelly.mywarp.storage.RelationalDataService;
-import me.taylorkelly.mywarp.storage.StorageInitializationException;
-import me.taylorkelly.mywarp.storage.WarpStorage;
-import me.taylorkelly.mywarp.storage.WarpStorageFactory;
-import me.taylorkelly.mywarp.teleport.StrategyTeleportService;
-import me.taylorkelly.mywarp.teleport.TeleportService;
-import me.taylorkelly.mywarp.teleport.strategy.ChainedValidationStrategy;
-import me.taylorkelly.mywarp.teleport.strategy.CubicSafetyValidationStrategy;
-import me.taylorkelly.mywarp.teleport.strategy.LegacyPositionCorrectionStrategy;
-import me.taylorkelly.mywarp.teleport.strategy.PositionValidationStrategy;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.Platform;
+import me.taylorkelly.mywarp.platform.Settings;
+import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
+import me.taylorkelly.mywarp.platform.event.PostInitializationEvent;
+import me.taylorkelly.mywarp.platform.event.ReloadEvent;
+import me.taylorkelly.mywarp.platform.event.WarpsLoadedEvent;
+import me.taylorkelly.mywarp.service.teleport.strategy.ChainedValidationStrategy;
+import me.taylorkelly.mywarp.service.teleport.strategy.CubicSafetyValidationStrategy;
+import me.taylorkelly.mywarp.service.teleport.strategy.LegacyPositionCorrectionStrategy;
+import me.taylorkelly.mywarp.service.teleport.strategy.PositionValidationStrategy;
+import me.taylorkelly.mywarp.sign.WarpSignManager;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
-import me.taylorkelly.mywarp.util.profile.ProfileService;
+import me.taylorkelly.mywarp.util.teleport.StrategicTeleportHandler;
+import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.warp.EventfulWarpManager;
 import me.taylorkelly.mywarp.warp.MemoryWarpManager;
 import me.taylorkelly.mywarp.warp.StorageWarpManager;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
-import me.taylorkelly.mywarp.warp.authorization.AuthorizationService;
+import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 import me.taylorkelly.mywarp.warp.authorization.PermissionAuthorizationStrategy;
 import me.taylorkelly.mywarp.warp.authorization.WarpPropertiesAuthorizationStrategy;
 import me.taylorkelly.mywarp.warp.authorization.WorldAccessAuthorizationStrategy;
+import me.taylorkelly.mywarp.warp.storage.AsyncWritingWarpStorage;
+import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
+import me.taylorkelly.mywarp.warp.storage.RelationalDataService;
+import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
+import me.taylorkelly.mywarp.warp.storage.WarpStorage;
+import me.taylorkelly.mywarp.warp.storage.WarpStorageFactory;
 
 import org.slf4j.Logger;
 
@@ -65,9 +66,10 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * Entry point and container for a working MyWarp implementation. <p> An instance of this class holds and manages
- * MyWarp's internal logic. It is initialized with a {@link me.taylorkelly.mywarp.Platform} which provides MyWarp with
- * the connection to the game.</p>
+ * Entry point and container for a working MyWarp implementation.
+ *
+ * <p> An instance of this class holds and manages MyWarp's internal logic. It is initialized with a {@link Platform}
+ * which provides MyWarp with the connection to the game.</p>
  */
 public final class MyWarp {
 
@@ -78,23 +80,19 @@ public final class MyWarp {
   private final WarpStorage warpStorage;
   private final WarpManager warpManager;
   private final EventBus eventBus;
-  private final AuthorizationService authorizationService;
-  private final CommandHandler commandHandler;
+  private final AuthorizationResolver authorizationResolver;
 
-  private TeleportService teleportService;
-  private EconomyService economyService;
-  private LimitService limitService;
+  private CommandHandler commandHandler;
+  private TeleportHandler teleportHandler;
 
   /**
-   * Creates an instance of MyWarp, running on the given Platform.
+   * Creates an instance of MyWarp, operating on the given Platform.
    *
-   * @param platform the Platform MyWarp runs on
+   * @param platform the Platform MyWarp operates on
    * @throws InitializationException if the initialization fails and MyWarp is unable to continue
    */
   public MyWarp(Platform platform) throws InitializationException {
     this.platform = platform;
-
-    DynamicMessages.setControl(platform.getResourceBundleControl());
 
     ConnectionConfiguration connectionConfiguration = getSettings().getRelationalStorageConfiguration();
     dataService = platform.createDataService(connectionConfiguration);
@@ -102,7 +100,7 @@ public final class MyWarp {
       warpStorage =
           new AsyncWritingWarpStorage(WarpStorageFactory
                                           .createInitialized(dataService.getDataSource(), connectionConfiguration,
-                                                             platform.getProfileService()),
+                                                             platform.getProfileCache()),
                                       dataService.getExecutorService());
 
     } catch (SQLException e) {
@@ -115,47 +113,109 @@ public final class MyWarp {
 
     warpManager = new EventfulWarpManager(new StorageWarpManager(new MemoryWarpManager(), warpStorage), eventBus);
 
-    authorizationService =
-        new AuthorizationService(new WorldAccessAuthorizationStrategy(
+    authorizationResolver = new AuthorizationResolver(new WorldAccessAuthorizationStrategy(
             new PermissionAuthorizationStrategy(new WarpPropertiesAuthorizationStrategy()), getGame(), getSettings()));
 
-    //setup the teleportService
-    List<PositionValidationStrategy> validationStrategies = new ArrayList<PositionValidationStrategy>();
-    validationStrategies.add(new LegacyPositionCorrectionStrategy());
-
-    if (getSettings().isSafetyEnabled()) {
-      validationStrategies.add(new CubicSafetyValidationStrategy(getSettings()));
-    }
-    teleportService = new StrategyTeleportService(new ChainedValidationStrategy(validationStrategies), getGame());
-
     setupPlugin();
-
-    commandHandler = new CommandHandler(this);
   }
 
   /**
-   * Sets up the plugin.
+   * Reloads MyWarp.
+   *
+   * <p>Reloading will remove all loaded warps from the active WarpManager and reload them from the configured storage.
+   * Interaction models (commands, signs...) are newly created. The platform running MyWarp may reload the user
+   * configuration from disk.</p>
    */
+  public void reload() {
+    // cleanup
+    warpManager.clear();
+    DynamicMessages.clearCache();
+
+    eventBus.post(new ReloadEvent());
+
+    // setup new stuff
+    setupPlugin();
+  }
+
+  /**
+   * Gets the CommandHandler that holds and executes all of MyWarp's commands.
+   *
+   * @return the CommandHandler
+   */
+  public CommandHandler getCommandHandler() {
+    return commandHandler;
+  }
+
+  /**
+   * Gets the internal EventBus that keeps track of internal events thrown by MyWarp.
+   *
+   * @return the EventBus
+   */
+  public EventBus getEventBus() {
+    return eventBus;
+  }
+
+  /**
+   * Gets the Game instance of this MyWarp instance.
+   *
+   * @return the Game
+   */
+  public Game getGame() {
+    return platform.getGame();
+  }
+
+  /**
+   * Gets the Settings instance of this MyWarp instance.
+   *
+   * @return the Settings
+   */
+  public Settings getSettings() {
+    return platform.getSettings();
+  }
+
+  /**
+   * Gets the WarpManager of this MyWarp instance.
+   *
+   * @return the WarpManager
+   */
+  public WarpManager getWarpManager() {
+    return warpManager;
+  }
+
+  /**
+   * Gets the AuthorizationResolver instance of this MyWarp instance.
+   *
+   * @return the AuthorizationResolver
+   */
+  public AuthorizationResolver getAuthorizationResolver() {
+    return authorizationResolver;
+  }
+
+  /**
+   * Gets the TeleportHandler instance of this MyWarp instance.
+   *
+   * @return the teleportHandler
+   */
+  public TeleportHandler getTeleportHandler() {
+    return teleportHandler;
+  }
+
+  /**
+   * Creates a new WarpSignManager that hooks into the WarpManager configured for this MyWarp instance.
+   *
+   * @return a new WarpSign instance
+   */
+  public WarpSignManager createWarpSignHandler() {
+    return new WarpSignManager(getSettings().getWarpSignsIdentifiers(), warpManager, authorizationResolver, getGame(),
+                               teleportHandler, platform.getCapability(EconomyCapability.class));
+  }
+
   private void setupPlugin() {
 
-    // setup the limitService
-    if (getSettings().isLimitsEnabled()) {
-      limitService = new SimpleLimitService(platform.getLimitProvider(), warpManager);
-    } else {
-      limitService = new DummyLimitService(platform.getGame(), warpManager);
-    }
+    teleportHandler = createTeleportHandler();
+    commandHandler = new CommandHandler(this, platform);
 
-    // setup the economyService
-    try {
-      if (getSettings().isEconomyEnabled()) {
-        economyService =
-            new InformativeEconomyService(getSettings(), platform.getFeeProvider(), platform.getEconomyService());
-      } else {
-        economyService = new DummyEconomyService();
-      }
-    } catch (UnsupportedOperationException e) {
-      economyService = new DummyEconomyService();
-    }
+    eventBus.post(new PostInitializationEvent());
 
     log.info("Loading warps...");
     ListenableFuture<List<Warp>> futureWarps = dataService.getExecutorService().submit(new Callable<List<Warp>>() {
@@ -170,6 +230,8 @@ public final class MyWarp {
       @Override
       public void onSuccess(Collection<Warp> result) {
         warpManager.populate(result);
+
+        eventBus.post(new WarpsLoadedEvent());
         log.info("{} warps loaded.", warpManager.getSize());
       }
 
@@ -182,125 +244,13 @@ public final class MyWarp {
 
   }
 
-  /**
-   * Reloads MyWarp.
-   */
-  public void reload() {
-    // cleanup
-    warpManager.clear();
-    DynamicMessages.clearCache();
+  private TeleportHandler createTeleportHandler() {
+    List<PositionValidationStrategy> validationStrategies = new ArrayList<PositionValidationStrategy>();
+    validationStrategies.add(new LegacyPositionCorrectionStrategy());
 
-    // setup new stuff
-    platform.reload();
-    setupPlugin();
-  }
-
-  /**
-   * Gets the Platform running MyWarp.
-   *
-   * @return the Platform
-   */
-  //REVIEW remove?
-  public Platform getPlatform() {
-    return platform;
-  }
-
-  /**
-   * Gets the Game instance of this MyWarp instance.
-   *
-   * @return the Game
-   */
-  public Game getGame() {
-    return platform.getGame();
-  }
-
-  /**
-   * Gets the ProfileService instance of this MyWarp instance.
-   *
-   * @return the ProfileService
-   */
-  public ProfileService getProfileService() {
-    return platform.getProfileService();
-  }
-
-  /**
-   * Gets the Settings instance of this MyWarp instance.
-   *
-   * @return the Settings
-   */
-  public Settings getSettings() {
-    return platform.getSettings();
-  }
-
-  /**
-   * Gets the CommandHanlder that manages all of MyWarp's commands.
-   *
-   * @return the CommandHandler
-   */
-  public CommandHandler getCommandHandler() {
-    return commandHandler;
-  }
-
-  /**
-   * Gets the WarpManager of this MyWarp instance.
-   *
-   * @return the WarpManager
-   */
-  public WarpManager getWarpManager() {
-    return warpManager;
-  }
-
-  /**
-   * Gets the internal EventBus that keeps track of {@link me.taylorkelly.mywarp.warp.event.WarpEvent}s.
-   *
-   * @return the EventBus
-   */
-  public EventBus getEventBus() {
-    return eventBus;
-  }
-
-  /**
-   * Gets the AuthorizationService instance of this MyWarp instance.
-   *
-   * @return the AuthorizationService
-   */
-  public AuthorizationService getAuthorizationService() {
-    return authorizationService;
-  }
-
-  /**
-   * Gets the EconomyService.
-   * <p/>
-   * Calling this method will always return valid EconomyService implementation, if economy support is disabled on the
-   * configuration file, the returned EconomyService will handle this internally and fail quietly.
-   *
-   * @return the EconomyService
-   */
-  public EconomyService getEconomyService() {
-    return economyService;
-  }
-
-  /**
-   * Gets the LimitService.
-   * <p/>
-   * Calling this method will always return valid LimitService implementation, if limit support is disabled on the
-   * configuration file, the returned LimitService will handle this internally and fail quietly.
-   *
-   * @return the LimitService
-   */
-  public LimitService getLimitService() {
-    return limitService;
-  }
-
-  /**
-   * Gets the basic TeleportService.
-   * <p/>
-   * Calling this method will return a basic TeleportSaervice implementation that should be used to build further
-   * validation on top.
-   *
-   * @return the TeleportService
-   */
-  public TeleportService getTeleportService() {
-    return teleportService;
+    if (getSettings().isSafetyEnabled()) {
+      validationStrategies.add(new CubicSafetyValidationStrategy(getSettings()));
+    }
+    return new StrategicTeleportHandler(new ChainedValidationStrategy(validationStrategies));
   }
 }

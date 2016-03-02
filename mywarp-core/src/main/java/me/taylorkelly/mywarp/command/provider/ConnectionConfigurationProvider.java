@@ -24,7 +24,7 @@ import com.sk89q.intake.argument.CommandArgs;
 import com.sk89q.intake.parametric.Provider;
 import com.sk89q.intake.parametric.ProvisionException;
 
-import me.taylorkelly.mywarp.storage.ConnectionConfiguration;
+import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;

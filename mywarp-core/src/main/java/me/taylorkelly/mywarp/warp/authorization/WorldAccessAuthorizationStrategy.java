@@ -19,10 +19,10 @@
 
 package me.taylorkelly.mywarp.warp.authorization;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalEntity;
-import me.taylorkelly.mywarp.Settings;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.warp.Warp;
 
 /**

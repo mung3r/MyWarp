@@ -26,17 +26,17 @@ import com.sk89q.intake.Command;
 import com.sk89q.intake.Require;
 import com.sk89q.intake.parametric.annotation.Optional;
 
-import me.taylorkelly.mywarp.Actor;
-import me.taylorkelly.mywarp.Game;
-import me.taylorkelly.mywarp.LocalPlayer;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.command.annotation.Billable;
 import me.taylorkelly.mywarp.command.annotation.Name;
 import me.taylorkelly.mywarp.command.annotation.Sender;
 import me.taylorkelly.mywarp.command.paginator.StringPaginator;
-import me.taylorkelly.mywarp.economy.FeeProvider.FeeType;
-import me.taylorkelly.mywarp.teleport.TeleportService;
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.service.economy.FeeType;
+import me.taylorkelly.mywarp.service.teleport.TeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -69,12 +69,6 @@ public class UtilityCommands {
     this.game = game;
   }
 
-  /**
-   * Displays the help.
-   *
-   * @param actor the Actor
-   * @param page  the page
-   */
   @Command(aliases = {"help"}, desc = "help.description", help = "help.help")
   @Require("mywarp.cmd.help")
   @Billable(FeeType.HELP)
@@ -85,12 +79,6 @@ public class UtilityCommands {
         .display(actor, page);
   }
 
-  /**
-   * Points the compass of a player to a Warp.
-   *
-   * @param player the LocalPlayer
-   * @param warp   the Warp
-   */
   @Command(aliases = {"point"}, desc = "point.description", help = "point.help")
   @Require("mywarp.cmd.point")
   @Billable(FeeType.POINT)
@@ -104,13 +92,6 @@ public class UtilityCommands {
     }
   }
 
-  /**
-   * Teleports an other player to a Warp.
-   *
-   * @param actor      the Actor
-   * @param teleportee the LocalPlayer to teleport
-   * @param warp       the Warp
-   */
   @Command(aliases = {"player"}, desc = "warp-player.description", help = "warp-player.help")
   @Require("mywarp.cmd.player")
   @Billable(FeeType.WARP_PLAYER)
@@ -122,11 +103,6 @@ public class UtilityCommands {
     }
   }
 
-  /**
-   * Reloads MyWarp.
-   *
-   * @param actor the Actor
-   */
   @Command(aliases = {"reload"}, desc = "reload.description", help = "reload.help")
   @Require("mywarp.cmd.reload")
   public void reload(Actor actor) {
