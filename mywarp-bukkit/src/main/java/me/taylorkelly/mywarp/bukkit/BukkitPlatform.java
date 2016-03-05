@@ -158,6 +158,22 @@ public class BukkitPlatform implements Platform {
     return ret;
   }
 
+  @Override
+  public void onCoreReload() {
+    // cleanup old stuff
+    plugin.unregister();
+    registeredCapabilities.clear();
+
+    // load new stuff
+    settings.reload();
+    plugin.notifyCoreInitialized();
+  }
+
+  @Override
+  public void onWarpsLoaded() {
+    plugin.notifyWarpAvailability();
+  }
+
   /**
    * Removes all registered capabilities so that further requests of these capabilities enforce a new instance
    * creation.

@@ -29,9 +29,6 @@ import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.Platform;
 import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
-import me.taylorkelly.mywarp.platform.event.PostInitializationEvent;
-import me.taylorkelly.mywarp.platform.event.ReloadEvent;
-import me.taylorkelly.mywarp.platform.event.WarpsLoadedEvent;
 import me.taylorkelly.mywarp.service.teleport.strategy.ChainedValidationStrategy;
 import me.taylorkelly.mywarp.service.teleport.strategy.CubicSafetyValidationStrategy;
 import me.taylorkelly.mywarp.service.teleport.strategy.LegacyPositionCorrectionStrategy;
@@ -68,7 +65,7 @@ import java.util.concurrent.Callable;
 /**
  * Entry point and container for a working MyWarp implementation.
  *
- * <p> An instance of this class holds and manages MyWarp's internal logic. It is initialized with a {@link Platform}
+ * <p>An instance of this class holds and manages MyWarp's internal logic. It is initialized with a {@link Platform}
  * which provides MyWarp with the connection to the game.</p>
  */
 public final class MyWarp {
@@ -86,37 +83,60 @@ public final class MyWarp {
   private TeleportHandler teleportHandler;
 
   /**
-   * Creates an instance of MyWarp, operating on the given Platform.
+   * Creates a MyWarp instance that runs on the given {@code platform}.
    *
-   * @param platform the Platform MyWarp operates on
-   * @throws InitializationException if the initialization fails and MyWarp is unable to continue
+   * <p>If this method returns the instance without raising any exceptions, MyWarp's internal logic has been
+   * successfully initialized and MyWarp is fully operational. Any additional service implemented by the client should
+   * thus be ready to operate.</p>
+   *
+   * <p>Warps might no yet be available, but are scheduled to be loaded from the storage system. Once they are
+   * available, {@link Platform#onWarpsLoaded()} will be called on {@code platform}.</p>
+   *
+   * @param platform the platform MyWarp will run on
+   * @return a fully operational instance of MyWarp that runs on {@code platform}
+   * @throws StorageInitializationException if the Storage system could not be initialized
+   * @throws SQLException                   if the {@code DataService} offered by {@code platform} does not provide a
+   *                                        valid {@code DataSource}
    */
-  public MyWarp(Platform platform) throws InitializationException {
+  public static MyWarp initialize(Platform platform) throws StorageInitializationException, SQLException {
+
+    ConnectionConfiguration connectionConfiguration = platform.getSettings().getRelationalStorageConfiguration();
+    RelationalDataService dataService = platform.createDataService(connectionConfiguration);
+    WarpStorage warpStorage;
+
+    warpStorage =
+        new AsyncWritingWarpStorage(WarpStorageFactory
+                                        .createInitialized(dataService.getDataSource(), connectionConfiguration,
+                                                           platform.getProfileCache()),
+                                    dataService.getExecutorService());
+
+    EventBus eventBus = new EventBus();
+
+    WarpManager
+        warpManager =
+        new EventfulWarpManager(new StorageWarpManager(new MemoryWarpManager(), warpStorage), eventBus);
+
+    AuthorizationResolver
+        authorizationResolver =
+        new AuthorizationResolver(new WorldAccessAuthorizationStrategy(
+            new PermissionAuthorizationStrategy(new WarpPropertiesAuthorizationStrategy()), platform.getGame(),
+            platform.getSettings()));
+
+    MyWarp myWarp = new MyWarp(platform, dataService, warpStorage, warpManager, eventBus, authorizationResolver);
+    myWarp.initializeMutableFields();
+    myWarp.loadWarps();
+
+    return myWarp;
+  }
+
+  private MyWarp(Platform platform, RelationalDataService dataService, WarpStorage warpStorage, WarpManager warpManager,
+                 EventBus eventBus, AuthorizationResolver authorizationResolver) {
     this.platform = platform;
-
-    ConnectionConfiguration connectionConfiguration = getSettings().getRelationalStorageConfiguration();
-    dataService = platform.createDataService(connectionConfiguration);
-    try {
-      warpStorage =
-          new AsyncWritingWarpStorage(WarpStorageFactory
-                                          .createInitialized(dataService.getDataSource(), connectionConfiguration,
-                                                             platform.getProfileCache()),
-                                      dataService.getExecutorService());
-
-    } catch (SQLException e) {
-      throw new InitializationException("Failed to get a connection to the database.", e);
-    } catch (StorageInitializationException e) {
-      throw new InitializationException("Failed to get a connection to the database.", e);
-    }
-
-    eventBus = new EventBus();
-
-    warpManager = new EventfulWarpManager(new StorageWarpManager(new MemoryWarpManager(), warpStorage), eventBus);
-
-    authorizationResolver = new AuthorizationResolver(new WorldAccessAuthorizationStrategy(
-            new PermissionAuthorizationStrategy(new WarpPropertiesAuthorizationStrategy()), getGame(), getSettings()));
-
-    setupPlugin();
+    this.dataService = dataService;
+    this.warpStorage = warpStorage;
+    this.warpManager = warpManager;
+    this.eventBus = eventBus;
+    this.authorizationResolver = authorizationResolver;
   }
 
   /**
@@ -131,10 +151,12 @@ public final class MyWarp {
     warpManager.clear();
     DynamicMessages.clearCache();
 
-    eventBus.post(new ReloadEvent());
+    //notify platform
+    platform.onCoreReload();
 
     // setup new stuff
-    setupPlugin();
+    initializeMutableFields();
+    loadWarps();
   }
 
   /**
@@ -210,13 +232,18 @@ public final class MyWarp {
                                teleportHandler, platform.getCapability(EconomyCapability.class));
   }
 
-  private void setupPlugin() {
+  private void initializeMutableFields() {
+    List<PositionValidationStrategy> validationStrategies = new ArrayList<PositionValidationStrategy>();
+    validationStrategies.add(new LegacyPositionCorrectionStrategy());
+    if (getSettings().isSafetyEnabled()) {
+      validationStrategies.add(new CubicSafetyValidationStrategy(getSettings()));
+    }
+    teleportHandler = new StrategicTeleportHandler(new ChainedValidationStrategy(validationStrategies));
 
-    teleportHandler = createTeleportHandler();
     commandHandler = new CommandHandler(this, platform);
+  }
 
-    eventBus.post(new PostInitializationEvent());
-
+  private void loadWarps() {
     log.info("Loading warps...");
     ListenableFuture<List<Warp>> futureWarps = dataService.getExecutorService().submit(new Callable<List<Warp>>() {
       @Override
@@ -231,7 +258,9 @@ public final class MyWarp {
       public void onSuccess(Collection<Warp> result) {
         warpManager.populate(result);
 
-        eventBus.post(new WarpsLoadedEvent());
+        //notify platform
+        platform.onWarpsLoaded();
+
         log.info("{} warps loaded.", warpManager.getSize());
       }
 
@@ -241,16 +270,5 @@ public final class MyWarp {
       }
 
     }, platform.getGame().getExecutor());
-
-  }
-
-  private TeleportHandler createTeleportHandler() {
-    List<PositionValidationStrategy> validationStrategies = new ArrayList<PositionValidationStrategy>();
-    validationStrategies.add(new LegacyPositionCorrectionStrategy());
-
-    if (getSettings().isSafetyEnabled()) {
-      validationStrategies.add(new CubicSafetyValidationStrategy(getSettings()));
-    }
-    return new StrategicTeleportHandler(new ChainedValidationStrategy(validationStrategies));
   }
 }

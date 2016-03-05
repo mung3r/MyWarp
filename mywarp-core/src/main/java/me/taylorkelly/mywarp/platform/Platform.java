@@ -84,4 +84,18 @@ public interface Platform {
    * @return the {@code RelationalDataService}
    */
   RelationalDataService createDataService(ConnectionConfiguration configuration);
+
+  /**
+   * Called when MyWarp is reloaded. By this state, Warps are no longer available; any services that depend on
+   * configuration should be reconstructed.
+   *
+   * <p>Unless errors occur, calls to this method are followed by a call to {@link #onWarpsLoaded()} shortly after.</p>
+   */
+  void onCoreReload();
+
+  /**
+   * Called when the core has successfully loaded warps from the storage system and populated the active WarpManager. By
+   * this state, all initialization should be complete.
+   */
+  void onWarpsLoaded();
 }

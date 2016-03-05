@@ -22,9 +22,7 @@ package me.taylorkelly.mywarp.bukkit;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Predicates;
-import com.google.common.eventbus.Subscribe;
 
-import me.taylorkelly.mywarp.InitializationException;
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.settings.BukkitSettings;
 import me.taylorkelly.mywarp.bukkit.util.conversation.AcceptancePromptFactory;
@@ -34,15 +32,13 @@ import me.taylorkelly.mywarp.bukkit.util.permission.group.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.util.permission.group.GroupResolverFactory;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
-import me.taylorkelly.mywarp.platform.event.PostInitializationEvent;
-import me.taylorkelly.mywarp.platform.event.ReloadEvent;
-import me.taylorkelly.mywarp.platform.event.WarpsLoadedEvent;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.FolderSourcedControl;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.Bukkit;
@@ -62,6 +58,7 @@ import org.slf4j.Logger;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -103,16 +100,18 @@ public final class MyWarpPlugin extends JavaPlugin {
 
     // setup the core
     try {
-      myWarp = new MyWarp(platform);
-    } catch (InitializationException e) {
-      log.error("A critical failure has been encountered and MyWarp is unable to continue. MyWarp will be disabled.",
-                e);
+      myWarp = MyWarp.initialize(platform);
+    } catch (SQLException e) {
+      log.error("Failed to connect with the database configured in the 'config.yml', are the settings correct?", e);
+      log.error("MyWarp is unable to continue and will be disabled.");
+      Bukkit.getPluginManager().disablePlugin(this);
+      return;
+    } catch (StorageInitializationException e) {
+      log.error("Failed to initialize warp storage.", e);
+      log.error("MyWarp is unable to continue and will be disabled.");
       Bukkit.getPluginManager().disablePlugin(this);
       return;
     }
-
-    // register internal event listener
-    myWarp.getEventBus().register(this);
 
     // further platform-specific objects
     groupResolver = GroupResolverFactory.createResolver();
@@ -120,11 +119,13 @@ public final class MyWarpPlugin extends JavaPlugin {
         new AcceptancePromptFactory(createConversationFactory(), myWarp.getAuthorizationResolver(), platform.getGame(),
                                     this);
     welcomeEditorFactory = new WelcomeEditorFactory(createConversationFactory());
+
+    notifyCoreInitialized();
   }
 
   @Override
   public void onDisable() {
-    unregisterPermsAndListeners();
+    unregister();
 
     //close any registered Closables
     for (Closeable closeable : closeables) {
@@ -137,36 +138,9 @@ public final class MyWarpPlugin extends JavaPlugin {
   }
 
   /**
-   * Called when MyWarp's core is reloaded.
-   *
-   * @param event the event
-   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
-   * privatized when support for legacy Guava versions is removed.
+   * Notifies the MyWarpPlugin instance that the core is fully initialized.
    */
-  @Deprecated
-  @Subscribe
-  public void onCoreReload(ReloadEvent event) {
-    // cleanup old stuff
-    unregisterPermsAndListeners();
-    platform.resetCapabilities();
-    if (marker != null) {
-      marker.clear();
-    }
-
-    // load new stuff
-    getSettings().reload();
-  }
-
-  /**
-   * Called after MyWarp's core is initialized.
-   *
-   * @param event the event
-   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
-   * privatized when support for legacy Guava versions is removed.
-   */
-  @Deprecated
-  @Subscribe
-  public void onCoreInitialized(PostInitializationEvent event) {
+  protected void notifyCoreInitialized() {
 
     //register profile service listener
     getProfileCache().registerEvents(this);
@@ -185,15 +159,10 @@ public final class MyWarpPlugin extends JavaPlugin {
   }
 
   /**
-   * Called after MyWarp's core has successfully loaded Warps from database.
-   *
-   * @param event the event
-   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
-   * privatized when support for legacy Guava versions is removed.
+   * Notifies the MyWarpPlugin instance about the availability of warps, so that it can execute additional callback (if
+   * any).
    */
-  @Deprecated
-  @Subscribe
-  public void onWarpsLoadedEvent(WarpsLoadedEvent event) {
+  protected void notifyWarpAvailability() {
     if (getSettings().isDynmapEnabled()) {
       Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
       if (dynmap != null && dynmap.isEnabled() && dynmap instanceof DynmapCommonAPI) {
@@ -333,9 +302,16 @@ public final class MyWarpPlugin extends JavaPlugin {
     return new ConversationFactory(this).withModality(true).withTimeout(CONVERSATION_TIMEOUT);
   }
 
-  private void unregisterPermsAndListeners() {
+  /**
+   * Unregisters all permissions registered by MyWarp, all active event-listeners and all created markers (if any).
+   */
+  protected void unregister() {
     HandlerList.unregisterAll(this);
     BukkitPermissionsRegistration.INSTANCE.unregisterAll();
+
+    if (marker != null) {
+      marker.clear();
+    }
   }
 
 }
