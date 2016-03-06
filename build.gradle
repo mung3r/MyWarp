@@ -90,6 +90,17 @@ subprojects {
         }
     }
 
+    // create the default fallback file (for all localizations) from the english localization
+    task copyLocalizations(type: Copy) {
+        def bundleFolder = 'me/taylorkelly/mywarp/lang'
+        from('src/main/resources/' + bundleFolder)
+        into(new File(sourceSets.main.output.resourcesDir, bundleFolder))
+        include('*_en.properties')
+        rename { fileName -> fileName.replace('_en', '') }
+    }
+
+    processResources.dependsOn(copyLocalizations)
+
     artifacts {
         archives jar
         archives sourcesJar
