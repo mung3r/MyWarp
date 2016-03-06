@@ -174,12 +174,4 @@ public class BukkitPlatform implements Platform {
     plugin.notifyWarpAvailability();
   }
 
-  /**
-   * Removes all registered capabilities so that further requests of these capabilities enforce a new instance
-   * creation.
-   */
-  void resetCapabilities() {
-    registeredCapabilities.clear();
-  }
-
 }

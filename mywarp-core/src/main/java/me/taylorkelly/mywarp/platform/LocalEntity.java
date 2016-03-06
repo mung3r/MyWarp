@@ -51,10 +51,11 @@ public interface LocalEntity {
   /**
    * Teleports this entity to the given position on the given world, and sets his rotation to the given one.
    *
-   * @param world    the world
-   * @param position the position vector
-   * @param rotation the rotation
+   * @param world              the world
+   * @param position           the position vector
+   * @param rotation           the rotation
+   * @param teleportTamedHorse if set and this entity currently sits on a tamed horse, the horse will be teleported too
    */
-  void teleport(LocalWorld world, Vector3 position, EulerDirection rotation);
+  void teleport(LocalWorld world, Vector3 position, EulerDirection rotation, boolean teleportTamedHorse);
 
 }

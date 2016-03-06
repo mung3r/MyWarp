@@ -238,7 +238,7 @@ public final class MyWarp {
     if (getSettings().isSafetyEnabled()) {
       validationStrategies.add(new CubicSafetyValidationStrategy(getSettings()));
     }
-    teleportHandler = new StrategicTeleportHandler(new ChainedValidationStrategy(validationStrategies));
+    teleportHandler = new StrategicTeleportHandler(new ChainedValidationStrategy(validationStrategies), getSettings());
 
     commandHandler = new CommandHandler(this, platform);
   }

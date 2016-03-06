@@ -23,6 +23,7 @@ import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.service.teleport.strategy.PositionValidationStrategy;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -34,14 +35,17 @@ import me.taylorkelly.mywarp.util.Vector3;
 public class StrategicTeleportHandler implements TeleportHandler {
 
   private final PositionValidationStrategy strategy;
+  private final Settings settings;
 
   /**
    * Creates an instance that uses the given strategy to validate teleport positions.
    *
    * @param strategy the strategy to use
+   * @param settings the settings instance to use
    */
-  public StrategicTeleportHandler(PositionValidationStrategy strategy) {
+  public StrategicTeleportHandler(PositionValidationStrategy strategy, Settings settings) {
     this.strategy = strategy;
+    this.settings = settings;
   }
 
   @Override
@@ -53,7 +57,7 @@ public class StrategicTeleportHandler implements TeleportHandler {
     }
 
     Vector3 validPosition = optional.get();
-    entity.teleport(world, position, rotation);
+    entity.teleport(world, position, rotation, settings.isTeleportTamedHorses());
 
     if (!validPosition.equals(position)) {
       return TeleportStatus.MODIFIED;

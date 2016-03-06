@@ -153,21 +153,14 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
   }
 
   @Override
-  public void teleport(LocalWorld world, Vector3 position, EulerDirection rotation) {
+  public void teleport(LocalWorld world, Vector3 position, EulerDirection rotation, boolean teleportTamedHorse) {
     Location
         bukkitLoc =
         new Location(BukkitAdapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getYaw(),
                      rotation.getPitch());
-    teleportRecursive(getWrapped(), bukkitLoc, true);
+    teleportRecursive(getWrapped(), bukkitLoc, teleportTamedHorse);
   }
 
-  /**
-   * Teleports the given {@link org.bukkit.entity.Entity} to the given {@link org.bukkit.Location}.
-   *
-   * @param teleportee          the Entity to teleport
-   * @param bukkitLoc           the Location where the Entity is teleported
-   * @param teleportTamedHorses whether ridden, tamed horses should be teleported too
-   */
   private void teleportRecursive(Entity teleportee, Location bukkitLoc, boolean teleportTamedHorses) {
     Entity vehicle = null;
 
@@ -196,7 +189,7 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
 
     // teleport the vehicle
     if (vehicle != null) {
-      teleportRecursive(vehicle, bukkitLoc, teleportTamedHorses);
+      teleportRecursive(vehicle, bukkitLoc, true);
       vehicle.setPassenger(teleportee);
     }
   }
