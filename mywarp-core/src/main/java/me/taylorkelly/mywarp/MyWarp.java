@@ -33,7 +33,7 @@ import me.taylorkelly.mywarp.service.teleport.strategy.ChainedValidationStrategy
 import me.taylorkelly.mywarp.service.teleport.strategy.CubicSafetyValidationStrategy;
 import me.taylorkelly.mywarp.service.teleport.strategy.LegacyPositionCorrectionStrategy;
 import me.taylorkelly.mywarp.service.teleport.strategy.PositionValidationStrategy;
-import me.taylorkelly.mywarp.sign.WarpSignManager;
+import me.taylorkelly.mywarp.sign.WarpSignHandler;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.teleport.StrategicTeleportHandler;
@@ -223,12 +223,12 @@ public final class MyWarp {
   }
 
   /**
-   * Creates a new WarpSignManager that hooks into the WarpManager configured for this MyWarp instance.
+   * Creates a new WarpSignHandler that hooks into the WarpManager configured for this MyWarp instance.
    *
    * @return a new WarpSign instance
    */
-  public WarpSignManager createWarpSignHandler() {
-    return new WarpSignManager(getSettings().getWarpSignsIdentifiers(), warpManager, authorizationResolver, getGame(),
+  public WarpSignHandler createWarpSignHandler() {
+    return new WarpSignHandler(getSettings().getWarpSignsIdentifiers(), warpManager, authorizationResolver, getGame(),
                                teleportHandler, platform.getCapability(EconomyCapability.class));
   }
 

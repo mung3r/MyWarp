@@ -19,10 +19,11 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 import me.taylorkelly.mywarp.bukkit.util.AbstractListener;
-import me.taylorkelly.mywarp.sign.WarpSignManager;
+import me.taylorkelly.mywarp.sign.WarpSignHandler;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,7 +37,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.Attachable;
 
 /**
- * Listens for events involving signs and feats them to a {@link WarpSignManager}.
+ * Listens for events involving signs and feats them to a {@link WarpSignHandler}.
  */
 public class WarpSignListener extends AbstractListener {
 
@@ -48,16 +49,16 @@ public class WarpSignListener extends AbstractListener {
       ImmutableSet.of(Material.WOOD_PLATE, Material.STONE_PLATE, Material.GOLD_PLATE, Material.IRON_PLATE);
 
   private final MyWarpPlugin plugin;
-  private final WarpSignManager warpSignManager;
+  private final WarpSignHandler warpSignHandler;
 
   /**
    * Initializes this listener.
    *
-   * @param warpSignManager the warpSignManager that will be feat by this listener
+   * @param warpSignHandler the warpSignHandler that will be feat by this listener
    */
-  WarpSignListener(MyWarpPlugin plugin, WarpSignManager warpSignManager) {
+  WarpSignListener(MyWarpPlugin plugin, WarpSignHandler warpSignHandler) {
     this.plugin = plugin;
-    this.warpSignManager = warpSignManager;
+    this.warpSignHandler = warpSignHandler;
   }
 
   /**
@@ -68,15 +69,23 @@ public class WarpSignListener extends AbstractListener {
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onSignChange(SignChangeEvent event) {
     String[] lines = event.getLines();
-    if (warpSignManager.isWarpSign(lines)) {
-      if (warpSignManager.validateWarpSign(lines, plugin.wrap(event.getPlayer()))) {
-        for (int i = 0; i < lines.length; i++) {
-          event.setLine(i, lines[i]);
-        }
-      } else {
-        event.getBlock().breakNaturally();
-        event.setCancelled(true);
-      }
+
+    Optional<Boolean>
+        isValidWarpSign =
+        warpSignHandler.handleSignCreation(plugin.wrap(event.getPlayer()), new EventSign(event));
+
+    if (!isValidWarpSign.isPresent()) {
+      return;
+    }
+
+    if (!isValidWarpSign.get()) {
+      event.getBlock().breakNaturally();
+      event.setCancelled(true);
+      return;
+    }
+
+    for (int i = 0; i < lines.length; i++) {
+      event.setLine(i, lines[i]);
     }
   }
 
@@ -95,10 +104,8 @@ public class WarpSignListener extends AbstractListener {
       if (block.getState() instanceof Sign) {
         Sign sign = (Sign) block.getState();
 
-        if (warpSignManager.isWarpSign(sign.getLines())) {
-          warpSignManager.warpFromSign(sign.getLine(WarpSignManager.WARPNAME_LINE), plugin.wrap(event.getPlayer()));
-          event.setCancelled(true);
-        }
+        boolean cancel = warpSignHandler.handleSignInteraction(plugin.wrap(event.getPlayer()), new BukkitSign(sign));
+        event.setCancelled(cancel);
 
       } else if (SUPPORTED_ATTACHABLES.contains(block.getType())) {
 
@@ -110,13 +117,13 @@ public class WarpSignListener extends AbstractListener {
         }
 
         org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind.getState().getData();
-        Sign signBut = (Sign) behind.getState();
+        Sign sign = (Sign) behind.getState();
 
-        if (!(signMat.getFacing() == attachable.getAttachedFace() && warpSignManager.isWarpSign(signBut.getLines()))) {
+        if (!(signMat.getFacing() == attachable.getAttachedFace())) {
           return;
         }
 
-        warpSignManager.warpFromSign(signBut.getLine(WarpSignManager.WARPNAME_LINE), plugin.wrap(event.getPlayer()));
+        warpSignHandler.handleSignInteraction(plugin.wrap(event.getPlayer()), new BukkitSign(sign));
       }
       // a player stepped on something
     } else if (event.getAction().equals(Action.PHYSICAL)) {
@@ -126,13 +133,48 @@ public class WarpSignListener extends AbstractListener {
         if (!(twoBelow.getState() instanceof Sign)) {
           return;
         }
-        Sign signBelow = (Sign) twoBelow.getState();
+        Sign sign = (Sign) twoBelow.getState();
 
-        if (!warpSignManager.isWarpSign(signBelow.getLines())) {
-          return;
-        }
-        warpSignManager.warpFromSign(signBelow.getLine(WarpSignManager.WARPNAME_LINE), plugin.wrap(event.getPlayer()));
+        warpSignHandler.handleSignInteraction(plugin.wrap(event.getPlayer()), new BukkitSign(sign));
       }
+    }
+  }
+
+  private class BukkitSign implements me.taylorkelly.mywarp.platform.Sign {
+
+    private final Sign bukkitSign;
+
+    private BukkitSign(Sign bukkitSign) {
+      this.bukkitSign = bukkitSign;
+    }
+
+    @Override
+    public String getLine(int line) {
+      return bukkitSign.getLine(line);
+    }
+
+    @Override
+    public void setLine(int line, String text) {
+      bukkitSign.setLine(line, text);
+    }
+  }
+
+  private class EventSign implements me.taylorkelly.mywarp.platform.Sign {
+
+    private final SignChangeEvent event;
+
+    private EventSign(SignChangeEvent event) {
+      this.event = event;
+    }
+
+    @Override
+    public String getLine(int line) {
+      return event.getLine(line);
+    }
+
+    @Override
+    public void setLine(int line, String text) {
+      event.setLine(line, text);
     }
   }
 

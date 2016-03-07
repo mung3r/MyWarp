@@ -20,7 +20,10 @@
 package me.taylorkelly.mywarp.platform;
 
 /**
- * A block.
+ * A type of an existing block.
+ *
+ * <p>There is no concept of individual block types or materials in MyWarp. Instead implementations of this class
+ * provide information about the underling block type.</p>
  */
 public interface BlockType {
 
