@@ -68,8 +68,6 @@ public class WarpSignListener extends AbstractListener {
    */
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onSignChange(SignChangeEvent event) {
-    String[] lines = event.getLines();
-
     Optional<Boolean>
         isValidWarpSign =
         warpSignHandler.handleSignCreation(plugin.wrap(event.getPlayer()), new EventSign(event));
@@ -81,11 +79,6 @@ public class WarpSignListener extends AbstractListener {
     if (!isValidWarpSign.get()) {
       event.getBlock().breakNaturally();
       event.setCancelled(true);
-      return;
-    }
-
-    for (int i = 0; i < lines.length; i++) {
-      event.setLine(i, lines[i]);
     }
   }
 
