@@ -99,7 +99,11 @@ public enum ReflectiveLocaleResolver {
 
     Locale locale = cache.get(rawLocale);
     if (locale == null) {
-      locale = LocaleUtils.toLocale(rawLocale);
+      try {
+        locale = LocaleUtils.toLocale(rawLocale);
+      } catch (IllegalArgumentException e) {
+        throw new UnresolvableLocaleException(e);
+      }
       cache.put(rawLocale, locale);
     }
     return locale;
