@@ -34,10 +34,9 @@ import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -138,20 +137,23 @@ public class SquirrelIdProfileCache extends AbstractListener implements ProfileC
   }
 
   /**
-   * Called when a player logs in.
+   * Called asynchronous when a player logs in.
    *
-   * @param event the PlayerLoginEvent
+   * @param event the AsyncPlayerPreLoginEvent
    */
   @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void onPlayerLogin(PlayerLoginEvent event) {
-    Player player = event.getPlayer();
-    cache.put(new com.sk89q.squirrelid.Profile(player.getUniqueId(), player.getName()));
+  public void onPlayerLogin(AsyncPlayerPreLoginEvent event) {
+    if (!event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
+      return;
+    }
+    //SquirrelID's cache is thread-safe
+    cache.put(new com.sk89q.squirrelid.Profile(event.getUniqueId(), event.getName()));
   }
 
   /**
    * A Profile that uses an {@link SquirrelIdProfileCache} to get the name whenever necessary.
    */
-  class LazyProfile implements Profile {
+  private class LazyProfile implements Profile {
 
     private final SquirrelIdProfileCache service;
     private final UUID uniqueId;
@@ -162,7 +164,7 @@ public class SquirrelIdProfileCache extends AbstractListener implements ProfileC
      * @param service  the NameProvidingProfileService
      * @param uniqueId the unique ID
      */
-    public LazyProfile(SquirrelIdProfileCache service, UUID uniqueId) {
+    LazyProfile(SquirrelIdProfileCache service, UUID uniqueId) {
       this.service = service;
       this.uniqueId = uniqueId;
     }
