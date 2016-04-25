@@ -38,7 +38,7 @@ public class MemoryWarpManager implements WarpManager {
 
   @Override
   public void add(Warp warp) {
-    checkArgument(contains(warp.getName()), "A warp with the name '{}' does already exist!");
+    checkArgument(contains(warp.getName()), "A warp with the name '%s' does already exist!", warp.getName());
     warpMap.put(warp.getName(), warp);
   }
 
