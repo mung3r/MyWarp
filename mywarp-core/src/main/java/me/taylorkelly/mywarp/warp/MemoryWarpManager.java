@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.warp;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -36,6 +38,7 @@ public class MemoryWarpManager implements WarpManager {
 
   @Override
   public void add(Warp warp) {
+    checkArgument(contains(warp.getName()), "A warp with the name '{}' does already exist!");
     warpMap.put(warp.getName(), warp);
   }
 

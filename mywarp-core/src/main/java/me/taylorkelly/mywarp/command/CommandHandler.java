@@ -117,10 +117,10 @@ public class CommandHandler {
 
     // create injector and register modules
     Injector injector = Intake.createInjector();
-    injector.install(new PrimitivesModule());
-    injector.install(new ProvidedModule());
     injector.install(
         new BaseModule(warpManager, authorizationResolver, profileCache, game, this, platform.getDataFolder()));
+    injector.install(new PrimitivesModule());
+    injector.install(new ProvidedModule());
 
     //create the builder
     ParametricBuilder builder = new ParametricBuilder(injector);
