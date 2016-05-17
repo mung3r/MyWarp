@@ -35,6 +35,8 @@ import me.taylorkelly.mywarp.command.provider.exception.IllegalCommandSenderExce
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
+import javax.annotation.Nullable;
+
 /**
  * Converts specific Exceptions into human readable {@link CommandException}s.
  *
@@ -89,7 +91,8 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   @ExceptionMatch
   public void convert(ArgumentException e, ExceptionContext context)
       throws InvocationCommandException, CommandException {
-    argumentExceptionConverter.convert(e.getCause(), context);
+    @Nullable Throwable cause = e.getCause();
+    argumentExceptionConverter.convert(cause != null ? cause : e, context);
   }
 
   //-- Flags
