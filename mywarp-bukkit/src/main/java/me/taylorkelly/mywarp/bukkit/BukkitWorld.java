@@ -19,7 +19,6 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import me.taylorkelly.mywarp.platform.BlockType;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.Vector3;
@@ -55,6 +54,11 @@ public class BukkitWorld implements LocalWorld {
     return worldIdentifier;
   }
 
+  @Override
+  public boolean isNotFullHeight(Vector3 position) {
+    return MaterialInfo.isNotFullHeight(MyWarpPlugin.getMaterial(this, position));
+  }
+
   /**
    * Gets the loaded World that is referenced by this BukkitWorld.
    *
@@ -67,11 +71,6 @@ public class BukkitWorld implements LocalWorld {
       throw new NoSuchWorldException(worldIdentifier.toString());
     }
     return ret;
-  }
-
-  @Override
-  public BlockType getBlock(Vector3 position) {
-    return new BukkitBlockType(this, position);
   }
 
   @Override

@@ -17,11 +17,12 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.service.teleport.strategy;
+package me.taylorkelly.mywarp.util.teleport;
 
 import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.capability.PositionValidationCapability;
 import me.taylorkelly.mywarp.util.Vector3;
 
 /**
@@ -31,11 +32,11 @@ import me.taylorkelly.mywarp.util.Vector3;
  * of a block that was smaller than a full block (e.g. a half step, a stair, a pressured plate), the height needs to be
  * adjusted or the entity ends up <i>within</i> this block.</p>
  */
-public class LegacyPositionCorrectionStrategy implements PositionValidationStrategy {
+public class LegacyPositionCorrectionCapability implements PositionValidationCapability {
 
   @Override
   public Optional<Vector3> getValidPosition(Vector3 originalPosition, LocalWorld world) {
-    if (world.getBlock(originalPosition).isNotFullHeight()) {
+    if (world.isNotFullHeight(originalPosition)) {
       originalPosition = originalPosition.add(0, 1, 0);
     }
     return Optional.of(originalPosition);

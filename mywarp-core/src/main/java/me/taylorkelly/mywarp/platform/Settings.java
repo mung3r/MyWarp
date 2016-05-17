@@ -72,20 +72,6 @@ public interface Settings {
   boolean isLocalizationPerPlayer();
 
   /**
-   * Returns whether safety checks for teleports are enabled.
-   *
-   * @return {@code true} if the location's safety should be checked before teleporting an entity
-   */
-  boolean isSafetyEnabled();
-
-  /**
-   * Gets the radius that is used to search a safe location.
-   *
-   * @return the search radius
-   */
-  int getSafetySearchRadius();
-
-  /**
    * Returns whether warp signs are enabled.
    *
    * @return {@code true} if warp signs are enabled

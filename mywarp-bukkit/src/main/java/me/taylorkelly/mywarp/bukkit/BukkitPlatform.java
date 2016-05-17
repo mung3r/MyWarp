@@ -30,6 +30,7 @@ import me.taylorkelly.mywarp.bukkit.util.permission.BundleProvider;
 import me.taylorkelly.mywarp.platform.Platform;
 import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
 import me.taylorkelly.mywarp.platform.capability.LimitCapability;
+import me.taylorkelly.mywarp.platform.capability.PositionValidationCapability;
 import me.taylorkelly.mywarp.platform.capability.TimerCapability;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
@@ -99,7 +100,7 @@ public class BukkitPlatform implements Platform {
       return Optional.of(registered);
     }
 
-    //BukkitLimitCapability
+    //LimitCapability
     if (capabilityClass.isAssignableFrom(LimitCapability.class) && settings.isLimitsEnabled()) {
       LimitCapability
           limitCapability =
@@ -143,6 +144,15 @@ public class BukkitPlatform implements Platform {
       registeredCapabilities.putInstance(TimerCapability.class, timerCapability);
       registered = (C) timerCapability;
 
+    }
+
+    //PositionSafetyCapability
+    if (capabilityClass.isAssignableFrom(PositionValidationCapability.class) && settings.isSafetyEnabled()) {
+      PositionValidationCapability
+          positionValidationCapability =
+          new CubicSafetyValidationCapability(settings.getSafetySearchRadius());
+      registeredCapabilities.putInstance(PositionValidationCapability.class, positionValidationCapability);
+      registered = (C) positionValidationCapability;
     }
 
     return Optional.fromNullable(registered);

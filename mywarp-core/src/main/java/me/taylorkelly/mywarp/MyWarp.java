@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp;
 
+import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -29,13 +30,11 @@ import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.Platform;
 import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
-import me.taylorkelly.mywarp.service.teleport.strategy.ChainedValidationStrategy;
-import me.taylorkelly.mywarp.service.teleport.strategy.CubicSafetyValidationStrategy;
-import me.taylorkelly.mywarp.service.teleport.strategy.LegacyPositionCorrectionStrategy;
-import me.taylorkelly.mywarp.service.teleport.strategy.PositionValidationStrategy;
+import me.taylorkelly.mywarp.platform.capability.PositionValidationCapability;
 import me.taylorkelly.mywarp.sign.WarpSignHandler;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+import me.taylorkelly.mywarp.util.teleport.LegacyPositionCorrectionCapability;
 import me.taylorkelly.mywarp.util.teleport.StrategicTeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.warp.EventfulWarpManager;
@@ -233,12 +232,15 @@ public final class MyWarp {
   }
 
   private void initializeMutableFields() {
-    List<PositionValidationStrategy> validationStrategies = new ArrayList<PositionValidationStrategy>();
-    validationStrategies.add(new LegacyPositionCorrectionStrategy());
-    if (getSettings().isSafetyEnabled()) {
-      validationStrategies.add(new CubicSafetyValidationStrategy(getSettings()));
+    List<PositionValidationCapability> validationStrategies = new ArrayList<PositionValidationCapability>();
+    validationStrategies.add(new LegacyPositionCorrectionCapability());
+    Optional<PositionValidationCapability>
+        validationStrategyOptional =
+        platform.getCapability(PositionValidationCapability.class);
+    if (validationStrategyOptional.isPresent()) {
+      validationStrategies.add(validationStrategyOptional.get());
     }
-    teleportHandler = new StrategicTeleportHandler(new ChainedValidationStrategy(validationStrategies), getSettings());
+    teleportHandler = new StrategicTeleportHandler(getSettings(), validationStrategies);
 
     commandHandler = new CommandHandler(this, platform);
   }

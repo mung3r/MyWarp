@@ -20,48 +20,79 @@
 package me.taylorkelly.mywarp.util.teleport;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.Settings;
-import me.taylorkelly.mywarp.service.teleport.strategy.PositionValidationStrategy;
+import me.taylorkelly.mywarp.platform.capability.PositionValidationCapability;
 import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.Vector3;
 
 /**
- * Parses teleport positions against a {@link PositionValidationStrategy}. If a valid position exists, the entity is
+ * Parses teleport positions against a {@link PositionValidationCapability}. If a valid position exists, the entity is
  * teleported there. If no valid position exists, the teleport is canceled.
  */
 public class StrategicTeleportHandler implements TeleportHandler {
 
-  private final PositionValidationStrategy strategy;
+  private final Iterable<PositionValidationCapability> strategies;
   private final Settings settings;
 
+
   /**
-   * Creates an instance that uses the given strategy to validate teleport positions.
+   * Creates an instance that uses the given strategies to validate teleport positions.
    *
-   * @param strategy the strategy to use
-   * @param settings the settings instance to use
+   * <p>The strategies are evaluated in the order of the given elements until either a strategy returns
+   * no valid position or all strategies have evaluated the position. If a strategy returns an alternate position,
+   * following strategies will check this position opposed to the original one. </p>
+   *
+   * @param settings   the settings instance to use
+   * @param strategies the strategies to use
    */
-  public StrategicTeleportHandler(PositionValidationStrategy strategy, Settings settings) {
-    this.strategy = strategy;
+  public StrategicTeleportHandler(Settings settings, PositionValidationCapability... strategies) {
+    this(settings, Lists.newArrayList(strategies));
+  }
+
+  /**
+   * Creates an instance that uses the given strategies to validate teleport positions.
+   *
+   * <p>The strategies are evaluated in the order of the elements in the given Iterable until either a strategy returns
+   * no valid position or all strategies have evaluated the position. If a strategy returns an alternate position,
+   * following strategies will check this position opposed to the original one. </p>
+   *
+   * @param settings   the settings instance to use
+   * @param strategies the strategies to use
+   */
+  public StrategicTeleportHandler(Settings settings, Iterable<PositionValidationCapability> strategies) {
+    this.strategies = strategies;
     this.settings = settings;
   }
 
   @Override
   public TeleportStatus teleport(LocalEntity entity, LocalWorld world, Vector3 position, EulerDirection rotation) {
-    Optional<Vector3> optional = strategy.getValidPosition(position, world);
+    Optional<Vector3> optional = getValidPosition(world, position);
 
     if (!optional.isPresent()) {
       return TeleportStatus.NONE;
     }
 
     Vector3 validPosition = optional.get();
-    entity.teleport(world, position, rotation, settings.isTeleportTamedHorses());
+    entity.teleport(world, validPosition, rotation, settings.isTeleportTamedHorses());
 
     if (!validPosition.equals(position)) {
       return TeleportStatus.MODIFIED;
     }
     return TeleportStatus.ORIGINAL;
+  }
+
+  private Optional<Vector3> getValidPosition(LocalWorld world, Vector3 originalPosition) {
+    Optional<Vector3> ret = Optional.of(originalPosition);
+    for (PositionValidationCapability strategy : strategies) {
+      if (!ret.isPresent()) {
+        return ret;
+      }
+      ret = strategy.getValidPosition(ret.get(), world);
+    }
+    return ret;
   }
 }

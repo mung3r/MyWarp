@@ -17,7 +17,7 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.service.teleport.strategy;
+package me.taylorkelly.mywarp.platform.capability;
 
 import com.google.common.base.Optional;
 
@@ -25,9 +25,9 @@ import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.util.Vector3;
 
 /**
- * Validates a given position or suggests alternative ones.
+ * The capability of a platform to validate a given position and suggests alternative ones.
  */
-public interface PositionValidationStrategy {
+public interface PositionValidationCapability {
 
   /**
    * Returns an Optional containing the first valid position starting from the given {@code originalPosition} within the

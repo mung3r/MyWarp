@@ -17,38 +17,40 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.service.teleport.strategy;
+package me.taylorkelly.mywarp.bukkit;
+
+import static me.taylorkelly.mywarp.bukkit.MyWarpPlugin.getMaterial;
 
 import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.Settings;
+import me.taylorkelly.mywarp.platform.capability.PositionValidationCapability;
 import me.taylorkelly.mywarp.util.Vector3;
 
 /**
  * Searches for positions that are safe for a normal entity within a cube surrounding a given center position.
  */
-public class CubicSafetyValidationStrategy implements PositionValidationStrategy {
+public class CubicSafetyValidationCapability implements PositionValidationCapability {
 
-  private Settings settings;
+  private int searchRadius;
 
   /**
-   * Creates an instance that searches for safe positions within a configured certain radius.
+   * Creates an instance that searches for safe positions within the given radius.
    *
-   * @param settings the settings instance
+   * @param searchRadius the radius within safe positions are searched
    */
-  public CubicSafetyValidationStrategy(Settings settings) {
-    this.settings = settings;
+  public CubicSafetyValidationCapability(int searchRadius) {
+    this.searchRadius = searchRadius;
   }
 
   @Override
   public Optional<Vector3> getValidPosition(Vector3 originalPosition, LocalWorld world) {
-    if (isSafe(originalPosition, world)) {
+    if (isSafe(world, originalPosition)) {
       return Optional.of(originalPosition);
     }
     Optional<Vector3> safePosition; // never modify the given location!
 
-    for (int i = 2; i <= settings.getSafetySearchRadius(); i++) {
+    for (int i = 2; i <= searchRadius; i++) {
       safePosition = checkCubeSurface(world, originalPosition, i);
       if (safePosition.isPresent()) {
         return safePosition;
@@ -98,7 +100,7 @@ public class CubicSafetyValidationStrategy implements PositionValidationStrategy
    * @return the first safe position, or {@code Optional#absent()} if none could be found
    */
   private Optional<Vector3> checkHorizontalSquare(LocalWorld world, Vector3 center, int halfEdgeLength) {
-    if (isSafe(center, world)) {
+    if (isSafe(world, center)) {
       return Optional.of(center);
     }
     Optional<Vector3> checkPosition;
@@ -129,27 +131,27 @@ public class CubicSafetyValidationStrategy implements PositionValidationStrategy
 
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(-1, 0, 0);
-      if (isSafe(checkPosition, world)) {
+      if (isSafe(world, checkPosition)) {
         return Optional.of(checkPosition);
       }
     }
 
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(0, 0, -1);
-      if (isSafe(checkPosition, world)) {
+      if (isSafe(world, checkPosition)) {
         return Optional.of(checkPosition);
       }
     }
 
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(1, 0, 0);
-      if (isSafe(checkPosition, world)) {
+      if (isSafe(world, checkPosition)) {
         return Optional.of(checkPosition);
       }
     }
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(0, 0, 1);
-      if (isSafe(checkPosition, world)) {
+      if (isSafe(world, checkPosition)) {
         return Optional.of(checkPosition);
       }
     }
@@ -160,18 +162,18 @@ public class CubicSafetyValidationStrategy implements PositionValidationStrategy
    * Returns whether the given {@code position} on the given {@code world} is safe for a regular entity to be teleported
    * to.
    *
-   * @param position the position to check
    * @param world    the world to check
+   * @param position the position to check
    * @return {@code true} is the position is safe
    */
-  private boolean isSafe(Vector3 position, LocalWorld world) {
-    if (!world.getBlock(position).canEntitySafelyStandWithin()) {
+  private boolean isSafe(LocalWorld world, Vector3 position) {
+    if (!MaterialInfo.canEntitySafelyStandWithin(getMaterial(world, position.add(0, 1, 0)))) {
       return false;
     }
-    if (!world.getBlock(position.add(0, 1, 0)).canEntitySafelyStandWithin()) {
+    if (!MaterialInfo.canEntitySafelyStandWithin(getMaterial(world, position))) {
       return false;
     }
-    if (!world.getBlock(position.sub(0, 1, 0)).canEntitySafelyStandOn()) {
+    if (!MaterialInfo.canEntitySafelyStandOn(getMaterial(world, position.add(0, -1, 0)))) {
       return false;
     }
     return true;

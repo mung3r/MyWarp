@@ -69,7 +69,9 @@ public class BukkitSettings implements Settings {
   public void reload() {
     if (!configFile.exists()) {
       try {
-        configFile.createNewFile();
+        if (!configFile.createNewFile()) {
+          throw new IOException("The file already exists.");
+        }
         log.info(String.format("Default '%1$s' created successfully.", configFile.getName()));
       } catch (IOException e) {
         log.error(String.format(
@@ -128,12 +130,20 @@ public class BukkitSettings implements Settings {
     return config.getBoolean("localization.perPlayer");
   }
 
-  @Override
+  /**
+   * Returns whether safety checks for teleports are enabled.
+   *
+   * @return {@code true} if the location's safety should be checked before teleporting an entity
+   */
   public boolean isSafetyEnabled() {
     return config.getBoolean("teleportSafety.enabled");
   }
 
-  @Override
+  /**
+   * Gets the radius that is used to search a safe location.
+   *
+   * @return the search radius
+   */
   public int getSafetySearchRadius() {
     return config.getInt("teleportSafety.searchRadius");
   }

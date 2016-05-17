@@ -24,8 +24,7 @@ import me.taylorkelly.mywarp.util.Vector3;
 import java.util.UUID;
 
 /**
- * A world or dimension currently existing on the server. <p>Typically an implementation is provided by the platform
- * running MyWarp.</p>
+ * A world or dimension currently existing on the server.
  */
 public interface LocalWorld {
 
@@ -44,11 +43,13 @@ public interface LocalWorld {
   UUID getUniqueId();
 
   /**
-   * Gets the block at the given position.
+   * Returns whether the block at the given {@code position} within this world is smaller than a single full block.
    *
-   * @param position the position vector
-   * @return the block
+   * @param position the position to check
+   * @return {@code true} if this particular block is smaller than a normal block
+   * @deprecated This method exists only to support warps created in legacy versions and may be removed at any time.
    */
-  BlockType getBlock(Vector3 position);
+  @Deprecated
+  boolean isNotFullHeight(Vector3 position);
 
 }

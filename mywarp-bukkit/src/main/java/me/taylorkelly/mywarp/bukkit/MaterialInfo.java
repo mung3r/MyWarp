@@ -19,36 +19,25 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import com.google.common.primitives.Ints;
-
-import me.taylorkelly.mywarp.platform.BlockType;
-import me.taylorkelly.mywarp.util.Vector3;
-
 import org.bukkit.Material;
 
 /**
- * A reference to a block in Bukkit.
+ * Provides information about Materials.
  */
-public class BukkitBlockType implements BlockType {
+class MaterialInfo {
 
-  private final BukkitWorld world;
-  private final Vector3 position;
-
-  /**
-   * Constructs an instance.
-   *
-   * @param world    the world of the block
-   * @param position the position of the block
-   */
-  BukkitBlockType(BukkitWorld world, Vector3 position) {
-    this.world = world;
-    this.position = position;
+  private MaterialInfo() {
   }
 
-  @Override
-  public boolean canEntitySafelyStandWithin() {
-    Material blockMaterial = getBlockMaterial();
-    switch (blockMaterial) {
+  /**
+   * Returns whether a regular entity (without any status effects) can stand <i>within</i> a block of the given material
+   * without taking any damage from doing so.
+   *
+   * @param material the material to check
+   * @return {@code true} if an entity can safely stand within a block of the given material
+   */
+  static boolean canEntitySafelyStandWithin(Material material) {
+    switch (material) {
       case LAVA:
       case STATIONARY_LAVA:
       case FIRE:
@@ -56,26 +45,35 @@ public class BukkitBlockType implements BlockType {
       case WATER:
         return true;
       default:
-        return !blockMaterial.isSolid();
+        return !material.isSolid();
     }
   }
 
-  @Override
-  public boolean canEntitySafelyStandOn() {
-    Material blockMaterial = getBlockMaterial();
-    switch (blockMaterial) {
+  /**
+   * Returns whether a regular entity (without any status effects) can stand <i>on</i> a block of the given material
+   * without taking any damage from doing so.
+   *
+   * @param material the material to check
+   * @return {@code true} if an entity can safely stand within a block of the given material
+   */
+  static boolean canEntitySafelyStandOn(Material material) {
+    switch (material) {
       case CACTUS:
         return false;
       case WATER:
         return true;
       default:
-        return blockMaterial.isSolid();
+        return material.isSolid();
     }
   }
 
-  @Override
-  public boolean isNotFullHeight() {
-    Material material = getBlockMaterial();
+  /**
+   * Returns whether a block of the given material is smaller than a normal full block.
+   *
+   * @param material the material to check
+   * @return {@code true} if this particular block is smaller than a normal block
+   */
+  static boolean isNotFullHeight(Material material) {
     switch (material) {
       case BED_BLOCK:
       case STEP:
@@ -107,11 +105,4 @@ public class BukkitBlockType implements BlockType {
         return false;
     }
   }
-
-  private Material getBlockMaterial() {
-    return world.getLoadedWorld()
-        .getBlockAt(Ints.checkedCast(position.getFloorX()), Ints.checkedCast(position.getFloorY()),
-                    Ints.checkedCast(position.getFloorZ())).getType();
-  }
-
 }

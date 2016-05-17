@@ -22,6 +22,7 @@ package me.taylorkelly.mywarp.bukkit;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Predicates;
+import com.google.common.primitives.Ints;
 
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.settings.BukkitSettings;
@@ -32,7 +33,9 @@ import me.taylorkelly.mywarp.bukkit.util.permission.group.GroupResolver;
 import me.taylorkelly.mywarp.bukkit.util.permission.group.GroupResolverFactory;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
+import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.FolderSourcedControl;
@@ -42,6 +45,7 @@ import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -312,6 +316,19 @@ public final class MyWarpPlugin extends JavaPlugin {
     if (marker != null) {
       marker.clear();
     }
+  }
+
+  /**
+   * Gets the {@code Material} of the block at the given position within the given world.
+   *
+   * @param world    the world
+   * @param position the position
+   * @return the Material of the block at the given position
+   */
+  protected static Material getMaterial(LocalWorld world, Vector3 position) {
+    return BukkitAdapter.adapt(world)
+        .getBlockAt(Ints.checkedCast(position.getFloorX()), Ints.checkedCast(position.getFloorY()),
+                    Ints.checkedCast(position.getFloorZ())).getType();
   }
 
 }
