@@ -162,7 +162,8 @@ public class InformativeCommands {
     }
 
     //query the warps
-    List<Warp> warps = Ordering.natural().sortedCopy(warpManager.filter(Predicates.and(predicates)));
+    //noinspection RedundantTypeArguments
+    List<Warp> warps = Ordering.natural().sortedCopy(warpManager.filter(Predicates.<Warp>and(predicates)));
 
     Function<Warp, Message> mapping = new Function<Warp, Message>() {
 

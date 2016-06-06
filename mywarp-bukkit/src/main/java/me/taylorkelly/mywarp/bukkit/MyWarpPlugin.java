@@ -100,7 +100,17 @@ public final class MyWarpPlugin extends JavaPlugin {
 
     // initialize platform
     DynamicMessages.setControl(control);
-    platform = new BukkitPlatform(this, YamlConfiguration.loadConfiguration(this.getTextResource("config.yml")));
+    File dataFolder = getDataFolder();
+    if (!dataFolder.exists()) {
+      if (!dataFolder.mkdirs()) {
+        log.error("Failed to create MyWarp's data-folder: " + dataFolder);
+        log.error("MyWarp is unable to continue and will be disabled.");
+        Bukkit.getPluginManager().disablePlugin(this);
+        return;
+      }
+    }
+    platform =
+        new BukkitPlatform(this, dataFolder, YamlConfiguration.loadConfiguration(this.getTextResource("config.yml")));
 
     // setup the core
     try {

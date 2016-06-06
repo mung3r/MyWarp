@@ -61,11 +61,11 @@ public class BukkitPlatform implements Platform {
 
   private final ClassToInstanceMap<Object> registeredCapabilities = MutableClassToInstanceMap.create();
 
-  BukkitPlatform(MyWarpPlugin plugin, FileConfiguration defaultConfig) {
+  BukkitPlatform(MyWarpPlugin plugin, File dataFolder, FileConfiguration defaultConfig) {
     this.plugin = plugin;
+    this.dataFolder = dataFolder;
 
     //initialize platform support
-    this.dataFolder = plugin.getDataFolder();
     this.settings = new BukkitSettings(new File(dataFolder, "config.yml"), defaultConfig);
     this.game = new BukkitGame(plugin, new BukkitExecutor(plugin));
     this.profileCache = new SquirrelIdProfileCache(new File(dataFolder, "profiles.db"));
