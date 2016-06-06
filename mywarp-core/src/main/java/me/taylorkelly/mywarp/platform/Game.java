@@ -55,6 +55,13 @@ public interface Game {
   Optional<LocalPlayer> getPlayer(UUID identifier);
 
   /**
+   * Gets an ImmutableSet with all players currently on the server.
+   *
+   * @return an ImmutableSet with all players
+   */
+  ImmutableSet<LocalPlayer> getPlayers();
+
+  /**
    * Gets an Optional containing the world of the given name, if such a world exists.
    *
    * @param name the name of the world

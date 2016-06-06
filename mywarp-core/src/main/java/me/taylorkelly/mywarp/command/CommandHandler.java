@@ -37,14 +37,12 @@ import com.sk89q.intake.parametric.provider.PrimitivesModule;
 import com.sk89q.intake.util.auth.AuthorizationException;
 
 import me.taylorkelly.mywarp.MyWarp;
-import me.taylorkelly.mywarp.command.definition.ImportCommands;
-import me.taylorkelly.mywarp.command.definition.InformativeCommands;
-import me.taylorkelly.mywarp.command.definition.ManagementCommands;
-import me.taylorkelly.mywarp.command.definition.SocialCommands;
-import me.taylorkelly.mywarp.command.definition.UsageCommands;
-import me.taylorkelly.mywarp.command.definition.UtilityCommands;
-import me.taylorkelly.mywarp.command.provider.BaseModule;
-import me.taylorkelly.mywarp.command.provider.magic.ProvidedModule;
+import me.taylorkelly.mywarp.command.parametric.ActorAuthorizer;
+import me.taylorkelly.mywarp.command.parametric.CommandResourceProvider;
+import me.taylorkelly.mywarp.command.parametric.EconomyInvokeHandler;
+import me.taylorkelly.mywarp.command.parametric.ExceptionConverter;
+import me.taylorkelly.mywarp.command.parametric.namespace.ProvidedModule;
+import me.taylorkelly.mywarp.command.parametric.provider.BaseModule;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.Platform;
@@ -79,7 +77,7 @@ import java.util.TreeSet;
 /**
  * Handles MyWarp's commands.
  */
-public class CommandHandler {
+public final class CommandHandler {
 
   public static final String RESOURCE_BUNDLE_NAME = "me.taylorkelly.mywarp.lang.Commands";
   private static final char CMD_PREFIX = '/';
@@ -271,7 +269,7 @@ public class CommandHandler {
    * @param forWhom the Actor for whom the returned commands should be usable
    * @return all usable commands as strings
    */
-  public Set<String> getUsableCommands(Actor forWhom) {
+  protected Set<String> getUsableCommands(Actor forWhom) {
     Set<String> usableCommands = new TreeSet<String>();
 
     flattenCommands(usableCommands, createNamespace(forWhom), "", dispatcher);

@@ -22,7 +22,7 @@ package me.taylorkelly.mywarp.bukkit.util.conversation;
 import me.taylorkelly.mywarp.bukkit.BukkitPlayer;
 import me.taylorkelly.mywarp.bukkit.MyWarpPlugin;
 import me.taylorkelly.mywarp.bukkit.util.BukkitMessageInterpreter;
-import me.taylorkelly.mywarp.command.printer.InfoPrinter;
+import me.taylorkelly.mywarp.command.util.printer.InfoPrinter;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.util.Message;

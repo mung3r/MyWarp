@@ -75,6 +75,16 @@ public class BukkitGame implements Game {
   }
 
   @Override
+  public ImmutableSet<LocalWorld> getWorlds() {
+    ImmutableSet.Builder<LocalWorld> builder = ImmutableSet.builder();
+
+    for (World world : Bukkit.getWorlds()) {
+      builder.add(BukkitAdapter.adapt(world));
+    }
+    return builder.build();
+  }
+
+  @Override
   public Optional<LocalPlayer> getPlayer(String name) {
     @SuppressWarnings("deprecation") Player player = Bukkit.getPlayer(name);
     if (player != null) {
@@ -93,11 +103,11 @@ public class BukkitGame implements Game {
   }
 
   @Override
-  public ImmutableSet<LocalWorld> getWorlds() {
-    ImmutableSet.Builder<LocalWorld> builder = ImmutableSet.builder();
+  public ImmutableSet<LocalPlayer> getPlayers() {
+    ImmutableSet.Builder<LocalPlayer> builder = ImmutableSet.builder();
 
-    for (World world : Bukkit.getWorlds()) {
-      builder.add(BukkitAdapter.adapt(world));
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      builder.add(plugin.wrap(player));
     }
     return builder.build();
   }
