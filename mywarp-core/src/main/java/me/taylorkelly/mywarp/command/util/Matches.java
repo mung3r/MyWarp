@@ -1,20 +1,20 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.command.util;
@@ -90,13 +90,13 @@ public class Matches<E> {
     @Nullable E ret = null;
 
     if (equalMatches.size() == 1) {
-      ret = equalMatches.get(1);
+      ret = equalMatches.get(0);
     } else if (equalIgnoreCaseMatches.size() == 1) {
-      ret = equalIgnoreCaseMatches.get(1);
+      ret = equalIgnoreCaseMatches.get(0);
     } else if (containsMatches.size() == 1) {
-      ret = containsMatches.get(1);
+      ret = containsMatches.get(0);
     } else if (containsIgnoreCaseMatches.size() == 1) {
-      ret = containsIgnoreCaseMatches.get(1);
+      ret = containsIgnoreCaseMatches.get(0);
     }
 
     return Optional.fromNullable(ret);
