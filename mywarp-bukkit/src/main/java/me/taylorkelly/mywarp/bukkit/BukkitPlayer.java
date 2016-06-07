@@ -1,23 +1,26 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.bukkit;
+
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3d;
 
 import me.taylorkelly.mywarp.bukkit.util.ReflectiveLocaleResolver;
 import me.taylorkelly.mywarp.bukkit.util.conversation.AcceptancePromptFactory;
@@ -29,9 +32,7 @@ import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.platform.profile.ProfileCache;
-import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import org.bukkit.Effect;
@@ -125,7 +126,7 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
   }
 
   @Override
-  public void setCompassTarget(LocalWorld world, Vector3 position) {
+  public void setCompassTarget(LocalWorld world, Vector3d position) {
     Location bukkitLoc = new Location(BukkitAdapter.adapt(world), position.getX(), position.getY(), position.getZ());
     getWrapped().setCompassTarget(bukkitLoc);
   }
@@ -141,23 +142,23 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
   }
 
   @Override
-  public Vector3 getPosition() {
+  public Vector3d getPosition() {
     Location bukkitLoc = getWrapped().getLocation();
-    return new Vector3(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ());
+    return new Vector3d(bukkitLoc.getX(), bukkitLoc.getY(), bukkitLoc.getZ());
   }
 
   @Override
-  public EulerDirection getRotation() {
+  public Vector2f getRotation() {
     Location bukkitLoc = getWrapped().getLocation();
-    return new EulerDirection(bukkitLoc.getPitch(), bukkitLoc.getYaw(), 0);
+    return new Vector2f(bukkitLoc.getPitch(), bukkitLoc.getYaw());
   }
 
   @Override
-  public void teleport(LocalWorld world, Vector3 position, EulerDirection rotation, boolean teleportTamedHorse) {
+  public void teleport(LocalWorld world, Vector3d position, Vector2f rotation, boolean teleportTamedHorse) {
     Location
         bukkitLoc =
-        new Location(BukkitAdapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getYaw(),
-                     rotation.getPitch());
+        new Location(BukkitAdapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getY(),
+                     rotation.getX());
     teleportRecursive(getWrapped(), bukkitLoc, teleportTamedHorse);
   }
 

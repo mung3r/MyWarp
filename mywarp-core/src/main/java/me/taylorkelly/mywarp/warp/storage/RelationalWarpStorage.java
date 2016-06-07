@@ -1,20 +1,20 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.warp.storage;
@@ -29,13 +29,13 @@ import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.selectOne;
 import static org.jooq.impl.DSL.val;
 
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.platform.profile.ProfileCache;
-import me.taylorkelly.mywarp.util.EulerDirection;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.Warp.Type;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
@@ -88,8 +88,8 @@ class RelationalWarpStorage implements WarpStorage {
 
   @Override
   public void addWarp(final Warp warp) {
-    final Vector3 position = warp.getPosition();
-    final EulerDirection rotation = warp.getRotation();
+    final Vector3d position = warp.getPosition();
+    final Vector2f rotation = warp.getRotation();
     final List<UUID> playerIds = new ArrayList<UUID>();
     playerIds.add(warp.getCreator().getUniqueId());
     playerIds.addAll(Collections2.transform(warp.getInvitedPlayers(), new Function<Profile, UUID>() {
@@ -128,8 +128,8 @@ class RelationalWarpStorage implements WarpStorage {
             .set(WARP.X, position.getX())
             .set(WARP.Y, position.getY())
             .set(WARP.Z, position.getZ())
-            .set(WARP.PITCH, rotation.getPitch())
-            .set(WARP.YAW, rotation.getYaw())
+            .set(WARP.PITCH, rotation.getX())
+            .set(WARP.YAW, rotation.getY())
             .set(WARP.WORLD_ID,
                  select(WORLD.WORLD_ID)
                  .from(WORLD)
@@ -241,8 +241,8 @@ class RelationalWarpStorage implements WarpStorage {
         .values()) {
       Profile creator = profileCache.getByUniqueId(r.getValue(0, creatorTable.UUID));
 
-      Vector3 position = new Vector3(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
-      EulerDirection rotation = new EulerDirection(r.getValue(0, WARP.PITCH), r.getValue(0, WARP.YAW), 0);
+      Vector3d position = new Vector3d(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
+      Vector2f rotation = new Vector2f(r.getValue(0, WARP.PITCH), r.getValue(0, WARP.YAW));
 
       WarpBuilder
           builder =
@@ -398,8 +398,8 @@ class RelationalWarpStorage implements WarpStorage {
 
   @Override
   public void updateLocation(final Warp warp) {
-    final Vector3 position = warp.getPosition();
-    final EulerDirection rotation = warp.getRotation();
+    final Vector3d position = warp.getPosition();
+    final Vector2f rotation = warp.getRotation();
 
     create(configuration).transaction(new TransactionalRunnable() {
       @Override
@@ -412,8 +412,8 @@ class RelationalWarpStorage implements WarpStorage {
             .set(WARP.X, position.getX())
             .set(WARP.Y, position.getY())
             .set(WARP.Z, position.getZ())
-            .set(WARP.PITCH, rotation.getPitch())
-            .set(WARP.YAW, rotation.getYaw())
+            .set(WARP.PITCH, rotation.getX())
+            .set(WARP.YAW, rotation.getY())
             .set(WARP.WORLD_ID,
                  select(WORLD.WORLD_ID)
                  .from(WORLD)

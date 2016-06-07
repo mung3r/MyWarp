@@ -1,24 +1,26 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.warp;
 
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ForwardingObject;
@@ -28,8 +30,6 @@ import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.profile.Profile;
-import me.taylorkelly.mywarp.util.EulerDirection;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
 
@@ -191,12 +191,12 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public Vector3 getPosition() {
+    public Vector3d getPosition() {
       return delegate().getPosition();
     }
 
     @Override
-    public EulerDirection getRotation() {
+    public Vector2f getRotation() {
       return delegate().getRotation();
     }
 
@@ -231,7 +231,7 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
+    public void setLocation(LocalWorld world, Vector3d position, Vector2f rotation) {
       delegate().setLocation(world, position, rotation);
     }
 

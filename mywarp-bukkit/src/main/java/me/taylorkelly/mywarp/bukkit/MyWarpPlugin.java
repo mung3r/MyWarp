@@ -1,26 +1,27 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.bukkit;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Predicates;
 import com.google.common.primitives.Ints;
 
@@ -35,7 +36,6 @@ import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.FolderSourcedControl;
@@ -335,10 +335,9 @@ public final class MyWarpPlugin extends JavaPlugin {
    * @param position the position
    * @return the Material of the block at the given position
    */
-  protected static Material getMaterial(LocalWorld world, Vector3 position) {
-    return BukkitAdapter.adapt(world)
-        .getBlockAt(Ints.checkedCast(position.getFloorX()), Ints.checkedCast(position.getFloorY()),
-                    Ints.checkedCast(position.getFloorZ())).getType();
+  protected static Material getMaterial(LocalWorld world, Vector3i position) {
+    return BukkitAdapter.adapt(world).getBlockAt(Ints.checkedCast(position.getX()), Ints.checkedCast(position.getY()),
+                                                 Ints.checkedCast(position.getZ())).getType();
   }
 
 }

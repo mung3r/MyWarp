@@ -1,31 +1,31 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.bukkit;
 
 import static me.taylorkelly.mywarp.bukkit.MyWarpPlugin.getMaterial;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.capability.PositionValidationCapability;
-import me.taylorkelly.mywarp.util.Vector3;
 
 /**
  * Searches for positions that are safe for a normal entity within a cube surrounding a given center position.
@@ -44,11 +44,11 @@ public class CubicSafetyValidationCapability implements PositionValidationCapabi
   }
 
   @Override
-  public Optional<Vector3> getValidPosition(Vector3 originalPosition, LocalWorld world) {
+  public Optional<Vector3d> getValidPosition(Vector3d originalPosition, LocalWorld world) {
     if (isSafe(world, originalPosition)) {
       return Optional.of(originalPosition);
     }
-    Optional<Vector3> safePosition; // never modify the given location!
+    Optional<Vector3d> safePosition; // never modify the given location!
 
     for (int i = 2; i <= searchRadius; i++) {
       safePosition = checkCubeSurface(world, originalPosition, i);
@@ -68,8 +68,8 @@ public class CubicSafetyValidationCapability implements PositionValidationCapabi
    * @param halfEdgeLength half of the effective edge length, including the block in the center
    * @return the first safe location found, or {@code Optional#absent()} if none could be found
    */
-  private Optional<Vector3> checkCubeSurface(LocalWorld world, Vector3 center, int halfEdgeLength) {
-    Optional<Vector3> safePosition;
+  private Optional<Vector3d> checkCubeSurface(LocalWorld world, Vector3d center, int halfEdgeLength) {
+    Optional<Vector3d> safePosition;
 
     int diameter = getEdgeLength(halfEdgeLength);
     for (int i = 0; i < diameter; i++) {
@@ -99,11 +99,11 @@ public class CubicSafetyValidationCapability implements PositionValidationCapabi
    * @param halfEdgeLength half of the effective edge length, including the block in the center
    * @return the first safe position, or {@code Optional#absent()} if none could be found
    */
-  private Optional<Vector3> checkHorizontalSquare(LocalWorld world, Vector3 center, int halfEdgeLength) {
+  private Optional<Vector3d> checkHorizontalSquare(LocalWorld world, Vector3d center, int halfEdgeLength) {
     if (isSafe(world, center)) {
       return Optional.of(center);
     }
-    Optional<Vector3> checkPosition;
+    Optional<Vector3d> checkPosition;
 
     // loop through surrounding blocks, starting with a half-edge-length of
     // 2 (1 would just be the central block)
@@ -125,9 +125,9 @@ public class CubicSafetyValidationCapability implements PositionValidationCapabi
    * @param halfEdgeLength half of the effective edge length, including the block in the center
    * @return the first safe position, or {@code Optional#absent()} if none could be found
    */
-  private Optional<Vector3> checkHorizontalSquareOutline(LocalWorld world, Vector3 center, int halfEdgeLength) {
+  private Optional<Vector3d> checkHorizontalSquareOutline(LocalWorld world, Vector3d center, int halfEdgeLength) {
     int blockSteps = getEdgeLength(halfEdgeLength) - 1;
-    Vector3 checkPosition = center.add(halfEdgeLength - 1, 0, halfEdgeLength - 1);
+    Vector3d checkPosition = center.add(halfEdgeLength - 1, 0, halfEdgeLength - 1);
 
     for (int i = 0; i < blockSteps; i++) {
       checkPosition = checkPosition.add(-1, 0, 0);
@@ -166,14 +166,14 @@ public class CubicSafetyValidationCapability implements PositionValidationCapabi
    * @param position the position to check
    * @return {@code true} is the position is safe
    */
-  private boolean isSafe(LocalWorld world, Vector3 position) {
-    if (!MaterialInfo.canEntitySafelyStandWithin(getMaterial(world, position.add(0, 1, 0)))) {
+  private boolean isSafe(LocalWorld world, Vector3d position) {
+    if (!MaterialInfo.canEntitySafelyStandWithin(getMaterial(world, position.add(0, 1, 0).toInt()))) {
       return false;
     }
-    if (!MaterialInfo.canEntitySafelyStandWithin(getMaterial(world, position))) {
+    if (!MaterialInfo.canEntitySafelyStandWithin(getMaterial(world, position.toInt()))) {
       return false;
     }
-    if (!MaterialInfo.canEntitySafelyStandOn(getMaterial(world, position.add(0, -1, 0)))) {
+    if (!MaterialInfo.canEntitySafelyStandOn(getMaterial(world, position.add(0, -1, 0).toInt()))) {
       return false;
     }
     return true;

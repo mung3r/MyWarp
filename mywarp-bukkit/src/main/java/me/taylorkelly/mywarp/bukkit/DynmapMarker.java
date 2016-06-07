@@ -1,24 +1,25 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.bukkit;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -29,7 +30,6 @@ import com.google.common.eventbus.Subscribe;
 import me.taylorkelly.mywarp.bukkit.settings.BukkitSettings;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -196,7 +196,7 @@ public class DynmapMarker {
 
     Marker marker = markerOptional.get();
     if (event.getType().equals(WarpUpdateEvent.UpdateType.LOCATION)) {
-      Vector3 pos = warp.getPosition();
+      Vector3d pos = warp.getPosition();
       marker.setLocation(warp.getWorld(game).getName(), pos.getX(), pos.getY(), pos.getZ());
     }
     marker.setLabel(label(warp), true);

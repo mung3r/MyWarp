@@ -1,20 +1,20 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.warp.storage;
@@ -24,6 +24,8 @@ import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.table;
 
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
@@ -32,9 +34,7 @@ import com.google.common.collect.Iterables;
 
 import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.platform.profile.ProfileCache;
-import me.taylorkelly.mywarp.util.EulerDirection;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
 
@@ -161,8 +161,8 @@ public class LegacyWarpSource implements WarpSource {
 
       Warp.Type type = r.value3() ? Warp.Type.PUBLIC : Warp.Type.PRIVATE;
 
-      Vector3 position = new Vector3(r.value4(), r.value5(), r.value6());
-      EulerDirection rotation = new EulerDirection(r.value8(), r.value7(), 0);
+      Vector3d position = new Vector3d(r.value4(), r.value5(), r.value6());
+      Vector2f rotation = new Vector2f(r.value8(), r.value7());
 
       String worldName = r.value9();
       UUID worldId = worldsSnapshot.get(worldName);

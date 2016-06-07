@@ -1,29 +1,29 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.util.teleport;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.capability.PositionValidationCapability;
-import me.taylorkelly.mywarp.util.Vector3;
 
 /**
  * Corrects positions saved with MyWarp versions prior to version 3 if necessary.
@@ -35,8 +35,8 @@ import me.taylorkelly.mywarp.util.Vector3;
 public class LegacyPositionCorrectionCapability implements PositionValidationCapability {
 
   @Override
-  public Optional<Vector3> getValidPosition(Vector3 originalPosition, LocalWorld world) {
-    if (world.isNotFullHeight(originalPosition)) {
+  public Optional<Vector3d> getValidPosition(Vector3d originalPosition, LocalWorld world) {
+    if (world.isNotFullHeight(originalPosition.toInt())) {
       originalPosition = originalPosition.add(0, 1, 0);
     }
     return Optional.of(originalPosition);

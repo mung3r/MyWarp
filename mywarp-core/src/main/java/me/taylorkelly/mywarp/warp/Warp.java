@@ -1,24 +1,26 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.warp;
 
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.ComparisonChain;
 
 import me.taylorkelly.mywarp.platform.Actor;
@@ -28,8 +30,6 @@ import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.service.limit.Limit;
-import me.taylorkelly.mywarp.util.EulerDirection;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 
 import java.util.Comparator;
@@ -191,14 +191,18 @@ public interface Warp extends Comparable<Warp> {
    *
    * @return the position
    */
-  Vector3 getPosition();
+  Vector3d getPosition();
 
   /**
    * Gets this Warp's rotation.
    *
+   * <p>The format of the rotation is represented by:</p>
+   *
+   * <ul><code>x -> pitch</code>, <code>y -> yaw</code></ul>
+   *
    * @return the rotation
    */
-  EulerDirection getRotation();
+  Vector2f getRotation();
 
   /**
    * Gets this Warp's type.
@@ -252,7 +256,7 @@ public interface Warp extends Comparable<Warp> {
    * @param position the position
    * @param rotation the rotation
    */
-  void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation);
+  void setLocation(LocalWorld world, Vector3d position, Vector2f rotation);
 
   /**
    * The type of a Warp.

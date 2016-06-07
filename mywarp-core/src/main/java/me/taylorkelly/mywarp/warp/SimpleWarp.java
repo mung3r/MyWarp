@@ -1,20 +1,20 @@
 /*
- * Copyright (C) 2011 - 2016, MyWarp team and contributors
+ * Copyright (C) 2011 - 2016, mywarp team and contributors
  *
- * This file is part of MyWarp.
+ * This file is part of mywarp.
  *
- * MyWarp is free software: you can redistribute it and/or modify
+ * mywarp is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MyWarp is distributed in the hope that it will be useful,
+ * mywarp is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
+ * along with mywarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package me.taylorkelly.mywarp.warp;
@@ -22,13 +22,14 @@ package me.taylorkelly.mywarp.warp;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.flowpowered.math.vector.Vector2f;
+import com.flowpowered.math.vector.Vector3d;
+
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.profile.Profile;
-import me.taylorkelly.mywarp.util.EulerDirection;
-import me.taylorkelly.mywarp.util.Vector3;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
@@ -53,8 +54,8 @@ class SimpleWarp extends AbstractWarp {
   private volatile Profile creator;
   private volatile Warp.Type type;
   private volatile UUID worldIdentifier;
-  private volatile Vector3 position;
-  private volatile EulerDirection rotation;
+  private volatile Vector3d position;
+  private volatile Vector2f rotation;
   private volatile int visits;
   private volatile String welcomeMessage;
 
@@ -76,8 +77,7 @@ class SimpleWarp extends AbstractWarp {
    * @throws IllegalArgumentException if {@code invitedPlayers} or {@code invitedGroups} contains {@code null}
    */
   SimpleWarp(String name, Date creationDate, Set<Profile> invitedPlayers, Set<String> invitedGroups, Profile creator,
-             Type type, UUID worldIdentifier, Vector3 position, EulerDirection rotation, int visits,
-             String welcomeMessage) {
+             Type type, UUID worldIdentifier, Vector3d position, Vector2f rotation, int visits, String welcomeMessage) {
     this.name = checkNotNull(name);
     this.creationDate = checkNotNull(creationDate);
     checkArgument(!checkNotNull(invitedPlayers).contains(null), "'invitedPlayers' must not contain null.");
@@ -201,19 +201,19 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public void setLocation(LocalWorld world, Vector3 position, EulerDirection rotation) {
+  public void setLocation(LocalWorld world, Vector3d position, Vector2f rotation) {
     this.worldIdentifier = world.getUniqueId();
     this.position = position;
     this.rotation = rotation;
   }
 
   @Override
-  public Vector3 getPosition() {
+  public Vector3d getPosition() {
     return position;
   }
 
   @Override
-  public EulerDirection getRotation() {
+  public Vector2f getRotation() {
     return rotation;
   }
 
