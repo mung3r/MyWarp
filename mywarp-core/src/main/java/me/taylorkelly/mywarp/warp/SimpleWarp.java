@@ -113,10 +113,10 @@ class SimpleWarp extends AbstractWarp {
           }
           break;
         case MODIFIED:
-          actor.sendError(msg.getString("unsafe-loc.closest-location", getName()));
+          actor.sendError(msg.getString("unsafe-location.closest", getName()));
           break;
         case NONE:
-          actor.sendError(msg.getString("unsafe-loc.no-teleport", getName()));
+          actor.sendError(msg.getString("unsafe-location.no-teleport", getName()));
           break;
       }
     }

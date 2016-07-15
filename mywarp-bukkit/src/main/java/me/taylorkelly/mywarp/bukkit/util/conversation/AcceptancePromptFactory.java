@@ -116,23 +116,22 @@ public class AcceptancePromptFactory {
 
       Message
           message =
-          Message.builder().append(
-              msg.getString("warp-acceptance-conversation.want-to-accept", initiatorName, warp.getName(),
-                            acceptanceSequence(), declineSequence(), infoSequence(), MyWarpPlugin.CONVERSATION_TIMEOUT))
+          Message.builder().append(msg.getString("warp-acceptance.want-to-accept", initiatorName, warp.getName(),
+                                                 acceptanceSequence(), declineSequence(), infoSequence(), MyWarpPlugin.CONVERSATION_TIMEOUT))
               .build();
       return BukkitMessageInterpreter.interpret(message);
     }
 
     private String acceptanceSequence() {
-      return msg.getString("warp-acceptance-conversation.acceptance-sequence");
+      return msg.getString("warp-acceptance.acceptance-sequence");
     }
 
     private String declineSequence() {
-      return msg.getString("warp-acceptance-conversation.decline-sequence");
+      return msg.getString("warp-acceptance.decline-sequence");
     }
 
     private String infoSequence() {
-      return msg.getString("warp-acceptance-conversation.info-sequence");
+      return msg.getString("warp-acceptance.info-sequence");
     }
   }
 
@@ -168,8 +167,7 @@ public class AcceptancePromptFactory {
 
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
       Message
-          message =
-          Message.builder().append(msg.getString("warp-acceptance-conversation.accepted-successful", warp.getName()))
+          message = Message.builder().append(msg.getString("warp-acceptance.accepted-successful", warp.getName()))
               .build();
       return BukkitMessageInterpreter.interpret(message);
     }
@@ -190,8 +188,7 @@ public class AcceptancePromptFactory {
     public String getPromptText(ConversationContext context) {
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
       Message
-          message =
-          Message.builder().append(msg.getString("warp-acceptance-conversation.declined-successful")).build();
+          message = Message.builder().append(msg.getString("warp-acceptance.declined-successful")).build();
       return BukkitMessageInterpreter.interpret(message);
     }
 

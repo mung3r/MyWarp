@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  */
 public class StringPaginator<E> {
 
-  private static final DynamicMessages msg = new DynamicMessages("me.taylorkelly.mywarp.lang.StringPaginator");
+  private static final DynamicMessages msg = new DynamicMessages("me.taylorkelly.mywarp.lang.Paginator");
 
 
   private final String header;

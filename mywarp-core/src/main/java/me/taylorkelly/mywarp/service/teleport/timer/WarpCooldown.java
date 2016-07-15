@@ -21,10 +21,10 @@ package me.taylorkelly.mywarp.service.teleport.timer;
 
 import com.google.common.base.Optional;
 
-import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.profile.Profile;
+import me.taylorkelly.mywarp.service.teleport.TimerTeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 
@@ -33,7 +33,7 @@ import me.taylorkelly.mywarp.util.i18n.LocaleManager;
  */
 public class WarpCooldown extends TimerAction<Profile> {
 
-  private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages msg = new DynamicMessages(TimerTeleportService.RESOURCE_BUNDLE_NAME);
 
   private final Game game;
   private final boolean notifyOnFinish;
@@ -59,7 +59,7 @@ public class WarpCooldown extends TimerAction<Profile> {
       if (optionalPlayer.isPresent()) {
         LocalPlayer player = optionalPlayer.get();
         LocaleManager.setLocale(player.getLocale());
-        player.sendMessage(msg.getString("warp-to.cooldown.ended"));
+        player.sendMessage(msg.getString("warp-cooldown.ended"));
       }
     }
   }

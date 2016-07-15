@@ -22,12 +22,12 @@ package me.taylorkelly.mywarp.service.teleport.timer;
 import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Optional;
 
-import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.capability.TimerCapability;
 import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.service.teleport.TeleportService;
+import me.taylorkelly.mywarp.service.teleport.TimerTeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -39,7 +39,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
 
   private static final int ALLOWED_DISTANCE = 2;
 
-  private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
+  private static final DynamicMessages msg = new DynamicMessages(TimerTeleportService.RESOURCE_BUNDLE_NAME);
 
   private final Warp warp;
   private final Vector3d initialPosition;
@@ -105,7 +105,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
       return false;
     }
     LocaleManager.setLocale(player.getLocale());
-    player.sendError(msg.getString("warp-to.warmup.cancelled-move"));
+    player.sendError(msg.getString("warp-warmup.cancelled.move"));
     return true;
   }
 
@@ -123,7 +123,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
       return false;
     }
     LocaleManager.setLocale(player.getLocale());
-    player.sendError(msg.getString("warp-to.warmup.cancelled-damage"));
+    player.sendError(msg.getString("warp-warmup.cancelled.damage"));
     return true;
   }
 

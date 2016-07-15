@@ -300,7 +300,7 @@ public class DynmapMarker {
    * @see Marker#getLabel()
    */
   private String label(Warp warp) {
-    return WarpUtils.replaceTokens(MESSAGES.getString("marker", settings.getLocalizationDefaultLocale()), warp);
+    return WarpUtils.replaceTokens(MESSAGES.getString("marker.label", settings.getLocalizationDefaultLocale()), warp);
   }
 
   /**

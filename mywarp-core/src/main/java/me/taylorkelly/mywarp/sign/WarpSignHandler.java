@@ -57,8 +57,7 @@ public class WarpSignHandler {
   private static final int WARPNAME_LINE = 2;
   private static final int IDENTIFIER_LINE = 1;
 
-  //TODO rename
-  private static final DynamicMessages msg = new DynamicMessages("me.taylorkelly.mywarp.lang.WarpSignManager");
+  private static final DynamicMessages msg = new DynamicMessages("me.taylorkelly.mywarp.lang.WarpSigns");
 
   private final TreeSet<String> identifiers = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
   private final AuthorizationResolver authorizationResolver;
@@ -125,7 +124,7 @@ public class WarpSignHandler {
     //validate permission
     LocaleManager.setLocale(player.getLocale());
     if (!player.hasPermission("mywarp.sign.create.self")) {
-      player.sendError(msg.getString("create-permission"));
+      player.sendError(msg.getString("permission.create"));
       return Optional.of(false);
     }
     String name = sign.getLine(WARPNAME_LINE);
@@ -140,7 +139,7 @@ public class WarpSignHandler {
 
     //validate authorization
     if (!authorizationResolver.isModifiable(warp, player) && !player.hasPermission("mywarp.sign.create")) {
-      player.sendError(msg.getString("create-warp-permission", name));
+      player.sendError(msg.getString("permission.create.to-warp", name));
       return Optional.of(false);
     }
 
@@ -181,7 +180,7 @@ public class WarpSignHandler {
     }
     LocaleManager.setLocale(player.getLocale());
     if (!player.hasPermission("mywarp.sign.use")) {
-      player.sendError(msg.getString("use-permission"));
+      player.sendError(msg.getString("permission.use"));
       return true;
     }
 
@@ -195,7 +194,7 @@ public class WarpSignHandler {
     final Warp warp = optional.get();
 
     if (!authorizationResolver.isUsable(warp, player)) {
-      player.sendError(msg.getString("use-warp-permission", warpName));
+      player.sendError(msg.getString("permission.use.to-warp", warpName));
       return true;
     }
 

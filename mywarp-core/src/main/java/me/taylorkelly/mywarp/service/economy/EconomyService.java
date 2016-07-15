@@ -64,7 +64,7 @@ public class EconomyService {
     boolean has = capability.hasAtLeast(player, amount);
 
     if (!has) {
-      player.sendError(msg.getString("cannot-afford", amount));
+      player.sendError(msg.getString("transaction.not-affordable", amount));
     }
     return has;
   }
@@ -88,7 +88,7 @@ public class EconomyService {
     amount = capability.withdraw(player, capability.getFee(player, fee));
 
     if (capability.informAfterTransaction()) {
-      player.sendMessage(msg.getString("transaction-complete", amount));
+      player.sendMessage(msg.getString("transaction.complete", amount));
     }
     return amount;
   }
