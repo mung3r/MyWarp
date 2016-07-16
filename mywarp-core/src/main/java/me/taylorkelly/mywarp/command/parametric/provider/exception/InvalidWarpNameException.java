@@ -34,9 +34,7 @@ public class InvalidWarpNameException extends NonMatchingInputException {
    * The reason why a String is not valid as a name for a {@link me.taylorkelly.mywarp.warp.Warp}.
    */
   public enum Reason {
-    ALREADY_EXISTS,
-    TOO_LONG,
-    IS_CMD
+    ALREADY_EXISTS, TOO_LONG, IS_CMD
   }
 
   private final Reason reason;

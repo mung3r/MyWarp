@@ -118,6 +118,8 @@ class SimpleWarp extends AbstractWarp {
         case NONE:
           actor.sendError(msg.getString("unsafe-location.no-teleport", getName()));
           break;
+        default:
+          assert false : status;
       }
     }
     return status;
@@ -224,18 +226,9 @@ class SimpleWarp extends AbstractWarp {
 
   @Override
   public String toString() {
-    return "SimpleWarp{" +
-           "name='" + name + '\'' +
-           ", creationDate=" + creationDate +
-           ", invitedPlayers=" + invitedPlayers +
-           ", invitedGroups=" + invitedGroups +
-           ", creator=" + creator +
-           ", type=" + type +
-           ", worldIdentifier=" + worldIdentifier +
-           ", position=" + position +
-           ", rotation=" + rotation +
-           ", visits=" + visits +
-           ", welcomeMessage='" + welcomeMessage + '\'' +
-           '}';
+    return "SimpleWarp{" + "name='" + name + '\'' + ", creationDate=" + creationDate + ", invitedPlayers="
+           + invitedPlayers + ", invitedGroups=" + invitedGroups + ", creator=" + creator + ", type=" + type
+           + ", worldIdentifier=" + worldIdentifier + ", position=" + position + ", rotation=" + rotation + ", visits="
+           + visits + ", welcomeMessage='" + welcomeMessage + '\'' + '}';
   }
 }

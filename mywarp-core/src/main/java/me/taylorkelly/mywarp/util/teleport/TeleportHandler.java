@@ -49,12 +49,10 @@ public interface TeleportHandler {
     /**
      * The entity has not been teleported.
      */
-    NONE(false),
-    /**
+    NONE(false), /**
      * The entity has been teleported to the desired position.
      */
-    ORIGINAL(true),
-    /**
+    ORIGINAL(true), /**
      * The entity has been teleported, but the position is not equal to the desired one.
      */
     MODIFIED(true);

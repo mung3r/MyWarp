@@ -79,9 +79,6 @@ public abstract class ValueBundle implements Comparable<ValueBundle> {
 
   @Override
   public String toString() {
-    return "ValueBundle{" +
-           "identifier='" + identifier + '\'' +
-           ", basePermission='" + basePermission + '\'' +
-           '}';
+    return "ValueBundle{" + "identifier='" + identifier + '\'' + ", basePermission='" + basePermission + '\'' + '}';
   }
 }

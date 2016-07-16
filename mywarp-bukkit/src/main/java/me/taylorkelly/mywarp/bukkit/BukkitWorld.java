@@ -99,8 +99,6 @@ public class BukkitWorld implements LocalWorld {
 
   @Override
   public String toString() {
-    return "BukkitWorld{" +
-           "worldIdentifier=" + worldIdentifier +
-           '}';
+    return "BukkitWorld{" + "worldIdentifier=" + worldIdentifier + '}';
   }
 }

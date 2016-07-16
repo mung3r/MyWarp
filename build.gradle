@@ -1,14 +1,5 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
-        //last version to run with Java6
-        classpath 'org.ajoberstar:grgit:0.1.0'
-    }
+plugins {
+    id "com.palantir.git-version" version "0.5.2"
 }
 
 // Define variables
@@ -20,9 +11,8 @@ if (!project.hasProperty("ciSystem")) {
 }
 if (!project.hasProperty("commitHash")) {
     try {
-        def repo = org.ajoberstar.grgit.Grgit.open(rootProject.file('.'))
-        ext.commitHash = repo.head().abbreviatedId
-    } catch (Exception e) {
+        ext.commitHash = versionDetails().gitHash
+    } catch (Exception ignore) {
         ext.commitHash = 'unknown'
     }
 }
@@ -31,8 +21,6 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'checkstyle'
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
 
     // Basic project information
     group = 'me.taylorkelly'
@@ -48,18 +36,16 @@ subprojects {
     ext.internalVersion = version + "+" + ciSystem + "-b" + buildNumber + ".git-" + commitHash
 
     // Minimum version of Java required
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 6
+    targetCompatibility = 6
 
     // Project repositories
     repositories {
-        mavenCentral()
+        jcenter()
     }
 
     checkstyle {
-        //last version to run with Java6
-        toolVersion = '6.1'
-
+        toolVersion = '7.0'
         configProperties.checkstyleConfigDir = new File(rootProject.projectDir, 'config/checkstyle')
         configFile = new File(configProperties.checkstyleConfigDir, 'checkstyle.xml')
     }

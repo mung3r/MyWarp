@@ -265,8 +265,7 @@ public interface Warp extends Comparable<Warp> {
     /**
      * A private Warp.
      */
-    PRIVATE,
-    /**
+    PRIVATE, /**
      * A public Warp.
      */
     PUBLIC;

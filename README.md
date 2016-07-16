@@ -9,7 +9,7 @@ MyWarp’s goal is to create a highly flexible system that allows players to dyn
 Compiling
 ---------
 
-You can compile MyWarp as long as you have the [Java Development Kit (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html) for Java 6 or newer. You only need one version of JDK installed.
+You can compile MyWarp as long as you have the [Java Development Kit (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html) for Java 8 or newer. You only need one version of JDK installed.
 
 The build process uses Gradle, which you do *not* need to download. MyWarp is a multi-module project with two modules:
 
@@ -23,7 +23,7 @@ The build process uses Gradle, which you do *not* need to download. MyWarp is a 
 1. Shift + right click the folder with MyWarp's files and click "Open command prompt".
 2. `gradlew build`
 
-#### On Linux, BSD, or Mac OS X
+#### On Linux, BSD or macOS
 
 1. In your terminal, navigate to the folder with MyWarp's files (`cd /folder/of/mywarp/files`)
 2. `./gradlew build`
@@ -39,8 +39,6 @@ If you want to use MyWarp, use the `-all` version which includes MyWarp and all 
 
 Contributing
 ------------
-
-We accept contributions, especially through pull requests on GitHub. Submissions must be licensed under the GNU General Public License v3.
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for important guidelines to follow.
 

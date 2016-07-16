@@ -65,6 +65,7 @@ import javax.sql.DataSource;
  * #getWarps()} will convert both. Player names are acquired by calling the configured {@link ProfileCache}, witch may
  * result in a blocking call.</p>
  */
+@SuppressWarnings("checkstyle:indentation")
 public class LegacyWarpSource implements WarpSource {
 
   private static final Logger log = MyWarpLogger.getLogger(LegacyWarpSource.class);

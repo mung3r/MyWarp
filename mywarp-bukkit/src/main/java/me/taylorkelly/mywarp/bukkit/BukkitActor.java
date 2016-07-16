@@ -99,8 +99,6 @@ public class BukkitActor extends AbstractActor {
 
   @Override
   public String toString() {
-    return "BukkitActor{" +
-           "sender=" + sender +
-           '}';
+    return "BukkitActor{" + "sender=" + sender + '}';
   }
 }

@@ -94,8 +94,8 @@ public class WelcomeEditorFactory {
       Message
           message =
           Message.builder().append(
-              msg.getString("welcome-message.enter-message", locale, warp.getName(), REMOVE_SEQUENCE,
-                            ESCAPE_SEQUENCE, MyWarpPlugin.CONVERSATION_TIMEOUT)).build();
+              msg.getString("welcome-message.enter-message", locale, warp.getName(), REMOVE_SEQUENCE, ESCAPE_SEQUENCE,
+                            MyWarpPlugin.CONVERSATION_TIMEOUT)).build();
 
       return BukkitMessageInterpreter.interpret(message);
     }

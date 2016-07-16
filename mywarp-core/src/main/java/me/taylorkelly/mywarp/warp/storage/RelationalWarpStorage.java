@@ -66,6 +66,7 @@ import java.util.UUID;
  * <p>This implementation is guaranteed to work with SQLite, MySQL, MariaDB and H2, but might also work on other
  * relational database management systems.</p>
  */
+@SuppressWarnings("checkstyle:indentation")
 class RelationalWarpStorage implements WarpStorage {
 
   private final Configuration configuration;

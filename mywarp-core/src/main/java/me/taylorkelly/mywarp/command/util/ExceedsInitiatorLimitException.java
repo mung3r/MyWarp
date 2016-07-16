@@ -83,6 +83,8 @@ public class ExceedsInitiatorLimitException extends CommandException {
       case PUBLIC:
         builder.append(msg.getString("exception.exceeds-initiator-limit.public", limitMaximum));
         break;
+      default:
+        assert false : exceededLimit;
     }
     builder.appendNewLine();
     builder.append(msg.getString("exception.exceeds-initiator-limit.delete-warps"));

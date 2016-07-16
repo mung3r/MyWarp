@@ -147,8 +147,7 @@ public class DynmapMarker {
    * Called when a Warp is added.
    *
    * @param event the event
-   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
-   * privatized when support for legacy Guava versions is removed.
+   * @deprecated will be privatized once support for old Guava versions is removed
    */
   @Deprecated
   @Subscribe
@@ -160,8 +159,7 @@ public class DynmapMarker {
    * Called when a Warp is deleted.
    *
    * @param event the event
-   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
-   * privatized when support for legacy Guava versions is removed.
+   * @deprecated will be privatized once support for old Guava versions is removed
    */
   @Deprecated
   @Subscribe
@@ -173,8 +171,7 @@ public class DynmapMarker {
    * Called when a Warp is updated.
    *
    * @param event the event
-   * @deprecated This method should only be called by the {@link com.google.common.eventbus.EventBus} and will be
-   * privatized when support for legacy Guava versions is removed.
+   * @deprecated will be privatized once support for old Guava versions is removed
    */
   @Deprecated
   @Subscribe

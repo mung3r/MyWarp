@@ -70,12 +70,10 @@ public interface Limit {
     /**
      * The total limit (accounts all warps).
      */
-    TOTAL(null, Predicates.<Warp>alwaysTrue()),
-    /**
+    TOTAL(null, Predicates.<Warp>alwaysTrue()), /**
      * The private limit (accounts only private warps).
      */
-    PRIVATE(TOTAL, WarpUtils.isType(Warp.Type.PRIVATE)),
-    /**
+    PRIVATE(TOTAL, WarpUtils.isType(Warp.Type.PRIVATE)), /**
      * The public limit (accounts only public warps).
      */
     PUBLIC(TOTAL, WarpUtils.isType(Warp.Type.PUBLIC));

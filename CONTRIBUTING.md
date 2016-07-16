@@ -3,16 +3,17 @@ Contributing
 
 Thank you for your interest in contributing to MyWarp! We appreciate your effort, but to make sure that the inclusion of your patch is a smooth process, we ask that you make note of the following guidelines.
 
-Please note that MyWarp is build against **Java 6**. All contributions must be licensed under the GNU General Public License v3.
+Please note that MyWarp targeted at **Java 6**, but requires at least **Java 8** to be build as the build process makes use of tools that are not compatible with Java 6.
+
+All contributions must be licensed under the GNU General Public License v3.
 
 Coding Style
 ---------
-MyWarp follows the [Google coding conventions](https://google-styleguide.googlecode.com/svn-history/r130/trunk/javaguide.html) with a few modifications:
+MyWarp follows the [Google coding conventions](https://google.github.io/styleguide/javaguide.html) with a few modifications:
 
-1. The column limit is set to 120 characters. This replaces point 4.4, while the exceptions defined there still apply.
-2. Switch cases can come without a `default` statement if, and only if, they cover all possible cases. This replaces point 4.8.4.3.
-3. All files must have the license header that can be found in `config/checkstyle/header.txt`.
-4. The `@author` tag in java-docs is forbidden.
+1. The column limit is set to 120 characters.
+2. All files must have the license header that can be found in `config/checkstyle/header.txt`.
+3. The `@author` tag in java-docs is forbidden.
 
 The build process automatically checks most of these conventions using Checkstyle.
 
