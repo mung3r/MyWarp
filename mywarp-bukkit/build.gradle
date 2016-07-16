@@ -34,6 +34,9 @@ processResources {
         )
     }
 }
+crowdinDownload {
+    excludePattern = '*mywarp-core*/**'
+}
 
 shadowJar {
     exclude 'LICENSE'

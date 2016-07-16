@@ -13,3 +13,7 @@ dependencies {
     compile 'com.flowpowered:flow-math:1.0.2'
     compile 'de.minehattan.intake:intake:4.2-SNAPSHOT'
 }
+
+crowdinDownload {
+    excludePattern = '*mywarp-bukkit*/**'
+}
