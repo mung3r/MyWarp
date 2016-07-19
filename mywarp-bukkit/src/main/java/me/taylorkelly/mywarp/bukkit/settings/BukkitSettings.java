@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Nullable;
+
 /**
  * The settings when running on Bukkit. This implementation relies on Bukkit's configuration API to manage the actual
  * configuration file.
@@ -56,7 +58,7 @@ public class BukkitSettings implements Settings {
    * @param configFile           the file that holds the configuration
    * @param defaultConfiguration the default configuration that acts as a fallback
    */
-  public BukkitSettings(File configFile, FileConfiguration defaultConfiguration) {
+  public BukkitSettings(File configFile, Configuration defaultConfiguration) {
     this.configFile = configFile;
     this.defaultConfiguration = defaultConfiguration;
 
@@ -67,37 +69,45 @@ public class BukkitSettings implements Settings {
    * Reloads the configuration.
    */
   public void reload() {
+    config = createConfiguration();
+
+    // add defaults
+    config.options().copyDefaults(true);
+
+    config.setDefaults(defaultConfiguration);
+    config.addDefault("storage.url", "jdbc:h2:" + configFile.getParentFile().getAbsolutePath() + "/warps");
+
+    //save defaults if we are reading from a file
+    if (config instanceof FileConfiguration) {
+      try {
+        ((FileConfiguration) config).save(configFile);
+      } catch (IOException e) {
+        log.error(String.format("Failed to save configuration to '%1$s', using build-in defaults for missing values.",
+                                configFile.getAbsolutePath()), e);
+      }
+    }
+
+    // Bukkit's config does not support Locale objects and this call is quit
+    // expensive so we cache the Locale
+    String configuredLocale = config.getString("localization.defaultLocale");
+    defaultLocale = LocaleUtils.toLocale(configuredLocale);
+  }
+
+  private Configuration createConfiguration() {
     if (!configFile.exists()) {
       try {
         if (!configFile.createNewFile()) {
           throw new IOException("The file already exists.");
         }
-        log.info(String.format("Default '%1$s' created successfully.", configFile.getName()));
+        log.info("Default '{}' created successfully.", configFile.getName());
       } catch (IOException e) {
         log.error(String.format(
-            "Failed to create the default configuration file ('%1$s'), using build-in defaults for all values.",
+            "Failed to create the configuration file ('%1$s'), using build-in defaults for all values.",
             configFile.getAbsolutePath()), e);
-        config = defaultConfiguration;
-        return;
+        return defaultConfiguration;
       }
     }
-    FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(configFile);
-
-    // add defaults
-    fileConfig.setDefaults(defaultConfiguration);
-    fileConfig.options().copyDefaults(true);
-    fileConfig.addDefault("storage.url", "jdbc:h2:" + configFile.getParentFile().getAbsolutePath() + "/warps");
-    try {
-      fileConfig.save(configFile);
-    } catch (IOException e) {
-      log.error(String.format("Failed to save configuration to '%1$s', using build-in defaults for missing values.",
-                              configFile.getAbsolutePath()), e);
-    }
-    config = fileConfig;
-
-    // Bukkit's config does not support Locale objects and this call is quit
-    // expensive so we cache the Locale
-    defaultLocale = LocaleUtils.toLocale(config.getString("localization.defaultLocale"));
+    return YamlConfiguration.loadConfiguration(configFile);
   }
 
   @Override
@@ -173,10 +183,7 @@ public class BukkitSettings implements Settings {
    * @return the default LimitBundle.
    */
   public LimitBundle getLimitsDefaultLimitBundle() {
-    // the default bundle must cover all worlds!
-    ConfigurationSection values = config.getConfigurationSection("limits.defaultLimit");
-    return new LimitBundle("default", values.getInt("totalLimit"), values.getInt("publicLimit"),
-                           values.getInt("privateLimit"));
+    return LimitBundle.createGlobal("default", config.getConfigurationSection("limits.defaultLimit"));
   }
 
   /**
@@ -186,13 +193,21 @@ public class BukkitSettings implements Settings {
    */
   public List<LimitBundle> getLimitsConfiguredLimitBundles() {
     List<LimitBundle> ret = new ArrayList<LimitBundle>();
-    ConfigurationSection configuredLimits = config.getConfigurationSection("limits.configuredLimits");
+
+    @Nullable ConfigurationSection configuredLimits = config.getConfigurationSection("limits.configuredLimits");
     if (configuredLimits == null) {
-      // the section contains no values
       return ret;
     }
+
     for (String key : configuredLimits.getKeys(false)) {
-      ret.add(new LimitBundle(key, configuredLimits.getConfigurationSection(key)));
+      @Nullable ConfigurationSection section = configuredLimits.getConfigurationSection(key);
+      if (section == null) {
+        log.warn(
+            "The configuration section with the key '{}' does not contain any readable values and will be ignored. Is"
+            + " your configuration file correctly formatted?", key);
+        continue;
+      }
+      ret.add(LimitBundle.create(key, section));
     }
     return ret;
   }
@@ -248,7 +263,7 @@ public class BukkitSettings implements Settings {
    * @return the default DurationBundle
    */
   public DurationBundle getTimersDefaultDurationBundle() {
-    return new DurationBundle("default", config.getConfigurationSection("timers.defaultTimer"));
+    return DurationBundle.create("default", config.getConfigurationSection("timers.defaultTimer"));
 
   }
 
@@ -259,13 +274,21 @@ public class BukkitSettings implements Settings {
    */
   public List<DurationBundle> getTimersConfiguredDurationBundles() {
     List<DurationBundle> ret = new ArrayList<DurationBundle>();
-    ConfigurationSection configuredTimers = config.getConfigurationSection("timers.configuredTimers");
+
+    @Nullable ConfigurationSection configuredTimers = config.getConfigurationSection("timers.configuredTimers");
     if (configuredTimers == null) {
-      // the section contains no values
       return ret;
     }
+
     for (String key : configuredTimers.getKeys(false)) {
-      ret.add(new DurationBundle(key, configuredTimers.getConfigurationSection(key)));
+      @Nullable ConfigurationSection section = configuredTimers.getConfigurationSection(key);
+      if (section == null) {
+        log.warn(
+            "The configuration section with the key '{}' does not contain any readable values and will be ignored. Is"
+            + " your configuration file correctly formatted?", key);
+        continue;
+      }
+      ret.add(DurationBundle.create(key, configuredTimers.getConfigurationSection(key)));
     }
     return ret;
   }
@@ -308,7 +331,7 @@ public class BukkitSettings implements Settings {
    * @return the default FeeBundle
    */
   public FeeBundle getEconomyDefaultFeeBundle() {
-    return new FeeBundle("default", config.getConfigurationSection("economy.defaultFee"));
+    return FeeBundle.create("default", config.getConfigurationSection("economy.defaultFee"));
 
   }
 
@@ -320,12 +343,19 @@ public class BukkitSettings implements Settings {
   public List<FeeBundle> getEconomyConfiguredFeeBundles() {
     List<FeeBundle> ret = new ArrayList<FeeBundle>();
     ConfigurationSection configuredFees = config.getConfigurationSection("economy.configuredFees");
+
     if (configuredFees == null) {
-      // the section contains no values
       return ret;
     }
     for (String key : configuredFees.getKeys(false)) {
-      ret.add(new FeeBundle(key, configuredFees.getConfigurationSection(key)));
+      @Nullable ConfigurationSection section = configuredFees.getConfigurationSection(key);
+      if (section == null) {
+        log.warn(
+            "The configuration section with the key '{}' does not contain any readable values and will be ignored. Is"
+            + " your configuration file correctly formatted?", key);
+        continue;
+      }
+      ret.add(FeeBundle.create(key, configuredFees.getConfigurationSection(key)));
     }
     return ret;
   }

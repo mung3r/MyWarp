@@ -19,6 +19,8 @@
 
 package me.taylorkelly.mywarp.bukkit.settings;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.ImmutableMap;
 
 import me.taylorkelly.mywarp.bukkit.util.permission.ValueBundle;
@@ -39,19 +41,23 @@ public class DurationBundle extends ValueBundle {
 
   private final Map<Class<? extends TimerAction<?>>, Duration> durations;
 
-  DurationBundle(String identifier, ConfigurationSection values) {
-    this(identifier, new Duration(values.getLong("warpCooldown", 0), TimeUnit.SECONDS),
-         new Duration(values.getLong("warpWarmup", 0), TimeUnit.SECONDS));
+  /**
+   * Creates a new bundle with the given {@code identifier} and the given {@code values}.
+   *
+   * <p>Individual fees are read from {@code values}. Non existing entries are read as {@code 0}.</p>
+   *
+   * @param identifier the bundle's identifier
+   * @param values     the bundle's values
+   */
+  static DurationBundle create(String identifier, ConfigurationSection values) {
+    checkNotNull(identifier);
+    checkNotNull(values);
+
+    return new DurationBundle(identifier, createDuration(values.getLong("warpCooldown")),
+                              createDuration(values.getLong("warpWarmup")));
   }
 
-  /**
-   * Initializes this bundle.
-   *
-   * @param identifier   the unique identifier
-   * @param warpCooldown the cooldown for the {@code warp} command
-   * @param warpWarmup   the warmup for the {@code warp} command
-   */
-  DurationBundle(String identifier, Duration warpCooldown, Duration warpWarmup) {
+  private DurationBundle(String identifier, Duration warpCooldown, Duration warpWarmup) {
     super(identifier, "mywarp.timer");
 
     durations =
@@ -67,6 +73,10 @@ public class DurationBundle extends ValueBundle {
    */
   public Duration get(Class<? extends TimerAction<?>> clazz) {
     return durations.get(clazz);
+  }
+
+  private static Duration createDuration(long seconds) {
+    return new Duration(seconds, TimeUnit.SECONDS);
   }
 
 }

@@ -19,7 +19,10 @@
 
 package me.taylorkelly.mywarp.bukkit.settings;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import me.taylorkelly.mywarp.bukkit.BukkitAdapter;
 import me.taylorkelly.mywarp.bukkit.util.permission.ValueBundle;
@@ -30,81 +33,87 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 /**
- * A ValueBundle that bundles limit.
+ * A ValueBundle that bundles warp creation limits.
  */
 public class LimitBundle extends ValueBundle implements Limit {
 
-  private final Map<Type, Integer> limitMap = new EnumMap<Limit.Type, Integer>(Type.class);
-  @Nullable
-  private final ImmutableSet<LocalWorld> affectedWorlds;
+  private static final String WORLD_KEY = "affectedWorlds";
 
-  LimitBundle(String identifier, ConfigurationSection values) {
-    this(identifier, values.getInt("totalLimit"), values.getInt("publicLimit"), values.getInt("privateLimit"),
-         createWorldList(values));
-  }
+  private final Map<Type, Integer> limitMap;
+  private final WorldHolder worldHolder;
 
-  @Nullable
-  private static List<LocalWorld> createWorldList(ConfigurationSection values) {
-    List<LocalWorld> worlds = null;
+  /**
+   * Creates a new bundle with the given {@code identifier} and the given {@code values}.
+   *
+   * <p>Individual limits are read from {@code values}. Non existing limits are read as {@code 0}; non-existing worlds
+   * are ignored.</p>
+   *
+   * @param identifier the bundle's identifier
+   * @param values     the bundle's values
+   */
+  static LimitBundle create(String identifier, ConfigurationSection values) {
+    checkNotNull(identifier);
+    checkNotNull(values);
 
-    if (values.contains("affectedWorlds")) {
-      worlds = new ArrayList<LocalWorld>();
-      for (String name : values.getStringList("affectedWorlds")) {
+    WorldHolder worldHolder;
+    if (isGlobal(values)) {
+      worldHolder = WorldHolder.INSTANCE;
+    } else {
+
+      Set<UUID> worlds = new HashSet<UUID>();
+      for (String name : values.getStringList(WORLD_KEY)) {
         World world = Bukkit.getWorld(name);
         if (world == null) {
-          //log.warn("The world name '{}' configured for the limit '{}' does not match any existing world and will be
-          // " + "ignored.", name, identifier);
+          //REVIEW warn?
           continue;
         }
-        worlds.add(BukkitAdapter.adapt(world));
+        worlds.add(world.getUID());
       }
+      worldHolder = new ConfiguredWorldHolder(worlds);
     }
-    return worlds;
+
+    return new LimitBundle(identifier, createMap(values), worldHolder);
   }
 
   /**
-   * Initializes this bundle as global.
+   * Creates a new global bundle with the given {@code identifier} and the given {@code values}.
    *
-   * @param identifier   the unique identifier
-   * @param totalLimit   the total limit
-   * @param publicLimit  the public limit
-   * @param privateLimit the private limit
+   * <p>Individual limits are read from {@code values}. Non existing limits are read as {@code 0}; any affected worlds
+   * configured in {@code values} are ignored.</p>
+   *
+   * @param identifier the bundle's identifier
+   * @param values     the bundle's values
    */
-  LimitBundle(String identifier, int totalLimit, int publicLimit, int privateLimit) {
-    this(identifier, totalLimit, publicLimit, privateLimit, null);
+  static LimitBundle createGlobal(String identifier, ConfigurationSection values) {
+    checkNotNull(identifier);
+    checkNotNull(values);
+
+    return new LimitBundle(identifier, createMap(values), WorldHolder.INSTANCE);
   }
 
-  /**
-   * Initializes this bundle.
-   *
-   * @param identifier     the unique identifier
-   * @param totalLimit     the total limit
-   * @param publicLimit    the public limit
-   * @param privateLimit   the private limit
-   * @param affectedWorlds an Iterable of worlds affected by this limit. Can be {@code null} if this limit should affect
-   *                       all worlds.
-   */
-  LimitBundle(String identifier, int totalLimit, int publicLimit, int privateLimit,
-              @Nullable Iterable<LocalWorld> affectedWorlds) {
+  private static boolean isGlobal(ConfigurationSection values) {
+    return !values.contains(WORLD_KEY);
+  }
+
+  private static EnumMap<Limit.Type, Integer> createMap(ConfigurationSection values) {
+    EnumMap<Type, Integer> ret = new EnumMap<Limit.Type, Integer>(Type.class);
+    ret.put(Type.TOTAL, values.getInt("totalLimit"));
+    ret.put(Type.PUBLIC, values.getInt("publicLimit"));
+    ret.put(Type.PRIVATE, values.getInt("privateLimit"));
+    return ret;
+  }
+
+  private LimitBundle(String identifier, EnumMap<Type, Integer> limitMap, WorldHolder worldHolder) {
     super(identifier, "mywarp.limit");
-
-    if (affectedWorlds != null) {
-      this.affectedWorlds = ImmutableSet.copyOf(affectedWorlds);
-    } else {
-      this.affectedWorlds = null;
-    }
-    limitMap.put(Type.TOTAL, totalLimit);
-    limitMap.put(Type.PUBLIC, publicLimit);
-    limitMap.put(Type.PRIVATE, privateLimit);
+    this.limitMap = limitMap;
+    this.worldHolder = worldHolder;
   }
 
   @Override
@@ -114,29 +123,97 @@ public class LimitBundle extends ValueBundle implements Limit {
 
   @Override
   public ImmutableSet<LocalWorld> getAffectedWorlds() {
-    ImmutableSet<LocalWorld> ret = affectedWorlds;
-    if (ret == null) {
-      // bundle is global
-      ImmutableSet.Builder<LocalWorld> builder = ImmutableSet.builder();
-      for (World bukkitWorld : Bukkit.getWorlds()) {
-        builder.add(BukkitAdapter.adapt(bukkitWorld));
-      }
-      ret = builder.build();
-    }
-    return ret;
+    return worldHolder.getAffectedWorlds();
   }
 
   @Override
   public boolean isAffectedWorld(UUID worldIdentifier) {
-    if (affectedWorlds == null) {
-      return true;
-    }
-    for (LocalWorld world : affectedWorlds) {
-      if (world.getUniqueId().equals(worldIdentifier)) {
-        return true;
-      }
-    }
-    return false;
+    return worldHolder.isAffectedWorld(worldIdentifier);
   }
 
+  /**
+   * A managed reference to all worlds that exist on the server.
+   */
+  private static class WorldHolder {
+
+    private static final WorldHolder INSTANCE = new WorldHolder();
+
+    private WorldHolder() {
+    }
+
+    boolean isAffectedWorld(final UUID worldIdentifier) {
+      for (LocalWorld world : getAffectedWorlds()) {
+        if (world.getUniqueId().equals(worldIdentifier)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    ImmutableSet<LocalWorld> getAffectedWorlds() {
+      ImmutableSet.Builder<LocalWorld> builder = ImmutableSet.builder();
+      for (World world : Bukkit.getWorlds()) {
+        builder.add(BukkitAdapter.adapt(world));
+      }
+      return builder.build();
+    }
+
+  }
+
+  /**
+   * A managed reference to certain pre-configured worlds on the server.
+   */
+  private static class ConfiguredWorldHolder extends WorldHolder {
+
+    private final Set<UUID> worldIdentifiers;
+
+    private ConfiguredWorldHolder(Iterable<UUID> worldIdentifiers) {
+      this.worldIdentifiers = Sets.newHashSet(worldIdentifiers);
+    }
+
+    @Override
+    protected ImmutableSet<LocalWorld> getAffectedWorlds() {
+      ImmutableSet.Builder<LocalWorld> builder = ImmutableSet.builder();
+      for (World world : Bukkit.getWorlds()) {
+        if (worldIdentifiers.contains(world.getUID())) {
+          builder.add(BukkitAdapter.adapt(world));
+        }
+      }
+      return builder.build();
+    }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    LimitBundle that = (LimitBundle) o;
+
+    if (limitMap != null ? !limitMap.equals(that.limitMap) : that.limitMap != null) {
+      return false;
+    }
+    return worldHolder != null ? worldHolder.equals(that.worldHolder) : that.worldHolder == null;
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (limitMap != null ? limitMap.hashCode() : 0);
+    result = 31 * result + (worldHolder != null ? worldHolder.hashCode() : 0);
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return "LimitBundle{" + "limitMap=" + limitMap + ", worldHolder=" + worldHolder + '}';
+  }
 }

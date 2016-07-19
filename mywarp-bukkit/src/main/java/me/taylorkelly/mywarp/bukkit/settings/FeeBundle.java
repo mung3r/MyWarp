@@ -19,6 +19,9 @@
 
 package me.taylorkelly.mywarp.bukkit.settings;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.math.BigDecimal.valueOf;
+
 import me.taylorkelly.mywarp.bukkit.util.permission.ValueBundle;
 import me.taylorkelly.mywarp.service.economy.FeeType;
 
@@ -32,80 +35,47 @@ import java.util.EnumMap;
  */
 public class FeeBundle extends ValueBundle {
 
-  private EnumMap<FeeType, BigDecimal> fees = new EnumMap<FeeType, BigDecimal>(FeeType.class);
+  private EnumMap<FeeType, BigDecimal> fees;
 
   /**
    * Creates a new bundle with the given {@code identifier} and the given {@code values}.
    *
-   * <p>Individual fees are read from {@code values}. Non existing entries are read as  {@code 0}.</p>
+   * <p>Individual fees are read from {@code values}. Non existing entries are read as {@code 0}.</p>
    *
    * @param identifier the bundle's identifier
    * @param values     the bundle's values
    */
-  FeeBundle(String identifier, ConfigurationSection values) {
-    this(identifier, BigDecimal.valueOf(values.getDouble("assets", 0)),
-         BigDecimal.valueOf(values.getDouble("create", 0)), BigDecimal.valueOf(values.getDouble("createPrivate", 0)),
-         BigDecimal.valueOf(values.getDouble("delete", 0)), BigDecimal.valueOf(values.getDouble("give", 0)),
-         BigDecimal.valueOf(values.getDouble("help", 0)), BigDecimal.valueOf(values.getDouble("info", 0)),
-         BigDecimal.valueOf(values.getDouble("invite", 0)), BigDecimal.valueOf(values.getDouble("list", 0)),
-         BigDecimal.valueOf(values.getDouble("point", 0)), BigDecimal.valueOf(values.getDouble("private", 0)),
-         BigDecimal.valueOf(values.getDouble("public", 0)), BigDecimal.valueOf(values.getDouble("uninvite", 0)),
-         BigDecimal.valueOf(values.getDouble("update", 0)), BigDecimal.valueOf(values.getDouble("warpPlayer", 0)),
-         BigDecimal.valueOf(values.getDouble("warpSignCreate", 0)),
-         BigDecimal.valueOf(values.getDouble("warpSignUse", 0)), BigDecimal.valueOf(values.getDouble("warpTo", 0)),
-         BigDecimal.valueOf(values.getDouble("welcome", 0)));
+  static FeeBundle create(String identifier, ConfigurationSection values) {
+    checkNotNull(identifier);
+    checkNotNull(values);
+
+    EnumMap<FeeType, BigDecimal> fees = new EnumMap<FeeType, BigDecimal>(FeeType.class);
+    fees.put(FeeType.ASSETS, valueOf(values.getDouble("assets")));
+    fees.put(FeeType.CREATE, valueOf(values.getDouble("create")));
+    fees.put(FeeType.CREATE_PRIVATE, valueOf(values.getDouble("createPrivate")));
+    fees.put(FeeType.DELETE, valueOf(values.getDouble("delete")));
+    fees.put(FeeType.GIVE, valueOf(values.getDouble("give")));
+    fees.put(FeeType.HELP, valueOf(values.getDouble("help")));
+    fees.put(FeeType.INFO, valueOf(values.getDouble("info")));
+    fees.put(FeeType.INVITE, valueOf(values.getDouble("invite")));
+    fees.put(FeeType.LIST, valueOf(values.getDouble("list")));
+    fees.put(FeeType.POINT, valueOf(values.getDouble("point")));
+    fees.put(FeeType.PRIVATE, valueOf(values.getDouble("private")));
+    fees.put(FeeType.PUBLIC, valueOf(values.getDouble("public")));
+    fees.put(FeeType.UNINVITE, valueOf(values.getDouble("uninvite")));
+    fees.put(FeeType.UPDATE, valueOf(values.getDouble("update")));
+    fees.put(FeeType.WARP_PLAYER, valueOf(values.getDouble("warpPlayer")));
+    fees.put(FeeType.WARP_SIGN_CREATE, valueOf(values.getDouble("warpSignCreate")));
+    fees.put(FeeType.WARP_SIGN_USE, valueOf(values.getDouble("warpSignUse")));
+    fees.put(FeeType.WARP_TO, valueOf(values.getDouble("warpTo")));
+    fees.put(FeeType.WELCOME, valueOf(values.getDouble("welcome")));
+
+    return new FeeBundle(identifier, fees);
   }
 
-  /**
-   * Creates a new bundle with the given {@code identifier} and the given values.
-   *
-   * @param identifier        the bundle's identifier
-   * @param assetsFee         used when listing a player's warps with limit
-   * @param createFee         used when creating a public warp
-   * @param createPrivateFee  used when creating a private warp
-   * @param deleteFee         used when a warp is deleted
-   * @param giveFee           used when a warp is given to other users
-   * @param helpFee           used when accessing the help-command
-   * @param infoFee           used when using the info-command
-   * @param inviteFee         used when inviting a user or a group
-   * @param listFee           used when warps are listed via /warp list
-   * @param pointFee          used when the compass is pointed to a warp
-   * @param privatizeFee      used when a warp is publicized
-   * @param publicizeFee      used when a warp is privatized
-   * @param uninviteFee       used when uninviting users or groups
-   * @param updateFee         used when a warp's location is updated
-   * @param warpPlayerFee     used when a player is warped (/warp player)
-   * @param warpSignCreateFee used upon warp sign creation
-   * @param warpSignUseFee    used upon warp sign usage
-   * @param warpFee           used when a users warps to a warp
-   * @param welcomeFee        used when the welcome message is changed
-   */
-  FeeBundle(String identifier, BigDecimal assetsFee, BigDecimal createFee, BigDecimal createPrivateFee,
-            BigDecimal deleteFee, BigDecimal giveFee, BigDecimal helpFee, BigDecimal infoFee, BigDecimal inviteFee,
-            BigDecimal listFee, BigDecimal pointFee, BigDecimal privatizeFee, BigDecimal publicizeFee,
-            BigDecimal uninviteFee, BigDecimal updateFee, BigDecimal warpPlayerFee, BigDecimal warpSignCreateFee,
-            BigDecimal warpSignUseFee, BigDecimal warpFee, BigDecimal welcomeFee) {
+  private FeeBundle(String identifier, EnumMap<FeeType, BigDecimal> fees) {
     super(identifier, "mywarp.economy");
-
-    fees.put(FeeType.ASSETS, assetsFee);
-    fees.put(FeeType.CREATE, createFee);
-    fees.put(FeeType.CREATE_PRIVATE, createPrivateFee);
-    fees.put(FeeType.DELETE, deleteFee);
-    fees.put(FeeType.GIVE, giveFee);
-    fees.put(FeeType.HELP, helpFee);
-    fees.put(FeeType.INFO, infoFee);
-    fees.put(FeeType.INVITE, inviteFee);
-    fees.put(FeeType.LIST, listFee);
-    fees.put(FeeType.POINT, pointFee);
-    fees.put(FeeType.PRIVATE, privatizeFee);
-    fees.put(FeeType.PUBLIC, publicizeFee);
-    fees.put(FeeType.UNINVITE, uninviteFee);
-    fees.put(FeeType.UPDATE, updateFee);
-    fees.put(FeeType.WARP_PLAYER, warpPlayerFee);
-    fees.put(FeeType.WARP_SIGN_CREATE, warpSignCreateFee);
-    fees.put(FeeType.WARP_SIGN_USE, warpSignUseFee);
-    fees.put(FeeType.WARP_TO, warpFee);
-    fees.put(FeeType.WELCOME, welcomeFee);
+    this.fees = fees;
   }
 
   /**
