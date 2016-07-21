@@ -150,6 +150,17 @@ public interface Limit {
       String perm = "mywarp.limit.disobey." + world.getName() + "." + lowerCaseName();
       return player.hasPermission(perm);
     }
+
+    public static Type valueOf(Warp.Type type) {
+      switch (type) {
+        case PRIVATE:
+          return PRIVATE;
+        case PUBLIC:
+          return PUBLIC;
+        default:
+          return TOTAL;
+      }
+    }
   }
 
 }

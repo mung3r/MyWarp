@@ -55,28 +55,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 /**
  * Bundles commands that provide information about existing Warps.
  */
-public class InformativeCommands {
+final class InformativeCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final AuthorizationResolver authorizationResolver;
   private final WarpManager warpManager;
   private final Game game;
-  private final com.google.common.base.Optional<LimitService> limitService;
+  @Nullable
+  private final LimitService limitService;
 
   /**
    * Creates an instance.
    *
    * @param warpManager           the WarpManager used by commands
-   * @param limitService          the LimitService used by commands
+   * @param limitService          the LimitService used by commands - may be {@code null} if no limit service is used
    * @param authorizationResolver the AuthorizationResolver used by commands
    * @param game                  the Game used by commands
    */
-  public InformativeCommands(WarpManager warpManager, com.google.common.base.Optional<LimitService> limitService,
-                             AuthorizationResolver authorizationResolver, Game game) {
+  InformativeCommands(WarpManager warpManager, @Nullable LimitService limitService,
+                      AuthorizationResolver authorizationResolver, Game game) {
     this.authorizationResolver = authorizationResolver;
     this.warpManager = warpManager;
     this.game = game;

@@ -29,7 +29,6 @@ import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.profile.Profile;
-import me.taylorkelly.mywarp.service.limit.Limit;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 
 import java.util.Comparator;
@@ -269,27 +268,6 @@ public interface Warp extends Comparable<Warp> {
      * A public Warp.
      */
     PUBLIC;
-
-    /**
-     * Gets the limit that corresponds with this type.
-     *
-     * @return the limit
-     */
-    //REVIEW this enforces a dependency on Limit that should not exist
-    public Limit.Type getLimit() {
-      // putting these information in the respective constructor will not
-      // work as the classloader runs into problems when initializing both
-      // enums!
-      switch (this) {
-        case PRIVATE:
-          return Limit.Type.PRIVATE;
-        case PUBLIC:
-          return Limit.Type.PUBLIC;
-        default:
-          return Limit.Type.TOTAL;
-
-      }
-    }
   }
 
   /**

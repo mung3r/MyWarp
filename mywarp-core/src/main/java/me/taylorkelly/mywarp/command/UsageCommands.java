@@ -32,7 +32,7 @@ import me.taylorkelly.mywarp.warp.Warp;
 /**
  * Bundles usage commands.
  */
-public class UsageCommands {
+final class UsageCommands {
 
   private static final String CMD_TO_PERMISSION = "mywarp.cmd.to";
 
@@ -43,7 +43,7 @@ public class UsageCommands {
    *
    * @param teleportService the TeleportService used by commands, implementing additional validation on top
    */
-  public UsageCommands(TeleportService teleportService) {
+  UsageCommands(TeleportService teleportService) {
     this.teleportService = teleportService;
   }
 
@@ -60,7 +60,7 @@ public class UsageCommands {
    *
    * @see Default
    */
-  public class DefaultUsageCommand {
+  class DefaultUsageCommand {
 
     @Command(aliases = {"to"}, desc = "warp-to.description")
     @Default(defaultOnly = true)

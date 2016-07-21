@@ -38,30 +38,34 @@ import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.service.economy.FeeType;
+import me.taylorkelly.mywarp.service.limit.Limit;
 import me.taylorkelly.mywarp.service.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
+import javax.annotation.Nullable;
+
 /**
  * Bundles commands that involve social interaction with other players.
  */
-public class SocialCommands {
+final class SocialCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final Game game;
   private final ProfileCache profileCache;
-  private final Optional<LimitService> limitService;
+  @Nullable
+  private final LimitService limitService;
 
   /**
    * Creates an instance.
    *
    * @param game         the Game instance used by commands
    * @param profileCache the ProfileCache used by commands
-   * @param limitService the LimitService used by commands
+   * @param limitService the LimitService used by commands - may be {@code null} if no limit service is used
    */
-  public SocialCommands(Game game, ProfileCache profileCache, Optional<LimitService> limitService) {
+  SocialCommands(Game game, ProfileCache profileCache, @Nullable LimitService limitService) {
     this.game = game;
     this.profileCache = profileCache;
     this.limitService = limitService;
@@ -77,13 +81,14 @@ public class SocialCommands {
     }
     Optional<LocalPlayer> receiverPlayer = game.getPlayer(receiver.getUniqueId());
 
-    if (!ignoreLimits && limitService.isPresent()) {
+    if (!ignoreLimits && limitService != null) {
       if (!receiverPlayer.isPresent()) {
         throw new NoSuchPlayerException(receiver);
       }
       LimitService.EvaluationResult
           result =
-          limitService.get().evaluateLimit(receiverPlayer.get(), warp.getWorld(game), warp.getType().getLimit(), true);
+          limitService
+              .evaluateLimit(receiverPlayer.get(), warp.getWorld(game), Limit.Type.valueOf(warp.getType()), true);
       if (result.exceedsLimit()) {
         throw new ExceedsLimitException(receiver);
       }
@@ -123,7 +128,7 @@ public class SocialCommands {
     if (warp.isType(Warp.Type.PRIVATE)) {
       throw new CommandException(msg.getString("private.already-private", warp.getName()));
     }
-    if (!ignoreLimits && limitService.isPresent()) {
+    if (!ignoreLimits && limitService != null) {
       Profile creator = warp.getCreator();
       Optional<LocalPlayer> creatorPlayer = game.getPlayer(creator.getUniqueId());
       if (!creatorPlayer.isPresent()) {
@@ -132,8 +137,8 @@ public class SocialCommands {
 
       LimitService.EvaluationResult
           result =
-          limitService.get()
-              .evaluateLimit(creatorPlayer.get(), warp.getWorld(game), Warp.Type.PRIVATE.getLimit(), false);
+          limitService
+              .evaluateLimit(creatorPlayer.get(), warp.getWorld(game), Limit.Type.valueOf(Warp.Type.PRIVATE), false);
 
       if (result.exceedsLimit()) {
         if (actor instanceof LocalPlayer && creatorPlayer.get().equals(actor)) {
@@ -160,7 +165,7 @@ public class SocialCommands {
     if (warp.isType(Warp.Type.PUBLIC)) {
       throw new CommandException(msg.getString("public.already-public", warp.getName()));
     }
-    if (!ignoreLimits && limitService.isPresent()) {
+    if (!ignoreLimits && limitService != null) {
       Profile creator = warp.getCreator();
       Optional<LocalPlayer> creatorPlayer = game.getPlayer(creator.getUniqueId());
       if (!creatorPlayer.isPresent()) {
@@ -169,8 +174,8 @@ public class SocialCommands {
 
       LimitService.EvaluationResult
           result =
-          limitService.get()
-              .evaluateLimit(creatorPlayer.get(), warp.getWorld(game), Warp.Type.PUBLIC.getLimit(), false);
+          limitService
+              .evaluateLimit(creatorPlayer.get(), warp.getWorld(game), Limit.Type.valueOf(Warp.Type.PUBLIC), false);
 
       if (result.exceedsLimit()) {
         if (actor instanceof LocalPlayer && creatorPlayer.get().equals(actor)) {

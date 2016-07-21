@@ -19,7 +19,6 @@
 
 package me.taylorkelly.mywarp.command.util.printer;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
@@ -44,6 +43,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 /**
  * Prints a certain player's assets, showing active limit and Warps sorted to the corresponding limit.
  */
@@ -54,7 +55,8 @@ public class AssetsPrinter {
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final LocalPlayer creator;
-  private final Optional<LimitService> limitService;
+  @Nullable
+  private final LimitService limitService;
   private final Game game;
   private final WarpManager manager;
 
@@ -62,11 +64,12 @@ public class AssetsPrinter {
    * Creates an instance.
    *
    * @param creator      the player whose assets should be displayed
-   * @param limitService the limitService that manages the limit that should be displayed
+   * @param limitService the limitService that manages the limit that should be displayed  - may be {@code null} if no
+   *                     limit service is used
    * @param game         the running game
    * @param manager      the warp manager that hold's the assets to display
    */
-  public AssetsPrinter(LocalPlayer creator, Optional<LimitService> limitService, Game game, WarpManager manager) {
+  public AssetsPrinter(LocalPlayer creator, @Nullable LimitService limitService, Game game, WarpManager manager) {
     this.creator = creator;
     this.limitService = limitService;
     this.game = game;
@@ -86,8 +89,8 @@ public class AssetsPrinter {
     // display the limit
     Map<Limit, Collection<Warp>> index = new HashMap<Limit, Collection<Warp>>();
 
-    if (limitService.isPresent()) {
-      index.putAll(limitService.get().getWarpsPerLimit(creator));
+    if (limitService != null) {
+      index.putAll(limitService.getWarpsPerLimit(creator));
     } else {
       index.put(new Limit() {
         @Override

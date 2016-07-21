@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * Bundles utility commands.
  */
-public class UtilityCommands {
+final class UtilityCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
@@ -59,7 +59,7 @@ public class UtilityCommands {
    * @param teleportService the TeleportService to be used as base in commands
    * @param game            the Game instance used in commands
    */
-  public UtilityCommands(MyWarp myWarp, CommandHandler commandHandler, TeleportService teleportService, Game game) {
+  UtilityCommands(MyWarp myWarp, CommandHandler commandHandler, TeleportService teleportService, Game game) {
     this.myWarp = myWarp;
     this.commandHandler = commandHandler;
     this.teleportService = teleportService;

@@ -162,9 +162,9 @@ public final class CommandHandler {
     dispatcher =
         new CommandGraph().builder(builder).commands().registerMethods(usageCmd).group("warp", "mywarp", "mw")
             .registerMethods(defaultUsageCmd)
-            .registerMethods(new InformativeCommands(warpManager, limitService, authorizationResolver, game))
-            .registerMethods(new ManagementCommands(warpManager, limitService))
-            .registerMethods(new SocialCommands(game, profileCache, limitService))
+            .registerMethods(new InformativeCommands(warpManager, limitService.orNull(), authorizationResolver, game))
+            .registerMethods(new ManagementCommands(warpManager, limitService.orNull()))
+            .registerMethods(new SocialCommands(game, profileCache, limitService.orNull()))
             .registerMethods(new UtilityCommands(myWarp, this, basic, game)).group("import", "migrate")
             .registerMethods(new ImportCommands(warpManager, platform, profileCache, game)).graph().getDispatcher();
   }

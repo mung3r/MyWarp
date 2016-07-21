@@ -19,7 +19,6 @@
 
 package me.taylorkelly.mywarp.command;
 
-import com.google.common.base.Optional;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
@@ -32,29 +31,33 @@ import me.taylorkelly.mywarp.command.util.ExceedsInitiatorLimitException;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.service.economy.FeeType;
+import me.taylorkelly.mywarp.service.limit.Limit;
 import me.taylorkelly.mywarp.service.limit.LimitService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
+import javax.annotation.Nullable;
+
 /**
  * Bundles commands that manage Warps.
  */
-public class ManagementCommands {
+final class ManagementCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final WarpManager warpManager;
-  private final Optional<LimitService> limitService;
+  @Nullable
+  private final LimitService limitService;
 
   /**
    * Creates an instance.
    *
    * @param warpManager  the WarpManager used by commands
-   * @param limitService the LimitService used by commands
+   * @param limitService the LimitService used by commands - may be {@code null} if no limit service is used
    */
-  public ManagementCommands(WarpManager warpManager, Optional<LimitService> limitService) {
+  ManagementCommands(WarpManager warpManager, @Nullable LimitService limitService) {
     this.warpManager = warpManager;
     this.limitService = limitService;
   }
@@ -85,10 +88,9 @@ public class ManagementCommands {
    */
   private void addWarp(LocalPlayer creator, Warp.Type type, String name) throws CommandException {
 
-    if (limitService.isPresent()) {
+    if (limitService != null) {
       LimitService.EvaluationResult
-          result =
-          limitService.get().evaluateLimit(creator, creator.getWorld(), type.getLimit(), true);
+          result = limitService.evaluateLimit(creator, creator.getWorld(), Limit.Type.valueOf(type), true);
       if (result.exceedsLimit()) {
         throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
       }

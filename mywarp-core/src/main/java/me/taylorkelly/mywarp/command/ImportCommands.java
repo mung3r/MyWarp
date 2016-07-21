@@ -56,7 +56,7 @@ import java.util.concurrent.Callable;
 /**
  * Bundles commands used to import Warps from an external source.
  */
-public class ImportCommands {
+final class ImportCommands {
 
   private static final String IMPORT_PERMISSION = "mywarp.cmd.import";
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
@@ -74,7 +74,7 @@ public class ImportCommands {
    * @param profileCache the ProfileCache used by commands
    * @param game         the Game used by commands
    */
-  public ImportCommands(WarpManager warpManager, Platform platform, ProfileCache profileCache, Game game) {
+  ImportCommands(WarpManager warpManager, Platform platform, ProfileCache profileCache, Game game) {
     this.platform = platform;
     this.profileCache = profileCache;
     this.warpManager = warpManager;
