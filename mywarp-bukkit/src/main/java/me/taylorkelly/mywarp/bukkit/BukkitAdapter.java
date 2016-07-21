@@ -21,6 +21,7 @@ package me.taylorkelly.mywarp.bukkit;
 
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.util.BlockFace;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -81,4 +82,22 @@ public final class BukkitAdapter {
     return loadedPlayer;
   }
 
+  static BlockFace adapt(org.bukkit.block.BlockFace blockFace) {
+    switch (blockFace) {
+      case NORTH:
+        return BlockFace.NORTH;
+      case EAST:
+        return BlockFace.EAST;
+      case SOUTH:
+        return BlockFace.SOUTH;
+      case WEST:
+        return BlockFace.WEST;
+      case UP:
+        return BlockFace.UP;
+      case DOWN:
+        return BlockFace.DOWN;
+      default:
+        return BlockFace.NONE;
+    }
+  }
 }

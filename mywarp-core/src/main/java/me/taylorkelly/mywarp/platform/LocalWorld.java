@@ -20,6 +20,9 @@
 package me.taylorkelly.mywarp.platform;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Optional;
+
+import me.taylorkelly.mywarp.util.BlockFace;
 
 import java.util.UUID;
 
@@ -41,6 +44,24 @@ public interface LocalWorld {
    * @return this world's unique identifier
    */
   UUID getUniqueId();
+
+  /**
+   * Gets an Optional with the Sign that exists at the given {@code position} within this world, if such a Sign exists.
+   *
+   * @param position the position to check
+   * @return an Optional containing the Sign
+   */
+  Optional<Sign> getSign(Vector3i position);
+
+  /**
+   * Gets an Optional with the Sign that exists at the given {@code position} within this world and which is attached to
+   * the given {@code blockFace}, if such a Sign exists.
+   *
+   * @param position  the position to check
+   * @param blockFace the blockFace the sign is attached to
+   * @return an Optional containing the Sign
+   */
+  Optional<Sign> getAttachedSign(Vector3i position, BlockFace blockFace);
 
   /**
    * Returns whether the block at the given {@code position} within this world is smaller than a single full block.

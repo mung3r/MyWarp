@@ -228,7 +228,7 @@ public final class MyWarp {
    */
   public WarpSignHandler createWarpSignHandler() {
     return new WarpSignHandler(getSettings().getWarpSignsIdentifiers(), warpManager, authorizationResolver, getGame(),
-                               teleportHandler, platform.getCapability(EconomyCapability.class));
+                               teleportHandler, platform.getCapability(EconomyCapability.class).orNull());
   }
 
   private void initializeMutableFields() {

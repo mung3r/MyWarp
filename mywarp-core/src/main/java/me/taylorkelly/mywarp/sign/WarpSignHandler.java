@@ -19,11 +19,13 @@
 
 package me.taylorkelly.mywarp.sign;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.Sign;
 import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
 import me.taylorkelly.mywarp.service.economy.EconomyService;
@@ -31,6 +33,7 @@ import me.taylorkelly.mywarp.service.economy.FeeType;
 import me.taylorkelly.mywarp.service.teleport.EconomyTeleportService;
 import me.taylorkelly.mywarp.service.teleport.HandlerTeleportService;
 import me.taylorkelly.mywarp.service.teleport.TeleportService;
+import me.taylorkelly.mywarp.util.BlockFace;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
@@ -75,18 +78,33 @@ public class WarpSignHandler {
    * @param authorizationResolver the AuthorizationResolver used to resolve authorizations
    * @param game                  the game within which this instance acts
    * @param handler               the TeleportHandler that handles teleports
-   * @param economyCapability     an Optional with the platform's capability to provide economical functionality
+   */
+  public WarpSignHandler(Iterable<String> identifiers, WarpManager warpManager,
+                         AuthorizationResolver authorizationResolver, Game game, TeleportHandler handler) {
+    this(identifiers, warpManager, authorizationResolver, game, handler, null);
+  }
+
+  /**
+   * Creates an instance.
+   *
+   * @param identifiers           the identifiers to identify a valid warp sign
+   * @param warpManager           the WarpManager this manager will act on
+   * @param authorizationResolver the AuthorizationResolver used to resolve authorizations
+   * @param game                  the game within which this instance acts
+   * @param handler               the TeleportHandler that handles teleports
+   * @param economyCapability     the platform's capability to provide economical functionality (may be {@code null} if
+   *                              the plattform does not provide an economy capability)
    */
   public WarpSignHandler(Iterable<String> identifiers, WarpManager warpManager,
                          AuthorizationResolver authorizationResolver, Game game, TeleportHandler handler,
-                         Optional<EconomyCapability> economyCapability) {
+                         @Nullable EconomyCapability economyCapability) {
     Iterables.addAll(this.identifiers, identifiers);
 
     this.warpManager = warpManager;
     this.authorizationResolver = authorizationResolver;
 
-    if (economyCapability.isPresent()) {
-      this.economyService = new EconomyService(economyCapability.get());
+    if (economyCapability != null) {
+      this.economyService = new EconomyService(economyCapability);
     } else {
       this.economyService = null;
     }
@@ -94,11 +112,11 @@ public class WarpSignHandler {
   }
 
   private TeleportService createTeleportService(Game game, TeleportHandler handler,
-                                                Optional<EconomyCapability> economyCapability) {
+                                                @Nullable EconomyCapability economyCapability) {
     TeleportService ret = new HandlerTeleportService(handler, game);
 
-    if (economyCapability.isPresent()) {
-      ret = new EconomyTeleportService(ret, new EconomyService(economyCapability.get()), FeeType.WARP_SIGN_USE);
+    if (economyCapability != null) {
+      ret = new EconomyTeleportService(ret, new EconomyService(economyCapability), FeeType.WARP_SIGN_USE);
     }
     return ret;
   }
@@ -161,8 +179,45 @@ public class WarpSignHandler {
   }
 
   /**
-   * Handles the interaction of the given {@code player} on the given {@code sign}. Returns {@code true} if and only if
-   * the sign is a valid warp sign.
+   * Handles the interaction of the given {@code player} with the given {@code blockFace} of the block at the given
+   * {@code position}.
+   *
+   * <p>If position and block face can be traced back to a warp sign, the player has the permission to use warp signs,
+   * the warp given on the warp sign exists and is usable by the player, he is teleported there. If any of this
+   * conditions is not met, the handling is aborted and the player is informed (if appropriate).</p>
+   *
+   * <p>Typically an interaction is a right click.</p>
+   *
+   * @param player    the player who interacted
+   * @param position  the position of the interaction
+   * @param blockFace the blockFace of the interaction
+   * @return {@code true} if the sign is a warp sign
+   */
+  public boolean handleInteraction(LocalPlayer player, Vector3i position, BlockFace blockFace) {
+    LocalWorld world = player.getWorld();
+    Optional<Sign> sign;
+
+    switch (blockFace) {
+      case NORTH:
+      case EAST:
+      case SOUTH:
+      case WEST:
+        sign = world.getAttachedSign(position.add(blockFace.getVector().mul(2)), blockFace.getOpposite());
+        break;
+      case UP:
+      case DOWN:
+        sign = world.getSign(position.sub(blockFace.getVector().mul(2)));
+        break;
+      default:
+        sign = world.getSign(position);
+    }
+
+    return !sign.isPresent() || handleInteraction(player, sign.get());
+  }
+
+  /**
+   * Handles the interaction of the given {@code player} with the given {@code sign}. Returns {@code true} if and only
+   * if the sign is a valid warp sign.
    *
    * <p>If the sign is a warp sign, the player has the permission to use warp signs, the warp given on the warp sign
    * exists and is usable by the player, he is teleported there. If any of this conditions is not met, the handling is
@@ -170,11 +225,11 @@ public class WarpSignHandler {
    *
    * <p>Typically an interaction is a right click.</p>
    *
-   * @param player the player who clicked the sign
-   * @param sign   the clicked sign
-   * @return {@code true} if the sign is a warp sign, false otherwise
+   * @param player the player who interacted with the the sign
+   * @param sign   the sign interacted with
+   * @return {@code true} if the sign is a warp sign
    */
-  public boolean handleSignInteraction(LocalPlayer player, Sign sign) {
+  public boolean handleInteraction(LocalPlayer player, Sign sign) {
     if (!isWarpSign(sign)) {
       return false;
     }

@@ -20,14 +20,20 @@
 package me.taylorkelly.mywarp.bukkit;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.Sign;
+import me.taylorkelly.mywarp.util.BlockFace;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 /**
  * A reference to a World in Bukkit.
@@ -60,13 +66,40 @@ public class BukkitWorld implements LocalWorld {
     return MaterialInfo.isNotFullHeight(MyWarpPlugin.getMaterial(this, position));
   }
 
+  @Override
+  public Optional<Sign> getSign(Vector3i position) {
+    //Generics are stupid and throw an error when not casting
+    return Optional.fromNullable((Sign) getBukkitSign(position));
+  }
+
+  @Override
+  public Optional<Sign> getAttachedSign(Vector3i position, BlockFace blockFace) {
+    BukkitSign sign = getBukkitSign(position);
+
+    if (sign != null && sign.isAttached(blockFace)) {
+      //Generics are stupid and throw an error when not casting
+      return Optional.of((Sign) sign);
+    }
+    return Optional.absent();
+  }
+
+  @Nullable
+  private BukkitSign getBukkitSign(Vector3i position) {
+    Block block = getLoadedWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
+
+    if (block.getState() instanceof org.bukkit.block.Sign) {
+      return new BukkitSign((org.bukkit.block.Sign) block.getState());
+    }
+    return null;
+  }
+
   /**
    * Gets the loaded World that is referenced by this BukkitWorld.
    *
    * @return the loaded World
    * @throws NoSuchWorldException if the World is no longer loaded
    */
-  public World getLoadedWorld() {
+  World getLoadedWorld() {
     World ret = Bukkit.getWorld(worldIdentifier);
     if (ret == null) {
       throw new NoSuchWorldException(worldIdentifier.toString());

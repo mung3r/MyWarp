@@ -275,6 +275,7 @@ public interface Warp extends Comparable<Warp> {
      *
      * @return the limit
      */
+    //REVIEW this enforces a dependency on Limit that should not exist
     public Limit.Type getLimit() {
       // putting these information in the respective constructor will not
       // work as the classloader runs into problems when initializing both

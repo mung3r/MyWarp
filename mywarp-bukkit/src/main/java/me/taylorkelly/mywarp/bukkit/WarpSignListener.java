@@ -19,19 +19,21 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
+import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 import me.taylorkelly.mywarp.bukkit.util.AbstractListener;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.sign.WarpSignHandler;
+import me.taylorkelly.mywarp.util.BlockFace;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.Attachable;
@@ -39,7 +41,7 @@ import org.bukkit.material.Attachable;
 /**
  * Listens for events involving signs and feats them to a {@link WarpSignHandler}.
  */
-public class WarpSignListener extends AbstractListener {
+class WarpSignListener extends AbstractListener {
 
   private static final ImmutableSet<Material>
       SUPPORTED_ATTACHABLES =
@@ -89,69 +91,46 @@ public class WarpSignListener extends AbstractListener {
    */
   @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
   public void onPlayerInteract(PlayerInteractEvent event) {
+    Block block = event.getClickedBlock();
 
-    // a player clicked on a block
-    if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-      Block block = event.getClickedBlock();
-
-      if (block.getState() instanceof Sign) {
-        Sign sign = (Sign) block.getState();
-
-        boolean cancel = warpSignHandler.handleSignInteraction(plugin.wrap(event.getPlayer()), new BukkitSign(sign));
-        event.setCancelled(cancel);
-
-      } else if (SUPPORTED_ATTACHABLES.contains(block.getType())) {
-
-        Attachable attachable = (Attachable) block.getState().getData();
-        Block behind = block.getRelative(attachable.getAttachedFace(), 2);
-
-        if (!(behind.getState() instanceof Sign)) {
+    switch (event.getAction()) {
+      case RIGHT_CLICK_BLOCK:
+        //player clicked on a sign directly
+        if (block.getState() instanceof Sign) {
+          boolean cancel = warpSignHandler.handleInteraction(toPlayer(event), new BukkitSign((Sign) block.getState()));
+          event.setCancelled(cancel);
           return;
         }
 
-        org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) behind.getState().getData();
-        Sign sign = (Sign) behind.getState();
-
-        if (!(signMat.getFacing() == attachable.getAttachedFace())) {
-          return;
+        //player clicked on something that might trigger a warp sign
+        if (SUPPORTED_ATTACHABLES.contains(block.getType())) {
+          Attachable attachable = (Attachable) block.getState().getData();
+          warpSignHandler
+              .handleInteraction(toPlayer(event), toVector(block), BukkitAdapter.adapt(attachable.getAttachedFace()));
         }
-
-        warpSignHandler.handleSignInteraction(plugin.wrap(event.getPlayer()), new BukkitSign(sign));
-      }
-      // a player stepped on something
-    } else if (event.getAction().equals(Action.PHYSICAL)) {
-      if (SUPPORTED_PLATES.contains(event.getClickedBlock().getType())) {
-        Block twoBelow = event.getClickedBlock().getRelative(BlockFace.DOWN, 2);
-
-        if (!(twoBelow.getState() instanceof Sign)) {
-          return;
+        break;
+      case PHYSICAL:
+        //player stepped on something that might trigger a warp sign
+        if (SUPPORTED_PLATES.contains(block.getType())) {
+          warpSignHandler.handleInteraction(toPlayer(event), toVector(block), BlockFace.UP);
         }
-        Sign sign = (Sign) twoBelow.getState();
-
-        warpSignHandler.handleSignInteraction(plugin.wrap(event.getPlayer()), new BukkitSign(sign));
-      }
+        break;
+      default: //do nothing
     }
   }
 
-  private class BukkitSign implements me.taylorkelly.mywarp.platform.Sign {
-
-    private final Sign bukkitSign;
-
-    private BukkitSign(Sign bukkitSign) {
-      this.bukkitSign = bukkitSign;
-    }
-
-    @Override
-    public String getLine(int line) {
-      return bukkitSign.getLine(line);
-    }
-
-    @Override
-    public void setLine(int line, String text) {
-      bukkitSign.setLine(line, text);
-    }
+  private LocalPlayer toPlayer(PlayerInteractEvent event) {
+    return plugin.wrap(event.getPlayer());
   }
 
+  private static Vector3i toVector(Block block) {
+    Location loc = block.getLocation();
+    return new Vector3i(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+  }
+
+  /**
+   * A sign that is actually a wrapped event.
+   */
   private class EventSign implements me.taylorkelly.mywarp.platform.Sign {
 
     private final SignChangeEvent event;
