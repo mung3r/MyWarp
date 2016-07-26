@@ -57,7 +57,7 @@ public class BukkitPlatform implements Platform {
   private final File dataFolder;
   private final BukkitSettings settings;
   private final BukkitGame game;
-  private final SquirrelIdProfileCache profileCache;
+  private final SquirrelIdPlayerNameResolver profileCache;
 
   private final ClassToInstanceMap<Object> registeredCapabilities = MutableClassToInstanceMap.create();
 
@@ -68,7 +68,7 @@ public class BukkitPlatform implements Platform {
     //initialize platform support
     this.settings = new BukkitSettings(new File(dataFolder, "config.yml"), defaultConfig);
     this.game = new BukkitGame(plugin, new BukkitExecutor(plugin));
-    this.profileCache = new SquirrelIdProfileCache(new File(dataFolder, "profiles.db"));
+    this.profileCache = new SquirrelIdPlayerNameResolver(new File(dataFolder, "profiles.db"));
   }
 
   @Override
@@ -87,7 +87,7 @@ public class BukkitPlatform implements Platform {
   }
 
   @Override
-  public SquirrelIdProfileCache getProfileCache() {
+  public SquirrelIdPlayerNameResolver getPlayerNameResolver() {
     return profileCache;
   }
 

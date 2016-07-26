@@ -131,7 +131,7 @@ public final class MyWarpPlugin extends JavaPlugin {
     groupResolver = GroupResolverFactory.createResolver();
     acceptancePromptFactory =
         new AcceptancePromptFactory(createConversationFactory(), myWarp.getAuthorizationResolver(), platform.getGame(),
-                                    this);
+                                    platform.getPlayerNameResolver(), this);
     welcomeEditorFactory = new WelcomeEditorFactory(createConversationFactory());
 
     notifyCoreInitialized();
@@ -247,7 +247,7 @@ public final class MyWarpPlugin extends JavaPlugin {
    */
   public LocalPlayer wrap(Player player) {
     return new BukkitPlayer(player, getAcceptancePromptFactory(), getWelcomeEditorFactory(), getGroupResolver(),
-                            getProfileCache(), getSettings());
+                            getSettings());
   }
 
   /**
@@ -291,13 +291,13 @@ public final class MyWarpPlugin extends JavaPlugin {
   }
 
   /**
-   * Gets the ProfileCache that stored Profiles for known players.
+   * Gets the PlayerNameResolver that stored Profiles for known players.
    *
-   * @return the configured ProfileCache
+   * @return the configured PlayerNameResolver
    */
-  protected SquirrelIdProfileCache getProfileCache() {
+  protected SquirrelIdPlayerNameResolver getProfileCache() {
     checkState(platform != null, "'platform' is not yet initialized");
-    return platform.getProfileCache();
+    return platform.getPlayerNameResolver();
   }
 
   /**

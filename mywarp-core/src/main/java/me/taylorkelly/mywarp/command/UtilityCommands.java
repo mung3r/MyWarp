@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * Bundles utility commands.
  */
-final class UtilityCommands {
+public final class UtilityCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 

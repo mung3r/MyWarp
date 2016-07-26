@@ -26,25 +26,28 @@ import com.sk89q.intake.argument.Namespace;
 import com.sk89q.intake.parametric.Provider;
 import com.sk89q.intake.parametric.ProvisionException;
 
-import me.taylorkelly.mywarp.command.parametric.provider.exception.NoSuchProfileException;
-import me.taylorkelly.mywarp.platform.profile.Profile;
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
+import me.taylorkelly.mywarp.command.parametric.provider.exception.NoSuchPlayerIdentifierException;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 /**
- * Provides {@link Profile} instances.
+ * Provides {@link UUID} instances that identify players.
+ *
+ * @see LocalPlayer#getUniqueId()
  */
-class ProfileProvider implements Provider<Profile> {
+class PlayerIdentifierProvider implements Provider<UUID> {
 
-  private final ProfileCache profileCache;
+  private final PlayerNameResolver playerNameResolver;
 
-  ProfileProvider(ProfileCache profileCache) {
-    this.profileCache = profileCache;
+  PlayerIdentifierProvider(PlayerNameResolver playerNameResolver) {
+    this.playerNameResolver = playerNameResolver;
   }
 
   @Override
@@ -54,14 +57,14 @@ class ProfileProvider implements Provider<Profile> {
 
   @Nullable
   @Override
-  public Profile get(CommandArgs arguments, List<? extends Annotation> modifiers)
+  public UUID get(CommandArgs arguments, List<? extends Annotation> modifiers)
       throws ArgumentException, ProvisionException {
     String query = arguments.next();
 
-    Optional<Profile> optional = profileCache.getByName(query);
+    Optional<UUID> optional = playerNameResolver.getByName(query);
 
     if (!optional.isPresent()) {
-      throw new NoSuchProfileException(query);
+      throw new NoSuchPlayerIdentifierException(query);
     }
     return optional.get();
   }

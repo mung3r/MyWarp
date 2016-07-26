@@ -19,10 +19,10 @@
 
 package me.taylorkelly.mywarp.warp.storage;
 
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 
 /**
@@ -87,11 +87,11 @@ public class AsyncWritingWarpStorage extends ForwardingWarpStorage {
   }
 
   @Override
-  public void invitePlayer(final Warp warp, final Profile playerProfile) {
+  public void invitePlayer(final Warp warp, final UUID uniqueId) {
     executor.execute(new Runnable() {
       @Override
       public void run() {
-        delegate().invitePlayer(warp, playerProfile);
+        delegate().invitePlayer(warp, uniqueId);
       }
     });
   }
@@ -107,11 +107,11 @@ public class AsyncWritingWarpStorage extends ForwardingWarpStorage {
   }
 
   @Override
-  public void uninvitePlayer(final Warp warp, final Profile playerProfile) {
+  public void uninvitePlayer(final Warp warp, final UUID uniqueId) {
     executor.execute(new Runnable() {
       @Override
       public void run() {
-        delegate().uninvitePlayer(warp, playerProfile);
+        delegate().uninvitePlayer(warp, uniqueId);
       }
     });
   }

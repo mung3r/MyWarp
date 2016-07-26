@@ -23,15 +23,16 @@ import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.service.teleport.TimerTeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 
+import java.util.UUID;
+
 /**
  * A cooldown that blocks a player from using warps.
  */
-public class WarpCooldown extends TimerAction<Profile> {
+public class WarpCooldown extends TimerAction<UUID> {
 
   private static final DynamicMessages msg = new DynamicMessages(TimerTeleportService.RESOURCE_BUNDLE_NAME);
 
@@ -46,7 +47,7 @@ public class WarpCooldown extends TimerAction<Profile> {
    * @param notifyOnFinish whether the {@code player} should be notified once the cooldown finishes
    */
   public WarpCooldown(LocalPlayer player, Game game, boolean notifyOnFinish) {
-    super(player.getProfile());
+    super(player.getUniqueId());
     this.game = game;
     this.notifyOnFinish = notifyOnFinish;
   }
@@ -54,7 +55,7 @@ public class WarpCooldown extends TimerAction<Profile> {
   @Override
   public void run() {
     if (notifyOnFinish) {
-      Optional<LocalPlayer> optionalPlayer = game.getPlayer(getTimedSuject().getUniqueId());
+      Optional<LocalPlayer> optionalPlayer = game.getPlayer(getTimedSuject());
 
       if (optionalPlayer.isPresent()) {
         LocalPlayer player = optionalPlayer.get();

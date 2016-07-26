@@ -22,10 +22,10 @@ package me.taylorkelly.mywarp.warp;
 import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.Game;
-import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
+
+import java.util.UUID;
 
 /**
  * Implements methods that can be resolved using other existing methods.
@@ -33,13 +33,8 @@ import me.taylorkelly.mywarp.util.NoSuchWorldException;
 abstract class AbstractWarp implements Warp {
 
   @Override
-  public boolean isCreator(LocalPlayer player) {
-    return isCreator(player.getProfile());
-  }
-
-  @Override
-  public boolean isCreator(Profile profile) {
-    return getCreator().equals(profile);
+  public boolean isCreator(UUID uniqueId) {
+    return getCreator().equals(uniqueId);
   }
 
   @Override
@@ -48,13 +43,8 @@ abstract class AbstractWarp implements Warp {
   }
 
   @Override
-  public boolean isPlayerInvited(LocalPlayer player) {
-    return isPlayerInvited(player.getProfile());
-  }
-
-  @Override
-  public boolean isPlayerInvited(Profile profile) {
-    return getInvitedPlayers().contains(profile);
+  public boolean isPlayerInvited(UUID uniqueId) {
+    return getInvitedPlayers().contains(uniqueId);
   }
 
   @Override

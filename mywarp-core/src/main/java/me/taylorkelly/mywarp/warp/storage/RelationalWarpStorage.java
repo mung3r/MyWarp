@@ -31,11 +31,7 @@ import static org.jooq.impl.DSL.val;
 
 import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3d;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 
-import me.taylorkelly.mywarp.platform.profile.Profile;
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.Warp.Type;
 import me.taylorkelly.mywarp.warp.WarpBuilder;
@@ -60,6 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 /**
  * A storage implementation that stores warps in a relational database.
  *
@@ -70,17 +68,14 @@ import java.util.UUID;
 class RelationalWarpStorage implements WarpStorage {
 
   private final Configuration configuration;
-  private ProfileCache profileCache;
 
   /**
    * Creates an instance that uses the given {@code Configuration}.
    *
    * @param configuration the Configuration
-   * @param profileCache  the ProfileCache used to resolve stored profiles
    */
-  RelationalWarpStorage(Configuration configuration, ProfileCache profileCache) {
+  RelationalWarpStorage(Configuration configuration) {
     this.configuration = configuration;
-    this.profileCache = profileCache;
   }
 
   private DSLContext create(Configuration configuration) {
@@ -92,13 +87,8 @@ class RelationalWarpStorage implements WarpStorage {
     final Vector3d position = warp.getPosition();
     final Vector2f rotation = warp.getRotation();
     final List<UUID> playerIds = new ArrayList<UUID>();
-    playerIds.add(warp.getCreator().getUniqueId());
-    playerIds.addAll(Collections2.transform(warp.getInvitedPlayers(), new Function<Profile, UUID>() {
-      @Override
-      public UUID apply(Profile input) {
-        return input.getUniqueId();
-      }
-    }));
+    playerIds.add(warp.getCreator());
+    playerIds.addAll(warp.getInvitedPlayers());
 
     // @formatter:off
     create(configuration).transaction(new TransactionalRunnable() {
@@ -122,7 +112,7 @@ class RelationalWarpStorage implements WarpStorage {
             .set(WARP.PLAYER_ID,
                  select(PLAYER.PLAYER_ID)
                  .from(PLAYER)
-                 .where(PLAYER.UUID.eq(warp.getCreator().getUniqueId()))
+                 .where(PLAYER.UUID.eq(warp.getCreator()))
                  .limit(1)
             )
             .set(WARP.TYPE, warp.getType())
@@ -151,7 +141,7 @@ class RelationalWarpStorage implements WarpStorage {
         //insert all player-invitations
         List<InsertSetMoreStep<Record>> warpPlayerInserts = new
             ArrayList<InsertSetMoreStep<Record>>();
-        for (Profile invited : warp.getInvitedPlayers()) {
+        for (UUID invited : warp.getInvitedPlayers()) {
           warpPlayerInserts.add(create(configuration)
             .insertInto(WARP_PLAYER_MAP)
             .set(WARP_PLAYER_MAP.WARP_ID,
@@ -163,7 +153,7 @@ class RelationalWarpStorage implements WarpStorage {
             .set(WARP_PLAYER_MAP.PLAYER_ID,
                  select(PLAYER.PLAYER_ID)
                  .from(PLAYER)
-                 .where(PLAYER.UUID.eq(invited.getUniqueId()))
+                 .where(PLAYER.UUID.eq(invited))
                  .limit(1)
             )
           );
@@ -240,14 +230,14 @@ class RelationalWarpStorage implements WarpStorage {
     for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String,
         UUID, String>> r : groupedResults
         .values()) {
-      Profile creator = profileCache.getByUniqueId(r.getValue(0, creatorTable.UUID));
 
       Vector3d position = new Vector3d(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
       Vector2f rotation = new Vector2f(r.getValue(0, WARP.PITCH), r.getValue(0, WARP.YAW));
 
       WarpBuilder
           builder =
-          new WarpBuilder(r.getValue(0, WARP.NAME), creator, r.getValue(0, WORLD.UUID), position, rotation);
+          new WarpBuilder(r.getValue(0, WARP.NAME), r.getValue(0, creatorTable.UUID), r.getValue(0, WORLD.UUID),
+                          position, rotation);
 
       // optional values
       builder.setType(r.getValue(0, WARP.TYPE));
@@ -255,16 +245,15 @@ class RelationalWarpStorage implements WarpStorage {
       builder.setVisits(r.getValue(0, WARP.VISITS).intValue());
       builder.setWelcomeMessage(r.getValue(0, WARP.WELCOME_MESSAGE));
 
-      for (String groupName : r.getValues(GROUP.NAME)) {
+      for (@Nullable String groupName : r.getValues(GROUP.NAME)) {
         if (groupName != null) {
           builder.addInvitedGroup(groupName);
         }
       }
 
-      for (UUID inviteeUniqueId : r.getValues(PLAYER.UUID)) {
+      for (@Nullable UUID inviteeUniqueId : r.getValues(PLAYER.UUID)) {
         if (inviteeUniqueId != null) {
-          Profile inviteeProfile = profileCache.getByUniqueId(inviteeUniqueId);
-          builder.addInvitedPlayer(inviteeProfile);
+          builder.addInvitedPlayer(inviteeUniqueId);
         }
       }
 
@@ -303,12 +292,12 @@ class RelationalWarpStorage implements WarpStorage {
   }
 
   @Override
-  public void invitePlayer(final Warp warp, final Profile profile) {
+  public void invitePlayer(final Warp warp, final UUID uniqueId) {
     create(configuration).transaction(new TransactionalRunnable() {
       @Override
       public void run(Configuration configuration) throws Exception {
         // @formatter:off
-        insertOrIgnore(configuration, PLAYER, PLAYER.UUID, profile.getUniqueId()).execute();
+        insertOrIgnore(configuration, PLAYER, PLAYER.UUID, uniqueId).execute();
 
         create(configuration)
             .insertInto(WARP_PLAYER_MAP)
@@ -321,7 +310,7 @@ class RelationalWarpStorage implements WarpStorage {
             .set(WARP_PLAYER_MAP.PLAYER_ID,
                  select(PLAYER.PLAYER_ID)
                  .from(PLAYER)
-                 .where(PLAYER.UUID.eq(profile.getUniqueId()))
+                 .where(PLAYER.UUID.eq(uniqueId))
                  .limit(1)
             )
         .execute();
@@ -353,7 +342,7 @@ class RelationalWarpStorage implements WarpStorage {
   }
 
   @Override
-  public void uninvitePlayer(final Warp warp, final Profile profile) {
+  public void uninvitePlayer(final Warp warp, final UUID uniqueId) {
     // @formatter:off
     create(configuration)
         .delete(WARP_PLAYER_MAP)
@@ -366,7 +355,7 @@ class RelationalWarpStorage implements WarpStorage {
             .and(WARP_PLAYER_MAP.PLAYER_ID.eq(
               select(PLAYER.PLAYER_ID)
               .from(PLAYER)
-              .where(PLAYER.UUID.eq(profile.getUniqueId()))
+              .where(PLAYER.UUID.eq(uniqueId))
               .limit(1))
             )
         )
@@ -380,14 +369,14 @@ class RelationalWarpStorage implements WarpStorage {
       @Override
       public void run(Configuration configuration) throws Exception {
         // @formatter:off
-        insertOrIgnore(configuration, PLAYER, PLAYER.UUID, warp.getCreator().getUniqueId()).execute();
+        insertOrIgnore(configuration, PLAYER, PLAYER.UUID, warp.getCreator()).execute();
 
         create(configuration)
             .update(WARP)
             .set(WARP.PLAYER_ID,
                 select(PLAYER.PLAYER_ID)
                 .from(PLAYER)
-                .where(PLAYER.UUID.eq(warp.getCreator().getUniqueId()))
+                .where(PLAYER.UUID.eq(warp.getCreator()))
                 .limit(1)
             )
             .where(WARP.NAME.eq(warp.getName()))

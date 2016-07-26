@@ -23,7 +23,6 @@ import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3d;
 import com.google.common.collect.Iterables;
 
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 import java.util.Date;
@@ -39,9 +38,9 @@ public class WarpBuilder {
   private static final DynamicMessages msg = new DynamicMessages(Warp.RESOURCE_BUNDLE_NAME);
 
   private final String name;
-  private final Set<Profile> invitedPlayers;
+  private final Set<UUID> invitedPlayers;
   private final Set<String> invitedGroups;
-  private final Profile creator;
+  private final UUID creator;
   private final UUID worldIdentifier;
   private final Vector3d position;
   private final Vector2f rotation;
@@ -55,13 +54,13 @@ public class WarpBuilder {
    * Creates an instance that builds Warp's using the given values.
    *
    * @param name            the Warp's name
-   * @param creator         the Warp's creator
+   * @param creator         the Warp's creator unique identifier
    * @param worldIdentifier the identifier of the world the Warp is located in
    * @param position        the Warp's position
    * @param rotation        the Warp's rotation
    */
-  public WarpBuilder(String name, Profile creator, UUID worldIdentifier, Vector3d position, Vector2f rotation) {
-    this.invitedPlayers = new HashSet<Profile>();
+  public WarpBuilder(String name, UUID creator, UUID worldIdentifier, Vector3d position, Vector2f rotation) {
+    this.invitedPlayers = new HashSet<UUID>();
     this.invitedGroups = new HashSet<String>();
 
     this.name = name;
@@ -83,23 +82,23 @@ public class WarpBuilder {
   }
 
   /**
-   * Adds the player to the set of players invited to the Warp.
+   * Adds the unique identifier to the set of identifiers of players invited to the Warp.
    *
-   * @param player the player profiles
+   * @param uniqueId the unique identifer
    * @return this {@code WarpBuilder}
    */
-  public WarpBuilder addInvitedPlayer(Profile player) {
-    invitedPlayers.add(player);
+  public WarpBuilder addInvitedPlayer(UUID uniqueId) {
+    invitedPlayers.add(uniqueId);
     return this;
   }
 
   /**
-   * Adds each player to the set of players invited to the Warp.
+   * Adds each unique identifier to the set of identifiers of players invited to the Warp.
    *
-   * @param players the Iterable of player profiles
+   * @param players the Iterable of unique identifiers
    * @return this {@code WarpBuilder}
    */
-  public WarpBuilder addInvitedPlayers(Iterable<Profile> players) {
+  public WarpBuilder addInvitedPlayers(Iterable<UUID> players) {
     Iterables.addAll(invitedPlayers, players);
     return this;
   }

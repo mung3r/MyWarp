@@ -26,9 +26,7 @@ import com.google.common.collect.ComparisonChain;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
-import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 
 import java.util.Comparator;
@@ -56,20 +54,12 @@ public interface Warp extends Comparable<Warp> {
   TeleportHandler.TeleportStatus visit(LocalEntity entity, Game game, TeleportHandler handler);
 
   /**
-   * Returns whether the given player is the creator of this Warp.
+   * Returns whether the unique identifier is equal to the identifier of the player who created this Warp.
    *
-   * @param player the player
-   * @return true if the given player is the creator
+   * @param uniqueId the unique identifier to check
+   * @return true if the identifiers are equal
    */
-  boolean isCreator(LocalPlayer player);
-
-  /**
-   * Returns whether the given profile is equal to the profile of the player who created this Warp.
-   *
-   * @param profile the profile
-   * @return true if the profiles are equal
-   */
-  boolean isCreator(Profile profile);
+  boolean isCreator(UUID uniqueId);
 
   /**
    * Returns whether the Warp has the same type as the given type.
@@ -80,20 +70,12 @@ public interface Warp extends Comparable<Warp> {
   boolean isType(Warp.Type type);
 
   /**
-   * Returns whether the given player is invited to this Warp.
+   * Returns whether the given unique identifier identifies a player who is invited to this Warp.
    *
-   * @param player the player
-   * @return true if the given player is invited to this Warp
+   * @param uniqueId the unique identifier to check
+   * @return true if the identified player is invited to this Warp
    */
-  boolean isPlayerInvited(LocalPlayer player);
-
-  /**
-   * Returns whether the given Profile identifies a player who is invited to this Warp.
-   *
-   * @param profile the Profile
-   * @return true if the identified Player is invited to this Warp
-   */
-  boolean isPlayerInvited(Profile profile);
+  boolean isPlayerInvited(UUID uniqueId);
 
   /**
    * Returns whether the permission-group identified by the given ID is invited to this Warp.
@@ -104,50 +86,46 @@ public interface Warp extends Comparable<Warp> {
   boolean isGroupInvited(String groupId);
 
   /**
-   * Invites the permission-group identified by the given ID to this Warp. This method will also attempt to update this
-   * Warp via the active data-connection.
+   * Invites the permission-group identified by the given ID to this Warp.
    *
    * @param groupId the ID of the group who should be invited
    */
   void inviteGroup(String groupId);
 
   /**
-   * Invites the player identified by the given Profile to this Warp. This method will also attempt to update this Warp
-   * via the active data-connection.
+   * Invites the player identified by the given unique identifier to this Warp.
    *
-   * @param player the profile of the player who should be invited
+   * @param uniqueId the unique identifier of the player who should be invited
    */
-  void invitePlayer(Profile player);
+  void invitePlayer(UUID uniqueId);
 
   /**
-   * Uninvites the permission-group identified by the given ID from this Warp. This method will also attempt to update
-   * this Warp via the active data-connection.
+   * Uninvites the permission-group identified by the given ID from this Warp.
    *
    * @param groupId the ID of the group who should be uninvited
    */
   void uninviteGroup(String groupId);
 
   /**
-   * Uninvites the player identified by the given Profile from this Warp. This method will also attempt to update this
-   * Warp via the active data-connection.
+   * Uninvites the player identified by the given unique identifier from this Warp.
    *
-   * @param player the Profile of the player who should be uninvited
+   * @param uniqueId the unique identifier of the player who should be uninvited
    */
-  void uninvitePlayer(Profile player);
+  void uninvitePlayer(UUID uniqueId);
 
   /**
-   * Gets the Profile of this Warp's creator.
+   * Gets the unique identifier of this Warp's creator.
    *
-   * @return the Profile of the creator of this Warp
+   * @return the unique identifier of the creator of this Warp
    */
-  Profile getCreator();
+  UUID getCreator();
 
   /**
-   * Sets the creator of this Warp to the one identified by the given Profile.
+   * Sets the creator of this Warp to the one identified by the given unique identifier.
    *
-   * @param creator the profile of the new creator
+   * @param uniqueId the unique identifier of the new creator
    */
-  void setCreator(Profile creator);
+  void setCreator(UUID uniqueId);
 
   /**
    * Gets an unmodifiable set containing the IDs of all permission-groups invited to this Warp.
@@ -157,11 +135,11 @@ public interface Warp extends Comparable<Warp> {
   Set<String> getInvitedGroups();
 
   /**
-   * Gets an unmodifiable set containing the Profiles of all players invited to this Warp.
+   * Gets an unmodifiable set containing the unique identifiers of all players invited to this Warp.
    *
-   * @return a set with all Profiles of players who are invited to this Warp
+   * @return a set with all unique identifers of players who are invited to this Warp
    */
-  Set<Profile> getInvitedPlayers();
+  Set<UUID> getInvitedPlayers();
 
   /**
    * Gets this Warp's name.
@@ -267,7 +245,7 @@ public interface Warp extends Comparable<Warp> {
     PRIVATE, /**
      * A public Warp.
      */
-    PUBLIC;
+    PUBLIC
   }
 
   /**

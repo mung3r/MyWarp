@@ -54,8 +54,10 @@ CREATE TABLE "warp" (
   FOREIGN KEY ("world_id")
   REFERENCES "world" ("world_id")
 );
-CREATE INDEX "warp.warp_player_id_idx" ON "warp" ("player_id");
-CREATE INDEX "warp.warp_world_id_idx" ON "warp" ("world_id");
+CREATE INDEX "warp.warp_player_id_idx"
+  ON "warp" ("player_id");
+CREATE INDEX "warp.warp_world_id_idx"
+  ON "warp" ("world_id");
 
 -- -----------------------------------------------------
 -- Table "warp_player_map"
@@ -71,8 +73,10 @@ CREATE TABLE "warp_player_map" (
   FOREIGN KEY ("warp_id")
   REFERENCES "warp" ("warp_id")
 );
-CREATE INDEX "warp_player_map.warp_player_map_player_id_idx" ON "warp_player_map" ("player_id");
-CREATE INDEX "warp_player_map.warp_player_map_warp_id_idx" ON "warp_player_map" ("warp_id");
+CREATE INDEX "warp_player_map.warp_player_map_player_id_idx"
+  ON "warp_player_map" ("player_id");
+CREATE INDEX "warp_player_map.warp_player_map_warp_id_idx"
+  ON "warp_player_map" ("warp_id");
 
 -- -----------------------------------------------------
 -- Table "warp_group_map"
@@ -88,5 +92,7 @@ CREATE TABLE "warp_group_map" (
   FOREIGN KEY ("warp_id")
   REFERENCES "warp" ("warp_id")
 );
-CREATE INDEX "warp_group_map.warp_group_map_group_id_idx" ON "warp_group_map" ("group_id");
-CREATE INDEX "warp_group_map.warp_group_map_warp_id_idx" ON "warp_group_map" ("warp_id");
+CREATE INDEX "warp_group_map.warp_group_map_group_id_idx"
+  ON "warp_group_map" ("group_id");
+CREATE INDEX "warp_group_map.warp_group_map_warp_id_idx"
+  ON "warp_group_map" ("warp_id");

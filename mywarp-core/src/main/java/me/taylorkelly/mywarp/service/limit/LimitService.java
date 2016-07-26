@@ -75,7 +75,7 @@ public class LimitService {
                                         boolean evaluateParents) {
     if (!type.canDisobey(creator, world)) {
 
-      Iterable<Warp> filteredWarps = warpManager.filter(WarpUtils.isCreator(creator.getProfile()));
+      Iterable<Warp> filteredWarps = warpManager.filter(WarpUtils.isCreator(creator.getUniqueId()));
       Limit limit = capability.getLimit(creator, world);
 
       List<Limit.Type> limitsToCheck = Lists.newArrayList(type);
@@ -110,7 +110,7 @@ public class LimitService {
    * @return a Map with all matching warps
    */
   public Map<Limit, List<Warp>> getWarpsPerLimit(LocalPlayer creator) {
-    Collection<Warp> warps = warpManager.filter(WarpUtils.isCreator(creator.getProfile()));
+    Collection<Warp> warps = warpManager.filter(WarpUtils.isCreator(creator.getUniqueId()));
     Map<Limit, List<Warp>> ret = new HashMap<Limit, List<Warp>>();
 
     for (Limit limit : capability.getEffectiveLimits(creator)) {

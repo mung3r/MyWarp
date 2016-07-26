@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.platform;
 
 import com.flowpowered.math.vector.Vector3d;
 
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.UUID;
@@ -32,18 +31,11 @@ import java.util.UUID;
 public interface LocalPlayer extends LocalEntity, Actor {
 
   /**
-   * Gets the unique ID of this player.
+   * Gets the unique identifier of this player.
    *
-   * @return this player's unique ID
+   * @return this player's unique identifier
    */
   UUID getUniqueId();
-
-  /**
-   * Gets the Profile of this player.
-   *
-   * @return the Profile
-   */
-  Profile getProfile();
 
   /**
    * Returns whether this player belongs to the given group.

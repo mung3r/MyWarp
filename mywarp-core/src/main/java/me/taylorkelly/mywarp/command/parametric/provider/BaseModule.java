@@ -33,14 +33,14 @@ import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
-import me.taylorkelly.mywarp.platform.profile.Profile;
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
 
 import java.io.File;
+import java.util.UUID;
 
 /**
  * Provides most of MyWarp's internal objects by converting the user given arguments.
@@ -49,7 +49,7 @@ public class BaseModule extends AbstractModule {
 
   private final WarpManager warpManager;
   private final AuthorizationResolver authorizationResolver;
-  private final ProfileCache profileCache;
+  private final PlayerNameResolver playerNameResolver;
   private final Game game;
   private CommandHandler commandHandler;
   private File base;
@@ -59,16 +59,16 @@ public class BaseModule extends AbstractModule {
    *
    * @param warpManager           the WarpManager to use
    * @param authorizationResolver the AuthorizationResolver to use
-   * @param profileCache          the ProfileCache to use
+   * @param playerNameResolver    the PlayerNameResolver to use
    * @param game                  the Game to use
    * @param commandHandler        the CommandHandler to use
    * @param base                  the base File to use
    */
-  public BaseModule(WarpManager warpManager, AuthorizationResolver authorizationResolver, ProfileCache profileCache,
-                    Game game, CommandHandler commandHandler, File base) {
+  public BaseModule(WarpManager warpManager, AuthorizationResolver authorizationResolver,
+                    PlayerNameResolver playerNameResolver, Game game, CommandHandler commandHandler, File base) {
     this.warpManager = warpManager;
     this.authorizationResolver = authorizationResolver;
-    this.profileCache = profileCache;
+    this.playerNameResolver = playerNameResolver;
     this.game = game;
     this.commandHandler = commandHandler;
     this.base = base;
@@ -78,7 +78,7 @@ public class BaseModule extends AbstractModule {
   protected void configure() {
     //game related objects
     bind(LocalPlayer.class).toProvider(new PlayerProvider(game));
-    bind(Profile.class).toProvider(new ProfileProvider(profileCache));
+    bind(UUID.class).toProvider(new PlayerIdentifierProvider(playerNameResolver));
 
     //warps
     bind(Warp.class).annotatedWith(Viewable.class).toProvider(new WarpProvider(authorizationResolver, warpManager) {

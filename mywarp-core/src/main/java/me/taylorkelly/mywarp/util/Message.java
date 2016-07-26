@@ -38,8 +38,7 @@ import javax.annotation.Nullable;
  * <p>A message consists of a list of non-null objects. To form a human readable message, these must be interpreted by
  * the client. While there is no guarantee about the type of objects inside the message, the following ones should be
  * expected: <ul> <li>{@link me.taylorkelly.mywarp.warp.Warp}</li> <li>{@link LocalPlayer}</li> <li>{@link
- * me.taylorkelly.mywarp.platform.profile.Profile}</li> <li>{@link LocalWorld}</li> <li>{@link Style}</li> <li>{@link
- * CharSequence}</li> <li>{@link Number}</li> </ul> </p>
+ * LocalWorld}</li> <li>{@link Style}</li> <li>{@link CharSequence}</li> <li>{@link Number}</li> </ul> </p>
  *
  * <p>Use a {@link Builder} to create instances.</p>
  */

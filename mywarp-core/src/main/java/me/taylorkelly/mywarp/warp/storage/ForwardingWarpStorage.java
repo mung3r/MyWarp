@@ -21,10 +21,10 @@ package me.taylorkelly.mywarp.warp.storage;
 
 import com.google.common.collect.ForwardingObject;
 
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A WarpStorage that forwards all its method calls to another WarpStorage. Subclasses should override one or more
@@ -57,8 +57,8 @@ abstract class ForwardingWarpStorage extends ForwardingObject implements WarpSto
   }
 
   @Override
-  public void invitePlayer(Warp warp, Profile playerProfile) {
-    delegate().invitePlayer(warp, playerProfile);
+  public void invitePlayer(Warp warp, UUID uniqueId) {
+    delegate().invitePlayer(warp, uniqueId);
   }
 
   @Override
@@ -67,8 +67,8 @@ abstract class ForwardingWarpStorage extends ForwardingObject implements WarpSto
   }
 
   @Override
-  public void uninvitePlayer(Warp warp, Profile playerProfile) {
-    delegate().uninvitePlayer(warp, playerProfile);
+  public void uninvitePlayer(Warp warp, UUID uniqueId) {
+    delegate().uninvitePlayer(warp, uniqueId);
   }
 
   @Override

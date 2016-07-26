@@ -34,7 +34,7 @@ public class WarpPropertiesAuthorizationStrategy implements AuthorizationStrateg
 
   @Override
   public boolean isModifiable(Warp warp, Actor actor) {
-    return actor instanceof LocalPlayer && warp.isCreator((LocalPlayer) actor);
+    return actor instanceof LocalPlayer && warp.isCreator(((LocalPlayer) actor).getUniqueId());
   }
 
   @Override
@@ -46,7 +46,7 @@ public class WarpPropertiesAuthorizationStrategy implements AuthorizationStrateg
     if (entity instanceof LocalPlayer) {
       LocalPlayer player = (LocalPlayer) entity;
 
-      if (warp.isPlayerInvited(player)) {
+      if (warp.isPlayerInvited(player.getUniqueId())) {
         return true;
       }
       for (String groupId : warp.getInvitedGroups()) {

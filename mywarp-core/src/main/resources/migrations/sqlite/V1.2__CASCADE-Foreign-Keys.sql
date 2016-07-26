@@ -46,8 +46,10 @@ CREATE TABLE "warp" (
   ON DELETE CASCADE
   ON UPDATE CASCADE
 );
-CREATE INDEX "warp.warp_player_id_idx" ON "warp" ("player_id");
-CREATE INDEX "warp.warp_world_id_idx" ON "warp" ("world_id");
+CREATE INDEX "warp.warp_player_id_idx"
+  ON "warp" ("player_id");
+CREATE INDEX "warp.warp_world_id_idx"
+  ON "warp" ("world_id");
 INSERT INTO "warp" SELECT *
                    FROM "warp_backup";
 DROP TABLE "warp_backup";
@@ -77,8 +79,10 @@ CREATE TABLE "warp_player_map" (
   ON DELETE CASCADE
   ON UPDATE CASCADE
 );
-CREATE INDEX "warp_player_map.warp_player_map_player_id_idx" ON "warp_player_map" ("player_id");
-CREATE INDEX "warp_player_map.warp_player_map_warp_id_idx" ON "warp_player_map" ("warp_id");
+CREATE INDEX "warp_player_map.warp_player_map_player_id_idx"
+  ON "warp_player_map" ("player_id");
+CREATE INDEX "warp_player_map.warp_player_map_warp_id_idx"
+  ON "warp_player_map" ("warp_id");
 INSERT INTO "warp_player_map" SELECT *
                               FROM "warp_player_map_backup";
 DROP TABLE "warp_player_map_backup";
@@ -108,8 +112,10 @@ CREATE TABLE "warp_group_map" (
   ON DELETE CASCADE
   ON UPDATE CASCADE
 );
-CREATE INDEX "warp_group_map.warp_group_map_group_id_idx" ON "warp_group_map" ("group_id");
-CREATE INDEX "warp_group_map.warp_group_map_warp_id_idx" ON "warp_group_map" ("warp_id");
+CREATE INDEX "warp_group_map.warp_group_map_group_id_idx"
+  ON "warp_group_map" ("group_id");
+CREATE INDEX "warp_group_map.warp_group_map_warp_id_idx"
+  ON "warp_group_map" ("warp_id");
 INSERT INTO "warp_group_map" SELECT *
                              FROM "warp_group_map_backup";
 DROP TABLE "warp_group_map_backup";

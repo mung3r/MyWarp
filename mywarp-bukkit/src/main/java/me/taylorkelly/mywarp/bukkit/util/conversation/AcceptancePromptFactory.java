@@ -25,6 +25,7 @@ import me.taylorkelly.mywarp.bukkit.util.BukkitMessageInterpreter;
 import me.taylorkelly.mywarp.command.util.printer.InfoPrinter;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
@@ -52,6 +53,7 @@ public class AcceptancePromptFactory {
   private final AuthorizationResolver authorizationResolver;
   private final ConversationFactory factory;
   private final Game game;
+  private final PlayerNameResolver resolver;
   private final MyWarpPlugin plugin;
 
   /**
@@ -60,12 +62,14 @@ public class AcceptancePromptFactory {
    * @param factory               the ConversationFactory to build conversations with
    * @param authorizationResolver the AuthorizationResolver to resolve warp authorizations
    * @param game                  the running game
+   * @param resolver              the resolver to be used when resolving player names
    * @param plugin                the plugin instance
    */
   public AcceptancePromptFactory(ConversationFactory factory, AuthorizationResolver authorizationResolver, Game game,
-                                 MyWarpPlugin plugin) {
+                                 PlayerNameResolver resolver, MyWarpPlugin plugin) {
     this.authorizationResolver = authorizationResolver;
     this.game = game;
+    this.resolver = resolver;
     this.plugin = plugin;
     this.factory = factory.withFirstPrompt(new QuestionPrompt());
   }
@@ -150,8 +154,8 @@ public class AcceptancePromptFactory {
       Warp warp = (Warp) context.getSessionData(Warp.class);
 
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
-      return BukkitMessageInterpreter.interpret(
-          new InfoPrinter(warp, authorizationResolver, game).getText(plugin.wrap((Player) context.getForWhom())));
+      return BukkitMessageInterpreter.interpret(new InfoPrinter(warp, authorizationResolver, game, resolver)
+                                                    .getText(plugin.wrap((Player) context.getForWhom())));
     }
   }
 
@@ -163,7 +167,7 @@ public class AcceptancePromptFactory {
     @Override
     public String getPromptText(ConversationContext context) {
       Warp warp = (Warp) context.getSessionData(Warp.class);
-      warp.setCreator(plugin.wrap((Player) context.getForWhom()).getProfile());
+      warp.setCreator(((Player) context.getForWhom()).getUniqueId());
 
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
       Message

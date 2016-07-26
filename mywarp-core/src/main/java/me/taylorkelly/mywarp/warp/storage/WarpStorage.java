@@ -19,10 +19,9 @@
 
 package me.taylorkelly.mywarp.warp.storage;
 
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
-import java.util.List;
+import java.util.UUID;
 
 /**
  * A connection to a data storage, e.g. a rational database.
@@ -44,14 +43,6 @@ public interface WarpStorage extends WarpSource {
   void removeWarp(Warp warp);
 
   /**
-   * Gets a {@code List} with every {@code Warp} stored in the underlying data storage.
-   *
-   * @return all stored {@code Warp}s
-   */
-  @Override
-  List<Warp> getWarps();
-
-  /**
    * Adds the given {@code groupId} to the list of invited groupIds for the given {@code Warp}.
    *
    * @param warp    the {@code Warp}
@@ -60,12 +51,12 @@ public interface WarpStorage extends WarpSource {
   void inviteGroup(Warp warp, String groupId);
 
   /**
-   * Adds the given {@code Profile} to the invited profiles for the given {@code Warp}.
+   * Adds the given unique identifier to the invited identifiers for the given {@code Warp}.
    *
-   * @param warp          the {@code Warp}
-   * @param playerProfile the {@code Profile} to add
+   * @param warp     the {@code Warp}
+   * @param uniqueId the unique identifier to add
    */
-  void invitePlayer(Warp warp, Profile playerProfile);
+  void invitePlayer(Warp warp, UUID uniqueId);
 
   /**
    * Removes the given {@code groupId} from the list of invited groupIds for the given {@code Warp}.
@@ -76,12 +67,12 @@ public interface WarpStorage extends WarpSource {
   void uninviteGroup(Warp warp, String groupId);
 
   /**
-   * Removes the given {@code Profile} from the invited player-profiles for the given {@code Warp}.
+   * Removes the given unique identifer from the invited identifiers for the given {@code Warp}.
    *
-   * @param warp          the {@code Warp}
-   * @param playerProfile the {@code Profile} to remove
+   * @param warp     the {@code Warp}
+   * @param uniqueId the unique identifier to remove
    */
-  void uninvitePlayer(Warp warp, Profile playerProfile);
+  void uninvitePlayer(Warp warp, UUID uniqueId);
 
   /**
    * Updates the creator of the given {@code Warp}.

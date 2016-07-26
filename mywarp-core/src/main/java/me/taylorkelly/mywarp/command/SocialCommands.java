@@ -29,14 +29,13 @@ import com.sk89q.intake.util.auth.AuthorizationException;
 import me.taylorkelly.mywarp.command.parametric.annotation.Billable;
 import me.taylorkelly.mywarp.command.parametric.annotation.Modifiable;
 import me.taylorkelly.mywarp.command.parametric.provider.exception.NoSuchPlayerException;
-import me.taylorkelly.mywarp.command.parametric.provider.exception.NoSuchProfileException;
+import me.taylorkelly.mywarp.command.parametric.provider.exception.NoSuchPlayerIdentifierException;
 import me.taylorkelly.mywarp.command.util.ExceedsInitiatorLimitException;
 import me.taylorkelly.mywarp.command.util.ExceedsLimitException;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
-import me.taylorkelly.mywarp.platform.profile.Profile;
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.service.economy.FeeType;
 import me.taylorkelly.mywarp.service.limit.Limit;
 import me.taylorkelly.mywarp.service.limit.LimitService;
@@ -44,53 +43,56 @@ import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 /**
  * Bundles commands that involve social interaction with other players.
  */
-final class SocialCommands {
+public final class SocialCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final Game game;
-  private final ProfileCache profileCache;
+  private final PlayerNameResolver playerNameResolver;
   @Nullable
   private final LimitService limitService;
 
   /**
    * Creates an instance.
    *
-   * @param game         the Game instance used by commands
-   * @param profileCache the ProfileCache used by commands
-   * @param limitService the LimitService used by commands - may be {@code null} if no limit service is used
+   * @param game               the Game instance used by commands
+   * @param playerNameResolver the PlayerNameResolver used by commands
+   * @param limitService       the LimitService used by commands - may be {@code null} if no limit service is used
    */
-  SocialCommands(Game game, ProfileCache profileCache, @Nullable LimitService limitService) {
+  SocialCommands(Game game, PlayerNameResolver playerNameResolver, @Nullable LimitService limitService) {
     this.game = game;
-    this.profileCache = profileCache;
+    this.playerNameResolver = playerNameResolver;
     this.limitService = limitService;
   }
 
   @Command(aliases = {"give"}, desc = "give.description", help = "give.help")
   @Require("mywarp.cmd.give")
   @Billable(FeeType.GIVE)
-  public void give(Actor actor, @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits, Profile receiver,
+  public void give(Actor actor, @Switch('d') boolean giveDirectly, @Switch('f') boolean ignoreLimits, UUID receiver,
                    @Modifiable Warp warp) throws CommandException, AuthorizationException, NoSuchPlayerException {
     if (warp.isCreator(receiver)) {
       throw new CommandException("give.is-owner");
     }
-    Optional<LocalPlayer> receiverPlayer = game.getPlayer(receiver.getUniqueId());
+    Optional<LocalPlayer> receiverPlayerOptional = game.getPlayer(receiver);
 
     if (!ignoreLimits && limitService != null) {
-      if (!receiverPlayer.isPresent()) {
+      if (!receiverPlayerOptional.isPresent()) {
         throw new NoSuchPlayerException(receiver);
       }
+      LocalPlayer receiverPlayer = receiverPlayerOptional.get();
+
       LimitService.EvaluationResult
           result =
-          limitService
-              .evaluateLimit(receiverPlayer.get(), warp.getWorld(game), Limit.Type.valueOf(warp.getType()), true);
+          limitService.evaluateLimit(receiverPlayer, warp.getWorld(game), Limit.Type.valueOf(warp.getType()), true);
       if (result.exceedsLimit()) {
-        throw new ExceedsLimitException(receiver);
+        throw new ExceedsLimitException(receiverPlayer);
       }
     } else if (!actor.hasPermission("mywarp.cmd.give.force")) {
       throw new AuthorizationException();
@@ -103,20 +105,19 @@ final class SocialCommands {
 
       warp.setCreator(receiver);
 
-      actor.sendMessage(msg.getString("give.given-successful", warp.getName(),
-                                      receiver.getName().or(receiver.getUniqueId().toString())));
+      actor.sendMessage(msg.getString("give.given-successful", warp.getName(), friendlyName(receiver)));
 
-      if (receiverPlayer.isPresent()) {
-        receiverPlayer.get().sendMessage(msg.getString("give.givee-owner", actor.getName(), warp.getName()));
+      if (receiverPlayerOptional.isPresent()) {
+        receiverPlayerOptional.get().sendMessage(msg.getString("give.givee-owner", actor.getName(), warp.getName()));
       }
       return;
     }
 
-    if (!receiverPlayer.isPresent()) {
+    if (!receiverPlayerOptional.isPresent()) {
       throw new NoSuchPlayerException(receiver);
     }
-    receiverPlayer.get().initiateAcceptanceConversation(actor, warp);
-    actor.sendMessage(msg.getString("give.asked-successful", receiverPlayer.get().getName(), warp.getName()));
+    receiverPlayerOptional.get().initiateAcceptanceConversation(actor, warp);
+    actor.sendMessage(msg.getString("give.asked-successful", receiverPlayerOptional.get().getName(), warp.getName()));
 
   }
 
@@ -129,22 +130,22 @@ final class SocialCommands {
       throw new CommandException(msg.getString("private.already-private", warp.getName()));
     }
     if (!ignoreLimits && limitService != null) {
-      Profile creator = warp.getCreator();
-      Optional<LocalPlayer> creatorPlayer = game.getPlayer(creator.getUniqueId());
-      if (!creatorPlayer.isPresent()) {
+      UUID creator = warp.getCreator();
+      Optional<LocalPlayer> creatorPlayerOptional = game.getPlayer(creator);
+      if (!creatorPlayerOptional.isPresent()) {
         throw new NoSuchPlayerException(creator);
       }
+      LocalPlayer creatorPlayer = creatorPlayerOptional.get();
 
       LimitService.EvaluationResult
           result =
-          limitService
-              .evaluateLimit(creatorPlayer.get(), warp.getWorld(game), Limit.Type.valueOf(Warp.Type.PRIVATE), false);
+          limitService.evaluateLimit(creatorPlayer, warp.getWorld(game), Limit.Type.valueOf(Warp.Type.PRIVATE), false);
 
       if (result.exceedsLimit()) {
-        if (actor instanceof LocalPlayer && creatorPlayer.get().equals(actor)) {
+        if (actor instanceof LocalPlayer && creatorPlayer.equals(actor)) {
           throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
         } else {
-          throw new ExceedsLimitException(creator);
+          throw new ExceedsLimitException(creatorPlayer);
         }
       }
 
@@ -166,22 +167,22 @@ final class SocialCommands {
       throw new CommandException(msg.getString("public.already-public", warp.getName()));
     }
     if (!ignoreLimits && limitService != null) {
-      Profile creator = warp.getCreator();
-      Optional<LocalPlayer> creatorPlayer = game.getPlayer(creator.getUniqueId());
-      if (!creatorPlayer.isPresent()) {
+      UUID creator = warp.getCreator();
+      Optional<LocalPlayer> creatorPlayerOptional = game.getPlayer(creator);
+      if (!creatorPlayerOptional.isPresent()) {
         throw new NoSuchPlayerException(creator);
       }
+      LocalPlayer creatorPlayer = creatorPlayerOptional.get();
 
       LimitService.EvaluationResult
           result =
-          limitService
-              .evaluateLimit(creatorPlayer.get(), warp.getWorld(game), Limit.Type.valueOf(Warp.Type.PUBLIC), false);
+          limitService.evaluateLimit(creatorPlayer, warp.getWorld(game), Limit.Type.valueOf(Warp.Type.PUBLIC), false);
 
       if (result.exceedsLimit()) {
-        if (actor instanceof LocalPlayer && creatorPlayer.get().equals(actor)) {
+        if (actor instanceof LocalPlayer && creatorPlayer.equals(actor)) {
           throw new ExceedsInitiatorLimitException(result.getExceededLimit(), result.getLimitMaximum());
         } else {
-          throw new ExceedsLimitException(creator);
+          throw new ExceedsLimitException(creatorPlayer);
         }
       }
 
@@ -196,7 +197,7 @@ final class SocialCommands {
   @Require("mywarp.cmd.invite")
   @Billable(FeeType.INVITE)
   public void invite(Actor actor, @Switch('g') boolean groupInvite, String inviteeIdentifier, @Modifiable Warp warp)
-      throws CommandException, AuthorizationException, NoSuchProfileException {
+      throws CommandException, AuthorizationException, NoSuchPlayerIdentifierException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.cmd.invite.group")) {
         throw new AuthorizationException();
@@ -216,33 +217,28 @@ final class SocialCommands {
       return;
     }
     // invite player
-    Optional<Profile> optionalInvitee = profileCache.getByName(inviteeIdentifier);
+    Optional<UUID> optionalInvitee = playerNameResolver.getByName(inviteeIdentifier);
     if (!optionalInvitee.isPresent()) {
-      throw new NoSuchProfileException(inviteeIdentifier);
+      throw new NoSuchPlayerIdentifierException(inviteeIdentifier);
     }
 
-    Profile invitee = optionalInvitee.get();
+    UUID invitee = optionalInvitee.get();
 
     if (warp.isPlayerInvited(invitee)) {
-      throw new CommandException(msg.getString("invite.player.already-invited", invitee.getName()));
+      throw new CommandException(msg.getString("invite.player.already-invited", friendlyName(invitee)));
     }
     if (warp.isCreator(invitee)) {
-      throw new CommandException(msg.getString("invite.player.is-creator", invitee.getName()));
+      throw new CommandException(msg.getString("invite.player.is-creator", friendlyName(invitee)));
     }
     warp.invitePlayer(invitee);
 
-    String displayName = invitee.getUniqueId().toString();
-    if (invitee.getName().isPresent()) {
-      displayName = invitee.getName().get();
-    }
-
-    actor.sendMessage(msg.getString("invite.player.successful", displayName, warp.getName()));
+    actor.sendMessage(msg.getString("invite.player.successful", friendlyName(invitee), warp.getName()));
     if (warp.getType() == Warp.Type.PUBLIC) {
       actor.sendMessage(
           Message.builder().append(Message.Style.INFO).append(msg.getString("invite.public", warp.getName())).build());
     }
 
-    Optional<LocalPlayer> invitedPlayer = game.getPlayer(invitee.getUniqueId());
+    Optional<LocalPlayer> invitedPlayer = game.getPlayer(invitee);
     if (invitedPlayer.isPresent()) {
       invitedPlayer.get().sendMessage(msg.getString("invite.player.player-invited", actor.getName(), warp.getName()));
     }
@@ -252,7 +248,7 @@ final class SocialCommands {
   @Require("mywarp.cmd.uninvite")
   @Billable(FeeType.UNINVITE)
   public void uninvite(Actor actor, @Switch('g') boolean groupInvite, String uninviteeIdentifier, @Modifiable Warp warp)
-      throws CommandException, AuthorizationException, NoSuchProfileException {
+      throws CommandException, AuthorizationException, NoSuchPlayerIdentifierException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.cmd.uninvite.group")) {
         throw new AuthorizationException();
@@ -272,36 +268,35 @@ final class SocialCommands {
       return;
     }
     // uninvite player
-    Optional<Profile> optionalUninvitee = profileCache.getByName(uninviteeIdentifier);
+    Optional<UUID> optionalUninvitee = playerNameResolver.getByName(uninviteeIdentifier);
     if (!optionalUninvitee.isPresent()) {
-      throw new NoSuchProfileException(uninviteeIdentifier);
+      throw new NoSuchPlayerIdentifierException(uninviteeIdentifier);
     }
 
-    Profile uninvitee = optionalUninvitee.get();
+    UUID uninvitee = optionalUninvitee.get();
 
     if (!warp.isPlayerInvited(uninvitee)) {
-      throw new CommandException(msg.getString("uninvite.player.not-invited", uninvitee.getName()));
+      throw new CommandException(msg.getString("uninvite.player.not-invited", friendlyName(uninvitee)));
     }
     if (warp.isCreator(uninvitee)) {
-      throw new CommandException(msg.getString("uninvite.player.is-creator", uninvitee.getName()));
+      throw new CommandException(msg.getString("uninvite.player.is-creator", friendlyName(uninvitee)));
     }
     warp.uninvitePlayer(uninvitee);
 
-    String displayName = uninvitee.getUniqueId().toString();
-    if (uninvitee.getName().isPresent()) {
-      displayName = uninvitee.getName().get();
-    }
-
-    actor.sendMessage(msg.getString("uninvite.player.successful", displayName, warp.getName()));
+    actor.sendMessage(msg.getString("uninvite.player.successful", friendlyName(uninvitee), warp.getName()));
     if (warp.getType() == Warp.Type.PUBLIC) {
       actor.sendMessage(
           Message.builder().append(Message.Style.INFO).append(msg.getString("uninvite.public", warp.getName()))
               .build());
     }
 
-    Optional<LocalPlayer> invitedPlayer = game.getPlayer(uninvitee.getUniqueId());
+    Optional<LocalPlayer> invitedPlayer = game.getPlayer(uninvitee);
     if (invitedPlayer.isPresent()) {
       invitedPlayer.get().sendMessage(msg.getString("uninvite.player.player-uninvited", warp.getName()));
     }
+  }
+
+  private String friendlyName(UUID uniqueId) {
+    return playerNameResolver.getByUniqueId(uniqueId).or(uniqueId.toString());
   }
 }

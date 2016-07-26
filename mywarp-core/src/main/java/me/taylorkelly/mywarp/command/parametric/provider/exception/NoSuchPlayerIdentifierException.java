@@ -20,15 +20,14 @@
 package me.taylorkelly.mywarp.command.parametric.provider.exception;
 
 import me.taylorkelly.mywarp.command.CommandHandler;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 /**
- * Thrown when a given input does not match a known {@link Profile}.
+ * Thrown when a given input does not match a known player.
  * <p/>
  * Typically this is caused by a malformed query or unavailable UUID servers.
  */
-public class NoSuchProfileException extends NonMatchingInputException {
+public class NoSuchPlayerIdentifierException extends NonMatchingInputException {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
@@ -37,7 +36,7 @@ public class NoSuchProfileException extends NonMatchingInputException {
    *
    * @param input the input
    */
-  public NoSuchProfileException(String input) {
+  public NoSuchPlayerIdentifierException(String input) {
     super(input);
   }
 

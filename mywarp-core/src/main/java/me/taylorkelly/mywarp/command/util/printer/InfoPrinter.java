@@ -22,10 +22,11 @@ package me.taylorkelly.mywarp.command.util.printer;
 import com.google.common.collect.Ordering;
 
 import me.taylorkelly.mywarp.command.CommandHandler;
+import me.taylorkelly.mywarp.command.util.CommandUtil;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
-import me.taylorkelly.mywarp.platform.profile.Profile;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -36,6 +37,7 @@ import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 import java.text.DateFormat;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Prints information about a certain Warp.
@@ -46,7 +48,8 @@ public class InfoPrinter {
 
   private final Warp warp;
   private final AuthorizationResolver authorizationResolver;
-  private Game game;
+  private final Game game;
+  private final PlayerNameResolver playerNameResolver;
 
   /**
    * Creates an instance.
@@ -54,11 +57,14 @@ public class InfoPrinter {
    * @param warp                  the Warp whose information should be printed
    * @param authorizationResolver the AuthorizationResolver used to resolve authorizations for the given warp
    * @param game                  the running game instance that holds the warp's world
+   * @param playerNameResolver    the resolver to be used when resolving player names
    */
-  public InfoPrinter(Warp warp, AuthorizationResolver authorizationResolver, Game game) {
+  public InfoPrinter(Warp warp, AuthorizationResolver authorizationResolver, Game game,
+                     PlayerNameResolver playerNameResolver) {
     this.warp = warp;
     this.authorizationResolver = authorizationResolver;
     this.game = game;
+    this.playerNameResolver = playerNameResolver;
   }
 
   /**
@@ -84,9 +90,9 @@ public class InfoPrinter {
     info.append(msg.getString("info.created-by"));
     info.append(" ");
     info.append(Message.Style.VALUE);
-    Profile creator = warp.getCreator();
-    info.append(creator);
-    if (receiver instanceof LocalPlayer && warp.isCreator((LocalPlayer) receiver)) {
+    UUID creator = warp.getCreator();
+    info.append(CommandUtil.toName(creator, playerNameResolver));
+    if (receiver instanceof LocalPlayer && warp.isCreator(((LocalPlayer) receiver).getUniqueId())) {
       info.append(" ");
       info.append(msg.getString("info.created-by-you"));
     }
@@ -111,11 +117,11 @@ public class InfoPrinter {
       info.append(" ");
       info.append(Message.Style.VALUE);
 
-      Set<Profile> invitedPlayers = warp.getInvitedPlayers();
+      Set<UUID> invitedPlayers = warp.getInvitedPlayers();
       if (invitedPlayers.isEmpty()) {
         info.append("-");
       } else {
-        info.appendWithSeparators(invitedPlayers);
+        info.appendWithSeparators(CommandUtil.toName(invitedPlayers, playerNameResolver));
       }
       info.appendNewLine();
 

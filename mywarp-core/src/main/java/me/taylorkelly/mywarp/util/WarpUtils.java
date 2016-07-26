@@ -22,11 +22,11 @@ package me.taylorkelly.mywarp.util;
 import com.google.common.base.Predicate;
 
 import me.taylorkelly.mywarp.platform.Actor;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,16 +68,16 @@ public final class WarpUtils {
    * Returns a predicate that evaluates to {@code true} if the warp being tested is created by player identified by the
    * given profile.
    *
-   * @param profile the Profile
+   * @param uniqueId the Profile
    * @return a predicate that checks if the given warp is created by the given player
-   * @see Warp#isCreator(Profile)
+   * @see Warp#isCreator(java.util.UUID)
    */
-  public static Predicate<Warp> isCreator(final Profile profile) {
+  public static Predicate<Warp> isCreator(final UUID uniqueId) {
     return new Predicate<Warp>() {
 
       @Override
       public boolean apply(Warp warp) {
-        return warp.isCreator(profile);
+        return warp.isCreator(uniqueId);
       }
 
     };
@@ -155,7 +155,7 @@ public final class WarpUtils {
    * @return the{@code Map} with added tokens and variables
    */
   private static Map<String, String> warpTokens(Warp warp, Map<String, String> variables) {
-    variables.put("creator", warp.getCreator().getName().or(warp.getCreator().getUniqueId().toString()));
+    variables.put("creator", warp.getCreator().toString()); //TODO not good
     variables.put("loc", "(" + warp.getPosition().getFloorX() + ", " + warp.getPosition().getFloorY() + ", " + warp
         .getPosition().getFloorZ() + ")");
     variables.put("visits", Integer.toString(warp.getVisits()));

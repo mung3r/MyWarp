@@ -72,12 +72,12 @@ public class TimerTeleportService extends ForwardingTeleportService {
     LocalPlayer player = (LocalPlayer) entity;
 
     // check for already running timers
-    TimerCapability.EvaluationResult cooldownResult = capability.has(player.getProfile(), WarpCooldown.class);
+    TimerCapability.EvaluationResult cooldownResult = capability.has(player.getUniqueId(), WarpCooldown.class);
     if (cooldownResult.isTimerRunning()) {
       player.sendError(msg.getString("timer-already-running", cooldownResult.getDurationLeft().get(TimeUnit.SECONDS)));
       return TeleportHandler.TeleportStatus.NONE;
     }
-    TimerCapability.EvaluationResult warmupResult = capability.has(player.getProfile(), WarpWarmup.class);
+    TimerCapability.EvaluationResult warmupResult = capability.has(player.getUniqueId(), WarpWarmup.class);
     if (warmupResult.isTimerRunning()) {
       player.sendError(msg.getString("timer-already-running", warmupResult.getDurationLeft().get(TimeUnit.SECONDS)));
       return TeleportHandler.TeleportStatus.NONE;
@@ -85,7 +85,7 @@ public class TimerTeleportService extends ForwardingTeleportService {
 
     // start warmup
     Duration duration = capability.getDuration(player, WarpWarmup.class);
-    capability.start(player.getProfile(), duration, new WarpWarmup(player, warp, game, delegate(), capability));
+    capability.start(player.getUniqueId(), duration, new WarpWarmup(player, warp, game, delegate(), capability));
     if (capability.notifyOnWarmupStart()) {
       player.sendMessage(msg.getString("warp-warmup.started", warp.getName(), duration.get(TimeUnit.SECONDS)));
     }

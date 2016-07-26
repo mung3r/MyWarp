@@ -22,7 +22,7 @@ package me.taylorkelly.mywarp.command.util;
 import com.sk89q.intake.CommandException;
 
 import me.taylorkelly.mywarp.command.CommandHandler;
-import me.taylorkelly.mywarp.platform.profile.Profile;
+import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 /**
@@ -34,28 +34,19 @@ public class ExceedsLimitException extends CommandException {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
-  private final Profile subject;
+  private final LocalPlayer subject;
 
   /**
    * Constructs an instance.
    *
    * @param subject the subject whose limit are or would be exceeded
    */
-  public ExceedsLimitException(Profile subject) {
+  public ExceedsLimitException(LocalPlayer subject) {
     this.subject = subject;
-  }
-
-  /**
-   * Gets the subject whose limit are or would be exceeded.
-   *
-   * @return the subject
-   */
-  public Profile getSubject() {
-    return subject;
   }
 
   @Override
   public String getLocalizedMessage() {
-    return msg.getString("exception.exceeds-limit", subject.getName().or(subject.getUniqueId().toString()));
+    return msg.getString("exception.exceeds-limit", subject.getName());
   }
 }

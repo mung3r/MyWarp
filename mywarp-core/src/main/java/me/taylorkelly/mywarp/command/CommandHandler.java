@@ -46,10 +46,10 @@ import me.taylorkelly.mywarp.command.parametric.provider.BaseModule;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.Platform;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
 import me.taylorkelly.mywarp.platform.capability.LimitCapability;
 import me.taylorkelly.mywarp.platform.capability.TimerCapability;
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.service.economy.EconomyService;
 import me.taylorkelly.mywarp.service.economy.FeeType;
 import me.taylorkelly.mywarp.service.limit.LimitService;
@@ -94,7 +94,7 @@ public final class CommandHandler {
    * @param platform the platform commands will hook into
    */
   public CommandHandler(MyWarp myWarp, Platform platform) {
-    this(myWarp, platform, myWarp.getWarpManager(), myWarp.getAuthorizationResolver(), platform.getProfileCache(),
+    this(myWarp, platform, myWarp.getWarpManager(), myWarp.getAuthorizationResolver(), platform.getPlayerNameResolver(),
          platform.getGame(), myWarp.getTeleportHandler());
   }
 
@@ -105,18 +105,18 @@ public final class CommandHandler {
    * @param platform              the Platform commands will use
    * @param warpManager           the WarpManager commands will use
    * @param authorizationResolver the AuthorizationResolver commands will use
-   * @param profileCache          the ProfileCache commands will use
+   * @param playerNameResolver    the PlayerNameResolver commands will use
    * @param game                  the Game commands will use
    * @param teleportHandler       the TeleportHandler commands will use
    */
   private CommandHandler(MyWarp myWarp, Platform platform, WarpManager warpManager,
-                         AuthorizationResolver authorizationResolver, ProfileCache profileCache, Game game,
+                         AuthorizationResolver authorizationResolver, PlayerNameResolver playerNameResolver, Game game,
                          TeleportHandler teleportHandler) {
 
     // create injector and register modules
     Injector injector = Intake.createInjector();
     injector.install(
-        new BaseModule(warpManager, authorizationResolver, profileCache, game, this, platform.getDataFolder()));
+        new BaseModule(warpManager, authorizationResolver, playerNameResolver, game, this, platform.getDataFolder()));
     injector.install(new PrimitivesModule());
     injector.install(new ProvidedModule());
 
@@ -161,12 +161,14 @@ public final class CommandHandler {
     //register commands
     dispatcher =
         new CommandGraph().builder(builder).commands().registerMethods(usageCmd).group("warp", "mywarp", "mw")
-            .registerMethods(defaultUsageCmd)
-            .registerMethods(new InformativeCommands(warpManager, limitService.orNull(), authorizationResolver, game))
+            .registerMethods(defaultUsageCmd).registerMethods(
+            new InformativeCommands(warpManager, limitService.orNull(), authorizationResolver, game,
+                                    playerNameResolver))
             .registerMethods(new ManagementCommands(warpManager, limitService.orNull()))
-            .registerMethods(new SocialCommands(game, profileCache, limitService.orNull()))
+            .registerMethods(new SocialCommands(game, playerNameResolver, limitService.orNull()))
             .registerMethods(new UtilityCommands(myWarp, this, basic, game)).group("import", "migrate")
-            .registerMethods(new ImportCommands(warpManager, platform, profileCache, game)).graph().getDispatcher();
+            .registerMethods(new ImportCommands(warpManager, platform, playerNameResolver, game)).graph()
+            .getDispatcher();
   }
 
   /**

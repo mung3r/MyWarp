@@ -48,8 +48,10 @@ CREATE TABLE "${schema}"."warp" (
   ON DELETE CASCADE
   ON UPDATE CASCADE
 );
-CREATE INDEX "warp_player_id_idx" ON "${schema}"."warp" ("player_id");
-CREATE INDEX "warp_world_id_idx" ON "${schema}"."warp" ("world_id");
+CREATE INDEX "warp_player_id_idx"
+  ON "${schema}"."warp" ("player_id");
+CREATE INDEX "warp_world_id_idx"
+  ON "${schema}"."warp" ("world_id");
 
 -- -----------------------------------------------------
 -- Table "${schema}"."warp_player_map"
@@ -67,8 +69,10 @@ CREATE TABLE "${schema}"."warp_player_map" (
   ON DELETE CASCADE
   ON UPDATE CASCADE
 );
-CREATE INDEX "warp_player_map_player_id_idx" ON "${schema}"."warp_player_map" ("player_id");
-CREATE INDEX "warp_player_map_warp_id_idx" ON "${schema}"."warp_player_map" ("warp_id");
+CREATE INDEX "warp_player_map_player_id_idx"
+  ON "${schema}"."warp_player_map" ("player_id");
+CREATE INDEX "warp_player_map_warp_id_idx"
+  ON "${schema}"."warp_player_map" ("warp_id");
 
 -- -----------------------------------------------------
 -- Table "${schema}"."warp_group_map"
@@ -86,5 +90,7 @@ CREATE TABLE "${schema}"."warp_group_map" (
   ON DELETE CASCADE
   ON UPDATE CASCADE
 );
-CREATE INDEX "warp_group_map_group_id_idx" ON "${schema}"."warp_group_map" ("group_id");
-CREATE INDEX "warp_group_map_warp_id_idx" ON "${schema}"."warp_group_map" ("warp_id");
+CREATE INDEX "warp_group_map_group_id_idx"
+  ON "${schema}"."warp_group_map" ("group_id");
+CREATE INDEX "warp_group_map_warp_id_idx"
+  ON "${schema}"."warp_group_map" ("warp_id");

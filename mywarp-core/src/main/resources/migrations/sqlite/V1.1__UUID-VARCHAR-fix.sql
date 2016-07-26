@@ -1,7 +1,8 @@
 -- -----------------------------------------------------
 -- Table "player"
 -- -----------------------------------------------------
-ALTER TABLE "player" RENAME TO "tmp_player";
+ALTER TABLE "player"
+  RENAME TO "tmp_player";
 CREATE TABLE "player" (
   "player_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL CHECK ("player_id" >= 0),
   "uuid"      VARCHAR(36)                       NOT NULL,
@@ -18,7 +19,8 @@ DROP TABLE "tmp_player";
 -- -----------------------------------------------------
 -- Table "world"
 -- -----------------------------------------------------
-ALTER TABLE "world" RENAME TO "tmp_world";
+ALTER TABLE "world"
+  RENAME TO "tmp_world";
 CREATE TABLE "world" (
   "world_id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL CHECK ("world_id" >= 0),
   "uuid"     VARCHAR(36)                       NOT NULL,

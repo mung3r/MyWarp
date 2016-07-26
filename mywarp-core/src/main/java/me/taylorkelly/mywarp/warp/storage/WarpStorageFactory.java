@@ -22,7 +22,6 @@ package me.taylorkelly.mywarp.warp.storage;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.warp.storage.generated.Tables;
 
 import org.flywaydb.core.Flyway;
@@ -50,41 +49,39 @@ public class WarpStorageFactory {
   /**
    * Creates a new {@code WarpStorage} to the given {@code DataSource}.
    *
-   * <p>Use {@link #createInitialized(DataSource, ConnectionConfiguration, ProfileCache)} to create an initialized
+   * <p>Use {@link #createInitialized(DataSource, ConnectionConfiguration)} to create an initialized
    * {@code WarpStorage} that guarantees existence of MyWarp's table structure.</p>
    *
-   * @param dataSource   the DataSource
-   * @param config       the config
-   * @param profileCache the ProfileService used by the created {@code WarpStorage} to resolve stored profiles
+   * @param dataSource the DataSource
+   * @param config     the config
    * @return the {@code WarpStorage}
    * @throws StorageInitializationException if a database error occurs or the underling database management system is
    *                                        not supported
    */
-  public static WarpStorage create(DataSource dataSource, ConnectionConfiguration config, ProfileCache profileCache)
+  public static WarpStorage create(DataSource dataSource, ConnectionConfiguration config)
       throws StorageInitializationException {
     SQLDialect dialect = config.getDialect();
     if (!SUPPORTED_DIALECTS.contains(dialect)) {
       throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
     }
-    return createRelationalWarpStorage(config.getDialect(), createSettings(config), dataSource, profileCache);
+    return createRelationalWarpStorage(config.getDialect(), createSettings(config), dataSource);
   }
 
   /**
    * Creates a new initialized {@code WarpStorage} to the given {@code DataSource}, attempting to create or update
    * MyWarp's table structure if necessary.
    *
-   * <p>Use {@link #create(DataSource, ConnectionConfiguration, ProfileCache)} to create a {@code WarpStorage} that does
+   * <p>Use {@link #create(DataSource, ConnectionConfiguration)} to create a {@code WarpStorage} that does
    * not create or update the table structure.</p>
    *
-   * @param dataSource   the DataSource
-   * @param config       the config
-   * @param profileCache the ProfileService used by the created {@code WarpStorage} to resolve stored profiles
+   * @param dataSource the DataSource
+   * @param config     the config
    * @return the {@code WarpStorage}
    * @throws StorageInitializationException if a database error occurs, the underling database management system is not
    *                                        supported or initialization of MyWarp's table structure fails
    */
-  public static WarpStorage createInitialized(DataSource dataSource, ConnectionConfiguration config,
-                                              ProfileCache profileCache) throws StorageInitializationException {
+  public static WarpStorage createInitialized(DataSource dataSource, ConnectionConfiguration config)
+      throws StorageInitializationException {
     SQLDialect dialect = config.getDialect();
     if (!SUPPORTED_DIALECTS.contains(dialect)) {
       throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
@@ -108,13 +105,12 @@ public class WarpStorageFactory {
       throw new StorageInitializationException("Failed to execute migration process.", e);
     }
 
-    return createRelationalWarpStorage(dialect, createSettings(config), dataSource, profileCache);
+    return createRelationalWarpStorage(dialect, createSettings(config), dataSource);
   }
 
   private static RelationalWarpStorage createRelationalWarpStorage(SQLDialect dialect, Settings settings,
-                                                                   DataSource dataSource, ProfileCache profileCache) {
-    return new RelationalWarpStorage(new DefaultConfiguration().set(dialect).set(settings).set(dataSource),
-                                     profileCache);
+                                                                   DataSource dataSource) {
+    return new RelationalWarpStorage(new DefaultConfiguration().set(dialect).set(settings).set(dataSource));
   }
 
   private static Settings createSettings(ConnectionConfiguration config) {

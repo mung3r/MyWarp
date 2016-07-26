@@ -25,17 +25,18 @@ import com.google.common.base.Optional;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.capability.TimerCapability;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.service.teleport.TeleportService;
 import me.taylorkelly.mywarp.service.teleport.TimerTeleportService;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
 
+import java.util.UUID;
+
 /**
  * A warmup that teleports a player to a warp when done.
  */
-public class WarpWarmup extends AbortableTimerAction<Profile> {
+public class WarpWarmup extends AbortableTimerAction<UUID> {
 
   private static final int ALLOWED_DISTANCE = 2;
 
@@ -59,7 +60,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
    */
   public WarpWarmup(LocalPlayer player, Warp warp, Game game, TeleportService teleportService,
                     TimerCapability capability) {
-    super(player.getProfile());
+    super(player.getUniqueId());
     this.warp = warp;
     this.game = game;
     this.teleportService = teleportService;
@@ -70,7 +71,7 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
 
   @Override
   public void run() {
-    Optional<LocalPlayer> optionalPlayer = game.getPlayer(getTimedSuject().getUniqueId());
+    Optional<LocalPlayer> optionalPlayer = game.getPlayer(getTimedSuject());
     if (!optionalPlayer.isPresent()) {
       return;
     }
@@ -80,13 +81,13 @@ public class WarpWarmup extends AbortableTimerAction<Profile> {
     if (teleportService.teleport(player, warp).isPositionModified()) {
       Duration duration = capability.getDuration(player, WarpCooldown.class);
       capability
-          .start(player.getProfile(), duration, new WarpCooldown(player, game, capability.notifyOnCooldownFinish()));
+          .start(player.getUniqueId(), duration, new WarpCooldown(player, game, capability.notifyOnCooldownFinish()));
     }
   }
 
   @Override
   public boolean abort() {
-    Optional<LocalPlayer> player = game.getPlayer(getTimedSuject().getUniqueId());
+    Optional<LocalPlayer> player = game.getPlayer(getTimedSuject());
     // player is not online, but might re-login so the timer continues
     return player.isPresent() && (abortOnMove(player.get()) || abortOnDamage(player.get()));
   }

@@ -28,7 +28,6 @@ import com.google.common.eventbus.EventBus;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
 import me.taylorkelly.mywarp.warp.event.WarpAdditionEvent;
@@ -38,6 +37,8 @@ import me.taylorkelly.mywarp.warp.event.WarpGroupInvitesEvent;
 import me.taylorkelly.mywarp.warp.event.WarpInvitesEvent;
 import me.taylorkelly.mywarp.warp.event.WarpPlayerInvitesEvent;
 import me.taylorkelly.mywarp.warp.event.WarpUpdateEvent;
+
+import java.util.UUID;
 
 /**
  * Fires events for all warps managed by it. Functional calls are all delegated to an underling WarpManager as required
@@ -128,9 +129,9 @@ public class EventfulWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public void invitePlayer(Profile player) {
-      super.invitePlayer(player);
-      eventBus.post(new WarpPlayerInvitesEvent(this, WarpInvitesEvent.InvitationStatus.INVITE, player));
+    public void invitePlayer(UUID uniqueId) {
+      super.invitePlayer(uniqueId);
+      eventBus.post(new WarpPlayerInvitesEvent(this, WarpInvitesEvent.InvitationStatus.INVITE, uniqueId));
 
     }
 
@@ -142,15 +143,15 @@ public class EventfulWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public void uninvitePlayer(Profile player) {
-      super.uninvitePlayer(player);
-      eventBus.post(new WarpPlayerInvitesEvent(this, WarpInvitesEvent.InvitationStatus.UNINVITE, player));
+    public void uninvitePlayer(UUID uniqueId) {
+      super.uninvitePlayer(uniqueId);
+      eventBus.post(new WarpPlayerInvitesEvent(this, WarpInvitesEvent.InvitationStatus.UNINVITE, uniqueId));
 
     }
 
     @Override
-    public void setCreator(Profile creator) {
-      super.setCreator(creator);
+    public void setCreator(UUID uniqueId) {
+      super.setCreator(uniqueId);
       eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.CREATOR));
 
     }

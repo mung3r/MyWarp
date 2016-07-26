@@ -104,10 +104,9 @@ public final class MyWarp {
     WarpStorage warpStorage;
 
     warpStorage =
-        new AsyncWritingWarpStorage(WarpStorageFactory
-                                        .createInitialized(dataService.getDataSource(), connectionConfiguration,
-                                                           platform.getProfileCache()),
-                                    dataService.getExecutorService());
+        new AsyncWritingWarpStorage(
+            WarpStorageFactory.createInitialized(dataService.getDataSource(), connectionConfiguration),
+            dataService.getExecutorService());
 
     EventBus eventBus = new EventBus();
 

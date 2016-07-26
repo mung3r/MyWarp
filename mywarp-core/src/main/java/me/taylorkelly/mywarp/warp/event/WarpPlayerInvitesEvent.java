@@ -19,36 +19,37 @@
 
 package me.taylorkelly.mywarp.warp.event;
 
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.warp.Warp;
+
+import java.util.UUID;
 
 /**
  * Indicates that a player was invited to or uninvited from a Warp.
  */
 public class WarpPlayerInvitesEvent extends WarpInvitesEvent {
 
-  private final Profile profile;
+  private final UUID uniqueId;
 
   /**
-   * Constructs this event for the given Warp, indicating that the player of the given Profile now has the given
-   * InvitationStatus.
+   * Constructs this event for the given Warp, indicating that the player with the given unique identifier now has the
+   * given InvitationStatus.
    *
    * @param warp             the warp
    * @param invitationStatus the InvitationStatus of the player
-   * @param profile          the Profile of the player
+   * @param uniqueId         the unique identifier of the player
    */
-  public WarpPlayerInvitesEvent(Warp warp, InvitationStatus invitationStatus, Profile profile) {
+  public WarpPlayerInvitesEvent(Warp warp, InvitationStatus invitationStatus, UUID uniqueId) {
     super(warp, invitationStatus);
-    this.profile = profile;
+    this.uniqueId = uniqueId;
   }
 
   /**
-   * Gets the profile of the player.
+   * Gets the unique identifier of the player.
    *
-   * @return the profile
+   * @return the unique identifer
    */
-  public Profile getProfile() {
-    return profile;
+  public UUID getUniqueId() {
+    return uniqueId;
   }
 
 }

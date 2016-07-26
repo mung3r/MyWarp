@@ -27,9 +27,7 @@ import com.google.common.collect.ForwardingObject;
 
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
-import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
 
@@ -101,13 +99,8 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public boolean isCreator(LocalPlayer player) {
-      return delegate().isCreator(player);
-    }
-
-    @Override
-    public boolean isCreator(Profile profile) {
-      return delegate().isCreator(profile);
+    public boolean isCreator(UUID uniqueId) {
+      return delegate().isCreator(uniqueId);
     }
 
     @Override
@@ -116,13 +109,8 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public boolean isPlayerInvited(LocalPlayer player) {
-      return delegate().isPlayerInvited(player);
-    }
-
-    @Override
-    public boolean isPlayerInvited(Profile profile) {
-      return delegate().isPlayerInvited(profile);
+    public boolean isPlayerInvited(UUID uniqueId) {
+      return delegate().isPlayerInvited(uniqueId);
     }
 
     @Override
@@ -136,8 +124,8 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public void invitePlayer(Profile player) {
-      delegate().invitePlayer(player);
+    public void invitePlayer(UUID uniqueId) {
+      delegate().invitePlayer(uniqueId);
     }
 
     @Override
@@ -146,8 +134,8 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public void uninvitePlayer(Profile player) {
-      delegate().uninvitePlayer(player);
+    public void uninvitePlayer(UUID uniqueId) {
+      delegate().uninvitePlayer(uniqueId);
     }
 
     @Override
@@ -156,13 +144,13 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public Profile getCreator() {
+    public UUID getCreator() {
       return delegate().getCreator();
     }
 
     @Override
-    public void setCreator(Profile creator) {
-      delegate().setCreator(creator);
+    public void setCreator(UUID uniqueId) {
+      delegate().setCreator(uniqueId);
     }
 
     @Override
@@ -171,7 +159,7 @@ abstract class ForwardingWarpManager extends ForwardingObject implements WarpMan
     }
 
     @Override
-    public Set<Profile> getInvitedPlayers() {
+    public Set<UUID> getInvitedPlayers() {
       return delegate().getInvitedPlayers();
     }
 

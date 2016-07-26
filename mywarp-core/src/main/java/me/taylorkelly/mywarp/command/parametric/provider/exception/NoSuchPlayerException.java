@@ -21,8 +21,9 @@ package me.taylorkelly.mywarp.command.parametric.provider.exception;
 
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
+
+import java.util.UUID;
 
 /**
  * Thrown when the given input does not match an online {@link LocalPlayer}.
@@ -34,10 +35,11 @@ public class NoSuchPlayerException extends NonMatchingInputException {
   /**
    * Creates an instance.
    *
-   * @param profile the profile of the Player
+   * @param uniqueId the unique identifier of the Player
    */
-  public NoSuchPlayerException(Profile profile) {
-    this(profile.getName().or(profile.getUniqueId().toString()));
+  //REVIEW it might be better if instead the name of the player would be given, if possible
+  public NoSuchPlayerException(UUID uniqueId) {
+    this(uniqueId.toString());
   }
 
   /**

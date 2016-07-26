@@ -107,7 +107,7 @@ public class AssetsPrinter {
         public boolean isAffectedWorld(UUID worldIdentifier) {
           return true;
         }
-      }, manager.filter(WarpUtils.isCreator(creator.getProfile())));
+      }, manager.filter(WarpUtils.isCreator(creator.getUniqueId())));
     }
 
     for (Entry<Limit, Collection<Warp>> entry : index.entrySet()) {

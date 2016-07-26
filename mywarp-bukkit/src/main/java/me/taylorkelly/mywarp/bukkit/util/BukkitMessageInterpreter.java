@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.bukkit.util;
 
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -105,17 +104,6 @@ public class BukkitMessageInterpreter {
     if (element instanceof Actor) {
       builder.append(ChatColor.ITALIC);
       builder.append(((Actor) element).getName());
-
-      builder.append(resolveStyle(lastStyle));
-      return this;
-    }
-
-    // Profile
-    if (element instanceof Profile) {
-      Profile profile = (Profile) element;
-
-      builder.append(ChatColor.ITALIC);
-      builder.append(profile.getName().or(profile.getUniqueId().toString()));
 
       builder.append(resolveStyle(lastStyle));
       return this;

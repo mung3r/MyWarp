@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.platform;
 
 import com.google.common.base.Optional;
 
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
 import me.taylorkelly.mywarp.warp.storage.RelationalDataService;
 
@@ -55,11 +54,11 @@ public interface Platform {
   Settings getSettings();
 
   /**
-   * Gets the {@link ProfileCache} as implemented by this Platform.
+   * Gets the {@link PlayerNameResolver} as implemented by this Platform.
    *
-   * @return the {@code ProfileCache}
+   * @return the {@code PlayerNameResolver}
    */
-  ProfileCache getProfileCache();
+  PlayerNameResolver getPlayerNameResolver();
 
   /**
    * Gets an Optional with the instance of the given class or {@link Optional#absent()} if this Platform is unable to

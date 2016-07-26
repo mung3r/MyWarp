@@ -30,8 +30,6 @@ import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.Settings;
-import me.taylorkelly.mywarp.platform.profile.Profile;
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -55,7 +53,6 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
   private final AcceptancePromptFactory acceptancePromptFactory;
   private final WelcomeEditorFactory welcomeEditorFactory;
   private final GroupResolver groupResolver;
-  private final ProfileCache profileCache;
 
   /**
    * Creates an instance that references the given {@code player}.
@@ -64,17 +61,14 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
    * @param acceptancePromptFactory the factory to create warp acceptance conversations
    * @param welcomeEditorFactory    the factory to create welcome message editor conversations
    * @param groupResolver           the group resolver
-   * @param profileCache            the configured profile cache
    * @param settings                the configured settings
    */
   BukkitPlayer(Player player, AcceptancePromptFactory acceptancePromptFactory,
-               WelcomeEditorFactory welcomeEditorFactory, GroupResolver groupResolver, ProfileCache profileCache,
-               Settings settings) {
+               WelcomeEditorFactory welcomeEditorFactory, GroupResolver groupResolver, Settings settings) {
     super(player, settings);
     this.acceptancePromptFactory = acceptancePromptFactory;
     this.welcomeEditorFactory = welcomeEditorFactory;
     this.groupResolver = groupResolver;
-    this.profileCache = profileCache;
   }
 
   @Override
@@ -85,11 +79,6 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
   @Override
   public UUID getUniqueId() {
     return getWrapped().getUniqueId();
-  }
-
-  @Override
-  public Profile getProfile() {
-    return profileCache.getByUniqueId(getWrapped().getUniqueId());
   }
 
   @Override

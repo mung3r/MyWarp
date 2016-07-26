@@ -34,6 +34,7 @@ import com.sk89q.intake.util.auth.AuthorizationException;
 import me.taylorkelly.mywarp.command.parametric.annotation.Billable;
 import me.taylorkelly.mywarp.command.parametric.annotation.Viewable;
 import me.taylorkelly.mywarp.command.parametric.namespace.IllegalCommandSenderException;
+import me.taylorkelly.mywarp.command.util.CommandUtil;
 import me.taylorkelly.mywarp.command.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.command.util.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.command.util.printer.InfoPrinter;
@@ -41,6 +42,7 @@ import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.service.economy.FeeType;
 import me.taylorkelly.mywarp.service.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
@@ -60,13 +62,14 @@ import javax.annotation.Nullable;
 /**
  * Bundles commands that provide information about existing Warps.
  */
-final class InformativeCommands {
+public final class InformativeCommands {
 
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final AuthorizationResolver authorizationResolver;
   private final WarpManager warpManager;
   private final Game game;
+  private final PlayerNameResolver playerNameResolver;
   @Nullable
   private final LimitService limitService;
 
@@ -77,13 +80,15 @@ final class InformativeCommands {
    * @param limitService          the LimitService used by commands - may be {@code null} if no limit service is used
    * @param authorizationResolver the AuthorizationResolver used by commands
    * @param game                  the Game used by commands
+   * @param playerNameResolver    the PlayerNameResolver used by commands
    */
   InformativeCommands(WarpManager warpManager, @Nullable LimitService limitService,
-                      AuthorizationResolver authorizationResolver, Game game) {
+                      AuthorizationResolver authorizationResolver, Game game, PlayerNameResolver playerNameResolver) {
     this.authorizationResolver = authorizationResolver;
     this.warpManager = warpManager;
     this.game = game;
     this.limitService = limitService;
+    this.playerNameResolver = playerNameResolver;
   }
 
   @Command(aliases = {"assets", "limits"}, desc = "assets.description", help = "assets.help")
@@ -120,7 +125,7 @@ final class InformativeCommands {
       predicates.add(new Predicate<Warp>() {
         @Override
         public boolean apply(Warp input) {
-          com.google.common.base.Optional<String> creatorName = input.getCreator().getName();
+          com.google.common.base.Optional<String> creatorName = playerNameResolver.getByUniqueId(input.getCreator());
           return creatorName.isPresent() && StringUtils.containsIgnoreCase(creatorName.get(), creator);
         }
       });
@@ -182,10 +187,10 @@ final class InformativeCommands {
         builder.append(msg.getString("list.by"));
         builder.append(" ");
 
-        if (actor instanceof LocalPlayer && input.isCreator((LocalPlayer) actor)) {
+        if (actor instanceof LocalPlayer && input.isCreator(((LocalPlayer) actor).getUniqueId())) {
           builder.append(msg.getString("list.you"));
         } else {
-          builder.append(input.getCreator());
+          builder.append(CommandUtil.toName(input.getCreator(), playerNameResolver));
         }
         return builder.build();
       }
@@ -200,6 +205,6 @@ final class InformativeCommands {
   @Require("mywarp.cmd.info")
   @Billable(FeeType.INFO)
   public void info(Actor actor, @Viewable Warp warp) {
-    new InfoPrinter(warp, authorizationResolver, game).print(actor);
+    new InfoPrinter(warp, authorizationResolver, game, playerNameResolver).print(actor);
   }
 }

@@ -29,7 +29,6 @@ import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
@@ -48,10 +47,10 @@ class SimpleWarp extends AbstractWarp {
 
   private final String name;
   private final Date creationDate;
-  private final Set<Profile> invitedPlayers;
+  private final Set<UUID> invitedPlayers;
   private final Set<String> invitedGroups;
 
-  private volatile Profile creator;
+  private volatile UUID creator;
   private volatile Warp.Type type;
   private volatile UUID worldIdentifier;
   private volatile Vector3d position;
@@ -76,7 +75,7 @@ class SimpleWarp extends AbstractWarp {
    * @throws NullPointerException     if one of the given values is {@code null}
    * @throws IllegalArgumentException if {@code invitedPlayers} or {@code invitedGroups} contains {@code null}
    */
-  SimpleWarp(String name, Date creationDate, Set<Profile> invitedPlayers, Set<String> invitedGroups, Profile creator,
+  SimpleWarp(String name, Date creationDate, Set<UUID> invitedPlayers, Set<String> invitedGroups, UUID creator,
              Type type, UUID worldIdentifier, Vector3d position, Vector2f rotation, int visits, String welcomeMessage) {
     this.name = checkNotNull(name);
     this.creationDate = checkNotNull(creationDate);
@@ -131,8 +130,8 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public void invitePlayer(Profile player) {
-    invitedPlayers.add(player);
+  public void invitePlayer(UUID uniqueId) {
+    invitedPlayers.add(uniqueId);
   }
 
   @Override
@@ -142,18 +141,18 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public void uninvitePlayer(Profile player) {
-    invitedPlayers.remove(player);
+  public void uninvitePlayer(UUID uniqueId) {
+    invitedPlayers.remove(uniqueId);
   }
 
   @Override
-  public Profile getCreator() {
+  public UUID getCreator() {
     return creator;
   }
 
   @Override
-  public void setCreator(Profile creator) {
-    this.creator = creator;
+  public void setCreator(UUID uniqueId) {
+    this.creator = uniqueId;
   }
 
   @Override
@@ -162,7 +161,7 @@ class SimpleWarp extends AbstractWarp {
   }
 
   @Override
-  public Set<Profile> getInvitedPlayers() {
+  public Set<UUID> getInvitedPlayers() {
     return Collections.unmodifiableSet(invitedPlayers);
   }
 

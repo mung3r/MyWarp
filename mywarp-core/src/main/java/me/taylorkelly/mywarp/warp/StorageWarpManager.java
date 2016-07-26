@@ -27,10 +27,11 @@ import com.google.common.collect.Iterables;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.profile.Profile;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
 import me.taylorkelly.mywarp.warp.storage.WarpStorage;
+
+import java.util.UUID;
 
 /**
  * Stores all warps managed in a {@link WarpStorage}. Calls are all delegated to an underling WarpManager as required by
@@ -116,9 +117,9 @@ public class StorageWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public void invitePlayer(Profile player) {
-      super.invitePlayer(player);
-      storage.invitePlayer(delegate(), player);
+    public void invitePlayer(UUID uniqueId) {
+      super.invitePlayer(uniqueId);
+      storage.invitePlayer(delegate(), uniqueId);
 
     }
 
@@ -130,15 +131,15 @@ public class StorageWarpManager extends ForwardingWarpManager {
     }
 
     @Override
-    public void uninvitePlayer(Profile player) {
-      super.uninvitePlayer(player);
-      storage.uninvitePlayer(delegate(), player);
+    public void uninvitePlayer(UUID uniqueId) {
+      super.uninvitePlayer(uniqueId);
+      storage.uninvitePlayer(delegate(), uniqueId);
 
     }
 
     @Override
-    public void setCreator(Profile creator) {
-      super.setCreator(creator);
+    public void setCreator(UUID uniqueId) {
+      super.setCreator(uniqueId);
       storage.updateCreator(delegate());
 
     }

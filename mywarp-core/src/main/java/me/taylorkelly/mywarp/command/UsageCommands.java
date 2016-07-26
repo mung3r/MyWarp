@@ -32,7 +32,7 @@ import me.taylorkelly.mywarp.warp.Warp;
 /**
  * Bundles usage commands.
  */
-final class UsageCommands {
+public final class UsageCommands {
 
   private static final String CMD_TO_PERMISSION = "mywarp.cmd.to";
 

@@ -31,7 +31,7 @@ import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.Platform;
-import me.taylorkelly.mywarp.platform.profile.ProfileCache;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
@@ -56,27 +56,27 @@ import java.util.concurrent.Callable;
 /**
  * Bundles commands used to import Warps from an external source.
  */
-final class ImportCommands {
+public final class ImportCommands {
 
   private static final String IMPORT_PERMISSION = "mywarp.cmd.import";
   private static final DynamicMessages msg = new DynamicMessages(CommandHandler.RESOURCE_BUNDLE_NAME);
 
   private final Platform platform;
-  private final ProfileCache profileCache;
+  private final PlayerNameResolver playerNameResolver;
   private final WarpManager warpManager;
   private final Game game;
 
   /**
    * Creates an instance.
    *
-   * @param warpManager  the Warpmanager used by commands
-   * @param platform     the Platform used by commands
-   * @param profileCache the ProfileCache used by commands
-   * @param game         the Game used by commands
+   * @param warpManager        the WarpManager used by commands
+   * @param platform           the Platform used by commands
+   * @param playerNameResolver the PlayerNameResolver used by commands
+   * @param game               the Game used by commands
    */
-  ImportCommands(WarpManager warpManager, Platform platform, ProfileCache profileCache, Game game) {
+  ImportCommands(WarpManager warpManager, Platform platform, PlayerNameResolver playerNameResolver, Game game) {
     this.platform = platform;
-    this.profileCache = profileCache;
+    this.playerNameResolver = playerNameResolver;
     this.warpManager = warpManager;
     this.game = game;
   }
@@ -86,7 +86,7 @@ final class ImportCommands {
   public void current(Actor actor, ConnectionConfiguration configuration) throws CommandException {
     RelationalDataService dataService = platform.createDataService(configuration);
     try {
-      start(actor, dataService, WarpStorageFactory.create(dataService.getDataSource(), configuration, profileCache));
+      start(actor, dataService, WarpStorageFactory.create(dataService.getDataSource(), configuration));
     } catch (StorageInitializationException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     } catch (SQLException e) {
@@ -101,7 +101,7 @@ final class ImportCommands {
     try {
       RelationalDataService dataService = platform.createDataService(configuration);
       start(actor, dataService,
-            new LegacyWarpSource(dataService.getDataSource(), configuration, "warpTable", profileCache,
+            new LegacyWarpSource(dataService.getDataSource(), configuration, "warpTable", playerNameResolver,
                                  getWorldSnapshot()));
     } catch (SQLException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
@@ -117,8 +117,8 @@ final class ImportCommands {
         new ConnectionConfiguration(dsn).setSchema(schema).setUser(user).setPassword(password);
     try {
       RelationalDataService dataService = platform.createDataService(config);
-      start(actor, dataService,
-            new LegacyWarpSource(dataService.getDataSource(), config, tableName, profileCache, getWorldSnapshot()));
+      start(actor, dataService, new LegacyWarpSource(dataService.getDataSource(), config, tableName, playerNameResolver,
+                                                     getWorldSnapshot()));
     } catch (SQLException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     }
