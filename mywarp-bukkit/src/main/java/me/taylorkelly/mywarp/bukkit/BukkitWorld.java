@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Optional;
 
@@ -28,6 +29,8 @@ import me.taylorkelly.mywarp.util.BlockFace;
 import me.taylorkelly.mywarp.util.NoSuchWorldException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
@@ -64,6 +67,16 @@ public class BukkitWorld implements LocalWorld {
   @Override
   public boolean isNotFullHeight(Vector3i position) {
     return MaterialInfo.isNotFullHeight(MyWarpPlugin.getMaterial(this, position));
+  }
+
+  @Override
+  public void playTeleportEffect(Vector3d position) {
+    Location loc = new Location(getLoadedWorld(), position.getX(), position.getY(), position.getZ());
+
+    // play the smoke effect
+    for (int i = 0; i < 4; i++) {
+      getLoadedWorld().playEffect(loc, Effect.SMOKE, 4);
+    }
   }
 
   @Override

@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp.platform;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Optional;
 
@@ -62,6 +63,15 @@ public interface LocalWorld {
    * @return an Optional containing the Sign
    */
   Optional<Sign> getAttachedSign(Vector3i position, BlockFace blockFace);
+
+  /**
+   * Plays the teleport effect at the given {@code position} within this world.
+   *
+   * <p>The teleport effect is a normal smoke effect applied four times.</p>
+   *
+   * @param position the position where the effect should be played
+   */
+  void playTeleportEffect(Vector3d position);
 
   /**
    * Returns whether the block at the given {@code position} within this world is smaller than a single full block.

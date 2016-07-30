@@ -33,7 +33,6 @@ import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.warp.Warp;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
@@ -167,11 +166,6 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
     int blockZ = bukkitLoc.getBlockZ();
     if (!bukkitLoc.getWorld().isChunkLoaded(blockX, blockZ)) {
       bukkitLoc.getWorld().refreshChunk(blockX, blockZ);
-    }
-
-    // play the smoke effect
-    for (int i = 0; i < 4; i++) {
-      bukkitLoc.getWorld().playEffect(bukkitLoc, Effect.SMOKE, 4);
     }
 
     // teleport the entity

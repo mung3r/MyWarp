@@ -37,13 +37,6 @@ public interface Settings {
   boolean isControlWorldAccess();
 
   /**
-   * Returns whether currently unloaded chunks should be loaded manually teleport an entity there.
-   *
-   * @return {@code true} if chunks should be loaded before
-   */
-  boolean isPreloadChunks();
-
-  /**
    * Returns whether horses ridden by the entity who is teleported, should be teleported too.
    *
    * @return {@code true} if ridden horses should be teleported too

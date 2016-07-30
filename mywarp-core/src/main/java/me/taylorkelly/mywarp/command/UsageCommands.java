@@ -60,7 +60,7 @@ public final class UsageCommands {
    *
    * @see Default
    */
-  class DefaultUsageCommand {
+  public class DefaultUsageCommand {
 
     @Command(aliases = {"to"}, desc = "warp-to.description")
     @Default(defaultOnly = true)

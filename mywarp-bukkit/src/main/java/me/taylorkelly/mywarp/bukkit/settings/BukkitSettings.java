@@ -116,11 +116,6 @@ public class BukkitSettings implements Settings {
   }
 
   @Override
-  public boolean isPreloadChunks() {
-    return config.getBoolean("settings.preloadChunks");
-  }
-
-  @Override
   public boolean isShowTeleportEffect() {
     return config.getBoolean("settings.showTeleportEffect");
   }

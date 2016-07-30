@@ -1,6 +1,5 @@
 settings:
   controlWorldAccess: false
-  preloadChunks: false
   teleportHorses: true
   showTeleportEffect: true
 storage:

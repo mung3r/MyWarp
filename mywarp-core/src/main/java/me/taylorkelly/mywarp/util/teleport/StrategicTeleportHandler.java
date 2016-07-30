@@ -77,6 +77,10 @@ public class StrategicTeleportHandler implements TeleportHandler {
     }
 
     Vector3d validPosition = optional.get();
+
+    if (settings.isShowTeleportEffect()) {
+      world.playTeleportEffect(entity.getPosition());
+    }
     entity.teleport(world, validPosition, rotation, settings.isTeleportTamedHorses());
 
     if (!validPosition.equals(position)) {
