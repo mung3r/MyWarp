@@ -320,6 +320,11 @@ public class BukkitSettings implements Settings {
     return config;
   }
 
+  @Override
+  public boolean isInformPlayerOnInvitation() {
+    return config.getBoolean("settings.informPlayersOnInvitation");
+  }
+
   /**
    * Gets the default FeeBundle.
    *

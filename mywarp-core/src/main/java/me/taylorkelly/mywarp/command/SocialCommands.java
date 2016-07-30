@@ -237,11 +237,6 @@ public final class SocialCommands {
       actor.sendMessage(
           Message.builder().append(Message.Style.INFO).append(msg.getString("invite.public", warp.getName())).build());
     }
-
-    Optional<LocalPlayer> invitedPlayer = game.getPlayer(invitee);
-    if (invitedPlayer.isPresent()) {
-      invitedPlayer.get().sendMessage(msg.getString("invite.player.player-invited", actor.getName(), warp.getName()));
-    }
   }
 
   @Command(aliases = {"uninvite"}, desc = "uninvite.description", help = "uninvite.help")
@@ -288,11 +283,6 @@ public final class SocialCommands {
       actor.sendMessage(
           Message.builder().append(Message.Style.INFO).append(msg.getString("uninvite.public", warp.getName()))
               .build());
-    }
-
-    Optional<LocalPlayer> invitedPlayer = game.getPlayer(uninvitee);
-    if (invitedPlayer.isPresent()) {
-      invitedPlayer.get().sendMessage(msg.getString("uninvite.player.player-uninvited", warp.getName()));
     }
   }
 

@@ -85,4 +85,11 @@ public interface Settings {
    */
   ConnectionConfiguration getRelationalStorageConfiguration();
 
+  /**
+   * Returns whether players should be informed when they are invited to or uninvited from warps.
+   *
+   * @return {@code true} if players should be informed
+   */
+  boolean isInformPlayerOnInvitation();
+
 }

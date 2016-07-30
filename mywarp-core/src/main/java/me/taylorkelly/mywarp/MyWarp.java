@@ -32,6 +32,7 @@ import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.platform.capability.EconomyCapability;
 import me.taylorkelly.mywarp.platform.capability.PositionValidationCapability;
 import me.taylorkelly.mywarp.sign.WarpSignHandler;
+import me.taylorkelly.mywarp.util.InvitationInformationListener;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.teleport.LegacyPositionCorrectionCapability;
@@ -61,6 +62,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.annotation.Nullable;
+
 /**
  * Entry point and container for a working MyWarp implementation.
  *
@@ -80,6 +83,9 @@ public final class MyWarp {
 
   private CommandHandler commandHandler;
   private TeleportHandler teleportHandler;
+
+  @Nullable
+  private InvitationInformationListener invitationInformationListener;
 
   /**
    * Creates a MyWarp instance that runs on the given {@code platform}.
@@ -148,6 +154,9 @@ public final class MyWarp {
     // cleanup
     warpManager.clear();
     DynamicMessages.clearCache();
+    if (invitationInformationListener != null) {
+      eventBus.unregister(invitationInformationListener);
+    }
 
     //notify platform
     platform.onCoreReload();
@@ -242,6 +251,11 @@ public final class MyWarp {
     teleportHandler = new StrategicTeleportHandler(getSettings(), validationStrategies);
 
     commandHandler = new CommandHandler(this, platform);
+
+    if (getSettings().isInformPlayerOnInvitation()) {
+      invitationInformationListener = new InvitationInformationListener(getGame());
+      eventBus.register(invitationInformationListener);
+    }
   }
 
   private void loadWarps() {
