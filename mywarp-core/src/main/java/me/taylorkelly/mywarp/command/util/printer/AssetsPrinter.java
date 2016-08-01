@@ -179,7 +179,7 @@ public class AssetsPrinter {
   private Message.Builder warpLimitCount(Message.Builder builder, int warpCount, int limitMaximum) {
     builder.append("(");
     builder.append(warpCount);
-    if (0 < limitMaximum) {
+    if (0 <= limitMaximum) {
       builder.append('/').append(limitMaximum);
     }
     builder.append(")");

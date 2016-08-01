@@ -74,6 +74,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.Nullable;
+
 /**
  * Handles MyWarp's commands.
  */
@@ -148,10 +150,10 @@ public final class CommandHandler {
     }
 
     //...limit service
-    Optional<LimitService> limitService = Optional.absent();
+    @Nullable LimitService limitService = null;
     Optional<LimitCapability> limitOptional = platform.getCapability(LimitCapability.class);
     if (limitOptional.isPresent()) {
-      limitService = Optional.of(new LimitService(limitOptional.get(), warpManager));
+      limitService = new LimitService(limitOptional.get(), warpManager);
     }
 
     //create some command instances (used below)
@@ -162,10 +164,9 @@ public final class CommandHandler {
     dispatcher =
         new CommandGraph().builder(builder).commands().registerMethods(usageCmd).group("warp", "mywarp", "mw")
             .registerMethods(defaultUsageCmd).registerMethods(
-            new InformativeCommands(warpManager, limitService.orNull(), authorizationResolver, game,
-                                    playerNameResolver))
-            .registerMethods(new ManagementCommands(warpManager, limitService.orNull()))
-            .registerMethods(new SocialCommands(game, playerNameResolver, limitService.orNull()))
+            new InformativeCommands(warpManager, limitService, authorizationResolver, game, playerNameResolver))
+            .registerMethods(new ManagementCommands(warpManager, limitService))
+            .registerMethods(new SocialCommands(game, playerNameResolver, limitService))
             .registerMethods(new UtilityCommands(myWarp, this, basic, game)).group("import", "migrate")
             .registerMethods(new ImportCommands(warpManager, platform, playerNameResolver, game)).graph()
             .getDispatcher();
