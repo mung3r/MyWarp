@@ -5,14 +5,60 @@ Starting with version 3, this project adheres to [Semantic Versioning](http://se
 
 Unreleased APIs may change dramatically between `SNAPSHOT` versions.
 
+## [Unreleased]
 
-## [3.0-beta-3]
+### Changed:
+* [[#64](https://github.com/TheE/MyWarp/issues/64)] - Decouple authentication from the Warp implementation
+* Update JOOQ 3.6.4
+* Make `DynamicMessages` use the bundled localizations by default
+* Commands are handled by the core, not by individual implementations
+* Rename `WarpRemovalEvent` to `WarpDeleteEvent`
+* Decouple teleport from Warp implementation
+* [[#74](https://github.com/TheE/MyWarp/issues/74)] - Update Intake to 4.0
+* Construct `MyWarp` with a factory rather than a constructor
+* [Bukkit] Overhaul Bukkit implementation
+* Unify naming of internal components, refactor most classes into a cleaner package structure
+* Make the core handled teleporting of tamed horses
+* [[#108](https://github.com/TheE/MyWarp/issues/108)] - Update FlyWay to 4.0.2
+* [[#86](https://github.com/TheE/MyWarp/issues/86)] - Replace EulerDirection with Vectors
+* Require at least Java8 to build (not to run) MyWarp
+* [[#84](https://github.com/TheE/MyWarp/issues/84)] - Warp signs are handled completely by the core
+* `Warp.Type` can no longer be converted to a `Limit.Type`
+* Remove Profiles, player UUIDs need to be converted to names by using the cache directly
+* Players are informed about invitations, including group invitations, via events (can be turned of in the configuration)
+* [Bukkit] Use the new official Vault repository
+
+
+### Added:
+* [[#77](https://github.com/TheE/MyWarp/issues/77)] - Support for golden and iron pressure plates
+* [[#65](https://github.com/TheE/MyWarp/issues/65), [#85](https://github.com/TheE/MyWarp/issues/85)] - Platforms can define optional capabilities to be used by the core if available; implement economy, limits, teleport safety and timers are such capabilites
+* [[#83](https://github.com/TheE/MyWarp/issues/83)] - Tab complete for Warps, online and offline players
+* [[#109](https://github.com/TheE/MyWarp/issues/109)] - Automatically download localizations from crowdin upon each build
+
+### Fixed:
+* [[#81](https://github.com/TheE/MyWarp/issues/81), [#78](https://github.com/TheE/MyWarp/issues/78)] - Warmup does not abort on damage or move
+* Use the default Locale if the player's client returns an invalid one
+* [[#98](https://github.com/TheE/MyWarp/issues/98)] - Profile cache updates in main thread cause server lag
+* [[#99](https://github.com/TheE/MyWarp/issues/99)] - Checks for warp-creation do not work
+* [[#106](https://github.com/TheE/MyWarp/issues/106)] - Command exception without cause results in NPE
+* [Bukkit] [[#104](https://github.com/TheE/MyWarp/issues/104)] - Creation of plugin folder fails
+* Matching warp names results in `IndexOutOfBoundException`
+* [[#102](https://github.com/TheE/MyWarp/issues/102)] - Malformatted value bundles can crash the server
+* Teleport effect setting has no effect
+* `/warp assets` does not display limits of zero
+* [[#92](https://github.com/TheE/MyWarp/issues/92)] - Insufficient permissions for the `/warp` command
+* [Bukkit] [[#105](https://github.com/TheE/MyWarp/issues/105)] - Warps only shown on DynMap until restart
+
+### Removed:
+* [Bukkit] Chunk pre-loading can no longer be disabled
+
+## [3.0-beta-3] - 2015-09-06
 
 ### Fixed:
 * [[#58](https://github.com/TheE/MyWarp/issues/58)] - Connection timeout on MySQL
 * [[#53](https://github.com/TheE/MyWarp/issues/53)] - Ownership change of a single warp affects all warps of a player
 
-## [3.0-beta-2]
+## [3.0-beta-2] - 2015-06-29
 
 ### Added:
 * Added delay to the sever shutdown if changes are still written to the database
@@ -44,7 +90,7 @@ Unreleased APIs may change dramatically between `SNAPSHOT` versions.
 ### Removed:
 * [Bukkit] Removed support for SQLite 3.7.x witch is bundled by CraftBukkit.
 
-## [3.0-beta-1]
+## [3.0-beta-1] - 2015-04-23
 
 ### Added:
 * Added support for UUIDs
