@@ -19,11 +19,8 @@
 
 package me.taylorkelly.mywarp.service.limit;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.capability.LimitCapability;
@@ -32,13 +29,10 @@ import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Nullable;
+import java.util.*;
+
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Resolves and evaluates warp creation limits for individual players on a set of worlds.
@@ -75,7 +69,7 @@ public class LimitService {
                                         boolean evaluateParents) {
     if (!type.canDisobey(creator, world)) {
 
-      Iterable<Warp> filteredWarps = warpManager.filter(WarpUtils.isCreator(creator.getUniqueId()));
+      Iterable<Warp> filteredWarps = warpManager.getAll(WarpUtils.isCreator(creator.getUniqueId()));
       Limit limit = capability.getLimit(creator, world);
 
       List<Limit.Type> limitsToCheck = Lists.newArrayList(type);
@@ -103,14 +97,14 @@ public class LimitService {
 
   /**
    * Gets all warps created by the given player mapped under the applicable {@link Limit}. <p/> The map is guaranteed to
-   * include all limit that effect the given player. If no warp exists for a certain limit, {@code get(Limit)} will
+   * include all limit that effect the given player. If no warp exists for a certain limit, {@code getByName(Limit)} will
    * return an empty list.
    *
    * @param creator the creator
    * @return a Map with all matching warps
    */
   public Map<Limit, List<Warp>> getWarpsPerLimit(LocalPlayer creator) {
-    Collection<Warp> warps = warpManager.filter(WarpUtils.isCreator(creator.getUniqueId()));
+    Collection<Warp> warps = warpManager.getAll(WarpUtils.isCreator(creator.getUniqueId()));
     Map<Limit, List<Warp>> ret = new HashMap<Limit, List<Warp>>();
 
     for (Limit limit : capability.getEffectiveLimits(creator)) {

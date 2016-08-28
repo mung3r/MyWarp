@@ -24,7 +24,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.Platform;
@@ -38,31 +37,20 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.teleport.LegacyPositionCorrectionCapability;
 import me.taylorkelly.mywarp.util.teleport.StrategicTeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
-import me.taylorkelly.mywarp.warp.EventfulWarpManager;
-import me.taylorkelly.mywarp.warp.MemoryWarpManager;
-import me.taylorkelly.mywarp.warp.StorageWarpManager;
-import me.taylorkelly.mywarp.warp.Warp;
-import me.taylorkelly.mywarp.warp.WarpManager;
+import me.taylorkelly.mywarp.warp.*;
 import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 import me.taylorkelly.mywarp.warp.authorization.PermissionAuthorizationStrategy;
 import me.taylorkelly.mywarp.warp.authorization.WarpPropertiesAuthorizationStrategy;
 import me.taylorkelly.mywarp.warp.authorization.WorldAccessAuthorizationStrategy;
-import me.taylorkelly.mywarp.warp.storage.AsyncWritingWarpStorage;
-import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
-import me.taylorkelly.mywarp.warp.storage.RelationalDataService;
-import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
-import me.taylorkelly.mywarp.warp.storage.WarpStorage;
-import me.taylorkelly.mywarp.warp.storage.WarpStorageFactory;
-
+import me.taylorkelly.mywarp.warp.storage.*;
 import org.slf4j.Logger;
 
+import javax.annotation.Nullable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
-
-import javax.annotation.Nullable;
 
 /**
  * Entry point and container for a working MyWarp implementation.
@@ -77,7 +65,7 @@ public final class MyWarp {
   private final Platform platform;
   private final RelationalDataService dataService;
   private final WarpStorage warpStorage;
-  private final WarpManager warpManager;
+  private final PopulatableWarpManager warpManager;
   private final EventBus eventBus;
   private final AuthorizationResolver authorizationResolver;
 
@@ -116,9 +104,9 @@ public final class MyWarp {
 
     EventBus eventBus = new EventBus();
 
-    WarpManager
+    PopulatableWarpManager
         warpManager =
-        new EventfulWarpManager(new StorageWarpManager(new MemoryWarpManager(), warpStorage), eventBus);
+            new EventfulPopulatableWarpManager(new StoragePopulatableWarpManager(new MemoryPopulatableWarpManager(), warpStorage), eventBus);
 
     AuthorizationResolver
         authorizationResolver =
@@ -133,7 +121,7 @@ public final class MyWarp {
     return myWarp;
   }
 
-  private MyWarp(Platform platform, RelationalDataService dataService, WarpStorage warpStorage, WarpManager warpManager,
+  private MyWarp(Platform platform, RelationalDataService dataService, WarpStorage warpStorage, PopulatableWarpManager warpManager,
                  EventBus eventBus, AuthorizationResolver authorizationResolver) {
     this.platform = platform;
     this.dataService = dataService;
@@ -146,13 +134,13 @@ public final class MyWarp {
   /**
    * Reloads MyWarp.
    *
-   * <p>Reloading will remove all loaded warps from the active WarpManager and reload them from the configured storage.
+   * <p>Reloading will remove all loaded warps from the active PopulatableWarpManager and reload them from the configured storage.
    * Interaction models (commands, signs...) are newly created. The platform running MyWarp may reload the user
    * configuration from disk.</p>
    */
   public void reload() {
     // cleanup
-    warpManager.clear();
+    warpManager.depopulate();
     DynamicMessages.clearCache();
     if (invitationInformationListener != null) {
       eventBus.unregister(invitationInformationListener);
@@ -230,7 +218,7 @@ public final class MyWarp {
   }
 
   /**
-   * Creates a new WarpSignHandler that hooks into the WarpManager configured for this MyWarp instance.
+   * Creates a new WarpSignHandler that hooks into the PopulatableWarpManager configured for this MyWarp instance.
    *
    * @return a new WarpSign instance
    */
@@ -276,7 +264,7 @@ public final class MyWarp {
         //notify platform
         platform.onWarpsLoaded();
 
-        log.info("{} warps loaded.", warpManager.getSize());
+        log.info("{} warps loaded.", warpManager.getNumberOfAllWarps());
       }
 
       @Override

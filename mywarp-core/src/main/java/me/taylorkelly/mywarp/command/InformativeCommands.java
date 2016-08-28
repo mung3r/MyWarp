@@ -30,7 +30,6 @@ import com.sk89q.intake.parametric.annotation.Optional;
 import com.sk89q.intake.parametric.annotation.Range;
 import com.sk89q.intake.parametric.annotation.Switch;
 import com.sk89q.intake.util.auth.AuthorizationException;
-
 import me.taylorkelly.mywarp.command.parametric.annotation.Billable;
 import me.taylorkelly.mywarp.command.parametric.annotation.Viewable;
 import me.taylorkelly.mywarp.command.parametric.namespace.IllegalCommandSenderException;
@@ -38,11 +37,7 @@ import me.taylorkelly.mywarp.command.util.CommandUtil;
 import me.taylorkelly.mywarp.command.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.command.util.printer.AssetsPrinter;
 import me.taylorkelly.mywarp.command.util.printer.InfoPrinter;
-import me.taylorkelly.mywarp.platform.Actor;
-import me.taylorkelly.mywarp.platform.Game;
-import me.taylorkelly.mywarp.platform.LocalEntity;
-import me.taylorkelly.mywarp.platform.LocalPlayer;
-import me.taylorkelly.mywarp.platform.PlayerNameResolver;
+import me.taylorkelly.mywarp.platform.*;
 import me.taylorkelly.mywarp.service.economy.FeeType;
 import me.taylorkelly.mywarp.service.limit.LimitService;
 import me.taylorkelly.mywarp.util.Message;
@@ -50,14 +45,12 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
-
 import org.apache.commons.lang.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 /**
  * Bundles commands that provide information about existing Warps.
@@ -171,7 +164,7 @@ public final class InformativeCommands {
 
     //query the warps
     //noinspection RedundantTypeArguments
-    List<Warp> warps = Ordering.natural().sortedCopy(warpManager.filter(Predicates.<Warp>and(predicates)));
+    List<Warp> warps = Ordering.natural().sortedCopy(warpManager.getAll(Predicates.<Warp>and(predicates)));
 
     Function<Warp, Message> mapping = new Function<Warp, Message>() {
 

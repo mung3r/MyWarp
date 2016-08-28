@@ -19,12 +19,9 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Predicates;
 import com.google.common.primitives.Ints;
-
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.settings.BukkitSettings;
 import me.taylorkelly.mywarp.bukkit.util.conversation.AcceptancePromptFactory;
@@ -42,7 +39,6 @@ import me.taylorkelly.mywarp.util.i18n.FolderSourcedControl;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
-
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -59,17 +55,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapCommonAPI;
 import org.slf4j.Logger;
 
+import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
-import javax.annotation.Nullable;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * The MyWarp plugin singleton when running on Bukkit.
@@ -183,7 +176,7 @@ public final class MyWarpPlugin extends JavaPlugin {
         marker =
             new DynmapMarker((DynmapCommonAPI) dynmap, this, getSettings(), WarpUtils.isType(Warp.Type.PUBLIC),
                              platform.getGame());
-        marker.addMarker(myWarp.getWarpManager().filter(Predicates.<Warp>alwaysTrue()));
+        marker.addMarker(myWarp.getWarpManager().getAll(Predicates.<Warp>alwaysTrue()));
         myWarp.getEventBus().register(marker);
       } else {
         log.error("Failed to hook into Dynmap. Disabling Dynmap support.");

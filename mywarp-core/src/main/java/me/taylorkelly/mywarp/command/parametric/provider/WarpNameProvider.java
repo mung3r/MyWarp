@@ -22,7 +22,6 @@ package me.taylorkelly.mywarp.command.parametric.provider;
 import com.sk89q.intake.argument.ArgumentException;
 import com.sk89q.intake.argument.CommandArgs;
 import com.sk89q.intake.parametric.ProvisionException;
-
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.command.parametric.provider.exception.InvalidWarpNameException;
 import me.taylorkelly.mywarp.command.parametric.provider.exception.InvalidWarpNameException.Reason;
@@ -51,7 +50,7 @@ class WarpNameProvider extends NonSuggestiveProvider<String> {
       throws ArgumentException, ProvisionException {
     String name = arguments.next();
 
-    if (warpManager.contains(name)) {
+    if (warpManager.containsByName(name)) {
       throw new InvalidWarpNameException(name, Reason.ALREADY_EXISTS);
     }
     if (name.length() > WarpUtils.MAX_NAME_LENGTH) {

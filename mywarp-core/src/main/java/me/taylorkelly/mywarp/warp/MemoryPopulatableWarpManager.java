@@ -19,8 +19,6 @@
 
 package me.taylorkelly.mywarp.warp;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -29,17 +27,54 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * Stores managed warp in memory.
  */
-public class MemoryWarpManager implements WarpManager {
+public class MemoryPopulatableWarpManager implements PopulatableWarpManager {
 
   private final Map<String, Warp> warpMap = new HashMap<String, Warp>();
 
   @Override
   public void add(Warp warp) {
-    checkArgument(!contains(warp.getName()), "A warp with the name '%s' does already exist!", warp.getName());
+    checkArgument(!containsByName(warp.getName()), "A warp with the name '%s' does already exist!", warp.getName());
     warpMap.put(warp.getName(), warp);
+  }
+
+  @Override
+  public void remove(Warp warp) {
+    warpMap.remove(warp.getName());
+  }
+
+  @Override
+  public boolean contains(Warp warp) {
+    return containsByName(warp.getName());
+  }
+
+  @Override
+  public boolean containsByName(String name) {
+    return warpMap.containsKey(name);
+  }
+
+  @Override
+  public Optional<Warp> getByName(String name) {
+    return Optional.fromNullable(warpMap.get(name));
+  }
+
+  @Override
+  public Collection<Warp> getAll(Predicate<Warp> predicate) {
+    return Collections2.filter(warpMap.values(), predicate);
+  }
+
+  @Override
+  public int getNumberOfWarps(Predicate<Warp> predicate) {
+    return getAll(predicate).size();
+  }
+
+  @Override
+  public int getNumberOfAllWarps() {
+    return warpMap.size();
   }
 
   @Override
@@ -50,32 +85,7 @@ public class MemoryWarpManager implements WarpManager {
   }
 
   @Override
-  public void remove(Warp warp) {
-    warpMap.remove(warp.getName());
-  }
-
-  @Override
-  public void clear() {
+  public void depopulate() {
     warpMap.clear();
-  }
-
-  @Override
-  public int getSize() {
-    return warpMap.size();
-  }
-
-  @Override
-  public boolean contains(String name) {
-    return warpMap.containsKey(name);
-  }
-
-  @Override
-  public Optional<Warp> get(String name) {
-    return Optional.fromNullable(warpMap.get(name));
-  }
-
-  @Override
-  public Collection<Warp> filter(Predicate<Warp> predicate) {
-    return Collections2.filter(warpMap.values(), predicate);
   }
 }

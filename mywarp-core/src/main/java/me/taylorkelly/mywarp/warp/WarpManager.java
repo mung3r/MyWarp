@@ -25,69 +25,71 @@ import com.google.common.base.Predicate;
 import java.util.Collection;
 
 /**
- * Manages Warps and provides utility methods to get information based on the Warps managed by it.
+ * Holds and manages Warps.
+ *
+ * <p>Implementations must guarantee that at any given time, the name of each Warp that an instance contains, is
+ * unique. This guarantees that getting a Warp by name works as expected.</p>
  */
 public interface WarpManager {
-
   /**
-   * Adds the given Warp to this manager.
+   * Adds the given {@code warp} to this manager.
    *
-   * @param warp the Warp
+   * @param warp the Warp to add
+   * @throws IllegalArgumentException if this manager already contains a warp with the name of the given one
    */
   void add(Warp warp);
 
   /**
-   * Populates this manager with the given Warps. Unlike {@link #add(Warp)} this method must only be used to populate
-   * the warp manager with <i>already existing</i> warps.
+   * Removes the given {@code warp} from this manager.
    *
-   * @param warps the Warps
-   */
-  void populate(Iterable<Warp> warps);
-
-  /**
-   * Deletes the given Warp from this manager.
-   *
-   * @param warp the warp
+   * @param warp the Warp to remove
    */
   void remove(Warp warp);
 
   /**
-   * Clears this manager, removing all Warps previously managed by it. Unlike {@link #remove(Warp)} this method must
-   * only be used to <b>clear</b> the warp manager, it does not represent a removal of a warp.
+   * Checks whether this manager contains the given {@code warp}.
+   *
+   * @param warp the warp to check
+   * @return {@code true} if this manager contains the given warp
    */
-  void clear();
+  boolean contains(Warp warp);
+
+  /**
+   * Checks whether this manager contains a warp with the given {@code name}.
+   *
+   * @param name the name to check
+   * @return {@code true} if this manager contains a warp with the given name
+   */
+  boolean containsByName(String name);
+
+  /**
+   * Gets an Optional containing the Warp of the given {@code name}, if this manager contains such a Warp.
+   *
+   * @param name the name of the Warp
+   * @return an Optional containing the Warp with the given name
+   */
+  Optional<Warp> getByName(String name);
+
+  /**
+   * Gets a Collection with all Warps on this manager that fulfill the given {@code predicate}.
+   *
+   * @param predicate the predicate to fulfill
+   * @return all Warps that fulfill the Predicate
+   */
+  Collection<Warp> getAll(Predicate<Warp> predicate);
+
+  /**
+   * Gets the number of Warps managed by this manager that fulfill the given predicate.
+   *
+   * @param predicate to fulfill
+   * @return the number of Warps that fulfill the Predicate
+   */
+  int getNumberOfWarps(Predicate<Warp> predicate);
 
   /**
    * Gets the number of all Warps managed by this manger.
    *
-   * @return the total number of Warps on this manager
+   * @return the number of all Warps on this manager
    */
-  int getSize();
-
-  /**
-   * Checks whether a Warp with the given name is managed by this manager.
-   *
-   * @param name the name
-   * @return true if this manager contains a warp with this name
-   */
-  boolean contains(String name);
-
-  /**
-   * Gets an Optional containing the Warp of the given name managed by this manager, if such a Warp exists.
-   *
-   * @param name the exact name
-   * @return an Optional containing the Warp with the given name
-   */
-  Optional<Warp> get(String name);
-
-  /**
-   * Gets all Warps on this manager that fulfill the given Predicate. The returned collection is a live view, changes to
-   * one affect the other. If a live view is not needed, it may be faster to create a copy of the Warps returned by this
-   * method.
-   *
-   * @param predicate the predicate
-   * @return all Warps that fulfill the Predicate
-   */
-  Collection<Warp> filter(Predicate<Warp> predicate);
-
+  int getNumberOfAllWarps();
 }

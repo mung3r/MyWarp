@@ -22,7 +22,6 @@ package me.taylorkelly.mywarp.sign;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
-
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
@@ -41,9 +40,8 @@ import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
-import java.util.TreeSet;
-
 import javax.annotation.Nullable;
+import java.util.TreeSet;
 
 /**
  * Handles interaction with warp signs.
@@ -146,7 +144,7 @@ public class WarpSignHandler {
       return Optional.of(false);
     }
     String name = sign.getLine(WARPNAME_LINE);
-    Optional<Warp> optional = warpManager.get(name);
+    Optional<Warp> optional = warpManager.getByName(name);
 
     //validate warp existence
     if (!optional.isPresent()) {
@@ -241,7 +239,7 @@ public class WarpSignHandler {
 
     String warpName = sign.getLine(WARPNAME_LINE);
 
-    Optional<Warp> optional = warpManager.get(warpName);
+    Optional<Warp> optional = warpManager.getByName(warpName);
     if (!optional.isPresent()) {
       player.sendError(msg.getString("warp-non-existent", warpName));
       return true;

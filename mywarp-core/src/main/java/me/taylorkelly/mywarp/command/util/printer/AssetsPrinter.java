@@ -21,7 +21,6 @@ package me.taylorkelly.mywarp.command.util.printer;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
@@ -35,15 +34,9 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import javax.annotation.Nullable;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Prints a certain player's assets, showing active limit and Warps sorted to the corresponding limit.
@@ -107,7 +100,7 @@ public class AssetsPrinter {
         public boolean isAffectedWorld(UUID worldIdentifier) {
           return true;
         }
-      }, manager.filter(WarpUtils.isCreator(creator.getUniqueId())));
+      }, manager.getAll(WarpUtils.isCreator(creator.getUniqueId())));
     }
 
     for (Entry<Limit, Collection<Warp>> entry : index.entrySet()) {

@@ -26,31 +26,16 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
-
-import me.taylorkelly.mywarp.platform.Actor;
-import me.taylorkelly.mywarp.platform.Game;
-import me.taylorkelly.mywarp.platform.LocalWorld;
-import me.taylorkelly.mywarp.platform.Platform;
-import me.taylorkelly.mywarp.platform.PlayerNameResolver;
+import me.taylorkelly.mywarp.platform.*;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
-import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
-import me.taylorkelly.mywarp.warp.storage.LegacyWarpSource;
-import me.taylorkelly.mywarp.warp.storage.RelationalDataService;
-import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
-import me.taylorkelly.mywarp.warp.storage.WarpSource;
-import me.taylorkelly.mywarp.warp.storage.WarpStorageFactory;
+import me.taylorkelly.mywarp.warp.storage.*;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 /**
@@ -156,7 +141,7 @@ public final class ImportCommands {
         Set<Warp> notImportedWarps = new HashSet<Warp>();
 
         for (Warp warp : warps) {
-          if (warpManager.contains(warp.getName())) {
+          if (warpManager.containsByName(warp.getName())) {
             // skip the warp
             notImportedWarps.add(warp);
             continue;

@@ -19,8 +19,6 @@
 
 package me.taylorkelly.mywarp.command.parametric.provider;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -29,7 +27,6 @@ import com.sk89q.intake.argument.CommandArgs;
 import com.sk89q.intake.argument.MissingArgumentException;
 import com.sk89q.intake.argument.Namespace;
 import com.sk89q.intake.parametric.Provider;
-
 import me.taylorkelly.mywarp.command.parametric.provider.exception.NoSuchWarpException;
 import me.taylorkelly.mywarp.command.util.Matches;
 import me.taylorkelly.mywarp.platform.Actor;
@@ -39,6 +36,8 @@ import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Provides {@link Warp} instances.
@@ -81,7 +80,7 @@ abstract class WarpProvider implements Provider<Warp> {
 
     Matches<Warp>
         matches =
-        Matches.from(warpManager.filter(isValid(arguments.getNamespace()))).withStringFunction(nameFunction())
+            Matches.from(warpManager.getAll(isValid(arguments.getNamespace()))).withStringFunction(nameFunction())
             .withValueComparator(new Warp.PopularityComparator()).forQuery(query);
     Optional<Warp> exactMatch = matches.getExactMatch();
 
@@ -93,7 +92,7 @@ abstract class WarpProvider implements Provider<Warp> {
 
   @Override
   public List<String> getSuggestions(String prefix, Namespace locals) {
-    return Lists.transform(Matches.from(warpManager.filter(isValid(locals))).withStringFunction(nameFunction())
+    return Lists.transform(Matches.from(warpManager.getAll(isValid(locals))).withStringFunction(nameFunction())
                                .withValueComparator(new Warp.PopularityComparator()).forQuery(prefix)
                                .getSortedMatches(), nameFunction());
   }

@@ -23,53 +23,52 @@ import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-
+import com.google.common.eventbus.EventBus;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler.TeleportStatus;
-import me.taylorkelly.mywarp.warp.storage.WarpStorage;
+import me.taylorkelly.mywarp.warp.event.*;
 
 import java.util.UUID;
 
 /**
- * Stores all warps managed in a {@link WarpStorage}. Calls are all delegated to an underling WarpManager as required by
- * the decorator pattern, storage is implemented on top.
+ * Fires events for all warps managed by it. Functional calls are all delegated to an underling PopulatableWarpManager as required
+ * by the decorator pattern, events are implemented on top.
+ *
+ * <p>Events are dispatched in the {@link EventBus} given when initializing this PopulatableWarpManager. Individual warps fire
+ * {@link WarpEvent}s and the manager itself fires {@link WarpAdditionEvent}s and {@link
+ * me.taylorkelly.mywarp.warp.event.WarpDeletionEvent}s when Warps are added to or removed from it. Handlers that want
+ * to listen to such events need to register themselves on the EventBus.</p>
  */
-public class StorageWarpManager extends ForwardingWarpManager {
+public class EventfulPopulatableWarpManager extends ForwardingPopulatableWarpManager {
 
-  private final WarpManager delegate;
-  private final WarpStorage storage;
+  private final PopulatableWarpManager delegate;
+  private final EventBus eventBus;
 
   /**
-   * Creates an instance that stores warps in the given {@code storage}. Further management is delegated to the given
-   * WarpManager.
+   * Creates an instance that posts events on the given {@code eventBus}. Further management is delegated to the given
+   * PopulatableWarpManager.
    *
-   * @param delegate the WarpManager to delegate calls to
-   * @param storage  the WarpStorage that stores Warps managed by this manager
+   * @param delegate the PopulatableWarpManager to delegate calls to
+   * @param eventBus the EventBus on which this manager will post events
    */
-  public StorageWarpManager(WarpManager delegate, WarpStorage storage) {
+  public EventfulPopulatableWarpManager(PopulatableWarpManager delegate, EventBus eventBus) {
     this.delegate = delegate;
-    this.storage = storage;
+    this.eventBus = eventBus;
   }
 
   @Override
-  protected WarpManager delegate() {
+  protected PopulatableWarpManager delegate() {
     return delegate;
   }
 
   @Override
   public void add(Warp warp) {
-    warp = new PersistentWarp(warp);
+    warp = new EventfulWarp(warp);
     delegate().add(warp);
-    storage.addWarp(warp);
-  }
-
-  @Override
-  public void remove(Warp warp) {
-    delegate().remove(warp);
-    storage.removeWarp(warp);
+    eventBus.post(new WarpAdditionEvent(warp));
   }
 
   @Override
@@ -77,20 +76,26 @@ public class StorageWarpManager extends ForwardingWarpManager {
     delegate().populate(Iterables.transform(warps, new Function<Warp, Warp>() {
 
       @Override
-      public PersistentWarp apply(Warp input) {
-        return new PersistentWarp(input);
+      public EventfulWarp apply(Warp input) {
+        return new EventfulWarp(input);
       }
     }));
   }
 
+  @Override
+  public void remove(Warp warp) {
+    delegate().remove(warp);
+    eventBus.post(new WarpDeletionEvent(warp));
+  }
+
   /**
-   * A Warp that persists its values using a {@link StorageWarpManager}.
+   * Forwards method calls to an existing Warp and fires {@link WarpEvent}s to the parent's EventBus.
    */
-  private class PersistentWarp extends ForwardingWarp {
+  private class EventfulWarp extends ForwardingWarp {
 
     private final Warp delegate;
 
-    private PersistentWarp(Warp delegate) {
+    private EventfulWarp(Warp delegate) {
       this.delegate = delegate;
     }
 
@@ -104,7 +109,7 @@ public class StorageWarpManager extends ForwardingWarpManager {
       TeleportStatus status = delegate().visit(entity, game, handler);
 
       if (status.isPositionModified()) {
-        storage.updateVisits(delegate());
+        eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.VISITS));
       }
       return status;
     }
@@ -112,55 +117,55 @@ public class StorageWarpManager extends ForwardingWarpManager {
     @Override
     public void inviteGroup(String groupId) {
       super.inviteGroup(groupId);
-      storage.inviteGroup(delegate(), groupId);
+      eventBus.post(new WarpGroupInvitesEvent(this, WarpInvitesEvent.InvitationStatus.INVITE, groupId));
 
     }
 
     @Override
     public void invitePlayer(UUID uniqueId) {
       super.invitePlayer(uniqueId);
-      storage.invitePlayer(delegate(), uniqueId);
+      eventBus.post(new WarpPlayerInvitesEvent(this, WarpInvitesEvent.InvitationStatus.INVITE, uniqueId));
 
     }
 
     @Override
     public void uninviteGroup(String groupId) {
       super.uninviteGroup(groupId);
-      storage.uninviteGroup(delegate(), groupId);
+      eventBus.post(new WarpGroupInvitesEvent(this, WarpInvitesEvent.InvitationStatus.UNINVITE, groupId));
 
     }
 
     @Override
     public void uninvitePlayer(UUID uniqueId) {
       super.uninvitePlayer(uniqueId);
-      storage.uninvitePlayer(delegate(), uniqueId);
+      eventBus.post(new WarpPlayerInvitesEvent(this, WarpInvitesEvent.InvitationStatus.UNINVITE, uniqueId));
 
     }
 
     @Override
     public void setCreator(UUID uniqueId) {
       super.setCreator(uniqueId);
-      storage.updateCreator(delegate());
+      eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.CREATOR));
 
     }
 
     @Override
     public void setLocation(LocalWorld world, Vector3d position, Vector2f rotation) {
       super.setLocation(world, position, rotation);
-      storage.updateLocation(delegate());
+      eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.LOCATION));
 
     }
 
     @Override
     public void setType(Type type) {
       super.setType(type);
-      storage.updateType(delegate());
+      eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.TYPE));
     }
 
     @Override
     public void setWelcomeMessage(String welcomeMessage) {
       super.setWelcomeMessage(welcomeMessage);
-      storage.updateWelcomeMessage(delegate());
+      eventBus.post(new WarpUpdateEvent(this, WarpUpdateEvent.UpdateType.WELCOME_MESSAGE));
     }
   }
 }
