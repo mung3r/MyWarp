@@ -57,12 +57,12 @@ class PlayerProvider implements Provider<LocalPlayer> {
   @Nullable
   @Override
   public LocalPlayer get(CommandArgs arguments, List<? extends Annotation> modifiers)
-      throws ArgumentException, ProvisionException {
+          throws ArgumentException, ProvisionException {
     String query = arguments.next();
 
     Optional<LocalPlayer>
-        playerOptional =
-        Matches.from(game.getPlayers()).withStringFunction(nameFunction()).forQuery(query).getExactMatch();
+            playerOptional =
+            Matches.from(game.getPlayers()).withStringFunction(nameFunction()).forQuery(query).getExactMatch();
 
     if (!playerOptional.isPresent()) {
       throw new NoSuchPlayerException(query);

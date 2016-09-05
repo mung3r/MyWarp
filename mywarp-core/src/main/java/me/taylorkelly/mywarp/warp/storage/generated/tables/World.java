@@ -68,8 +68,8 @@ public class World extends TableImpl<Record> {
    * The column <code>mywarp.world.world_id</code>.
    */
   public final TableField<Record, UInteger>
-      WORLD_ID =
-      createField("world_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          WORLD_ID =
+          createField("world_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.world.uuid</code>.

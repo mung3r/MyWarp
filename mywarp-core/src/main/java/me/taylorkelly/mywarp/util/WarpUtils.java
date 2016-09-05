@@ -56,8 +56,8 @@ public final class WarpUtils {
     // this method might not be 100% exact (considering leap seconds), but
     // within the current Java API there are no alternatives
     long
-        daysSinceCreation =
-        TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - warp.getCreationDate().getTime());
+            daysSinceCreation =
+            TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - warp.getCreationDate().getTime());
     if (daysSinceCreation <= 0) {
       daysSinceCreation = 1;
     }
@@ -157,7 +157,7 @@ public final class WarpUtils {
   private static Map<String, String> warpTokens(Warp warp, Map<String, String> variables) {
     variables.put("creator", warp.getCreator().toString()); //TODO not good
     variables.put("loc", "(" + warp.getPosition().getFloorX() + ", " + warp.getPosition().getFloorY() + ", " + warp
-        .getPosition().getFloorZ() + ")");
+            .getPosition().getFloorZ() + ")");
     variables.put("visits", Integer.toString(warp.getVisits()));
     variables.put("warp", warp.getName());
     return variables;

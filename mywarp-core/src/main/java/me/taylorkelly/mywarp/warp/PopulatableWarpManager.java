@@ -23,7 +23,7 @@ package me.taylorkelly.mywarp.warp;
 /**
  * A WarpManager that can be populated and depopulated without invoking {@link #add(Warp)} or
  * {@link #remove(Warp)}.
- * <p>
+ *
  * <p>Implementations can define additional behavior for both methods (e.g. saving the warp in a database) and
  * callers can choose to ignore this behavior if needed b using the methods provided by this interface.</p>
  */
@@ -33,8 +33,8 @@ public interface PopulatableWarpManager extends WarpManager {
    * Populates this manager with the given Warps.
    *
    * @param warps the Warps
-   * @throws IllegalArgumentException if this manager already contains a Warp with a name equal to one
-   *                                  of the given Warps
+   * @throws IllegalArgumentException if this manager already contains a Warp with a name equal to one of the given
+   *                                  Warps
    */
   void populate(Iterable<Warp> warps);
 

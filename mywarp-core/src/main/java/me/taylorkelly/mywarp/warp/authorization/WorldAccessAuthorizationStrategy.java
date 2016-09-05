@@ -19,9 +19,12 @@
 
 package me.taylorkelly.mywarp.warp.authorization;
 
+import com.google.common.base.Optional;
+
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.Settings;
 import me.taylorkelly.mywarp.warp.Warp;
 
@@ -36,8 +39,8 @@ public class WorldAccessAuthorizationStrategy extends ForwardingAuthorizationStr
   private final Settings settings;
 
   /**
-   * Creates an instance using the given {@code Settings}. If the tested user may visit the world of the tested warp in
-   * question, further tests are delegated to the given {@code AuthorizationStrategy}.
+   * Creates an instance using the given {@code Settings}. If the tested user may visit the world of the tested warp
+   * in question, further tests are delegated to the given {@code AuthorizationStrategy}.
    *
    * @param delegate the strategy to delegate further tests to
    * @param game     the configured Game instance
@@ -78,7 +81,11 @@ public class WorldAccessAuthorizationStrategy extends ForwardingAuthorizationStr
    * @return {@code true} if the warp's world may not be accessed
    */
   private boolean cannotAccessWorld(Actor actor, Warp warp) {
-    return settings.isControlWorldAccess() && !actor
-        .hasPermission("mywarp.world-access." + warp.getWorld(game).getName());
+    if (!settings.isControlWorldAccess()) {
+      return false;
+    }
+    //if the Warp's world does not exist, the Actor cannot access it
+    Optional<LocalWorld> world = game.getWorld(warp.getWorldIdentifier());
+    return world.isPresent() && !actor.hasPermission("mywarp.world-access." + world.get().getName());
   }
 }

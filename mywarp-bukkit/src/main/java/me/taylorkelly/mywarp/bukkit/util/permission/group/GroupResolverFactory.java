@@ -48,8 +48,8 @@ public final class GroupResolverFactory {
     // check for Vault first!
     try {
       RegisteredServiceProvider<Permission>
-          permissionProvider =
-          Bukkit.getServicesManager().getRegistration(Permission.class);
+              permissionProvider =
+              Bukkit.getServicesManager().getRegistration(Permission.class);
       if (permissionProvider != null) {
         log.info("Using Vault for group support.");
         return new VaultResolver(permissionProvider.getProvider());

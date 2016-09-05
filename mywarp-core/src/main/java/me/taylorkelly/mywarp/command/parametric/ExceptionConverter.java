@@ -33,7 +33,7 @@ import com.sk89q.intake.parametric.handler.ExceptionMatch;
 
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.command.parametric.namespace.IllegalCommandSenderException;
-import me.taylorkelly.mywarp.util.NoSuchWorldException;
+import me.taylorkelly.mywarp.command.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 
 import javax.annotation.Nullable;
@@ -62,10 +62,10 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   public void convert(MissingArgumentException e, ExceptionContext context) throws InvalidUsageException {
     if (e.getParameter() != null) {
       throw new InvalidUsageException(msg.getString("exception.argument.missing", e.getParameter().getName()),
-                                      context.getCommand(), context.getAliasStack(), false, e);
+              context.getCommand(), context.getAliasStack(), false, e);
     }
     throw new InvalidUsageException(msg.getString("exception.argument.missing.unknown"), context.getCommand(),
-                                    context.getAliasStack(), false, e);
+            context.getAliasStack(), false, e);
   }
 
   /**
@@ -78,7 +78,7 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   @ExceptionMatch
   public void convert(UnusedArgumentException e, ExceptionContext context) throws InvalidUsageException {
     throw new InvalidUsageException(msg.getString("exception.argument.unused", e.getUnconsumed()), context.getCommand(),
-                                    context.getAliasStack(), false, e);
+            context.getAliasStack(), false, e);
   }
 
   /**
@@ -91,7 +91,7 @@ public class ExceptionConverter extends ExceptionConverterHelper {
    */
   @ExceptionMatch
   public void convert(ArgumentException e, ExceptionContext context)
-      throws InvocationCommandException, CommandException {
+          throws InvocationCommandException, CommandException {
     @Nullable Throwable cause = e.getCause();
     argumentExceptionConverter.convert(cause != null ? cause : e, context);
   }
@@ -108,7 +108,7 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   @ExceptionMatch
   public void convert(MissingFlagValueException e, ExceptionContext context) throws InvalidUsageException {
     throw new InvalidUsageException(msg.getString("exception.flag.value.missing", e.getFlagName()),
-                                    context.getCommand(), context.getAliasStack(), true, e);
+            context.getCommand(), context.getAliasStack(), true, e);
   }
 
   /**
@@ -121,7 +121,7 @@ public class ExceptionConverter extends ExceptionConverterHelper {
   @ExceptionMatch
   public void convert(AlreadyPresentFlagException e, ExceptionContext context) throws InvalidUsageException {
     throw new InvalidUsageException(msg.getString("exception.flag.value.already-given", e.getFlagName()),
-                                    context.getCommand(), context.getAliasStack(), true, e);
+            context.getCommand(), context.getAliasStack(), true, e);
   }
 
   //-- Custom
@@ -146,6 +146,6 @@ public class ExceptionConverter extends ExceptionConverterHelper {
    */
   @ExceptionMatch
   public void convert(NoSuchWorldException e) throws CommandException {
-    throw new CommandException(msg.getString("exception.no-such-world", e.getWorldRepresentation()), e);
+    throw new CommandException(msg.getString("exception.no-such-world", e.getWorldIdentifier()), e);
   }
 }

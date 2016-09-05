@@ -68,8 +68,8 @@ public class Player extends TableImpl<Record> {
    * The column <code>mywarp.player.player_id</code>.
    */
   public final TableField<Record, UInteger>
-      PLAYER_ID =
-      createField("player_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          PLAYER_ID =
+          createField("player_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.player.uuid</code>.

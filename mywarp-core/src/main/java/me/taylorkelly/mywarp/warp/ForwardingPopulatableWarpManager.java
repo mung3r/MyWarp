@@ -24,6 +24,7 @@ import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ForwardingObject;
+
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
@@ -36,8 +37,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Forwards all method calls to another PopulatableWarpManager. Subclasses should override one or more methods to modify the
- * behavior of the backing PopulatableWarpManager as desired per the <a href="http://en.wikipedia.org/wiki/Decorator_pattern">
+ * Forwards all method calls to another PopulatableWarpManager. Subclasses should override one or more methods to modify
+ * the behavior of the backing PopulatableWarpManager as desired per the <a href="http://en.wikipedia.org/wiki/Decorator_pattern">
  * decorator pattern</a>.
  */
 abstract class ForwardingPopulatableWarpManager extends ForwardingObject implements PopulatableWarpManager {
@@ -96,8 +97,8 @@ abstract class ForwardingPopulatableWarpManager extends ForwardingObject impleme
   protected abstract PopulatableWarpManager delegate();
 
   /**
-   * Forwards all method calls to another Warp. Subclasses should override one or more methods to modify the behavior of
-   * the backing Warp as desired per the <a href="http://en.wikipedia .org/wiki/Decorator_pattern">decorator
+   * Forwards all method calls to another Warp. Subclasses should override one or more methods to modify the behavior
+   * of the backing Warp as desired per the <a href="http://en.wikipedia .org/wiki/Decorator_pattern">decorator
    * pattern</a>.
    */
   abstract class ForwardingWarp extends ForwardingObject implements Warp {
@@ -175,11 +176,6 @@ abstract class ForwardingPopulatableWarpManager extends ForwardingObject impleme
     @Override
     public String getName() {
       return delegate().getName();
-    }
-
-    @Override
-    public LocalWorld getWorld(Game game) {
-      return delegate().getWorld(game);
     }
 
     @Override

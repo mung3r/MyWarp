@@ -22,6 +22,7 @@ package me.taylorkelly.mywarp.sign;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
+
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
@@ -40,8 +41,9 @@ import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 
-import javax.annotation.Nullable;
 import java.util.TreeSet;
+
+import javax.annotation.Nullable;
 
 /**
  * Handles interaction with warp signs.

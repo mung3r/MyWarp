@@ -83,7 +83,7 @@ public class BukkitSettings implements Settings {
         ((FileConfiguration) config).save(configFile);
       } catch (IOException e) {
         log.error(String.format("Failed to save configuration to '%1$s', using build-in defaults for missing values.",
-                                configFile.getAbsolutePath()), e);
+                configFile.getAbsolutePath()), e);
       }
     }
 
@@ -102,8 +102,8 @@ public class BukkitSettings implements Settings {
         log.info("Default '{}' created successfully.", configFile.getName());
       } catch (IOException e) {
         log.error(String.format(
-            "Failed to create the configuration file ('%1$s'), using build-in defaults for all values.",
-            configFile.getAbsolutePath()), e);
+                "Failed to create the configuration file ('%1$s'), using build-in defaults for all values.",
+                configFile.getAbsolutePath()), e);
         return defaultConfiguration;
       }
     }
@@ -198,8 +198,8 @@ public class BukkitSettings implements Settings {
       @Nullable ConfigurationSection section = configuredLimits.getConfigurationSection(key);
       if (section == null) {
         log.warn(
-            "The configuration section with the key '{}' does not contain any readable values and will be ignored. Is"
-            + " your configuration file correctly formatted?", key);
+                "The configuration section with the key '{}' does not contain any readable values and will be ignored."
+                        + " Is your configuration file correctly formatted?", key);
         continue;
       }
       ret.add(LimitBundle.create(key, section));
@@ -279,8 +279,8 @@ public class BukkitSettings implements Settings {
       @Nullable ConfigurationSection section = configuredTimers.getConfigurationSection(key);
       if (section == null) {
         log.warn(
-            "The configuration section with the key '{}' does not contain any readable values and will be ignored. Is"
-            + " your configuration file correctly formatted?", key);
+                "The configuration section with the key '{}' does not contain any readable values and will be ignored."
+                        + " Is your configuration file correctly formatted?", key);
         continue;
       }
       ret.add(DurationBundle.create(key, configuredTimers.getConfigurationSection(key)));
@@ -351,8 +351,8 @@ public class BukkitSettings implements Settings {
       @Nullable ConfigurationSection section = configuredFees.getConfigurationSection(key);
       if (section == null) {
         log.warn(
-            "The configuration section with the key '{}' does not contain any readable values and will be ignored. Is"
-            + " your configuration file correctly formatted?", key);
+                "The configuration section with the key '{}' does not contain any readable values and will be ignored."
+                        + " Is your configuration file correctly formatted?", key);
         continue;
       }
       ret.add(FeeBundle.create(key, configuredFees.getConfigurationSection(key)));

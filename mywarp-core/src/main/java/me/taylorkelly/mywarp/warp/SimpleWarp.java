@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3d;
+import com.google.common.base.Optional;
 
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
@@ -94,7 +95,17 @@ class SimpleWarp extends AbstractWarp {
 
   @Override
   public TeleportHandler.TeleportStatus visit(LocalEntity entity, Game game, TeleportHandler handler) {
-    TeleportHandler.TeleportStatus status = handler.teleport(entity, getWorld(game), getPosition(), getRotation());
+    Optional<LocalWorld> worldOptional = game.getWorld(worldIdentifier);
+
+    //cancel if this warp's world is not present
+    if (!worldOptional.isPresent()) {
+      if (entity instanceof Actor) {
+        ((Actor) entity).sendError(msg.getString("no-such-world", name, worldIdentifier));
+      }
+      return TeleportHandler.TeleportStatus.NONE;
+    }
+
+    TeleportHandler.TeleportStatus status = handler.teleport(entity, worldOptional.get(), getPosition(), getRotation());
 
     //visit counter
     if (status.isPositionModified()) {
@@ -226,8 +237,8 @@ class SimpleWarp extends AbstractWarp {
   @Override
   public String toString() {
     return "SimpleWarp{" + "name='" + name + '\'' + ", creationDate=" + creationDate + ", invitedPlayers="
-           + invitedPlayers + ", invitedGroups=" + invitedGroups + ", creator=" + creator + ", type=" + type
-           + ", worldIdentifier=" + worldIdentifier + ", position=" + position + ", rotation=" + rotation + ", visits="
-           + visits + ", welcomeMessage='" + welcomeMessage + '\'' + '}';
+            + invitedPlayers + ", invitedGroups=" + invitedGroups + ", creator=" + creator + ", type=" + type
+            + ", worldIdentifier=" + worldIdentifier + ", position=" + position + ", rotation=" + rotation + ", visits="
+            + visits + ", welcomeMessage='" + welcomeMessage + '\'' + '}';
   }
 }

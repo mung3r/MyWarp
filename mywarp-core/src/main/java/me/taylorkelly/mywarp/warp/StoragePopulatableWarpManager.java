@@ -23,6 +23,7 @@ import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalEntity;
 import me.taylorkelly.mywarp.platform.LocalWorld;
@@ -33,8 +34,8 @@ import me.taylorkelly.mywarp.warp.storage.WarpStorage;
 import java.util.UUID;
 
 /**
- * Stores all warps managed in a {@link WarpStorage}. Calls are all delegated to an underling PopulatableWarpManager as required by
- * the decorator pattern, storage is implemented on top.
+ * Stores all warps managed in a {@link WarpStorage}. Calls are all delegated to an underling PopulatableWarpManager as
+ * required by the decorator pattern, storage is implemented on top.
  */
 public class StoragePopulatableWarpManager extends ForwardingPopulatableWarpManager {
 

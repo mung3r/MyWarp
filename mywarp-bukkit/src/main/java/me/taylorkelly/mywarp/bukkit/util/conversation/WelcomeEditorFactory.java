@@ -92,10 +92,11 @@ public class WelcomeEditorFactory {
       Locale locale = (Locale) context.getSessionData(Locale.class);
 
       Message
-          message =
-          Message.builder().append(
-              msg.getString("welcome-message.enter-message", locale, warp.getName(), REMOVE_SEQUENCE, ESCAPE_SEQUENCE,
-                            MyWarpPlugin.CONVERSATION_TIMEOUT)).build();
+              message =
+              Message.builder().append(
+                      msg.getString("welcome-message.enter-message", locale, warp.getName(), REMOVE_SEQUENCE,
+                              ESCAPE_SEQUENCE,
+                              MyWarpPlugin.CONVERSATION_TIMEOUT)).build();
 
       return BukkitMessageInterpreter.interpret(message);
     }
@@ -118,12 +119,12 @@ public class WelcomeEditorFactory {
 
       if (welcomeMessage.isEmpty()) {
         message =
-            Message.builder().append(msg.getString("welcome-message.removed-successful", locale, warp.getName()))
-                .build();
+                Message.builder().append(msg.getString("welcome-message.removed-successful", locale, warp.getName()))
+                        .build();
       } else {
         message =
-            Message.builder().append(msg.getString("welcome-message.changed-successful", locale, warp.getName()))
-                .appendNewLine().append(Message.Style.INFO).append(welcomeMessage).build();
+                Message.builder().append(msg.getString("welcome-message.changed-successful", locale, warp.getName()))
+                        .appendNewLine().append(Message.Style.INFO).append(welcomeMessage).build();
       }
 
       return BukkitMessageInterpreter.interpret(message);

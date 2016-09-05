@@ -67,15 +67,15 @@ public class WarpGroupMap extends TableImpl<Record> {
    * The column <code>mywarp.warp_group_map.warp_id</code>.
    */
   public final TableField<Record, UInteger>
-      WARP_ID =
-      createField("warp_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          WARP_ID =
+          createField("warp_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp_group_map.group_id</code>.
    */
   public final TableField<Record, UInteger>
-      GROUP_ID =
-      createField("group_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          GROUP_ID =
+          createField("group_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * Create a <code>mywarp.warp_group_map</code> table reference

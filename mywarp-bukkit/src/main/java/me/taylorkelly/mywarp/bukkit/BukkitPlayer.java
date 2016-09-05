@@ -144,9 +144,9 @@ public class BukkitPlayer extends BukkitActor implements LocalPlayer {
   @Override
   public void teleport(LocalWorld world, Vector3d position, Vector2f rotation, boolean teleportTamedHorse) {
     Location
-        bukkitLoc =
-        new Location(BukkitAdapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getY(),
-                     rotation.getX());
+            bukkitLoc =
+            new Location(BukkitAdapter.adapt(world), position.getX(), position.getY(), position.getZ(), rotation.getY(),
+                    rotation.getX());
     teleportRecursive(getWrapped(), bukkitLoc, teleportTamedHorse);
   }
 

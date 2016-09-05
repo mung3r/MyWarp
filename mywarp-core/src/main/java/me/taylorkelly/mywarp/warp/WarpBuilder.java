@@ -165,6 +165,6 @@ public class WarpBuilder {
    */
   public Warp build() {
     return new SimpleWarp(name, creationDate, invitedPlayers, invitedGroups, creator, type, worldIdentifier, position,
-                          rotation, visits, welcomeMessage);
+            rotation, visits, welcomeMessage);
   }
 }

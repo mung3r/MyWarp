@@ -228,16 +228,16 @@ class RelationalWarpStorage implements WarpStorage {
     // create warp-instances from the results
     List<Warp> ret = new ArrayList<Warp>(groupedResults.size());
     for (Result<Record14<String, UUID, Type, Double, Double, Double, Float, Float, UUID, Date, UInteger, String,
-        UUID, String>> r : groupedResults
-        .values()) {
+            UUID, String>> r : groupedResults
+            .values()) {
 
       Vector3d position = new Vector3d(r.getValue(0, WARP.X), r.getValue(0, WARP.Y), r.getValue(0, WARP.Z));
       Vector2f rotation = new Vector2f(r.getValue(0, WARP.PITCH), r.getValue(0, WARP.YAW));
 
       WarpBuilder
-          builder =
-          new WarpBuilder(r.getValue(0, WARP.NAME), r.getValue(0, creatorTable.UUID), r.getValue(0, WORLD.UUID),
-                          position, rotation);
+              builder =
+              new WarpBuilder(r.getValue(0, WARP.NAME), r.getValue(0, creatorTable.UUID), r.getValue(0, WORLD.UUID),
+                      position, rotation);
 
       // optional values
       builder.setType(r.getValue(0, WARP.TYPE));

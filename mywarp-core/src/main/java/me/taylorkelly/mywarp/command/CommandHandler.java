@@ -97,7 +97,7 @@ public final class CommandHandler {
    */
   public CommandHandler(MyWarp myWarp, Platform platform) {
     this(myWarp, platform, myWarp.getWarpManager(), myWarp.getAuthorizationResolver(), platform.getPlayerNameResolver(),
-         platform.getGame(), myWarp.getTeleportHandler());
+            platform.getGame(), myWarp.getTeleportHandler());
   }
 
   /**
@@ -118,7 +118,8 @@ public final class CommandHandler {
     // create injector and register modules
     Injector injector = Intake.createInjector();
     injector.install(
-        new BaseModule(warpManager, authorizationResolver, playerNameResolver, game, this, platform.getDataFolder()));
+            new BaseModule(warpManager, authorizationResolver, playerNameResolver, game, this,
+                    platform.getDataFolder()));
     injector.install(new PrimitivesModule());
     injector.install(new ProvidedModule());
 
@@ -162,14 +163,14 @@ public final class CommandHandler {
 
     //register commands
     dispatcher =
-        new CommandGraph().builder(builder).commands().registerMethods(usageCmd).group("warp", "mywarp", "mw")
-            .registerMethods(defaultUsageCmd).registerMethods(
-            new InformativeCommands(warpManager, limitService, authorizationResolver, game, playerNameResolver))
-            .registerMethods(new ManagementCommands(warpManager, limitService))
-            .registerMethods(new SocialCommands(game, playerNameResolver, limitService))
-            .registerMethods(new UtilityCommands(myWarp, this, basic, game)).group("import", "migrate")
-            .registerMethods(new ImportCommands(warpManager, platform, playerNameResolver, game)).graph()
-            .getDispatcher();
+            new CommandGraph().builder(builder).commands().registerMethods(usageCmd).group("warp", "mywarp", "mw")
+                    .registerMethods(defaultUsageCmd).registerMethods(
+                    new InformativeCommands(warpManager, limitService, authorizationResolver, game, playerNameResolver))
+                    .registerMethods(new ManagementCommands(warpManager, limitService))
+                    .registerMethods(new SocialCommands(game, playerNameResolver, limitService))
+                    .registerMethods(new UtilityCommands(myWarp, this, basic, game)).group("import", "migrate")
+                    .registerMethods(new ImportCommands(warpManager, platform, playerNameResolver, game)).graph()
+                    .getDispatcher();
   }
 
   /**

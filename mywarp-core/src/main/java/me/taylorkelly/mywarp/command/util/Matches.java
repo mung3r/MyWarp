@@ -109,7 +109,7 @@ public class Matches<E> {
    */
   public ImmutableList<E> getSortedMatches() {
     return ImmutableList.<E>builder().addAll(equalMatches).addAll(equalIgnoreCaseMatches).addAll(containsMatches)
-        .addAll(containsIgnoreCaseMatches).build();
+            .addAll(containsIgnoreCaseMatches).build();
   }
 
   /**

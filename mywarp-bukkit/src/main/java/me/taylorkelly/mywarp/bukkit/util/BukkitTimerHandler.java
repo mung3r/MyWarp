@@ -42,8 +42,8 @@ import javax.annotation.Nullable;
 public class BukkitTimerHandler {
 
   private final Table<Object, Class<? extends TimerAction>, SelfRunningRunnable>
-      runningTimers =
-      HashBasedTable.create();
+          runningTimers =
+          HashBasedTable.create();
   private final MyWarpPlugin plugin;
 
   /**
@@ -65,7 +65,7 @@ public class BukkitTimerHandler {
    */
   public <T> void start(T timedSubject, Duration duration, TimerAction<T> timer) {
     checkArgument(!has(timedSubject, timer.getClass()).isTimerRunning(),
-                  "A timer of the type %s is already running for %s.", timedSubject, timer.getClass());
+            "A timer of the type %s is already running for %s.", timedSubject, timer.getClass());
 
     runningTimers.put(timedSubject, timer.getClass(), new SelfRunningRunnable<T>(timer, duration));
   }
@@ -131,7 +131,8 @@ public class BukkitTimerHandler {
 
         };
         abortingCheck
-            .runTaskTimer(plugin, AbortableTimerAction.CHECK_INTERVAL_TICKS, AbortableTimerAction.CHECK_INTERVAL_TICKS);
+                .runTaskTimer(plugin, AbortableTimerAction.CHECK_INTERVAL_TICKS,
+                        AbortableTimerAction.CHECK_INTERVAL_TICKS);
       } else {
         abortingCheck = null;
       }

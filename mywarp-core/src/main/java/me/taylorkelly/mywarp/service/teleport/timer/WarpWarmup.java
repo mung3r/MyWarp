@@ -81,7 +81,8 @@ public class WarpWarmup extends AbortableTimerAction<UUID> {
     if (teleportService.teleport(player, warp).isPositionModified()) {
       Duration duration = capability.getDuration(player, WarpCooldown.class);
       capability
-          .start(player.getUniqueId(), duration, new WarpCooldown(player, game, capability.notifyOnCooldownFinish()));
+              .start(player.getUniqueId(), duration,
+                      new WarpCooldown(player, game, capability.notifyOnCooldownFinish()));
     }
   }
 

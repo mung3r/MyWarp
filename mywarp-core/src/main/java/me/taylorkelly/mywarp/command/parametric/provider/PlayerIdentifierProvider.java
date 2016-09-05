@@ -58,7 +58,7 @@ class PlayerIdentifierProvider implements Provider<UUID> {
   @Nullable
   @Override
   public UUID get(CommandArgs arguments, List<? extends Annotation> modifiers)
-      throws ArgumentException, ProvisionException {
+          throws ArgumentException, ProvisionException {
     String query = arguments.next();
 
     Optional<UUID> optional = playerNameResolver.getByName(query);

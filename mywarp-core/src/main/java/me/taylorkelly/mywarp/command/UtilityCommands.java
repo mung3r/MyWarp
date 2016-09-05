@@ -28,6 +28,8 @@ import me.taylorkelly.mywarp.command.parametric.annotation.Billable;
 import me.taylorkelly.mywarp.command.parametric.annotation.Sender;
 import me.taylorkelly.mywarp.command.parametric.annotation.Usable;
 import me.taylorkelly.mywarp.command.parametric.annotation.Viewable;
+import me.taylorkelly.mywarp.command.util.CommandUtil;
+import me.taylorkelly.mywarp.command.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.command.util.paginator.StringPaginator;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
@@ -73,15 +75,15 @@ public final class UtilityCommands {
     Set<String> usableCommands = commandHandler.getUsableCommands(actor);
 
     StringPaginator.of(msg.getString("help.heading"), usableCommands).withNote(msg.getString("help.note")).paginate()
-        .display(actor, page);
+            .display(actor, page);
   }
 
   @Command(aliases = {"point"}, desc = "point.description", help = "point.help")
   @Require("mywarp.cmd.point")
   @Billable(FeeType.POINT)
-  public void point(@Sender LocalPlayer player, @Optional @Usable Warp warp) {
+  public void point(@Sender LocalPlayer player, @Optional @Usable Warp warp) throws NoSuchWorldException {
     if (warp != null) {
-      player.setCompassTarget(warp.getWorld(game), warp.getPosition());
+      player.setCompassTarget(CommandUtil.toWorld(warp, game), warp.getPosition());
       player.sendMessage(msg.getString("point.set", warp.getName()));
     } else {
       player.resetCompass();

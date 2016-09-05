@@ -55,7 +55,7 @@ class FileProvider implements Provider<File> {
   @Nullable
   @Override
   public File get(CommandArgs arguments, List<? extends Annotation> modifiers)
-      throws ArgumentException, ProvisionException {
+          throws ArgumentException, ProvisionException {
     File ret = new File(base, arguments.next());
     if (!ret.exists() || !ret.canRead()) {
       throw new NoSuchFileException(ret);

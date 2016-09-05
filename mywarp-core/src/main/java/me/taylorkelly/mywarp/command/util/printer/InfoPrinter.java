@@ -19,6 +19,7 @@
 
 package me.taylorkelly.mywarp.command.util.printer;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Ordering;
 
 import me.taylorkelly.mywarp.command.CommandHandler;
@@ -26,6 +27,7 @@ import me.taylorkelly.mywarp.command.util.CommandUtil;
 import me.taylorkelly.mywarp.platform.Actor;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.LocalPlayer;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.WarpUtils;
@@ -104,7 +106,7 @@ public class InfoPrinter {
     info.append(" ");
     info.append(Message.Style.VALUE);
     info.append(msg.getString("info.location.position", warp.getPosition().getFloorX(), warp.getPosition().getFloorY(),
-                              warp.getPosition().getFloorZ(), warp.getWorld(game).getName()));
+            warp.getPosition().getFloorZ(), worldName(warp.getWorldIdentifier())));
 
     info.appendNewLine();
 
@@ -146,7 +148,7 @@ public class InfoPrinter {
     info.append(" ");
     info.append(Message.Style.VALUE);
     info.append(
-        DateFormat.getDateInstance(DateFormat.DEFAULT, LocaleManager.getLocale()).format(warp.getCreationDate()));
+            DateFormat.getDateInstance(DateFormat.DEFAULT, LocaleManager.getLocale()).format(warp.getCreationDate()));
 
     info.appendNewLine();
 
@@ -166,6 +168,14 @@ public class InfoPrinter {
    */
   public void print(Actor receiver) {
     receiver.sendMessage(getText(receiver));
+  }
+
+  private String worldName(UUID worldIdentifier) {
+    Optional<LocalWorld> worldOptional = game.getWorld(worldIdentifier);
+    if (worldOptional.isPresent()) {
+      return worldOptional.get().getName();
+    }
+    return worldIdentifier.toString();
   }
 
 }

@@ -38,7 +38,7 @@ class ActorProvider extends NonProvidingProvider<Actor> {
 
   @Override
   public Actor get(CommandArgs arguments, List<? extends Annotation> modifiers)
-      throws ArgumentException, ProvisionException {
+          throws ArgumentException, ProvisionException {
     Namespace namespace = arguments.getNamespace();
     checkState(namespace.containsKey(Actor.class), "Namespace does not contain an Actor");
 

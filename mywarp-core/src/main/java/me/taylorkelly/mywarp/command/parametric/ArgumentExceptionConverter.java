@@ -80,7 +80,7 @@ public class ArgumentExceptionConverter extends ExceptionConverterHelper {
   @ExceptionMatch
   public void convert(OverRangeException e, ExceptionContext context) throws InvalidUsageException {
     throwInvalidUsage(msg.getString("exception.primitives.invalid.greater-or-equal", e.getMaximum(), e.getInput()),
-                      context, e);
+            context, e);
   }
 
   /**
@@ -93,7 +93,7 @@ public class ArgumentExceptionConverter extends ExceptionConverterHelper {
   @ExceptionMatch
   public void convert(UnderRangeException e, ExceptionContext context) throws InvalidUsageException {
     throwInvalidUsage(msg.getString("exception.primitives.invalid.less-or-equal", e.getMinimum(), e.getInput()),
-                      context, e);
+            context, e);
   }
 
   //-- BaseModule
@@ -119,15 +119,15 @@ public class ArgumentExceptionConverter extends ExceptionConverterHelper {
    * @throws InvalidUsageException the created exception
    */
   private void throwInvalidUsage(String errorMsg, ExceptionContext context, ArgumentParseException cause)
-      throws InvalidUsageException {
+          throws InvalidUsageException {
 
     if (cause.getParameter() != null) {
       throw new InvalidUsageException(
-          msg.getString("exception.argument.error", cause.getParameter().getName(), errorMsg), context.getCommand(),
-          context.getAliasStack(), false, cause);
+              msg.getString("exception.argument.error", cause.getParameter().getName(), errorMsg), context.getCommand(),
+              context.getAliasStack(), false, cause);
     }
     throw new InvalidUsageException(msg.getString("exception.argument.error.unknown", errorMsg), context.getCommand(),
-                                    context.getAliasStack(), false, cause);
+            context.getAliasStack(), false, cause);
 
   }
 

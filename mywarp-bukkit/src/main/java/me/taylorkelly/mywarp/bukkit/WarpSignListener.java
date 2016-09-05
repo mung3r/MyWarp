@@ -44,11 +44,11 @@ import org.bukkit.material.Attachable;
 class WarpSignListener extends AbstractListener {
 
   private static final ImmutableSet<Material>
-      SUPPORTED_ATTACHABLES =
-      ImmutableSet.of(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
+          SUPPORTED_ATTACHABLES =
+          ImmutableSet.of(Material.STONE_BUTTON, Material.WOOD_BUTTON, Material.LEVER);
   private static final ImmutableSet<Material>
-      SUPPORTED_PLATES =
-      ImmutableSet.of(Material.WOOD_PLATE, Material.STONE_PLATE, Material.GOLD_PLATE, Material.IRON_PLATE);
+          SUPPORTED_PLATES =
+          ImmutableSet.of(Material.WOOD_PLATE, Material.STONE_PLATE, Material.GOLD_PLATE, Material.IRON_PLATE);
 
   private final MyWarpPlugin plugin;
   private final WarpSignHandler warpSignHandler;
@@ -71,8 +71,8 @@ class WarpSignListener extends AbstractListener {
   @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
   public void onSignChange(SignChangeEvent event) {
     Optional<Boolean>
-        isValidWarpSign =
-        warpSignHandler.handleSignCreation(plugin.wrap(event.getPlayer()), new EventSign(event));
+            isValidWarpSign =
+            warpSignHandler.handleSignCreation(plugin.wrap(event.getPlayer()), new EventSign(event));
 
     if (!isValidWarpSign.isPresent()) {
       return;
@@ -106,7 +106,8 @@ class WarpSignListener extends AbstractListener {
         if (SUPPORTED_ATTACHABLES.contains(block.getType())) {
           Attachable attachable = (Attachable) block.getState().getData();
           warpSignHandler
-              .handleInteraction(toPlayer(event), toVector(block), BukkitAdapter.adapt(attachable.getAttachedFace()));
+                  .handleInteraction(toPlayer(event), toVector(block),
+                          BukkitAdapter.adapt(attachable.getAttachedFace()));
         }
         break;
       case PHYSICAL:

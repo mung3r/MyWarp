@@ -79,12 +79,12 @@ public class InvitationInformationListener {
   @Subscribe
   public void onGroupInvite(final WarpGroupInvitesEvent event) {
     inform(event.getInvitationStatus(), event.getWarp().getName(),
-           Iterables.filter(game.getPlayers(), new Predicate<LocalPlayer>() {
-             @Override
-             public boolean apply(LocalPlayer input) {
-               return input.hasGroup(event.getGroupId());
-             }
-           }));
+            Iterables.filter(game.getPlayers(), new Predicate<LocalPlayer>() {
+              @Override
+              public boolean apply(LocalPlayer input) {
+                return input.hasGroup(event.getGroupId());
+              }
+            }));
   }
 
   private void inform(WarpInvitesEvent.InvitationStatus status, String warpName, LocalPlayer... players) {

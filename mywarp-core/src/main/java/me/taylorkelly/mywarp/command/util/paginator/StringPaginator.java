@@ -152,8 +152,8 @@ public class StringPaginator<E> {
       this.header = paginator.header;
       this.notes = paginator.notes;
       this.pages =
-          Lists.partition(Lists.transform(paginator.elements, paginator.mapping),
-                          paginator.entriesPerPage - notes.size());
+              Lists.partition(Lists.transform(paginator.elements, paginator.mapping),
+                      paginator.entriesPerPage - notes.size());
     }
 
     /**

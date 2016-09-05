@@ -67,15 +67,15 @@ public class WarpPlayerMap extends TableImpl<Record> {
    * The column <code>mywarp.warp_player_map.warp_id</code>.
    */
   public final TableField<Record, UInteger>
-      WARP_ID =
-      createField("warp_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          WARP_ID =
+          createField("warp_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp_player_map.player_id</code>.
    */
   public final TableField<Record, UInteger>
-      PLAYER_ID =
-      createField("player_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          PLAYER_ID =
+          createField("player_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * Create a <code>mywarp.warp_player_map</code> table reference

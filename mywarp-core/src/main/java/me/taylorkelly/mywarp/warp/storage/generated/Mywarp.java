@@ -70,6 +70,6 @@ public class Mywarp extends SchemaImpl {
 
   private final List<Table<?>> getTables0() {
     return Arrays.<Table<?>>asList(Group.GROUP, Player.PLAYER, Warp.WARP, WarpGroupMap.WARP_GROUP_MAP,
-                                   WarpPlayerMap.WARP_PLAYER_MAP, World.WORLD);
+            WarpPlayerMap.WARP_PLAYER_MAP, World.WORLD);
   }
 }

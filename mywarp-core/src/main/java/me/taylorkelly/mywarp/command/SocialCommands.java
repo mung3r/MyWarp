@@ -30,6 +30,7 @@ import me.taylorkelly.mywarp.command.parametric.annotation.Billable;
 import me.taylorkelly.mywarp.command.parametric.annotation.Modifiable;
 import me.taylorkelly.mywarp.command.parametric.provider.exception.NoSuchPlayerException;
 import me.taylorkelly.mywarp.command.parametric.provider.exception.NoSuchPlayerIdentifierException;
+import me.taylorkelly.mywarp.command.util.CommandUtil;
 import me.taylorkelly.mywarp.command.util.ExceedsInitiatorLimitException;
 import me.taylorkelly.mywarp.command.util.ExceedsLimitException;
 import me.taylorkelly.mywarp.platform.Actor;
@@ -89,8 +90,9 @@ public final class SocialCommands {
       LocalPlayer receiverPlayer = receiverPlayerOptional.get();
 
       LimitService.EvaluationResult
-          result =
-          limitService.evaluateLimit(receiverPlayer, warp.getWorld(game), Limit.Type.valueOf(warp.getType()), true);
+              result =
+              limitService.evaluateLimit(receiverPlayer, CommandUtil.toWorld(warp, game),
+                      Limit.Type.valueOf(warp.getType()), true);
       if (result.exceedsLimit()) {
         throw new ExceedsLimitException(receiverPlayer);
       }
@@ -125,7 +127,7 @@ public final class SocialCommands {
   @Require("mywarp.cmd.private")
   @Billable(FeeType.PRIVATE)
   public void privatize(Actor actor, @Switch('f') boolean ignoreLimits, @Modifiable Warp warp)
-      throws CommandException, AuthorizationException, NoSuchPlayerException {
+          throws CommandException, AuthorizationException, NoSuchPlayerException {
     if (warp.isType(Warp.Type.PRIVATE)) {
       throw new CommandException(msg.getString("private.already-private", warp.getName()));
     }
@@ -138,8 +140,9 @@ public final class SocialCommands {
       LocalPlayer creatorPlayer = creatorPlayerOptional.get();
 
       LimitService.EvaluationResult
-          result =
-          limitService.evaluateLimit(creatorPlayer, warp.getWorld(game), Limit.Type.valueOf(Warp.Type.PRIVATE), false);
+              result =
+              limitService.evaluateLimit(creatorPlayer, CommandUtil.toWorld(warp, game),
+                      Limit.Type.valueOf(Warp.Type.PRIVATE), false);
 
       if (result.exceedsLimit()) {
         if (actor instanceof LocalPlayer && creatorPlayer.equals(actor)) {
@@ -162,7 +165,7 @@ public final class SocialCommands {
   @Require("mywarp.cmd.public")
   @Billable(FeeType.PUBLIC)
   public void publicize(Actor actor, @Switch('f') boolean ignoreLimits, @Modifiable Warp warp)
-      throws CommandException, AuthorizationException, NoSuchPlayerException {
+          throws CommandException, AuthorizationException, NoSuchPlayerException {
     if (warp.isType(Warp.Type.PUBLIC)) {
       throw new CommandException(msg.getString("public.already-public", warp.getName()));
     }
@@ -175,8 +178,10 @@ public final class SocialCommands {
       LocalPlayer creatorPlayer = creatorPlayerOptional.get();
 
       LimitService.EvaluationResult
-          result =
-          limitService.evaluateLimit(creatorPlayer, warp.getWorld(game), Limit.Type.valueOf(Warp.Type.PUBLIC), false);
+              result =
+              limitService.evaluateLimit(creatorPlayer, CommandUtil.toWorld(warp, game),
+                      Limit.Type.valueOf(Warp.Type.PUBLIC),
+                      false);
 
       if (result.exceedsLimit()) {
         if (actor instanceof LocalPlayer && creatorPlayer.equals(actor)) {
@@ -197,7 +202,7 @@ public final class SocialCommands {
   @Require("mywarp.cmd.invite")
   @Billable(FeeType.INVITE)
   public void invite(Actor actor, @Switch('g') boolean groupInvite, String inviteeIdentifier, @Modifiable Warp warp)
-      throws CommandException, AuthorizationException, NoSuchPlayerIdentifierException {
+          throws CommandException, AuthorizationException, NoSuchPlayerIdentifierException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.cmd.invite.group")) {
         throw new AuthorizationException();
@@ -211,8 +216,8 @@ public final class SocialCommands {
       actor.sendMessage(msg.getString("invite.group.successful", inviteeIdentifier, warp.getName()));
       if (warp.getType() == Warp.Type.PUBLIC) {
         actor.sendMessage(
-            Message.builder().append(Message.Style.INFO).append(msg.getString("invite.public", warp.getName()))
-                .build());
+                Message.builder().append(Message.Style.INFO).append(msg.getString("invite.public", warp.getName()))
+                        .build());
       }
       return;
     }
@@ -235,7 +240,8 @@ public final class SocialCommands {
     actor.sendMessage(msg.getString("invite.player.successful", friendlyName(invitee), warp.getName()));
     if (warp.getType() == Warp.Type.PUBLIC) {
       actor.sendMessage(
-          Message.builder().append(Message.Style.INFO).append(msg.getString("invite.public", warp.getName())).build());
+              Message.builder().append(Message.Style.INFO).append(msg.getString("invite.public", warp.getName()))
+                      .build());
     }
   }
 
@@ -243,7 +249,7 @@ public final class SocialCommands {
   @Require("mywarp.cmd.uninvite")
   @Billable(FeeType.UNINVITE)
   public void uninvite(Actor actor, @Switch('g') boolean groupInvite, String uninviteeIdentifier, @Modifiable Warp warp)
-      throws CommandException, AuthorizationException, NoSuchPlayerIdentifierException {
+          throws CommandException, AuthorizationException, NoSuchPlayerIdentifierException {
     if (groupInvite) {
       if (!actor.hasPermission("mywarp.cmd.uninvite.group")) {
         throw new AuthorizationException();
@@ -257,8 +263,8 @@ public final class SocialCommands {
       actor.sendMessage(msg.getString("uninvite.group.successful", uninviteeIdentifier, warp.getName()));
       if (warp.getType() == Warp.Type.PUBLIC) {
         actor.sendMessage(
-            Message.builder().append(Message.Style.INFO).append(msg.getString("uninvite.public", warp.getName()))
-                .build());
+                Message.builder().append(Message.Style.INFO).append(msg.getString("uninvite.public", warp.getName()))
+                        .build());
       }
       return;
     }
@@ -281,8 +287,8 @@ public final class SocialCommands {
     actor.sendMessage(msg.getString("uninvite.player.successful", friendlyName(uninvitee), warp.getName()));
     if (warp.getType() == Warp.Type.PUBLIC) {
       actor.sendMessage(
-          Message.builder().append(Message.Style.INFO).append(msg.getString("uninvite.public", warp.getName()))
-              .build());
+              Message.builder().append(Message.Style.INFO).append(msg.getString("uninvite.public", warp.getName()))
+                      .build());
     }
   }
 

@@ -40,8 +40,8 @@ import javax.sql.DataSource;
 public class WarpStorageFactory {
 
   private static final ImmutableSet<SQLDialect>
-      SUPPORTED_DIALECTS =
-      ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.MARIADB, SQLDialect.SQLITE, SQLDialect.H2);
+          SUPPORTED_DIALECTS =
+          ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.MARIADB, SQLDialect.SQLITE, SQLDialect.H2);
 
   private WarpStorageFactory() {
   }
@@ -59,7 +59,7 @@ public class WarpStorageFactory {
    *                                        not supported
    */
   public static WarpStorage create(DataSource dataSource, ConnectionConfiguration config)
-      throws StorageInitializationException {
+          throws StorageInitializationException {
     SQLDialect dialect = config.getDialect();
     if (!SUPPORTED_DIALECTS.contains(dialect)) {
       throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
@@ -81,7 +81,7 @@ public class WarpStorageFactory {
    *                                        supported or initialization of MyWarp's table structure fails
    */
   public static WarpStorage createInitialized(DataSource dataSource, ConnectionConfiguration config)
-      throws StorageInitializationException {
+          throws StorageInitializationException {
     SQLDialect dialect = config.getDialect();
     if (!SUPPORTED_DIALECTS.contains(dialect)) {
       throw new StorageInitializationException(String.format("%s is not supported!", dialect.getName()));
@@ -117,7 +117,7 @@ public class WarpStorageFactory {
     Settings settings = new Settings();
     if (config.supportsSchemas()) {
       settings.withRenderMapping(new RenderMapping().withSchemata(
-          new MappedSchema().withInput(Tables.WARP.getSchema().getName()).withOutput(config.getSchema())));
+              new MappedSchema().withInput(Tables.WARP.getSchema().getName()).withOutput(config.getSchema())));
     } else {
       settings.withRenderSchema(false);
     }
@@ -135,7 +135,7 @@ public class WarpStorageFactory {
         return "classpath:migrations/sqlite";
       default:
         throw new StorageInitializationException(
-            String.format("Migrations are not supported for %s!", dialect.getName()));
+                String.format("Migrations are not supported for %s!", dialect.getName()));
     }
   }
 

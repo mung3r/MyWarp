@@ -103,8 +103,9 @@ public class BukkitPlatform implements Platform {
     //LimitCapability
     if (capabilityClass.isAssignableFrom(LimitCapability.class) && settings.isLimitsEnabled()) {
       LimitCapability
-          limitCapability =
-          new BukkitLimitCapability(settings.getLimitsConfiguredLimitBundles(), settings.getLimitsDefaultLimitBundle());
+              limitCapability =
+              new BukkitLimitCapability(settings.getLimitsConfiguredLimitBundles(),
+                      settings.getLimitsDefaultLimitBundle());
       registeredCapabilities.putInstance(LimitCapability.class, limitCapability);
       registered = (C) limitCapability;
     }
@@ -116,9 +117,9 @@ public class BukkitPlatform implements Platform {
         RegisteredServiceProvider<Economy> serviceProvider = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (serviceProvider != null) {
           BundleProvider<FeeBundle>
-              feeProvider =
-              new BundleProvider<FeeBundle>(settings.getEconomyConfiguredFeeBundles(),
-                                            settings.getEconomyDefaultFeeBundle());
+                  feeProvider =
+                  new BundleProvider<FeeBundle>(settings.getEconomyConfiguredFeeBundles(),
+                          settings.getEconomyDefaultFeeBundle());
           economyCapability = new BukkitEconomyCapability(serviceProvider.getProvider(), feeProvider, settings);
         } else {
           log.error("Failed to hook into Vault (Economy is null). Economy support will not be available.");
@@ -136,10 +137,10 @@ public class BukkitPlatform implements Platform {
     //TimerCapability
     if (capabilityClass.isAssignableFrom(TimerCapability.class) && settings.isTimersEnabled()) {
       BundleProvider<DurationBundle>
-          durationProvider =
-          new BundleProvider<DurationBundle>(settings.getTimersConfiguredDurationBundles(), settings
+              durationProvider =
+              new BundleProvider<DurationBundle>(settings.getTimersConfiguredDurationBundles(), settings
 
-              .getTimersDefaultDurationBundle());
+                      .getTimersDefaultDurationBundle());
       TimerCapability timerCapability = new BukkitTimerCapability(plugin, durationProvider, settings);
       registeredCapabilities.putInstance(TimerCapability.class, timerCapability);
       registered = (C) timerCapability;
@@ -149,8 +150,8 @@ public class BukkitPlatform implements Platform {
     //PositionSafetyCapability
     if (capabilityClass.isAssignableFrom(PositionValidationCapability.class) && settings.isSafetyEnabled()) {
       PositionValidationCapability
-          positionValidationCapability =
-          new CubicSafetyValidationCapability(settings.getSafetySearchRadius());
+              positionValidationCapability =
+              new CubicSafetyValidationCapability(settings.getSafetySearchRadius());
       registeredCapabilities.putInstance(PositionValidationCapability.class, positionValidationCapability);
       registered = (C) positionValidationCapability;
     }

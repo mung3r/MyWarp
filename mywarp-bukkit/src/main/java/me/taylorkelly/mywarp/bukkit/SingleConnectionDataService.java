@@ -91,7 +91,7 @@ public class SingleConnectionDataService implements RelationalDataService {
         if (!executorService.awaitTermination(30, TimeUnit.SECONDS)) {
           List<Runnable> droppedTasks = executorService.shutdownNow();
           log.warn("SQL executor did not terminate within 30 seconds and is terminated. {} tasks will not be "
-                   + "executed, recent changes may be missing in the database.", droppedTasks.size());
+                  + "executed, recent changes may be missing in the database.", droppedTasks.size());
         }
       } catch (InterruptedException e) {
         log.error("Failed to terminate SQL executor as the process was interrupted.", e);

@@ -61,7 +61,7 @@ public class EconomyInvokeHandler extends AbstractInvokeListener implements Invo
 
   @Override
   public boolean preProcess(List<? extends Annotation> annotations, ArgumentParser parser, CommandArgs commandArgs)
-      throws CommandException, ArgumentException {
+          throws CommandException, ArgumentException {
     return true;
   }
 

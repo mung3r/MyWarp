@@ -17,33 +17,35 @@
  * along with MyWarp. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.taylorkelly.mywarp.util;
+package me.taylorkelly.mywarp.command.util;
+
+import com.sk89q.intake.CommandException;
+
+import java.util.UUID;
 
 /**
  * Thrown when an attempt is made to access a world that does not exist on the server at the moment, the attempt was
  * made.
  */
-public class NoSuchWorldException extends RuntimeException {
+public class NoSuchWorldException extends CommandException {
 
-  private final String worldRepresentation;
+  private final UUID worldIdentifier;
 
   /**
    * Creates an instance.
    *
-   * @param worldRepresentation the world's representation
+   * @param worldIdentifier the world's unique identifier
    */
-  public NoSuchWorldException(String worldRepresentation) {
-    this.worldRepresentation = worldRepresentation;
+  NoSuchWorldException(UUID worldIdentifier) {
+    this.worldIdentifier = worldIdentifier;
   }
 
   /**
-   * Gets a readable representation of the world which does not exist. This can be a world's name or a world's unique
-   * identifier.
+   * Gets the unique identifier of the world that is unavailable.
    *
-   * @return the world's representation
+   * @return the identifier of the unavailable world
    */
-  public String getWorldRepresentation() {
-    return worldRepresentation;
+  public UUID getWorldIdentifier() {
+    return worldIdentifier;
   }
-
 }

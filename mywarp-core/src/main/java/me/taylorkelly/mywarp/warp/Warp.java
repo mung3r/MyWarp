@@ -149,15 +149,11 @@ public interface Warp extends Comparable<Warp> {
   String getName();
 
   /**
-   * Gets the world this warp is positioned in.
-   *
-   * @param game the running Game that holds the world
-   * @return the world
-   */
-  LocalWorld getWorld(Game game);
-
-  /**
    * Gets the unique identifier of the world this warp is positioned in.
+   *
+   * <p>The loaded world identified by the identifier can be acquired from the Game by calling
+   * {@link Game#getWorld(UUID)}. There is however no guarantee, that a warp's world is actually loaded,  calling
+   * {@code Game.getWorld(UUID} with the unique identifier returned by this methid m retun an empty Optional.</p>
    *
    * @return the world's unique identifier
    */
@@ -252,8 +248,8 @@ public interface Warp extends Comparable<Warp> {
    * Orders Warps by popularity: popular Warps come first, unpopular last.
    *
    * <p>Warps with a higher popularity score are preferred over Warps with lower score. If the score is equal, newer
-   * Warps are preferred over older Warps. If both Warps were created at the same millisecond, the alphabetically first
-   * is preferred.</p>
+   * Warps are preferred over older Warps. If both Warps were created at the same millisecond, the alphabetically
+   * first is preferred.</p>
    */
   class PopularityComparator implements Comparator<Warp> {
 
@@ -262,13 +258,13 @@ public interface Warp extends Comparable<Warp> {
     @Override
     public int compare(Warp w1, Warp w2) {
       return ComparisonChain.start().compare(popularityScore(w2), popularityScore(w1))
-          .compare(w2.getCreationDate().getTime(), w1.getCreationDate().getTime()).compare(w1.getName(), w2.getName())
-          .result();
+              .compare(w2.getCreationDate().getTime(), w1.getCreationDate().getTime())
+              .compare(w1.getName(), w2.getName()).result();
     }
 
     /**
-     * Computes the popularity score of the given {@code warp}. The score depends on the number of visits of the Warp as
-     * well as the warp's age.
+     * Computes the popularity score of the given {@code warp}. The score depends on the number of visits of the
+     * Warp as well as the warp's age.
      *
      * @return the popularity score of this Warp
      */

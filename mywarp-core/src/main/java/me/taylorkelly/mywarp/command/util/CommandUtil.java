@@ -19,9 +19,13 @@
 
 package me.taylorkelly.mywarp.command.util;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.PlayerNameResolver;
+import me.taylorkelly.mywarp.warp.Warp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,8 +55,8 @@ public class CommandUtil {
   }
 
   /**
-   * Returns a alphabetically sorted List with the name of each  player identified by the given unique identifier or, if
-   * the name is not available, the identifier as String.
+   * Returns a alphabetically sorted List with the name of each  player identified by the given unique identifier or,
+   * if the name is not available, the identifier as String.
    *
    * @param uniqueIds the unique identifiers
    * @param resolver  the resolver used to resolve the player's name
@@ -73,5 +77,54 @@ public class CommandUtil {
     }
     Collections.sort(ret);
     return ret;
+  }
+
+  /**
+   * Returns the loaded world the given {@code warp} is positioned within or raises an Exception if the world is not
+   * loaded.
+   *
+   * @param warp the warp
+   * @param game the Game to acquire the world from
+   * @return the loaded world of the warp
+   * @throws NoSuchWorldException if the warp's world cannot be acquired from the Game
+   * @see Game#getWorld(UUID)
+   */
+  public static LocalWorld toWorld(Warp warp, Game game) throws NoSuchWorldException {
+    return toWorld(warp.getWorldIdentifier(), game);
+  }
+
+  /**
+   * Returns the loaded world identified the given identifier or raises an Exception if the
+   * world is not loaded.
+   *
+   * @param worldIdentifier the identifier
+   * @param game            the Game to acquire the world from
+   * @return the loaded world with the given identifier
+   * @throws NoSuchWorldException if the warp's world cannot be acquired from the Game
+   * @see Game#getWorld(UUID)
+   */
+  public static LocalWorld toWorld(UUID worldIdentifier, Game game) throws NoSuchWorldException {
+    Optional<LocalWorld> worldOptional = game.getWorld(worldIdentifier);
+
+    if (!worldOptional.isPresent()) {
+      throw new NoSuchWorldException(worldIdentifier);
+    }
+    return worldOptional.get();
+  }
+
+  /**
+   * Returns the name of the world identified by the given identifier or, if such a world is not loaded, the
+   * identifier as string.
+   *
+   * @param worldIdentifier the identifier
+   * @param game            the Game to acquire the world from
+   * @return the world's name
+   */
+  public static String toWorldName(UUID worldIdentifier, Game game) {
+    Optional<LocalWorld> worldOptional = game.getWorld(worldIdentifier);
+    if (worldOptional.isPresent()) {
+      return worldOptional.get().getName();
+    }
+    return worldIdentifier.toString();
   }
 }

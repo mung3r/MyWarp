@@ -23,10 +23,10 @@ import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Optional;
 
+import me.taylorkelly.mywarp.command.util.NoSuchWorldException;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.Sign;
 import me.taylorkelly.mywarp.util.BlockFace;
-import me.taylorkelly.mywarp.util.NoSuchWorldException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -115,7 +115,8 @@ public class BukkitWorld implements LocalWorld {
   World getLoadedWorld() {
     World ret = Bukkit.getWorld(worldIdentifier);
     if (ret == null) {
-      throw new NoSuchWorldException(worldIdentifier.toString());
+      throw new IllegalStateException(
+              "The world with the identifier " + worldIdentifier + "is not available in Bukkit.");
     }
     return ret;
   }

@@ -67,8 +67,9 @@ class SquirrelIdPlayerNameResolver extends AbstractListener implements PlayerNam
       cache = new HashMapCache();
     }
     resolver =
-        new CacheForwardingService(
-            new CombinedProfileService(BukkitPlayerService.getInstance(), HttpRepositoryService.forMinecraft()), cache);
+            new CacheForwardingService(
+                    new CombinedProfileService(BukkitPlayerService.getInstance(), HttpRepositoryService.forMinecraft()),
+                    cache);
   }
 
   @Override

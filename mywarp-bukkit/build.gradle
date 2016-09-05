@@ -28,9 +28,9 @@ dependencies {
 processResources {
     filesMatching('**/plugin.yml') {
         expand(projectName: project.projectName,
-               version: project.internalVersion,
-               projectDescription: project.projectDescription,
-               url: project.url
+                version: project.internalVersion,
+                projectDescription: project.projectDescription,
+                url: project.url
         )
     }
 }

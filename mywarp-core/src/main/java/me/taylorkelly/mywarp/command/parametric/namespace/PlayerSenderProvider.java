@@ -39,7 +39,7 @@ class PlayerSenderProvider extends NonProvidingProvider<LocalPlayer> {
 
   @Override
   public LocalPlayer get(CommandArgs arguments, List<? extends Annotation> modifiers)
-      throws ArgumentException, ProvisionException {
+          throws ArgumentException, ProvisionException {
     Actor actor = actorProvider.get(arguments, modifiers);
 
     if (!(actor instanceof LocalPlayer)) {

@@ -68,8 +68,8 @@ public class LegacyWarpSource implements WarpSource {
 
   private static final Logger log = MyWarpLogger.getLogger(LegacyWarpSource.class);
   private static final ImmutableSet<SQLDialect>
-      SUPPORTED_DIALECTS =
-      ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.SQLITE);
+          SUPPORTED_DIALECTS =
+          ImmutableSet.of(SQLDialect.MYSQL, SQLDialect.SQLITE);
 
   private final Splitter splitter = Splitter.on(',').omitEmptyStrings().trimResults();
   private final ImmutableMap<String, UUID> worldsSnapshot;
@@ -136,14 +136,14 @@ public class LegacyWarpSource implements WarpSource {
     List<Warp> ret = new ArrayList<Warp>(results.size());
 
     for (Record13<String, String, Boolean, Double, Double, Double, Float, Float, String, Integer, String, String,
-        String> r : results) {
+            String> r : results) {
       String warpName = r.value1();
 
       String creatorName = r.value2();
       UUID creator = profileLookup.get(creatorName);
       if (creator == null) {
         log.warn("For the creator of '{}' ({}) no unique ID could be found. The warp will be ignored.", warpName,
-                 creatorName);
+                creatorName);
         continue;
       }
 
@@ -156,7 +156,7 @@ public class LegacyWarpSource implements WarpSource {
       UUID worldId = worldsSnapshot.get(worldName);
       if (worldId == null) {
         log.warn("For the world of '{}' ({}) no unique ID could be found. The warp will be ignored.", warpName,
-                 worldName);
+                worldName);
         continue;
       }
 
@@ -173,7 +173,7 @@ public class LegacyWarpSource implements WarpSource {
         UUID invitee = profileLookup.get(playerName);
         if (invitee == null) {
           log.warn("{}, who is invited to '{}' does not have a unique ID. The invitation will be ignored.", playerName,
-                   warpName);
+                  warpName);
           continue;
         }
         builder.addInvitedPlayer(invitee);

@@ -94,9 +94,10 @@ public class SingleConnectionDataSource implements DataSource, Closeable {
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
     if (Objects.equal(this.properties.getProperty("user"), username) && Objects
-        .equal(this.properties.getProperty("password"), password)) {
+            .equal(this.properties.getProperty("password"), password)) {
       throw new SQLException(
-          "SingleConnectionDataSource does not support retrieving of connections with custom username and password.");
+              "SingleConnectionDataSource does not support retrieving of connections with custom username and "
+                      + "password.");
     }
     return getConnection();
   }
@@ -139,7 +140,7 @@ public class SingleConnectionDataSource implements DataSource, Closeable {
       return (T) this;
     }
     throw new SQLException(
-        "DataSource of type [" + getClass().getName() + "] cannot be unwrapped as [" + iface.getName() + "]");
+            "DataSource of type [" + getClass().getName() + "] cannot be unwrapped as [" + iface.getName() + "]");
   }
 
   @Override
@@ -209,7 +210,7 @@ public class SingleConnectionDataSource implements DataSource, Closeable {
    */
   private Connection getCloseSuppressingConnectionProxy(Connection target) {
     return (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(), new Class<?>[]{Connection.class},
-                                               new CloseSuppressingInvocationHandler(target));
+            new CloseSuppressingInvocationHandler(target));
   }
 
 

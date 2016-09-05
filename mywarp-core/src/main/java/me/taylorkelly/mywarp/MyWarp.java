@@ -24,6 +24,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+
 import me.taylorkelly.mywarp.command.CommandHandler;
 import me.taylorkelly.mywarp.platform.Game;
 import me.taylorkelly.mywarp.platform.Platform;
@@ -37,20 +38,32 @@ import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.util.teleport.LegacyPositionCorrectionCapability;
 import me.taylorkelly.mywarp.util.teleport.StrategicTeleportHandler;
 import me.taylorkelly.mywarp.util.teleport.TeleportHandler;
-import me.taylorkelly.mywarp.warp.*;
+import me.taylorkelly.mywarp.warp.EventfulPopulatableWarpManager;
+import me.taylorkelly.mywarp.warp.MemoryPopulatableWarpManager;
+import me.taylorkelly.mywarp.warp.PopulatableWarpManager;
+import me.taylorkelly.mywarp.warp.StoragePopulatableWarpManager;
+import me.taylorkelly.mywarp.warp.Warp;
+import me.taylorkelly.mywarp.warp.WarpManager;
 import me.taylorkelly.mywarp.warp.authorization.AuthorizationResolver;
 import me.taylorkelly.mywarp.warp.authorization.PermissionAuthorizationStrategy;
 import me.taylorkelly.mywarp.warp.authorization.WarpPropertiesAuthorizationStrategy;
 import me.taylorkelly.mywarp.warp.authorization.WorldAccessAuthorizationStrategy;
-import me.taylorkelly.mywarp.warp.storage.*;
+import me.taylorkelly.mywarp.warp.storage.AsyncWritingWarpStorage;
+import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
+import me.taylorkelly.mywarp.warp.storage.RelationalDataService;
+import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
+import me.taylorkelly.mywarp.warp.storage.WarpStorage;
+import me.taylorkelly.mywarp.warp.storage.WarpStorageFactory;
+
 import org.slf4j.Logger;
 
-import javax.annotation.Nullable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import javax.annotation.Nullable;
 
 /**
  * Entry point and container for a working MyWarp implementation.
@@ -98,21 +111,22 @@ public final class MyWarp {
     WarpStorage warpStorage;
 
     warpStorage =
-        new AsyncWritingWarpStorage(
-            WarpStorageFactory.createInitialized(dataService.getDataSource(), connectionConfiguration),
-            dataService.getExecutorService());
+            new AsyncWritingWarpStorage(
+                    WarpStorageFactory.createInitialized(dataService.getDataSource(), connectionConfiguration),
+                    dataService.getExecutorService());
 
     EventBus eventBus = new EventBus();
 
     PopulatableWarpManager
-        warpManager =
-            new EventfulPopulatableWarpManager(new StoragePopulatableWarpManager(new MemoryPopulatableWarpManager(), warpStorage), eventBus);
+            warpManager =
+            new EventfulPopulatableWarpManager(
+                    new StoragePopulatableWarpManager(new MemoryPopulatableWarpManager(), warpStorage), eventBus);
 
+    //REVIEW can we use the WorldAccessAuthorizationStrategy only if it enabled in the config?
     AuthorizationResolver
-        authorizationResolver =
-        new AuthorizationResolver(new WorldAccessAuthorizationStrategy(
-            new PermissionAuthorizationStrategy(new WarpPropertiesAuthorizationStrategy()), platform.getGame(),
-            platform.getSettings()));
+            authorizationResolver =
+            new AuthorizationResolver(new PermissionAuthorizationStrategy(new WorldAccessAuthorizationStrategy(
+                    new WarpPropertiesAuthorizationStrategy(), platform.getGame(), platform.getSettings())));
 
     MyWarp myWarp = new MyWarp(platform, dataService, warpStorage, warpManager, eventBus, authorizationResolver);
     myWarp.initializeMutableFields();
@@ -121,8 +135,8 @@ public final class MyWarp {
     return myWarp;
   }
 
-  private MyWarp(Platform platform, RelationalDataService dataService, WarpStorage warpStorage, PopulatableWarpManager warpManager,
-                 EventBus eventBus, AuthorizationResolver authorizationResolver) {
+  private MyWarp(Platform platform, RelationalDataService dataService, WarpStorage warpStorage,
+                 PopulatableWarpManager warpManager, EventBus eventBus, AuthorizationResolver authorizationResolver) {
     this.platform = platform;
     this.dataService = dataService;
     this.warpStorage = warpStorage;
@@ -134,9 +148,9 @@ public final class MyWarp {
   /**
    * Reloads MyWarp.
    *
-   * <p>Reloading will remove all loaded warps from the active PopulatableWarpManager and reload them from the configured storage.
-   * Interaction models (commands, signs...) are newly created. The platform running MyWarp may reload the user
-   * configuration from disk.</p>
+   * <p>Reloading will remove all loaded warps from the active PopulatableWarpManager and reload them from the
+   * configured storage. Interaction models (commands, signs...) are newly created. The platform running MyWarp may
+   * reload the user configuration from disk.</p>
    */
   public void reload() {
     // cleanup
@@ -224,15 +238,15 @@ public final class MyWarp {
    */
   public WarpSignHandler createWarpSignHandler() {
     return new WarpSignHandler(getSettings().getWarpSignsIdentifiers(), warpManager, authorizationResolver, getGame(),
-                               teleportHandler, platform.getCapability(EconomyCapability.class).orNull());
+            teleportHandler, platform.getCapability(EconomyCapability.class).orNull());
   }
 
   private void initializeMutableFields() {
     List<PositionValidationCapability> validationStrategies = new ArrayList<PositionValidationCapability>();
     validationStrategies.add(new LegacyPositionCorrectionCapability());
     Optional<PositionValidationCapability>
-        validationStrategyOptional =
-        platform.getCapability(PositionValidationCapability.class);
+            validationStrategyOptional =
+            platform.getCapability(PositionValidationCapability.class);
     if (validationStrategyOptional.isPresent()) {
       validationStrategies.add(validationStrategyOptional.get());
     }

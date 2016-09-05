@@ -54,15 +54,15 @@ public class DurationBundle extends ValueBundle {
     checkNotNull(values);
 
     return new DurationBundle(identifier, createDuration(values.getLong("warpCooldown")),
-                              createDuration(values.getLong("warpWarmup")));
+            createDuration(values.getLong("warpWarmup")));
   }
 
   private DurationBundle(String identifier, Duration warpCooldown, Duration warpWarmup) {
     super(identifier, "mywarp.timer");
 
     durations =
-        ImmutableMap.<Class<? extends TimerAction<?>>, Duration>builder().put(WarpCooldown.class, warpCooldown)
-            .put(WarpWarmup.class, warpWarmup).build();
+            ImmutableMap.<Class<? extends TimerAction<?>>, Duration>builder().put(WarpCooldown.class, warpCooldown)
+                    .put(WarpWarmup.class, warpWarmup).build();
   }
 
   /**

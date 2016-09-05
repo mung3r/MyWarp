@@ -81,8 +81,8 @@ public class Keys {
   public static final ForeignKey<Record, Record> WARP_GROUP_MAP_GROUP_ID_FK = ForeignKeys0.WARP_GROUP_MAP_GROUP_ID_FK;
   public static final ForeignKey<Record, Record> WARP_PLAYER_MAP_WARP_ID_FK = ForeignKeys0.WARP_PLAYER_MAP_WARP_ID_FK;
   public static final ForeignKey<Record, Record>
-      WARP_PLAYER_MAP_PLAYER_ID_FK =
-      ForeignKeys0.WARP_PLAYER_MAP_PLAYER_ID_FK;
+          WARP_PLAYER_MAP_PLAYER_ID_FK =
+          ForeignKeys0.WARP_PLAYER_MAP_PLAYER_ID_FK;
 
   // -------------------------------------------------------------------------
   // [#1459] distribute members to avoid static initialisers > 64kb
@@ -102,18 +102,18 @@ public class Keys {
     public static final UniqueKey<Record> KEY_GROUP_GROUP_NAME_UQ = createUniqueKey(Group.GROUP, Group.GROUP.NAME);
     public static final UniqueKey<Record> KEY_PLAYER_PRIMARY = createUniqueKey(Player.PLAYER, Player.PLAYER.PLAYER_ID);
     public static final UniqueKey<Record>
-        KEY_PLAYER_PLAYER_UUID_UQ =
-        createUniqueKey(Player.PLAYER, Player.PLAYER.UUID);
+            KEY_PLAYER_PLAYER_UUID_UQ =
+            createUniqueKey(Player.PLAYER, Player.PLAYER.UUID);
     public static final UniqueKey<Record> KEY_WARP_PRIMARY = createUniqueKey(Warp.WARP, Warp.WARP.WARP_ID);
     public static final UniqueKey<Record> KEY_WARP_WARP_NAME_UQ = createUniqueKey(Warp.WARP, Warp.WARP.NAME);
     public static final UniqueKey<Record>
-        KEY_WARP_GROUP_MAP_PRIMARY =
-        createUniqueKey(WarpGroupMap.WARP_GROUP_MAP, WarpGroupMap.WARP_GROUP_MAP.WARP_ID,
-                        WarpGroupMap.WARP_GROUP_MAP.GROUP_ID);
+            KEY_WARP_GROUP_MAP_PRIMARY =
+            createUniqueKey(WarpGroupMap.WARP_GROUP_MAP, WarpGroupMap.WARP_GROUP_MAP.WARP_ID,
+                    WarpGroupMap.WARP_GROUP_MAP.GROUP_ID);
     public static final UniqueKey<Record>
-        KEY_WARP_PLAYER_MAP_PRIMARY =
-        createUniqueKey(WarpPlayerMap.WARP_PLAYER_MAP, WarpPlayerMap.WARP_PLAYER_MAP.WARP_ID,
-                        WarpPlayerMap.WARP_PLAYER_MAP.PLAYER_ID);
+            KEY_WARP_PLAYER_MAP_PRIMARY =
+            createUniqueKey(WarpPlayerMap.WARP_PLAYER_MAP, WarpPlayerMap.WARP_PLAYER_MAP.WARP_ID,
+                    WarpPlayerMap.WARP_PLAYER_MAP.PLAYER_ID);
     public static final UniqueKey<Record> KEY_WORLD_PRIMARY = createUniqueKey(World.WORLD, World.WORLD.WORLD_ID);
     public static final UniqueKey<Record> KEY_WORLD_WORLD_UUID_UQ = createUniqueKey(World.WORLD, World.WORLD.UUID);
   }
@@ -121,23 +121,24 @@ public class Keys {
   private static class ForeignKeys0 extends AbstractKeys {
 
     public static final ForeignKey<Record, Record>
-        WARP_PLAYER_ID_FK =
-        createForeignKey(Keys.KEY_PLAYER_PRIMARY, Warp.WARP, Warp.WARP.PLAYER_ID);
+            WARP_PLAYER_ID_FK =
+            createForeignKey(Keys.KEY_PLAYER_PRIMARY, Warp.WARP, Warp.WARP.PLAYER_ID);
     public static final ForeignKey<Record, Record>
-        WARP_WORLD_ID_FK =
-        createForeignKey(Keys.KEY_WORLD_PRIMARY, Warp.WARP, Warp.WARP.WORLD_ID);
+            WARP_WORLD_ID_FK =
+            createForeignKey(Keys.KEY_WORLD_PRIMARY, Warp.WARP, Warp.WARP.WORLD_ID);
     public static final ForeignKey<Record, Record>
-        WARP_GROUP_MAP_WARP_ID_FK =
-        createForeignKey(Keys.KEY_WARP_PRIMARY, WarpGroupMap.WARP_GROUP_MAP, WarpGroupMap.WARP_GROUP_MAP.WARP_ID);
+            WARP_GROUP_MAP_WARP_ID_FK =
+            createForeignKey(Keys.KEY_WARP_PRIMARY, WarpGroupMap.WARP_GROUP_MAP, WarpGroupMap.WARP_GROUP_MAP.WARP_ID);
     public static final ForeignKey<Record, Record>
-        WARP_GROUP_MAP_GROUP_ID_FK =
-        createForeignKey(Keys.KEY_GROUP_PRIMARY, WarpGroupMap.WARP_GROUP_MAP, WarpGroupMap.WARP_GROUP_MAP.GROUP_ID);
+            WARP_GROUP_MAP_GROUP_ID_FK =
+            createForeignKey(Keys.KEY_GROUP_PRIMARY, WarpGroupMap.WARP_GROUP_MAP, WarpGroupMap.WARP_GROUP_MAP.GROUP_ID);
     public static final ForeignKey<Record, Record>
-        WARP_PLAYER_MAP_WARP_ID_FK =
-        createForeignKey(Keys.KEY_WARP_PRIMARY, WarpPlayerMap.WARP_PLAYER_MAP, WarpPlayerMap.WARP_PLAYER_MAP.WARP_ID);
+            WARP_PLAYER_MAP_WARP_ID_FK =
+            createForeignKey(Keys.KEY_WARP_PRIMARY, WarpPlayerMap.WARP_PLAYER_MAP,
+                    WarpPlayerMap.WARP_PLAYER_MAP.WARP_ID);
     public static final ForeignKey<Record, Record>
-        WARP_PLAYER_MAP_PLAYER_ID_FK =
-        createForeignKey(Keys.KEY_PLAYER_PRIMARY, WarpPlayerMap.WARP_PLAYER_MAP,
-                         WarpPlayerMap.WARP_PLAYER_MAP.PLAYER_ID);
+            WARP_PLAYER_MAP_PLAYER_ID_FK =
+            createForeignKey(Keys.KEY_PLAYER_PRIMARY, WarpPlayerMap.WARP_PLAYER_MAP,
+                    WarpPlayerMap.WARP_PLAYER_MAP.PLAYER_ID);
   }
 }

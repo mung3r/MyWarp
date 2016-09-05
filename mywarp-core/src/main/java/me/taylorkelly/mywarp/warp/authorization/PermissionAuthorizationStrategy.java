@@ -53,7 +53,7 @@ public class PermissionAuthorizationStrategy extends ForwardingAuthorizationStra
   @Override
   public boolean isUsable(Warp warp, LocalEntity entity) {
     return (entity instanceof Actor && ((Actor) entity).hasPermission("mywarp.override.use")) || delegate
-        .isUsable(warp, entity);
+            .isUsable(warp, entity);
   }
 
   @Override

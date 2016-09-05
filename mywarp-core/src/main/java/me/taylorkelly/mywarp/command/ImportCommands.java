@@ -26,16 +26,31 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
-import me.taylorkelly.mywarp.platform.*;
+
+import me.taylorkelly.mywarp.platform.Actor;
+import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalWorld;
+import me.taylorkelly.mywarp.platform.Platform;
+import me.taylorkelly.mywarp.platform.PlayerNameResolver;
 import me.taylorkelly.mywarp.util.Message;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
-import me.taylorkelly.mywarp.warp.storage.*;
+import me.taylorkelly.mywarp.warp.storage.ConnectionConfiguration;
+import me.taylorkelly.mywarp.warp.storage.LegacyWarpSource;
+import me.taylorkelly.mywarp.warp.storage.RelationalDataService;
+import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
+import me.taylorkelly.mywarp.warp.storage.WarpSource;
+import me.taylorkelly.mywarp.warp.storage.WarpStorageFactory;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 /**
@@ -86,8 +101,8 @@ public final class ImportCommands {
     try {
       RelationalDataService dataService = platform.createDataService(configuration);
       start(actor, dataService,
-            new LegacyWarpSource(dataService.getDataSource(), configuration, "warpTable", playerNameResolver,
-                                 getWorldSnapshot()));
+              new LegacyWarpSource(dataService.getDataSource(), configuration, "warpTable", playerNameResolver,
+                      getWorldSnapshot()));
     } catch (SQLException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     }
@@ -96,14 +111,14 @@ public final class ImportCommands {
   @Command(aliases = {"pre3-mysql"}, desc = "import.pre3-mysql.description", help = "import.pre3-mysql.help")
   @Require(IMPORT_PERMISSION)
   public void pre3Mysql(Actor actor, String dsn, String schema, String user, String password, String tableName)
-      throws CommandException {
+          throws CommandException {
     ConnectionConfiguration
-        config =
-        new ConnectionConfiguration(dsn).setSchema(schema).setUser(user).setPassword(password);
+            config =
+            new ConnectionConfiguration(dsn).setSchema(schema).setUser(user).setPassword(password);
     try {
       RelationalDataService dataService = platform.createDataService(config);
       start(actor, dataService, new LegacyWarpSource(dataService.getDataSource(), config, tableName, playerNameResolver,
-                                                     getWorldSnapshot()));
+              getWorldSnapshot()));
     } catch (SQLException e) {
       throw new CommandException(msg.getString("import.no-connection", e.getMessage()));
     }

@@ -29,6 +29,7 @@ import com.google.common.eventbus.Subscribe;
 
 import me.taylorkelly.mywarp.bukkit.settings.BukkitSettings;
 import me.taylorkelly.mywarp.platform.Game;
+import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.util.MyWarpLogger;
 import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.util.i18n.DynamicMessages;
@@ -46,6 +47,8 @@ import org.dynmap.markers.MarkerSet;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
+
+import javax.annotation.Nullable;
 
 /**
  * Displays markers for warps using <a href="https://github.com/webbukkit/dynmap">dynmap</a>.
@@ -194,7 +197,12 @@ public class DynmapMarker {
     Marker marker = markerOptional.get();
     if (event.getType().equals(WarpUpdateEvent.UpdateType.LOCATION)) {
       Vector3d pos = warp.getPosition();
-      marker.setLocation(warp.getWorld(game).getName(), pos.getX(), pos.getY(), pos.getZ());
+      Optional<LocalWorld> worldOptional = game.getWorld(warp.getWorldIdentifier());
+      if (!worldOptional.isPresent()) {
+        log.debug("The world of the warp {} is not loaded. The warp is ignored.", warp);
+        return;
+      }
+      marker.setLocation(worldOptional.get().getName(), pos.getX(), pos.getY(), pos.getZ());
     }
     marker.setLabel(label(warp), true);
   }
@@ -211,8 +219,9 @@ public class DynmapMarker {
 
     if (ret == null) {
       ret =
-          api.createMarkerSet(DEFAULT_SET_ID, settings.getDynmapLayerDisplayName(), ImmutableSet.of(getOrCreateIcon()),
-                              false);
+              api.createMarkerSet(DEFAULT_SET_ID, settings.getDynmapLayerDisplayName(),
+                      ImmutableSet.of(getOrCreateIcon()),
+                      false);
       Preconditions.checkState(ret != null, "Failed to create MarkerSet '%s', Dynmap returns null.", DEFAULT_SET_ID);
 
       ret.setMarkerSetLabel(settings.getDynmapLayerDisplayName());
@@ -268,12 +277,19 @@ public class DynmapMarker {
    * @return the {@code Marker}
    * @throws IllegalStateException if Dynmap fails to create the {@code Marker}
    */
+  @Nullable
   private Marker createMarker(Warp warp) {
+    Optional<LocalWorld> worldOptional = game.getWorld(warp.getWorldIdentifier());
+    if (!worldOptional.isPresent()) {
+      log.debug("The world of the warp {} is not loaded. The warp is ignored.", warp);
+      return null;
+    }
     Marker
-        ret =
-        getOrCreateSet()
-            .createMarker(identifier(warp), label(warp), true, warp.getWorld(game).getName(), warp.getPosition().getX(),
-                          warp.getPosition().getY(), warp.getPosition().getZ(), getOrCreateIcon(), false);
+            ret =
+            getOrCreateSet()
+                    .createMarker(identifier(warp), label(warp), true, worldOptional.get().getName(),
+                            warp.getPosition().getX(),
+                            warp.getPosition().getY(), warp.getPosition().getZ(), getOrCreateIcon(), false);
     Preconditions.checkState(ret != null, "Failed to create Marker for %s, Dynmap returns null.", warp);
 
     return ret;

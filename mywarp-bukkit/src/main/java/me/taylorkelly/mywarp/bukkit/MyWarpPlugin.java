@@ -19,9 +19,12 @@
 
 package me.taylorkelly.mywarp.bukkit;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Predicates;
 import com.google.common.primitives.Ints;
+
 import me.taylorkelly.mywarp.MyWarp;
 import me.taylorkelly.mywarp.bukkit.settings.BukkitSettings;
 import me.taylorkelly.mywarp.bukkit.util.conversation.AcceptancePromptFactory;
@@ -39,6 +42,7 @@ import me.taylorkelly.mywarp.util.i18n.FolderSourcedControl;
 import me.taylorkelly.mywarp.util.i18n.LocaleManager;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.storage.StorageInitializationException;
+
 import org.apache.commons.lang.text.StrBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -55,14 +59,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapCommonAPI;
 import org.slf4j.Logger;
 
-import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.WeakHashMap;
 
-import static com.google.common.base.Preconditions.checkState;
+import javax.annotation.Nullable;
 
 /**
  * The MyWarp plugin singleton when running on Bukkit.
@@ -103,7 +110,8 @@ public final class MyWarpPlugin extends JavaPlugin {
       }
     }
     platform =
-        new BukkitPlatform(this, dataFolder, YamlConfiguration.loadConfiguration(this.getTextResource("config.yml")));
+            new BukkitPlatform(this, dataFolder,
+                    YamlConfiguration.loadConfiguration(this.getTextResource("config.yml")));
 
     // setup the core
     try {
@@ -123,8 +131,9 @@ public final class MyWarpPlugin extends JavaPlugin {
     // further platform-specific objects
     groupResolver = GroupResolverFactory.createResolver();
     acceptancePromptFactory =
-        new AcceptancePromptFactory(createConversationFactory(), myWarp.getAuthorizationResolver(), platform.getGame(),
-                                    platform.getPlayerNameResolver(), this);
+            new AcceptancePromptFactory(createConversationFactory(), myWarp.getAuthorizationResolver(),
+                    platform.getGame(),
+                    platform.getPlayerNameResolver(), this);
     welcomeEditorFactory = new WelcomeEditorFactory(createConversationFactory());
 
     notifyCoreInitialized();
@@ -174,8 +183,8 @@ public final class MyWarpPlugin extends JavaPlugin {
       Plugin dynmap = getServer().getPluginManager().getPlugin("dynmap");
       if (dynmap != null && dynmap.isEnabled() && dynmap instanceof DynmapCommonAPI) {
         marker =
-            new DynmapMarker((DynmapCommonAPI) dynmap, this, getSettings(), WarpUtils.isType(Warp.Type.PUBLIC),
-                             platform.getGame());
+                new DynmapMarker((DynmapCommonAPI) dynmap, this, getSettings(), WarpUtils.isType(Warp.Type.PUBLIC),
+                        platform.getGame());
         marker.addMarker(myWarp.getWarpManager().getAll(Predicates.<Warp>alwaysTrue()));
         myWarp.getEventBus().register(marker);
       } else {
@@ -240,7 +249,7 @@ public final class MyWarpPlugin extends JavaPlugin {
    */
   public LocalPlayer wrap(Player player) {
     return new BukkitPlayer(player, getAcceptancePromptFactory(), getWelcomeEditorFactory(), getGroupResolver(),
-                            getSettings());
+            getSettings());
   }
 
   /**
@@ -330,7 +339,7 @@ public final class MyWarpPlugin extends JavaPlugin {
    */
   protected static Material getMaterial(LocalWorld world, Vector3i position) {
     return BukkitAdapter.adapt(world).getBlockAt(Ints.checkedCast(position.getX()), Ints.checkedCast(position.getY()),
-                                                 Ints.checkedCast(position.getZ())).getType();
+            Ints.checkedCast(position.getZ())).getType();
   }
 
 }

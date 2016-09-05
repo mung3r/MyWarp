@@ -35,7 +35,7 @@ class ConnectionConfigurationProvider extends NonSuggestiveProvider<ConnectionCo
 
   @Override
   public ConnectionConfiguration get(CommandArgs arguments, List<? extends Annotation> modifiers)
-      throws ArgumentException, ProvisionException {
+          throws ArgumentException, ProvisionException {
     ConnectionConfiguration config = new ConnectionConfiguration(arguments.next());
 
     if (config.supportsSchemas()) {

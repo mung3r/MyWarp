@@ -19,8 +19,11 @@
 
 package me.taylorkelly.mywarp.service.limit;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
 import me.taylorkelly.mywarp.platform.LocalPlayer;
 import me.taylorkelly.mywarp.platform.LocalWorld;
 import me.taylorkelly.mywarp.platform.capability.LimitCapability;
@@ -29,10 +32,13 @@ import me.taylorkelly.mywarp.util.WarpUtils;
 import me.taylorkelly.mywarp.warp.Warp;
 import me.taylorkelly.mywarp.warp.WarpManager;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkState;
+import javax.annotation.Nullable;
 
 /**
  * Resolves and evaluates warp creation limits for individual players on a set of worlds.
@@ -97,8 +103,8 @@ public class LimitService {
 
   /**
    * Gets all warps created by the given player mapped under the applicable {@link Limit}. <p/> The map is guaranteed to
-   * include all limit that effect the given player. If no warp exists for a certain limit, {@code getByName(Limit)} will
-   * return an empty list.
+   * include all limit that effect the given player. If no warp exists for a certain limit, {@code getByName(Limit)}
+   * will return an empty list.
    *
    * @param creator the creator
    * @return a Map with all matching warps

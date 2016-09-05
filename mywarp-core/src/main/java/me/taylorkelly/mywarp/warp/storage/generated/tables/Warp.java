@@ -72,93 +72,93 @@ public class Warp extends TableImpl<Record> {
    * The column <code>mywarp.warp.warp_id</code>.
    */
   public final TableField<Record, UInteger>
-      WARP_ID =
-      createField("warp_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          WARP_ID =
+          createField("warp_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.name</code>.
    */
   public final TableField<Record, String>
-      NAME =
-      createField("name", org.jooq.impl.SQLDataType.VARCHAR.length(32).nullable(false), this, "");
+          NAME =
+          createField("name", org.jooq.impl.SQLDataType.VARCHAR.length(32).nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.player_id</code>.
    */
   public final TableField<Record, UInteger>
-      PLAYER_ID =
-      createField("player_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          PLAYER_ID =
+          createField("player_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.x</code>.
    */
   public final TableField<Record, Double>
-      X =
-      createField("x", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
+          X =
+          createField("x", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.y</code>.
    */
   public final TableField<Record, Double>
-      Y =
-      createField("y", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
+          Y =
+          createField("y", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.z</code>.
    */
   public final TableField<Record, Double>
-      Z =
-      createField("z", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
+          Z =
+          createField("z", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.pitch</code>.
    */
   public final TableField<Record, Float>
-      PITCH =
-      createField("pitch", org.jooq.impl.SQLDataType.REAL.nullable(false), this, "");
+          PITCH =
+          createField("pitch", org.jooq.impl.SQLDataType.REAL.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.yaw</code>.
    */
   public final TableField<Record, Float>
-      YAW =
-      createField("yaw", org.jooq.impl.SQLDataType.REAL.nullable(false), this, "");
+          YAW =
+          createField("yaw", org.jooq.impl.SQLDataType.REAL.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.world_id</code>.
    */
   public final TableField<Record, UInteger>
-      WORLD_ID =
-      createField("world_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+          WORLD_ID =
+          createField("world_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
   /**
    * The column <code>mywarp.warp.creation_date</code>.
    */
   public final TableField<Record, Date>
-      CREATION_DATE =
-      createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "",
+          CREATION_DATE =
+          createField("creation_date", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "",
                   new DateTimestampConverter());
 
   /**
    * The column <code>mywarp.warp.type</code>.
    */
   public final TableField<Record, Type>
-      TYPE =
-      createField("type", org.jooq.impl.SQLDataType.TINYINTUNSIGNED.nullable(false), this, "", new TypeConverter());
+          TYPE =
+          createField("type", org.jooq.impl.SQLDataType.TINYINTUNSIGNED.nullable(false), this, "", new TypeConverter());
 
   /**
    * The column <code>mywarp.warp.visits</code>.
    */
   public final TableField<Record, UInteger>
-      VISITS =
-      createField("visits", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false).defaulted(true), this, "");
+          VISITS =
+          createField("visits", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false).defaulted(true), this, "");
 
   /**
    * The column <code>mywarp.warp.welcome_message</code>.
    */
   public final TableField<Record, String>
-      WELCOME_MESSAGE =
-      createField("welcome_message", org.jooq.impl.SQLDataType.CLOB, this, "");
+          WELCOME_MESSAGE =
+          createField("welcome_message", org.jooq.impl.SQLDataType.CLOB, this, "");
 
   /**
    * Create a <code>mywarp.warp</code> table reference

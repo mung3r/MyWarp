@@ -119,10 +119,11 @@ public class AcceptancePromptFactory {
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
 
       Message
-          message =
-          Message.builder().append(
-              msg.getString("warp-acceptance.want-to-accept", initiatorName, warp.getName(), acceptanceSequence(),
-                            declineSequence(), infoSequence(), MyWarpPlugin.CONVERSATION_TIMEOUT)).build();
+              message =
+              Message.builder().append(
+                      msg.getString("warp-acceptance.want-to-accept", initiatorName, warp.getName(),
+                              acceptanceSequence(),
+                              declineSequence(), infoSequence(), MyWarpPlugin.CONVERSATION_TIMEOUT)).build();
       return BukkitMessageInterpreter.interpret(message);
     }
 
@@ -155,7 +156,7 @@ public class AcceptancePromptFactory {
 
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
       return BukkitMessageInterpreter.interpret(new InfoPrinter(warp, authorizationResolver, game, resolver)
-                                                    .getText(plugin.wrap((Player) context.getForWhom())));
+              .getText(plugin.wrap((Player) context.getForWhom())));
     }
   }
 
@@ -171,8 +172,8 @@ public class AcceptancePromptFactory {
 
       LocaleManager.setLocale((Locale) context.getSessionData(Locale.class));
       Message
-          message =
-          Message.builder().append(msg.getString("warp-acceptance.accepted-successful", warp.getName())).build();
+              message =
+              Message.builder().append(msg.getString("warp-acceptance.accepted-successful", warp.getName())).build();
       return BukkitMessageInterpreter.interpret(message);
     }
 
