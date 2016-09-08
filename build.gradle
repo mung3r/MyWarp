@@ -1,0 +1,128 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.mendhak.gradlecrowdin:plugin:0.0.9"
+    }
+}
+
+plugins {
+    id "com.palantir.git-version" version "0.5.2"
+}
+
+// Define variables
+if (!project.hasProperty("buildNumber")) {
+    ext.buildNumber = '0'
+}
+if (!project.hasProperty("ciSystem")) {
+    ext.ciSystem = 'unknown'
+}
+if (!project.hasProperty("commitHash")) {
+    try {
+        ext.commitHash = versionDetails().gitHash
+    } catch (Exception ignore) {
+        ext.commitHash = 'unknown'
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'checkstyle'
+    apply plugin: "com.mendhak.gradlecrowdin"
+
+    // Basic project information
+    group = 'me.taylorkelly'
+    version = '3.0-SNAPSHOT'
+
+    // Extended project information
+    ext.projectName = 'MyWarp'
+    ext.inceptionYear = '2011'
+    ext.packaging = 'jar'
+    ext.url = 'https://thee.github.io/MyWarp/'
+    ext.projectDescription = 'Social and dynamic warps for Minecraft'
+
+    ext.internalVersion = version + "+" + ciSystem + "-b" + buildNumber + ".git-" + commitHash
+
+    // Minimum version of Java required
+    sourceCompatibility = 6
+    targetCompatibility = 6
+
+    // Project repositories
+    repositories {
+        jcenter()
+    }
+
+    checkstyle {
+        toolVersion = '7.0'
+        configProperties.checkstyleConfigDir = new File(rootProject.projectDir, 'config/checkstyle')
+        configFile = new File(configProperties.checkstyleConfigDir, 'checkstyle.xml')
+    }
+
+    // JAR manifest configuration
+    jar.manifest.mainAttributes(
+            "Built-By": System.properties['user.name'],
+            "Created-By": System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
+            "Implementation-Title": name,
+            "Implementation-Version": internalVersion,
+            "Implementation-Vendor": url)
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    javadoc {
+        options.setEncoding('UTF-8')
+
+        if (JavaVersion.current().isJava8Compatible()) {
+            // disable the super-strict doclint tool in Java 8
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+
+    if (project.hasProperty('crowdinKey')) {
+
+        crowdinDownload {
+            destination = "$projectDir/build/resources/main/me/taylorkelly/mywarp/lang"
+            projectId = 'mywarp'
+
+            //remove project folders from crowdin source
+            renameMapping = [
+                    from: '^(.*)/(.*)$',
+                    to  : /\2/
+            ]
+
+            apiKey = project.crowdinKey
+        }
+        processResources.dependsOn(crowdinDownload)
+    }
+
+    // create the default fallback file (for all localizations) from the english localization
+    task createDefaultLocalizations(type: Copy) {
+        def bundleFolder = 'me/taylorkelly/mywarp/lang'
+        from('src/main/resources/' + bundleFolder)
+        into(new File(sourceSets.main.output.resourcesDir, bundleFolder))
+        include('*_en.properties')
+        rename { fileName -> fileName.replace('_en', '') }
+    }
+    processResources.dependsOn(createDefaultLocalizations)
+
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    build.dependsOn(checkstyleMain)
+    build.dependsOn(checkstyleTest)
+    build.dependsOn(sourcesJar)
+    build.dependsOn(javadocJar)
+}

@@ -1,0 +1,76 @@
+name: ${projectName}
+version: ${version}
+description: ${projectDescription}
+authors:
+  - tkelly
+  - flames
+  - spathizilla
+  - mung3r
+  - thee
+softdepend:
+  - dynmap
+  - bPermissions
+  - GroupManager
+  - Vault
+website: ${url}
+main: me.taylorkelly.mywarp.bukkit.MyWarpPlugin
+commands:
+  warp:
+    aliases: ['mywarp', 'mw']
+    description: MyWarp usage and management commands
+    usage: /<command> help - Displays the help for MyWarp
+  to:
+    description: Teleports the user to warps
+    usage: /to <warp>
+permissions:
+  mywarp.*:
+    children:
+      mywarp.cmd.*:
+        children:
+          mywarp.cmd.to: true
+          mywarp.cmd.create-public: true
+          mywarp.cmd.create-private: true
+          mywarp.cmd.delete: true
+          mywarp.cmd.update: true
+          mywarp.cmd.welcome: true
+          mywarp.cmd.assets:
+            children:
+              mywarp.cmd.assets.self: true
+          mywarp.cmd.list: true
+          mywarp.cmd.info: true
+          mywarp.cmd.help: true
+          mywarp.cmd.point: true
+          mywarp.cmd.player: true
+          mywarp.cmd.give: true
+          mywarp.cmd.give.direct: true
+          mywarp.cmd.give.force: true
+          mywarp.cmd.invite: true
+          mywarp.cmd.invite.group: true
+          mywarp.cmd.uninvite: true
+          mywarp.cmd.uninvite.group: true
+          mywarp.cmd.public: true
+          mywarp.cmd.public.force: true
+          mywarp.cmd.private: true
+          mywarp.cmd.private.force: true
+          mywarp.cmd.reload: true
+          mywarp.cmd.import: true
+      mywarp.sign.*:
+        children:
+          mywarp.sign.use: true
+          mywarp.sign.create:
+            children:
+              mywarp.sign.create.self: true
+      mywarp.world-access.*: true
+      mywarp.limit.disobey.*: true
+      mywarp.economy.disobey: true
+      mywarp.timer.disobey:
+        children:
+          mywarp.timer.disobey.warmup-abort.*:
+            children:
+              mywarp.timer.disobey.warmup-abort.damage: true
+              mywarp.timer.disobey.warmup-abort.move: true
+      mywarp.override.*:
+        children:
+          mywarp.override.modify: true
+          mywarp.override.use: true
+          mywarp.override.view: true
